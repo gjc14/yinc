@@ -2,7 +2,7 @@
  * Where will match all routes that are not matched by other routes.
  * Best place to put a 404 page.
  */
-import { MetaFunction } from '@remix-run/node'
+import { data, MetaFunction } from '@remix-run/node'
 import { Link } from '@remix-run/react'
 import { Button } from '~/components/ui/button'
 import { MainWrapper } from '~/components/wrappers'
@@ -12,6 +12,10 @@ export const meta: MetaFunction = () => {
         { title: 'Page not found' },
         { name: 'description', content: 'Page not found' },
     ]
+}
+
+export const loader = () => {
+    return data({}, { status: 404 })
 }
 
 export default function WhereAreYou() {
