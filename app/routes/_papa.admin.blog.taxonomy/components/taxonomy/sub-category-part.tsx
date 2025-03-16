@@ -1,6 +1,6 @@
-import { Category, SubCategory } from '@prisma/client'
+import { SubCategory } from '@prisma/client'
 import { Close, PopoverTrigger } from '@radix-ui/react-popover'
-import { Form, useFetcher, useFetchers, useSubmit } from '@remix-run/react'
+import { Form, useSubmit } from '@remix-run/react'
 import { ObjectId } from 'bson'
 import { XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -19,44 +19,24 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-
-const actionRoute = '/admin/blog/taxonomy/resource'
-
-export const usePendingSubCategories = (): SubCategory[] => {
-    const matchedFetchers = useFetchers().filter(fetcher => {
-        if (!fetcher.formData) return false
-        return fetcher.formData.get('intent') === 'subcategory'
-    })
-    return matchedFetchers.map(fetcher => {
-        return {
-            id: String(fetcher.formData?.get('id')),
-            name: String(fetcher.formData?.get('name')),
-            categoryId: '',
-            postIDs: [],
-        }
-    })
-}
+import { CategoriesFromDB } from '~/lib/db/blog-taxonomy.server'
+import { actionRoute } from '.'
 
 const SubCategoryPart = (props: {
-    categories: (Category & { subCategories: SubCategory[] })[] | null
+    categories: CategoriesFromDB
+    onDelete: (categoryId: string, subCategoryId: string) => void
 }) => {
-    const { categories } = props
     const submit = useSubmit()
-    const [selected, setSelected] = useState<string>('')
-    const subCategories =
-        categories?.find(cat => cat.id === selected)?.subCategories || null
+    const { categories, onDelete } = props
 
-    // Optimistic
-    const pendingItems = usePendingSubCategories()
-    for (let item of pendingItems) {
-        if (!subCategories?.some(sub => sub.id === item.id)) {
-            subCategories?.push(item)
-        }
-    }
+    // Getting subCategories
+    const [selectedCatId, setSelectedCatId] = useState<string>('')
+    const selectedCat = categories?.find(cat => cat.id === selectedCatId)
+    const subCategories = selectedCat?.subCategories || null
 
     useEffect(() => {
-        if (!categories?.some(cat => cat.id === selected)) {
-            setSelected('')
+        if (!categories?.some(cat => cat.id === selectedCatId)) {
+            setSelectedCatId('')
         }
     }, [categories])
 
@@ -70,9 +50,9 @@ const SubCategoryPart = (props: {
 
             <div className="flex items-center gap-3">
                 <Select
-                    value={selected ?? ''}
+                    value={selectedCatId ?? ''}
                     onValueChange={v => {
-                        setSelected(v)
+                        setSelectedCatId(v)
                     }}
                 >
                     <SelectTrigger
@@ -102,7 +82,7 @@ const SubCategoryPart = (props: {
                         disabled={
                             categories === null ||
                             categories.length === 0 ||
-                            !selected
+                            !selectedCatId
                         }
                     >
                         <Button variant={'outline'}>
@@ -133,7 +113,7 @@ const SubCategoryPart = (props: {
                             <input
                                 type="hidden"
                                 name="parentId"
-                                value={selected}
+                                value={selectedCatId}
                             />
                             <Input
                                 type="text"
@@ -157,6 +137,10 @@ const SubCategoryPart = (props: {
                             <SubcategoryItem
                                 key={subcategory.id}
                                 subcategory={subcategory}
+                                onDelete={id => {
+                                    if (!selectedCatId) return
+                                    onDelete(selectedCatId, id)
+                                }}
                             />
                         ))}
                     </div>
@@ -166,23 +150,26 @@ const SubCategoryPart = (props: {
     )
 }
 
-export const SubcategoryItem = (props: { subcategory: SubCategory }) => {
-    const fetcher = useFetcher()
-    const isDeleting = fetcher.formData?.get('id') === props.subcategory.id
+export const SubcategoryItem = (props: {
+    subcategory: SubCategory
+    onDelete?: (id: string) => void
+}) => {
+    const submit = useSubmit()
 
     return (
-        <div
-            className={`flex gap-0.5 items-center ${
-                isDeleting ? 'hidden' : ''
-            }`}
-        >
+        <div className="flex gap-0.5 items-center">
             <Badge>{props.subcategory.name}</Badge>
             <XCircle
                 className="h-4 w-4 cursor-pointer"
                 onClick={() => {
-                    fetcher.submit(
+                    props.onDelete?.(props.subcategory.id)
+                    submit(
                         { id: props.subcategory.id, intent: 'subcategory' },
-                        { method: 'DELETE', action: actionRoute }
+                        {
+                            method: 'DELETE',
+                            action: actionRoute,
+                            navigate: false,
+                        }
                     )
                 }}
             />

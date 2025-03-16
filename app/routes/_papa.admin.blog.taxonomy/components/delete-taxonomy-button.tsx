@@ -2,8 +2,9 @@ import { useFetcher } from '@remix-run/react'
 
 import { Button } from '~/components/ui/button'
 import { Intents } from '~/routes/_papa.admin.blog.taxonomy.resource/route'
+import { useTaxonomyState } from '../context'
 
-export const DeleteTaxonomyButton = ({
+export function DeleteTaxonomyButton({
     id,
     actionRoute,
     intent,
@@ -11,17 +12,46 @@ export const DeleteTaxonomyButton = ({
     id: string
     actionRoute: string
     intent: Intents
-}) => {
+}) {
+    const { setTagsState, setCategoriesState } = useTaxonomyState()
     const fetcher = useFetcher()
     const isDeleting = fetcher.formData?.get('id') === id
 
+    const handleDelete = () => {
+        switch (intent) {
+            case 'tag':
+                setTagsState(tags => tags.filter(tag => tag.id !== id))
+                break
+            case 'category':
+                setCategoriesState(categories =>
+                    categories.filter(category => category.id !== id)
+                )
+                break
+        }
+    }
+
     return (
-        <fetcher.Form method="DELETE" action={actionRoute} className="ml-auto">
-            <input type="hidden" name="id" value={id} />
-            <input type="hidden" name="intent" value={intent} />
-            <Button type="submit" variant={'destructive'} disabled={isDeleting}>
-                Delete
-            </Button>
-        </fetcher.Form>
+        <Button
+            type="submit"
+            size={'sm'}
+            variant={'destructive'}
+            className="ml-auto"
+            disabled={isDeleting}
+            onClick={() => {
+                handleDelete()
+                fetcher.submit(
+                    {
+                        id: id,
+                        intent: intent,
+                    },
+                    {
+                        method: 'DELETE',
+                        action: actionRoute,
+                    }
+                )
+            }}
+        >
+            Delete
+        </Button>
     )
 }

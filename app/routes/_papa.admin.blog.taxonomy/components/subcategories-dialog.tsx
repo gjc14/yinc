@@ -13,11 +13,9 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import {
-    SubcategoryItem,
-    usePendingSubCategories,
-} from '~/routes/_papa.admin.blog.taxonomy/components/taxonomy/sub-category-part'
+import { SubcategoryItem } from '~/routes/_papa.admin.blog.taxonomy/components/taxonomy/sub-category-part'
 import { BlogLoaderType } from '~/routes/_papa.admin.blog/route'
+import { useTaxonomyState } from '../context'
 
 const actionRoute = '/admin/blog/taxonomy/resource'
 
@@ -30,16 +28,9 @@ export function SubCategoriesDialog({
     categoryId: BlogLoaderType['categories'][number]['id']
     subCategories: BlogLoaderType['categories'][number]['subCategories']
 }) {
+    const { setCategoriesState } = useTaxonomyState()
     const submit = useSubmit()
     const subInputRef = useRef<HTMLInputElement>(null)
-
-    // Optimistic
-    const pendingItems = usePendingSubCategories()
-    for (let item of pendingItems) {
-        if (!subCategories?.some(sub => sub.id === item.id)) {
-            subCategories?.push(item)
-        }
-    }
 
     return (
         <Dialog>
@@ -106,6 +97,28 @@ export function SubCategoriesDialog({
                                     <SubcategoryItem
                                         key={subcategory.id}
                                         subcategory={subcategory}
+                                        onDelete={id => {
+                                            setCategoriesState(prev => {
+                                                return prev.map(category => {
+                                                    if (
+                                                        category.id ===
+                                                        categoryId
+                                                    ) {
+                                                        return {
+                                                            ...category,
+                                                            subCategories:
+                                                                category.subCategories.filter(
+                                                                    subcategory =>
+                                                                        subcategory.id !==
+                                                                        id
+                                                                ),
+                                                        }
+                                                    }
+
+                                                    return category
+                                                })
+                                            })
+                                        }}
                                     />
                                 ))}
                             </div>

@@ -1,6 +1,7 @@
 import { Link } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, PlusCircle } from 'lucide-react'
+import { useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
@@ -23,13 +24,20 @@ import {
 
 export default function AdminPost() {
     const { posts, tags, categories } = useAdminBlogContext()
+    const [tagsState, setTagsState] = useState(tags)
+    const [categoriesState, setCategoriesState] = useState(categories)
 
     return (
         <AdminSectionWrapper>
             <AdminHeader>
                 <AdminTitle title="Posts"></AdminTitle>
                 <AdminActions>
-                    <TaxonomyDialog tags={tags} categories={categories} />
+                    <TaxonomyDialog
+                        tagsState={tagsState}
+                        setTagsState={setTagsState}
+                        categoriesState={categoriesState}
+                        setCategoriesState={setCategoriesState}
+                    />
                     <Link to="/admin/blog/new">
                         <Button size={'sm'}>
                             <PlusCircle size={16} />

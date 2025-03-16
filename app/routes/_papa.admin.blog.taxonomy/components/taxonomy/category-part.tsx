@@ -1,6 +1,6 @@
-import { Category, SubCategory } from '@prisma/client'
+import { Category } from '@prisma/client'
 import { Close, PopoverTrigger } from '@radix-ui/react-popover'
-import { Form, useFetcher, useFetchers, useSubmit } from '@remix-run/react'
+import { Form, useSubmit } from '@remix-run/react'
 import { ObjectId } from 'bson'
 import { XCircle } from 'lucide-react'
 
@@ -9,38 +9,15 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Popover, PopoverContent } from '~/components/ui/popover'
-
-const actionRoute = '/admin/blog/taxonomy/resource'
-
-const usePendingCategories = (): (Category & {
-    subCategories: SubCategory[]
-})[] => {
-    const matchedFetchers = useFetchers().filter(fetcher => {
-        if (!fetcher.formData) return false
-        return fetcher.formData.get('intent') === 'category'
-    })
-    return matchedFetchers.map(fetcher => {
-        return {
-            id: String(fetcher.formData?.get('id')),
-            name: String(fetcher.formData?.get('name')),
-            postIDs: [],
-            subCategories: [],
-        }
-    })
-}
+import { CategoriesFromDB } from '~/lib/db/blog-taxonomy.server'
+import { actionRoute } from '.'
 
 const CategoryPart = (props: {
-    categories: (Category & { subCategories: SubCategory[] })[] | null
+    categories: CategoriesFromDB
+    onDelete: (id: string) => void
 }) => {
     const submit = useSubmit()
-
-    // Optimistic
-    const pendingItems = usePendingCategories()
-    for (let item of pendingItems) {
-        if (!props.categories?.some(cat => cat.id === item.id)) {
-            props.categories?.push(item)
-        }
-    }
+    const { categories, onDelete } = props
 
     return (
         <div className="space-y-2">
@@ -87,41 +64,48 @@ const CategoryPart = (props: {
                         </Form>
                     </PopoverContent>
                 </Popover>
-                {(!props.categories || props.categories.length === 0) && (
+                {categories.length === 0 && (
                     <p className="text-sm text-muted-foreground mx-3">
                         No category found
                     </p>
                 )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-1">
-                {props.categories &&
-                    props.categories?.length > 0 &&
-                    props.categories.map(category => (
-                        <CategoryItem key={category.id} category={category} />
+            {categories.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1">
+                    {categories.map(category => (
+                        <CategoryItem
+                            key={category.id}
+                            category={category}
+                            onDelete={id => onDelete(id)}
+                        />
                     ))}
-            </div>
+                </div>
+            )}
         </div>
     )
 }
 
-const CategoryItem = (props: { category: Category }) => {
-    const fetcher = useFetcher()
-    const isDeleting = fetcher.formData?.get('id') === props.category.id
+const CategoryItem = (props: {
+    category: Category
+    onDelete?: (id: string) => void
+}) => {
+    const submit = useSubmit()
 
     return (
-        <div
-            className={`flex gap-0.5 items-center ${
-                isDeleting ? 'hidden' : ''
-            }`}
-        >
+        <div className="flex gap-0.5 items-center">
             <Badge>{props.category.name}</Badge>
             <XCircle
                 className="h-4 w-4 cursor-pointer"
                 onClick={() => {
-                    fetcher.submit(
+                    props.onDelete?.(props.category.id)
+                    submit(
                         { id: props.category.id, intent: 'category' },
-                        { method: 'DELETE', action: actionRoute }
+                        {
+                            method: 'DELETE',
+                            action: actionRoute,
+                            navigate: false,
+                        }
                     )
                 }}
             />

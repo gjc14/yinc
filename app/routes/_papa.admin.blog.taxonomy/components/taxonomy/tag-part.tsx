@@ -1,5 +1,5 @@
 import { Tag } from '@prisma/client'
-import { useFetcher, useFetchers, useSubmit } from '@remix-run/react'
+import { useSubmit } from '@remix-run/react'
 import { ObjectId } from 'bson'
 import { XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -7,34 +7,18 @@ import { useEffect, useState } from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { TagsFromDB } from '~/lib/db/blog-taxonomy.server'
+import { actionRoute } from '.'
 
-const actionRoute = '/admin/blog/taxonomy/resource'
-
-const usePendingTags = (): Tag[] => {
-    const matchedFetchers = useFetchers().filter(fetcher => {
-        if (!fetcher.formData) return false
-        return fetcher.formData.get('intent') === 'tag'
-    })
-    return matchedFetchers.map(fetcher => {
-        return {
-            id: String(fetcher.formData?.get('id')),
-            name: String(fetcher.formData?.get('name')),
-            postIDs: [],
-        }
-    })
-}
-
-const TagPart = (props: { tags: Tag[] | null }) => {
+const TagPart = (props: {
+    tags: TagsFromDB
+    onDelete: (id: string) => void
+}) => {
     const submit = useSubmit()
+    const { tags, onDelete } = props
+
     const [tagValue, setTagValue] = useState<string>('')
     const [isComposing, setIsComposing] = useState(false)
-
-    const pendingItems = usePendingTags()
-    for (let item of pendingItems) {
-        if (!props.tags?.some(tag => tag.id === item.id)) {
-            props.tags?.push(item)
-        }
-    }
 
     const addTag = (tag: string) => {
         submit(
@@ -79,10 +63,14 @@ const TagPart = (props: { tags: Tag[] | null }) => {
                     setIsComposing(false)
                 }}
             />
-            {props.tags && props.tags.length > 0 && (
+            {tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 items-center">
-                    {props.tags.map(tag => (
-                        <TagItem key={tag.id} tag={tag} />
+                    {tags.map(tag => (
+                        <TagItem
+                            key={tag.id}
+                            tag={tag}
+                            onDelete={id => onDelete(id)}
+                        />
                     ))}
                 </div>
             )}
@@ -90,23 +78,23 @@ const TagPart = (props: { tags: Tag[] | null }) => {
     )
 }
 
-const TagItem = (props: { tag: Tag }) => {
-    const fetcher = useFetcher()
-    const isDeleting = fetcher.formData?.get('id') === props.tag.id
+const TagItem = (props: { tag: Tag; onDelete?: (id: string) => void }) => {
+    const submit = useSubmit()
 
     return (
-        <div
-            className={`flex gap-0.5 items-center ${
-                isDeleting ? 'hidden' : ''
-            }`}
-        >
+        <div className="flex gap-0.5 items-center">
             <Badge>{props.tag.name}</Badge>
             <XCircle
                 className="h-4 w-4 cursor-pointer"
                 onClick={() => {
-                    fetcher.submit(
+                    props.onDelete?.(props.tag.id)
+                    submit(
                         { id: props.tag.id, intent: 'tag' },
-                        { method: 'DELETE', action: actionRoute }
+                        {
+                            method: 'DELETE',
+                            action: actionRoute,
+                            navigate: false,
+                        }
                     )
                 }}
             />

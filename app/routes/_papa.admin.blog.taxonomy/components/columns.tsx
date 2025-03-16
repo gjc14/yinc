@@ -27,7 +27,7 @@ export const tagColumns: ColumnDef<
         accessorKey: 'id',
         header: () => <div className="w-full text-right">Action</div>,
         cell: ({ row }) => (
-            <div className="w-full flex">
+            <div className="w-full flex justify-end">
                 <DeleteTaxonomyButton
                     id={row.original.id}
                     actionRoute={'/admin/blog/taxonomy/resource'}
