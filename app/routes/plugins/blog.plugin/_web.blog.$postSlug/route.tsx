@@ -1,6 +1,6 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
-import { LoaderFunctionArgs, SerializeFrom } from '@remix-run/node'
+import { LoaderFunctionArgs } from '@remix-run/node'
 import {
     ClientLoaderFunctionArgs,
     useLoaderData,
@@ -48,9 +48,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
 }
 
-export type SerializedLoader = SerializeFrom<typeof loader>
+export type PostLoaderType = Awaited<ReturnType<typeof loader>>
 
-let cache: Record<string, SerializeFrom<typeof loader> | undefined> = {}
+let cache: Record<string, Awaited<ReturnType<typeof loader>> | undefined> = {}
 export const clientLoader = async ({
     serverLoader,
     params,

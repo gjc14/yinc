@@ -1,8 +1,4 @@
-import {
-    LoaderFunctionArgs,
-    SerializeFrom,
-    type MetaFunction,
-} from '@remix-run/node'
+import { LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { ClientLoaderFunctionArgs, useLoaderData } from '@remix-run/react'
 
 import { getPosts } from '~/lib/db/post.server'
@@ -31,7 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
 }
 
-let cache: SerializeFrom<typeof loader>
+let cache: Awaited<ReturnType<typeof loader>>
 export const clientLoader = async ({
     serverLoader,
 }: ClientLoaderFunctionArgs) => {

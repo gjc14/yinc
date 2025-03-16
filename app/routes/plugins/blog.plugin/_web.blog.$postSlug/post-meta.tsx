@@ -1,9 +1,9 @@
 import { useNavigate } from '@remix-run/react'
 
 import { Button } from '~/components/ui/button'
-import { SerializedLoader } from './route'
+import { PostLoaderType } from './route'
 
-export const PostMeta = ({ post }: { post: SerializedLoader['post'] }) => {
+export const PostMeta = ({ post }: { post: PostLoaderType['post'] }) => {
     const navigate = useNavigate()
 
     return (

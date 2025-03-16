@@ -4,14 +4,14 @@ import { useNavigate } from '@remix-run/react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
-import { SerializedLoader } from './route'
+import { PostLoaderType } from './route'
 
 export const PostFooter = ({
     post,
     prev,
     next,
 }: {
-    post: SerializedLoader['post']
+    post: PostLoaderType['post']
     prev: { title: string; slug: string } | null
     next: { title: string; slug: string } | null
 }) => {

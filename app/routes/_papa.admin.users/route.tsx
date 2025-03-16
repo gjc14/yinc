@@ -1,7 +1,6 @@
-import { SerializeFrom } from '@remix-run/node'
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
-import { getUsers } from '~/lib/db/user.server'
 
+import { getUsers } from '~/lib/db/user.server'
 export { action } from '~/routes/_papa.admin.users.admins/route'
 
 export const loader = async () => {
@@ -17,5 +16,5 @@ export default function AdminAllUsers() {
 }
 
 export const useUsersContext = () => {
-    return useOutletContext<SerializeFrom<typeof loader>>()
+    return useOutletContext<Awaited<ReturnType<typeof loader>>>()
 }

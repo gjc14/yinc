@@ -102,5 +102,5 @@ export default function Admin() {
 }
 
 export const useAdminContext = () => {
-    return useOutletContext<typeof loader>()
+    return useOutletContext<Awaited<ReturnType<typeof loader>>>()
 }

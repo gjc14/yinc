@@ -46,9 +46,9 @@ export default function AdminAllUsers() {
     )
 }
 
-type SerializedUser = ReturnType<typeof useUsersContext>['users'][number]
+type UsersLoaderType = ReturnType<typeof useUsersContext>['users'][number]
 
-export const columns: ColumnDef<SerializedUser>[] = [
+export const columns: ColumnDef<UsersLoaderType>[] = [
     {
         accessorKey: 'email',
         header: 'Email',

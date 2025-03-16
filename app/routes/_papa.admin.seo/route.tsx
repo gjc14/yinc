@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, SerializeFrom } from '@remix-run/node'
+import { ActionFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { PlusCircle } from 'lucide-react'
@@ -75,7 +75,7 @@ export const loader = async () => {
     return { seo }
 }
 
-export type SerializedSeo = SerializeFrom<typeof loader>['seo'][number]
+export type SeoLoaderType = Awaited<ReturnType<typeof loader>>['seo'][number]
 
 export default function AdminSEO() {
     const { seo } = useLoaderData<typeof loader>()
@@ -123,7 +123,7 @@ export default function AdminSEO() {
     )
 }
 
-export const columns: ColumnDef<SerializedSeo>[] = [
+export const columns: ColumnDef<SeoLoaderType>[] = [
     {
         accessorKey: 'route',
         header: 'Route',
