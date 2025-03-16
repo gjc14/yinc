@@ -1,9 +1,4 @@
-import {
-    LoaderFunctionArgs,
-    MetaFunction,
-    redirect,
-    SerializeFrom,
-} from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node'
 import {
     Outlet,
     useLoaderData,
@@ -15,6 +10,7 @@ import { memo, useMemo } from 'react'
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
 import { Separator } from '~/components/ui/separator'
 import {
+    SIDEBAR_COOKIE_NAME,
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
@@ -31,6 +27,19 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { user: admin } = await userIs(request, ['ADMIN'])
 
+    const cookieHeader = request.headers.get('Cookie')
+
+    let parsedSidebarStatus = null
+    if (cookieHeader) {
+        const cookies = Object.fromEntries(
+            cookieHeader.split(';').map(cookie => {
+                const [name, value] = cookie.trim().split('=')
+                return [name, decodeURIComponent(value)]
+            })
+        )
+        parsedSidebarStatus = cookies[SIDEBAR_COOKIE_NAME]
+    }
+
     if (!admin) {
         throw redirect('/admin/signin')
     }
@@ -43,13 +52,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return {
         admin: admin,
         pluginRoutes: pluginRoutes,
+        sidebarStatus: parsedSidebarStatus === 'true',
     }
 }
 
 const MemoAdminSidebar = memo(AdminSidebar)
 
 export default function Admin() {
-    const { admin, pluginRoutes } = useLoaderData<typeof loader>()
+    const { admin, pluginRoutes, sidebarStatus } =
+        useLoaderData<typeof loader>()
     const location = useLocation()
     const breadcrumbPaths = generateBreadcrumbs(location.pathname)
 
@@ -65,7 +76,7 @@ export default function Admin() {
     const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])
 
     return (
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={sidebarStatus}>
             <MemoAdminSidebar
                 user={memoizedUser}
                 pluginRoutes={memoizedPluginRoutes}
@@ -91,5 +102,5 @@ export default function Admin() {
 }
 
 export const useAdminContext = () => {
-    return useOutletContext<SerializeFrom<typeof loader>>()
+    return useOutletContext<typeof loader>()
 }
