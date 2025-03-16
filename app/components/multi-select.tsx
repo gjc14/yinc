@@ -1,10 +1,10 @@
 /**
  * @see https://github.com/mxkaske/mxkaske.dev/blob/main/components/craft/fancy-multi-select.tsx
  */
+import { Command as CommandPrimitive } from 'cmdk'
 import { X } from 'lucide-react'
 import * as React from 'react'
 
-import { Command as CommandPrimitive } from 'cmdk'
 import { Badge } from '~/components/ui/badge'
 import {
     Command,
@@ -22,7 +22,8 @@ interface MultiSelectInputProps {
     options: Option[]
     defaultSelected?: Option[]
     onSelectedChange?: (optionsSelected: Option[]) => void
-    onEnterNewValue?: (value: string) => void
+    onUnSelect?: (option: Option) => void
+    onEnterNewValue?: (value: string) => string
     placeholder?: string
     // className?: string  // className is not functional with cn() in div
     // id?: string  // id is controlled by cmdk
@@ -32,7 +33,8 @@ interface MultiSelectInputProps {
  * @param options - Array of { value, label } to select from
  * @param defaultSelected - Array of { value, label } to be selected by default
  * @param onSelectedChange - Callback function to be called when the selected options change, returns option selected
- * @param onEnterNewValue - Callback function to be called when the Enter key is pressed
+ * @param onUnSelect - Callback function to be called when an option is unselected
+ * @param onEnterNewValue - Callback function to generate id for when the new value entered, id default to label
  * @param placeholder - Placeholder text for the input field
  * @returns
  */
@@ -40,6 +42,7 @@ export const MultiSelect = ({
     options,
     defaultSelected,
     onSelectedChange,
+    onUnSelect,
     onEnterNewValue,
     placeholder,
 }: MultiSelectInputProps) => {
@@ -50,12 +53,18 @@ export const MultiSelect = ({
         defaultSelected ?? []
     )
     const [inputValue, setInputValue] = React.useState('')
+    const [isComposing, setIsComposing] = React.useState(false)
 
     const handleUnselect = React.useCallback(
         (option: MultiSelectInputProps['options'][number]) => {
             setSelected(prev => {
                 const newSelected = prev.filter(s => s.value !== option.value)
-                onSelectedChange?.(newSelected)
+
+                // This is a workaround to make sure the unselect callback is called after the selected state is updated, prevent Warning: Cannot update a component (PostContent) while rendering a different component (MultiSelect).
+                setTimeout(() => {
+                    onUnSelect?.(option)
+                    onSelectedChange?.(newSelected)
+                }, 0)
                 return newSelected
             })
         },
@@ -64,6 +73,7 @@ export const MultiSelect = ({
 
     const handleKeyDown = React.useCallback(
         (e: React.KeyboardEvent<HTMLDivElement>) => {
+            if (isComposing) return
             const input = inputRef.current
             if (input) {
                 if (e.key === 'Enter') {
@@ -72,25 +82,17 @@ export const MultiSelect = ({
                         getCommandStateRef.current?.getCommandState().filtered
                             .count === 0
                     ) {
-                        onEnterNewValue?.(input.value)
+                        const id = onEnterNewValue?.(input.value) ?? input.value
                         setSelected(prev => {
-                            const newSelected = [
-                                ...prev,
-                                { value: input.value, label: input.value },
-                            ]
-                            return newSelected
+                            return [...prev, { value: id, label: input.value }]
                         })
+
                         setInputValue('')
                     }
                 }
                 if (e.key === 'Delete' || e.key === 'Backspace') {
                     if (input.value === '') {
-                        setSelected(prev => {
-                            const newSelected = [...prev]
-                            newSelected.pop()
-                            onSelectedChange?.(newSelected)
-                            return newSelected
-                        })
+                        handleUnselect(selected[selected.length - 1])
                     }
                 }
                 // This is not a default behaviour of the <input /> field
@@ -99,7 +101,7 @@ export const MultiSelect = ({
                 }
             }
         },
-        []
+        [isComposing, onEnterNewValue]
     )
 
     const selectables = options.filter(option => {
@@ -148,6 +150,12 @@ export const MultiSelect = ({
                         onValueChange={setInputValue}
                         onBlur={() => setOpen(false)}
                         onFocus={() => setOpen(true)}
+                        onCompositionStart={() => {
+                            setIsComposing(true)
+                        }}
+                        onCompositionEnd={() => {
+                            setIsComposing(false)
+                        }}
                         placeholder={placeholder ?? 'Select...'}
                         className={`flex-1 bg-transparent outline-none placeholder:text-muted-foreground ${
                             selected.length > 0 ? 'ml-2' : ''
@@ -160,7 +168,9 @@ export const MultiSelect = ({
                     {open &&
                         (selectables.length > 0 ? (
                             <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                                <CommandEmpty>No results found.</CommandEmpty>
+                                <CommandEmpty>
+                                    No results found. Enter to create one.
+                                </CommandEmpty>
                                 <CommandGroup className="h-full overflow-auto">
                                     {selectables.map(option => {
                                         return (
@@ -173,11 +183,14 @@ export const MultiSelect = ({
                                                 onSelect={value => {
                                                     setInputValue('')
                                                     setSelected(prev => {
-                                                        onSelectedChange?.([
+                                                        const newSelected = [
                                                             ...prev,
                                                             option,
-                                                        ])
-                                                        return [...prev, option]
+                                                        ]
+                                                        onSelectedChange?.(
+                                                            newSelected
+                                                        )
+                                                        return newSelected
                                                     })
                                                 }}
                                                 className={'cursor-pointer'}
