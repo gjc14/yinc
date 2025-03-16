@@ -68,18 +68,18 @@ export const Hero = () => {
                             </a>
                             .
                         </li>
-                        <li>
+                        {/* <li>
                             You could add new plugin via cli&nbsp;
                             <span className="bg-zinc-300 dark:bg-zinc-700 py-0.5 px-1 rounded">
                                 papa add {'<name>.plugin'}
                             </span>
                             , and add a papa.config.ts file.
-                        </li>
+                        </li> */}
                     </motion.ul>
 
                     <div className="flex gap-3">
                         <a
-                            href="https://papacms.com"
+                            href="https://papacms.vercel.app"
                             aria-label="Go to papa"
                             target="_blank"
                             rel="noopener noreferrer"
