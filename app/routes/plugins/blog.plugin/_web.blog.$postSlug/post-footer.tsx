@@ -21,13 +21,13 @@ export const PostFooter = ({
         <footer className="py-9 md:py-12">
             {/* Tags area */}
             {post.tags.length > 0 && (
-                <ul className="flex items-center gap-1.5 my-8 md:my-12 md:gap-2">
+                <ul className="flex flex-wrap items-center gap-1.5 my-8 md:my-12 md:gap-2">
                     {post.tags.map(tag => (
                         <li key={tag.id}>
                             <Badge
-                                className="px-2 py-1 rounded-full md:text-sm cursor-pointer"
+                                className="px-2.5 py-1 rounded-full md:text-sm cursor-pointer"
                                 onClick={() =>
-                                    navigate(`/blog/tag?q=${tag.name}`)
+                                    navigate(`/blog/tag/${tag.name}`)
                                 }
                             >
                                 {tag.name}

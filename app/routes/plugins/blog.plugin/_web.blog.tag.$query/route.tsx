@@ -15,16 +15,14 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
         : []
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(new URL(request.url).pathname)
-    let { searchParams } = new URL(request.url)
-    let query = searchParams.getAll('q')
-    query = query.filter(q => q !== '')
+    const query = params.query ?? ''
 
     try {
         const { posts } = await getPosts({
             status: 'PUBLISHED',
-            tagFilter: query,
+            tagFilter: [query],
         })
         return { seo, posts, query }
     } catch (error) {
@@ -42,7 +40,11 @@ export default function Tag() {
             <SectionWrapper className="mt-28">
                 <PostCollection
                     title={`Listing ${
-                        query.length === 0 ? 'all posts' : query.join(', ')
+                        posts.length !== 0
+                            ? `${posts.length}${
+                                  posts.length === 0 ? ' post' : ' posts'
+                              } in ${query}`
+                            : 'all posts'
                     }`}
                     posts={posts.map(post => {
                         return {

@@ -15,29 +15,24 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
         : []
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(new URL(request.url).pathname)
-    let { searchParams } = new URL(request.url)
-    let query = searchParams.getAll('q')
-    query = query.filter(q => q !== '')
-    let subCatequery = searchParams.getAll('sub')
-    subCatequery = subCatequery.filter(q => q !== '')
+    const query = params.query ?? ''
 
     try {
         const { posts } = await getPosts({
             status: 'PUBLISHED',
-            categoryFilter: query,
-            subCategoryFilter: subCatequery,
+            categoryFilter: [query],
         })
-        return { seo, posts, query, subCatequery }
+        return { seo, posts, query }
     } catch (error) {
         console.error(error)
-        return { seo, posts: [], query, subCatequery }
+        return { seo, posts: [], query }
     }
 }
 
 export default function Category() {
-    const { seo, posts, query, subCatequery } = useLoaderData<typeof loader>()
+    const { seo, posts, query } = useLoaderData<typeof loader>()
 
     return (
         <>
@@ -45,14 +40,10 @@ export default function Category() {
             <SectionWrapper className="mt-28">
                 <PostCollection
                     title={`Listing ${
-                        query.length !== 0
-                            ? (subCatequery.length !== 0
-                                  ? `${subCatequery} in`
-                                  : '') +
-                              ' ' +
-                              query.join(', ')
-                            : subCatequery.length !== 0
-                            ? subCatequery.join(', ')
+                        posts.length !== 0
+                            ? `${posts.length}${
+                                  posts.length === 0 ? ' post' : ' posts'
+                              } in ${query}`
                             : 'all posts'
                     }`}
                     posts={posts.map(post => {
