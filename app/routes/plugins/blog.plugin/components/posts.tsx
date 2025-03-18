@@ -118,7 +118,6 @@ const Posts = ({
 
 export const columns: ColumnDef<DisplayPost>[] = [
     {
-        id: 'Title',
         accessorKey: 'title',
         header: ({ column }) => {
             return 'Title'
@@ -127,29 +126,26 @@ export const columns: ColumnDef<DisplayPost>[] = [
             const title = row.original.title
             const url = `/blog/${row.original.slug}`
             const description = row.original.seo.description
-            return (
-                <h3 className="text-lg">
-                    <Link to={url}>{title}</Link>
-                </h3>
-            )
-        },
-    },
-    {
-        accessorKey: 'meta',
-        header: 'Meta',
-        cell: ({ row }) => {
+
             const author = row.original.author.name ?? row.original.author.email
             const updatedAt = row.original.updatedAt
             return (
-                <div className="text-end space-y-1">
-                    <p className="text-xs">
-                        <span className="font-semibold">Written by</span>{' '}
-                        {author}
+                <div className="mx-2 my-3 flex flex-col text-pretty">
+                    <h2 className="text-2xl">
+                        <Link to={url}>{title}</Link>
+                    </h2>
+                    <p className="mt-1 text-base text-muted-foreground">
+                        {description}
                     </p>
-                    <p className="text-xs">
-                        <span className="font-semibold">Date</span>{' '}
-                        {updatedAt.toLocaleDateString('zh-TW')}
-                    </p>
+
+                    <div className="ml-1 pl-2 mt-3.5 md:mt-5 border-l-2 flex flex-col items-start justify-center gap-1">
+                        <p className="text-sm text-muted-foreground">
+                            Written by {author}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            {updatedAt.toLocaleDateString('zh-TW')}
+                        </p>
+                    </div>
                 </div>
             )
         },

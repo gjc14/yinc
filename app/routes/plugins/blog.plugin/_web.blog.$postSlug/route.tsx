@@ -84,13 +84,17 @@ export default function BlogPost() {
     }, [post])
 
     return (
-        <article className="w-full px-5 pt-32 md:px-0">
-            <div className="not-prose">
-                <ArrowLeft
-                    size={20}
-                    className="absolute -mt-9 cursor-pointer not-prose"
-                    onClick={() => navigate(-1)}
-                />
+        <div className="w-full max-w-prose min-h-screen px-5 text-pretty xl:px-0">
+            <ArrowLeft
+                size={20}
+                className="absolute mt-16 cursor-pointer"
+                onClick={() => navigate(-1)}
+            />
+
+            <div className="pt-28 space-y-6">
+                <h1 className="text-3xl font-bold tracking-tight leading-normal md:text-4xl md:leading-tight">
+                    {post.title}
+                </h1>
 
                 <FeaturedImage
                     src={post.featuredImage || 'https://placehold.co/600x400'}
@@ -101,14 +105,14 @@ export default function BlogPost() {
                 <PostMeta post={post} />
             </div>
 
-            <div
-                className="w-full mx-auto"
+            <article
+                className="w-full mx-auto text-xl"
                 dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            <div className="not-prose">
+            <div>
                 <PostFooter post={post} next={next} prev={prev} />
             </div>
-        </article>
+        </div>
     )
 }

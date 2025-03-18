@@ -1,44 +1,102 @@
-import { useNavigate } from '@remix-run/react'
+import { Link } from '@remix-run/react'
+import { LibraryBig } from 'lucide-react'
 
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
-import { PostLoaderType } from './route'
+import { Separator } from '~/components/ui/separator'
+import type { PostLoaderType } from './route'
 
-export const PostMeta = ({ post }: { post: PostLoaderType['post'] }) => {
-    const navigate = useNavigate()
-
+export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
     return (
-        <>
-            <h1>{post.title}</h1>
-            <div className="flex flex-col gap-5 mt-5 mb-14 md:mt-6 md:mb:20">
-                <p className="prose text-sm text-muted-foreground md:text-base">
-                    {post.excerpt}
-                </p>
-                <div className="w-full h-fit flex justify-between items-center px-1.5 border-y">
-                    <div className="flex gap-2 items-center my-1.5 md:my-2">
-                        <img
+        <div className="w-full mx-auto py-6">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                        <AvatarImage
                             src={
                                 post.author.imageUri ||
                                 '/placeholders/avatar.png'
                             }
-                            alt={'Author avatar'}
-                            className="w-9 h-9 rounded-full"
+                            alt={post.author.name || 'Author avatar'}
                         />
+                        <AvatarFallback>
+                            {post.author.name?.charAt(0) || 'P'}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
                         <Button
-                            onClick={() =>
-                                navigate(`/blog/author/${post.author.name}`)
-                            }
+                            className="w-fit flex items-center font-medium text-base px-0"
                             variant={'link'}
-                            className="px-0"
                         >
-                            {post.author.name ?? post.author.email}
+                            {post.author.name || post.author.email}
                         </Button>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground text-wrap">
+                            <span>{post.updatedAt.toDateString()}</span>
+                            <span className="px-1">·</span>
+                            <span>
+                                {Math.ceil(post.content.length / 250)} min read
+                            </span>
+                        </div>
                     </div>
-                    <p className="text-xs md:text-sm">
-                        Last updated:{' '}
-                        {new Date(post.updatedAt).toLocaleString()}
-                    </p>
                 </div>
             </div>
-        </>
+
+            <Separator className="mt-6" />
+
+            {post.categories.length > 0 && (
+                <>
+                    <div className="flex items-center text-base my-3 px-2">
+                        <LibraryBig size={16} className="mr-2 shrink-0" />
+                        <div className="mr-auto">
+                            {post.categories.map((c, i) => (
+                                <>
+                                    <Link to={`/blog/category/${c.name}`}>
+                                        <Button
+                                            variant={'link'}
+                                            className="h-fit p-0"
+                                        >
+                                            {c.name}
+                                        </Button>
+                                    </Link>
+                                    {i < post.categories.length - 1 && (
+                                        <span className="px-1.5">&</span>
+                                    )}
+                                </>
+                            ))}
+                        </div>
+
+                        {/* TODO: Add functions */}
+                        {/* <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                    >
+                        <ShareIcon className="h-5 w-5" />
+                        <span className="sr-only">Share</span>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                    >
+                        <BookmarkIcon className="h-5 w-5" />
+                        <span className="sr-only">Bookmark</span>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                    >
+                        <MoreHorizontalIcon className="h-5 w-5" />
+                        <span className="sr-only">More options</span>
+                    </Button>
+                </div> */}
+                    </div>
+
+                    <Separator className="mb-8" />
+                </>
+            )}
+        </div>
     )
 }
