@@ -120,6 +120,8 @@ interface CreatePostProps {
     slug: string
     status: PostStatus
     authorId: string
+    tagIDs: string[]
+    categoryIDs: string[]
     seo: {
         metaTitle?: string
         metaDescription?: string
@@ -129,7 +131,17 @@ interface CreatePostProps {
 export const createPost = async (
     props: CreatePostProps
 ): Promise<{ post: typeof post }> => {
-    const { title, content, excerpt, status, authorId, seo, slug } = props
+    const {
+        title,
+        content,
+        excerpt,
+        slug,
+        status,
+        authorId,
+        seo,
+        tagIDs,
+        categoryIDs,
+    } = props
 
     const post = await prisma.$transaction(async tx => {
         const seoCreated = await tx.seo.create({
@@ -146,9 +158,12 @@ export const createPost = async (
                 content,
                 excerpt,
                 slug,
-                seoId: seoCreated.id,
                 status,
+
                 authorId,
+                tagIDs: tagIDs,
+                categoryIDs: categoryIDs,
+                seoId: seoCreated.id,
             },
         })
     })
@@ -162,7 +177,18 @@ interface UpdatePostProps extends CreatePostProps {
 export const updatePost = async (
     props: UpdatePostProps
 ): Promise<{ post: typeof post }> => {
-    const { id, title, content, excerpt, status, seo, slug } = props
+    const {
+        id,
+        title,
+        content,
+        excerpt,
+        slug,
+        status,
+        authorId,
+        tagIDs,
+        categoryIDs,
+        seo,
+    } = props
 
     const post = await prisma.$transaction(async tx => {
         return await tx.post.update({
@@ -173,6 +199,17 @@ export const updatePost = async (
                 excerpt,
                 slug,
                 status,
+
+                author: {
+                    connect: { id: authorId },
+                },
+                // About set method: https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries#disconnect-all-related-records
+                tags: {
+                    set: tagIDs.map(id => ({ id })),
+                },
+                categories: {
+                    set: categoryIDs.map(id => ({ id })),
+                },
                 seo: {
                     update: {
                         title: seo.metaTitle ?? '',
