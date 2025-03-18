@@ -16,7 +16,7 @@ const intentSchema = z.enum(['category', 'subcategory', 'tag'])
 export type Intents = z.infer<typeof intentSchema>
 
 // Schema for both category and tag
-const taxonomySchema = z.object({
+export const taxonomySchema = z.object({
     id: z.string(),
     name: z.string(),
 })

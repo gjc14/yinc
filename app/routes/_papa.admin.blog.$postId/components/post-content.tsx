@@ -1,6 +1,7 @@
-import { Category, Post, Seo, Tag } from '@prisma/client'
+import { Category, Post, Seo, SubCategory, Tag } from '@prisma/client'
 import { ObjectId } from 'bson'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import DefaultTipTap, { EditorRef } from '~/components/editor/default-tiptap'
 import { MultiSelect } from '~/components/multi-select'
@@ -52,7 +53,7 @@ export const generatePostSlug = (title: string) => {
         .replace(/-+/g, '-')
 }
 
-// TODO: Add featured image; tags, categories, subcategories selection; edit author; publish schedule
+// TODO: Add featured image; edit author; publish schedule
 // TODO: Editor upload image; link setting popup
 export const PostContent = ({
     post,
@@ -66,6 +67,8 @@ export const PostContent = ({
     const [open, setOpen] = useState(false)
     const [initRecoverUnsaved, setInitRecoverUnsaved] = useState(false)
     const [postState, setPostState] = useState<PostContentEdit>(post)
+    const [newCategories, setNewCategories] = useState<CategoriesFromDB>([])
+    const [newTags, setNewTags] = useState<TagsFromDB>([])
 
     const postKey = `dirty-post-${postState.id}`
 
@@ -94,6 +97,16 @@ export const PostContent = ({
     // Update post content when post prop changes
     useEffect(() => {
         setPostState(post)
+        newCategories
+            .filter(c => !post.categoryIDs.includes(c.id))
+            .forEach(c => {
+                setNewCategories(prev => prev.filter(nc => nc.id !== c.id))
+            })
+        newTags
+            .filter(t => !post.tagIDs.includes(t.id))
+            .forEach(t => {
+                setNewTags(prev => prev.filter(nt => nt.id !== t.id))
+            })
     }, [post])
 
     // Update parent component and save dirty to local when post content changes
@@ -186,7 +199,7 @@ export const PostContent = ({
                             type="hidden"
                             name="content"
                             readOnly
-                            value={postState.content}
+                            defaultValue={postState.content}
                         />
                         <DefaultTipTap
                             ref={editorRef}
@@ -308,6 +321,12 @@ export const PostContent = ({
                         onClick={() => {
                             setPostState(prev => {
                                 const text = editorRef.current?.getText() || ''
+                                if (!text) {
+                                    toast.error(
+                                        'No content to generate excerpt'
+                                    )
+                                    return prev
+                                }
                                 const newPost = {
                                     ...prev,
                                     excerpt: text.slice(0, 150).trim() || '',
@@ -325,6 +344,16 @@ export const PostContent = ({
                 <div>
                     <Label htmlFor="categories">Categories</Label>
                     <div className="flex items-center gap-1.5">
+                        <input
+                            type="hidden"
+                            name="categoryIDs"
+                            defaultValue={postState.categoryIDs}
+                        />
+                        <input
+                            hidden
+                            name="newCategories"
+                            defaultValue={JSON.stringify(newCategories)}
+                        />
                         <MultiSelect
                             options={categories.map(c => ({
                                 value: c.id,
@@ -353,18 +382,43 @@ export const PostContent = ({
                                 })
                             }}
                             onEnterNewValue={v => {
+                                const createId = String(new ObjectId())
+                                const newCategory: Category & {
+                                    subCategories: SubCategory[]
+                                } = {
+                                    id: createId,
+                                    name: v,
+                                    postIDs: [],
+                                    subCategories: [],
+                                }
+
                                 setPostState(prev => {
-                                    const newCategory: Category = {
-                                        id: new ObjectId().toJSON(),
-                                        name: v,
-                                        postIDs: [],
-                                    }
                                     return {
                                         ...prev,
                                         categoryIDs: [
                                             ...prev.categoryIDs,
                                             newCategory.id,
                                         ],
+                                    }
+                                })
+
+                                setNewCategories(prev => [...prev, newCategory])
+
+                                return createId
+                            }}
+                            onUnSelect={unSelected => {
+                                setNewCategories(prev => {
+                                    const newCategories = prev.filter(
+                                        c => c.id !== unSelected.value
+                                    )
+                                    return newCategories
+                                })
+                                setPostState(prev => {
+                                    return {
+                                        ...prev,
+                                        categoryIDs: prev.categoryIDs.filter(
+                                            c => c !== unSelected.value
+                                        ),
                                     }
                                 })
                             }}
@@ -376,6 +430,16 @@ export const PostContent = ({
                 <div>
                     <Label htmlFor="tags">Tags</Label>
                     <div className="flex items-center gap-1.5">
+                        <input
+                            type="hidden"
+                            name="tagIDs"
+                            defaultValue={postState.tagIDs}
+                        />
+                        <input
+                            hidden
+                            name="newTags"
+                            defaultValue={JSON.stringify(newTags)}
+                        />
                         <MultiSelect
                             options={tags.map(t => ({
                                 value: t.id,
@@ -399,15 +463,36 @@ export const PostContent = ({
                                 })
                             }}
                             onEnterNewValue={v => {
+                                const createId = String(new ObjectId())
+                                const newTag: Tag = {
+                                    id: createId,
+                                    name: v,
+                                    postIDs: [],
+                                }
+
                                 setPostState(prev => {
-                                    const newTag: Tag = {
-                                        id: new ObjectId().toJSON(),
-                                        name: v,
-                                        postIDs: [],
-                                    }
                                     return {
                                         ...prev,
                                         tagIDs: [...prev.tagIDs, newTag.id],
+                                    }
+                                })
+
+                                setNewTags(prev => [...prev, newTag])
+
+                                return createId
+                            }}
+                            onUnSelect={unSelected => {
+                                setNewTags(prev => {
+                                    return prev.filter(
+                                        t => t.id !== unSelected.value
+                                    )
+                                })
+                                setPostState(prev => {
+                                    return {
+                                        ...prev,
+                                        tagIDs: prev.tagIDs.filter(
+                                            t => t !== unSelected.value
+                                        ),
                                     }
                                 })
                             }}
@@ -489,6 +574,12 @@ export const PostContent = ({
                         onClick={() => {
                             setPostState(prev => {
                                 const text = editorRef.current?.getText() || ''
+                                if (!text) {
+                                    toast.error(
+                                        'No content to generate SEO description'
+                                    )
+                                    return prev
+                                }
                                 const newPost = {
                                     ...prev,
                                     seo: {

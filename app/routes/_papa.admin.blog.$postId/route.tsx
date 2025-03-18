@@ -17,9 +17,12 @@ import {
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
 import { userIs } from '~/lib/db/auth.server'
+import { createCategory, createTag } from '~/lib/db/blog-taxonomy.server'
 import { updatePost } from '~/lib/db/post.server'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { PostContent } from '~/routes/_papa.admin.blog.$postId/components/post-content'
+import { taxonomySchema } from '~/routes/_papa.admin.blog.taxonomy.resource/route'
+import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 import {
     AdminActions,
     AdminHeader,
@@ -27,7 +30,6 @@ import {
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
 import { PostStatus } from '~/schema/database'
-import { useAdminBlogContext } from '../_papa.admin.blog/route'
 
 const PostContentUpdateSchema = z.object({
     id: z.string(),
@@ -36,8 +38,35 @@ const PostContentUpdateSchema = z.object({
     excerpt: z.string(),
     slug: z.string(),
     status: PostStatus,
+    autherId: z.string().optional(),
+    tagIDs: z.preprocess(val => {
+        return typeof val === 'string' ? val.split(',').filter(Boolean) : []
+    }, z.array(z.string()).default([])),
+    categoryIDs: z.preprocess(val => {
+        return typeof val === 'string' ? val.split(',').filter(Boolean) : []
+    }, z.array(z.string()).default([])),
     'seo-title': z.string(),
     'seo-description': z.string(),
+    newTags: z.preprocess(val => {
+        if (typeof val === 'string') {
+            try {
+                return JSON.parse(val)
+            } catch {
+                return []
+            }
+        }
+        return Array.isArray(val) ? val : []
+    }, z.array(taxonomySchema).default([])),
+    newCategories: z.preprocess(val => {
+        if (typeof val === 'string') {
+            try {
+                return JSON.parse(val)
+            } catch {
+                return []
+            }
+        }
+        return Array.isArray(val) ? val : []
+    }, z.array(taxonomySchema).default([])),
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -62,6 +91,27 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         } satisfies ConventionalActionResponse)
     }
 
+    const [newTags, newCategories] = [
+        zResult.data.newTags,
+        zResult.data.newCategories,
+    ]
+
+    if (newCategories.length > 0) {
+        await Promise.all(
+            newCategories.map(async category => {
+                await createCategory({ id: category.id, name: category.name })
+            })
+        )
+    }
+
+    if (newTags.length > 0) {
+        await Promise.all(
+            newTags.map(async tag => {
+                await createTag({ id: tag.id, name: tag.name })
+            })
+        )
+    }
+
     try {
         const { post } = await updatePost({
             id: zResult.data.id,
@@ -71,6 +121,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             slug: zResult.data.slug,
             status: zResult.data.status,
             authorId: admin.id,
+            tagIDs: zResult.data.tagIDs,
+            categoryIDs: zResult.data.categoryIDs,
             seo: {
                 metaTitle: zResult.data['seo-title'],
                 metaDescription: zResult.data['seo-description'],
