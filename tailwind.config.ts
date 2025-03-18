@@ -5,6 +5,9 @@ export default {
     content: ['./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
+            fontFamily: {
+                'serif-tw': ['"Noto Serif TC"', 'serif'],
+            },
             screens: {
                 xs: '480px',
             },

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,16 +51,16 @@
         --popover-foreground: 0 0% 98%;
         --primary: 0 0% 98%;
         --primary-foreground: 0 0% 9%;
-        --secondary: 0 0% 14.9%;
+        --secondary: 0 0% 20%;
         --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 14.9%;
+        --muted: 0 0% 20%;
         --muted-foreground: 0 0% 63.9%;
         --accent: 0 0% 20.9%;
         --accent-foreground: 0 0% 98%;
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
+        --border: 0 0% 20%;
+        --input: 0 0% 20%;
         --ring: 0 0% 83.1%;
         --chart-1: 220 70% 50%;
         --chart-2: 160 60% 45%;
@@ -124,9 +126,13 @@
 }
 
 /* tailwind typography */
-@layer base {
+@layer components {
     article {
         @apply prose tracking-wide leading-loose dark:prose-invert;
+    }
+
+    article p {
+        @apply font-serif-tw text-base md:text-lg;
     }
 
     /* Control margin top by article or its wrapper instead of prose */
