@@ -5,10 +5,13 @@ import { prisma, S3 } from '~/lib/db/_db.server'
 import { FileMeta } from '../_papa.admin.api.object-storage/schema'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+    if (!S3) return { hasObjectStorage: false, files: [] as FileMeta[] }
+
     const url = new URL(request.url)
 
-    const objects = await S3?.send(new ListObjectsV2Command({ Bucket: 'papa' }))
-    if (!objects || !objects.Contents) return { files: [] as FileMeta[] }
+    const objects = await S3.send(new ListObjectsV2Command({ Bucket: 'papa' }))
+    if (!objects || !objects.Contents)
+        return { hasObjectStorage: true, files: [] as FileMeta[] }
 
     const { Contents } = objects
 
@@ -27,9 +30,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
             }
         })
     )
+
     const filteredFiles = files.filter(file => file !== null)
 
     return {
+        hasObjectStorage: true,
         files: filteredFiles,
     }
 }

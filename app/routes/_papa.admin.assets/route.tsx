@@ -1,5 +1,4 @@
-import { ListObjectsV2Command } from '@aws-sdk/client-s3'
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from '@remix-run/node'
 import { useLoaderData, useSubmit } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 
@@ -11,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { prisma, S3 } from '~/lib/db/_db.server'
+import { prisma } from '~/lib/db/_db.server'
 import { capitalize, ConventionalActionResponse } from '~/lib/utils'
 import {
     AdminActions,
@@ -19,10 +18,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
-import {
-    FileMeta,
-    FileMetaSchema,
-} from '../_papa.admin.api.object-storage/schema'
+import { FileMetaSchema } from '../_papa.admin.api.object-storage/schema'
 import { FileGrid } from './components/file-grid'
 
 const displayOptions = ['all', 'image', 'video', 'audio', 'file'] as const
@@ -73,12 +69,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 }
 
+import { CloudAlert } from 'lucide-react'
 import { loader } from '../_papa.admin.assets.resource/route'
 export { loader } from '../_papa.admin.assets.resource/route'
 
 export default function AdminAsset() {
     const submit = useSubmit()
-    const { files } = useLoaderData<typeof loader>()
+    const { hasObjectStorage, files } = useLoaderData<typeof loader>()
     const [filesState, setFilesState] = useState(files)
     const [display, setDisplay] = useState('all')
 
@@ -124,23 +121,33 @@ export default function AdminAsset() {
                     </Select>
                 </AdminActions>
             </AdminHeader>
-            <FileGrid
-                files={filesDisplayed}
-                onFileUpdate={fileMeta => {
-                    setFilesState(
-                        filesState.map(file =>
-                            file.id === fileMeta.id ? fileMeta : file
+            {hasObjectStorage ? (
+                <FileGrid
+                    files={filesDisplayed}
+                    onFileUpdate={fileMeta => {
+                        setFilesState(
+                            filesState.map(file =>
+                                file.id === fileMeta.id ? fileMeta : file
+                            )
                         )
-                    )
-                    submit(
-                        { newFileMeta: JSON.stringify(fileMeta) },
-                        {
-                            method: 'POST',
-                            navigate: false,
-                        }
-                    )
-                }}
-            />
+                        submit(
+                            { newFileMeta: JSON.stringify(fileMeta) },
+                            {
+                                method: 'POST',
+                                navigate: false,
+                            }
+                        )
+                    }}
+                />
+            ) : (
+                <div className="border rounded-xl w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3">
+                    <CloudAlert size={50} />
+                    <p className="text-center text-pretty max-w-sm">
+                        Please setup your S3 Object Storage to start uploading
+                        assets
+                    </p>
+                </div>
+            )}
         </AdminSectionWrapper>
     )
 }
