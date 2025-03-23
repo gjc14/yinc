@@ -1,4 +1,4 @@
-import { prisma } from './_db.server'
+import { prisma } from './db.server'
 
 export const getSEOs = async (): Promise<{ seo: typeof seo }> => {
     const seo = await prisma.seo.findMany({

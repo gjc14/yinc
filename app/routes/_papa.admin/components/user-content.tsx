@@ -19,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { UserRole, UserStatus } from '~/schema/database'
+import { UserRole, UserStatus } from '~/lib/schema/system'
 
 export const UserContent = ({
     user,

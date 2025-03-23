@@ -1,7 +1,7 @@
 import { ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { LoaderFunctionArgs } from '@remix-run/node'
 
-import { prisma, S3 } from '~/lib/db/_db.server'
+import { prisma, S3 } from '~/lib/db/db.server'
 import { FileMeta } from '../_papa.admin.api.object-storage/schema'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

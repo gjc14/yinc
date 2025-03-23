@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { TurnstileSiteVerify } from '~/components/captchas/turnstile'
 import { createUser } from '~/lib/db/user.server'
 import { ConventionalActionResponse } from '~/lib/utils'
-import { UserRole, UserStatus } from '~/schema/database'
+import { UserRole, UserStatus } from '~/lib/schema/system'
 
 const captchaSchema = z.enum(['turnstile', 'recaptcha', 'hcaptcha'])
 

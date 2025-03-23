@@ -34,7 +34,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
-import { PostStatus } from '~/schema/database'
+import { PostStatus } from '~/lib/schema/system'
 
 const PostCreateSchema = z.object({
     title: z.string(),

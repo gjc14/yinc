@@ -28,7 +28,7 @@ import {
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { CategoriesFromDB, TagsFromDB } from '~/lib/db/blog-taxonomy.server'
-import { PostStatus } from '~/schema/database'
+import { PostStatus } from '~/lib/schema/system'
 
 export type PostContentEdit = Post & {
     seo: {

@@ -1,6 +1,6 @@
 import { Prisma, User } from '@prisma/client'
-import { UserRole, UserStatus } from '~/schema/database'
-import { prisma } from './_db.server'
+import { UserRole, UserStatus } from '~/lib/schema/system'
+import { prisma } from './db.server'
 
 export const getUsers = async (): Promise<{ users: User[] }> => {
     const users = await prisma.user.findMany()

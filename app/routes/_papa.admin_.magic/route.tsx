@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, redirect } from '@remix-run/node'
 import { authCookie, verifyMagicLink } from '~/lib/db/auth.server'
 import { getUserById, updateUser } from '~/lib/db/user.server'
-import { UserRole, UserStatus } from '~/schema/database'
+import { UserRole, UserStatus } from '~/lib/schema/system'
 import { MainWrapper } from '~/components/wrappers'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

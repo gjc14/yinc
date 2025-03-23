@@ -10,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { prisma } from '~/lib/db/_db.server'
+import { prisma } from '~/lib/db/db.server'
 import { capitalize, ConventionalActionResponse } from '~/lib/utils'
 import {
     AdminActions,

@@ -5,7 +5,7 @@ import Base64 from 'crypto-js/enc-base64'
 import Utf8 from 'crypto-js/enc-utf8'
 import { CreateEmailResponseSuccess, Resend } from 'resend'
 import MagicLinkEmail from '~/components/email/magic-link'
-import { UserRole } from '~/schema/database'
+import { UserRole } from '~/lib/schema/system'
 import { getUserById } from './user.server'
 
 let COOKIE_SECRET = process.env.COOKIE_SECRET

@@ -7,7 +7,7 @@ import {
     PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import { S3 } from '~/lib/db/_db.server'
+import { S3 } from '~/lib/db/db.server'
 
 export const getUploadUrl = async ({
     bucket = 'papa',

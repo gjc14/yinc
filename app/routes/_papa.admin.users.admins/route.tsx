@@ -31,7 +31,7 @@ import {
     DataTable,
 } from '~/routes/_papa.admin/components/data-table'
 import { UserContent } from '~/routes/_papa.admin/components/user-content'
-import { UserRole, UserStatus } from '~/schema/database'
+import { UserRole, UserStatus } from '~/lib/schema/system'
 import { useUsersContext } from '../_papa.admin.users/route'
 
 export const UserUpdateSchema = z.object({

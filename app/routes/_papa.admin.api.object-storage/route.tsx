@@ -1,6 +1,6 @@
 import { ActionFunctionArgs } from '@remix-run/node'
 
-import { prisma, S3 } from '~/lib/db/_db.server'
+import { prisma, S3 } from '~/lib/db/db.server'
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { userIs } from '~/lib/db/auth.server'
 import { ConventionalActionResponse } from '~/lib/utils'
