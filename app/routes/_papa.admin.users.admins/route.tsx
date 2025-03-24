@@ -18,6 +18,7 @@ import {
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { userIs } from '~/lib/db/auth.server'
+import { UserRole, UserStatus } from '~/lib/db/schema'
 import { updateUser } from '~/lib/db/user.server'
 import { ConventionalActionResponse } from '~/lib/utils'
 import {
@@ -31,15 +32,14 @@ import {
     DataTable,
 } from '~/routes/_papa.admin/components/data-table'
 import { UserContent } from '~/routes/_papa.admin/components/user-content'
-import { UserRole, UserStatus } from '~/lib/schema/system'
 import { useUsersContext } from '../_papa.admin.users/route'
 
 export const UserUpdateSchema = z.object({
-    id: z.string(),
+    id: z.number(),
     email: z.string().email(),
     name: z.string().nullable(),
-    role: UserRole,
-    status: UserStatus,
+    role: z.enum(UserRole),
+    status: z.enum(UserStatus),
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {

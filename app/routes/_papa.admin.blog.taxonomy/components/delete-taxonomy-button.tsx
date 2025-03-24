@@ -9,13 +9,13 @@ export function DeleteTaxonomyButton({
     actionRoute,
     intent,
 }: {
-    id: string
+    id: number
     actionRoute: string
     intent: Intents
 }) {
     const { setTagsState, setCategoriesState } = useTaxonomyState()
     const fetcher = useFetcher()
-    const isDeleting = fetcher.formData?.get('id') === id
+    const isDeleting = Number(fetcher.formData?.get('id')) === id
 
     const handleDelete = () => {
         switch (intent) {

@@ -12,12 +12,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const postId = params.postId
 
-    if (!postId) {
+    if (!postId || Number.isNaN(Number(postId))) {
         throw new Response('Invalid argument', { status: 400 })
     }
 
     try {
-        const { post } = await deletePost(postId)
+        const { post } = await deletePost(Number(postId))
         return Response.json({
             msg: `${post.title} deleted successfully`,
         } satisfies ConventionalActionResponse)

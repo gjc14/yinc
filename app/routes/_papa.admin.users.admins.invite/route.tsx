@@ -1,4 +1,3 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { ActionFunctionArgs } from '@remix-run/node'
 
 import { getToken, sendMagicLink } from '~/lib/db/auth.server'
@@ -33,17 +32,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             msg: `Success invite ${email}`,
         } satisfies ConventionalActionResponse)
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-            if (error.code === 'P2002') {
-                return Response.json({
-                    err: 'Email already exists',
-                } satisfies ConventionalActionResponse)
-            }
-        } else {
-            console.error('Error creating user:', error)
-            return Response.json({
-                err: 'Failed to invite',
-            } satisfies ConventionalActionResponse)
-        }
+        // TODO: Handle user existing error
+        console.error('Error creating user:', error)
+        return Response.json({
+            err: 'Failed to invite',
+        } satisfies ConventionalActionResponse)
     }
 }

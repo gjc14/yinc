@@ -117,7 +117,7 @@ const FileGridMain = ({
         onDrop: async acceptedFiles => {
             const newFiles: FileMetaWithFile[] = acceptedFiles.map(file => ({
                 file,
-                id: generateStorageKey(file, 'private'),
+                id: Math.random() * 0.1,
                 key: generateStorageKey(file, 'private'),
                 url: URL.createObjectURL(file),
                 type: file.type,

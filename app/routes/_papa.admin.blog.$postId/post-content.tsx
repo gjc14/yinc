@@ -1,4 +1,3 @@
-import { Category, Post, Seo, SubCategory, Tag } from '@prisma/client'
 import { ObjectId } from 'bson'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -27,21 +26,20 @@ import {
 } from '~/components/ui/select'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
-import { CategoriesFromDB, TagsFromDB } from '~/lib/db/blog-taxonomy.server'
-import { PostStatus } from '~/lib/schema/system'
+import { Category, Post, PostStatus, Seo, Tag } from '~/lib/db/schema'
 
 export type PostContentEdit = Post & {
     seo: {
-        title: Seo['title']
-        description: Seo['description']
+        title: Seo['metaTitle']
+        description: Seo['metaDescription']
     }
 }
 
 interface PostContentProps {
     post: PostContentEdit
     onPostChange?: (post: PostContentEdit, dirty: boolean) => void
-    tags: TagsFromDB
-    categories: CategoriesFromDB
+    tags: any
+    categories: any
 }
 
 export const generatePostSlug = (title: string) => {
@@ -67,8 +65,8 @@ export const PostContent = ({
     const [open, setOpen] = useState(false)
     const [initRecoverUnsaved, setInitRecoverUnsaved] = useState(false)
     const [postState, setPostState] = useState<PostContentEdit>(post)
-    const [newCategories, setNewCategories] = useState<CategoriesFromDB>([])
-    const [newTags, setNewTags] = useState<TagsFromDB>([])
+    const [newCategories, setNewCategories] = useState<Category[]>([])
+    const [newTags, setNewTags] = useState<Tag[]>([])
 
     const postKey = `dirty-post-${postState.id}`
 
@@ -98,7 +96,7 @@ export const PostContent = ({
     useEffect(() => {
         setPostState(post)
         newCategories
-            .filter(c => !post.categoryIDs.includes(c.id))
+            .filter(c => !post.includes(c.id))
             .forEach(c => {
                 setNewCategories(prev => prev.filter(nc => nc.id !== c.id))
             })

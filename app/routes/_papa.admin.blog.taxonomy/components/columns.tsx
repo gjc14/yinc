@@ -8,18 +8,20 @@ import { DeleteTaxonomyButton } from './delete-taxonomy-button'
 import { SubCategoriesDialog } from './subcategories-dialog'
 
 export const tagColumns: ColumnDef<
-    ReturnType<typeof useAdminBlogContext>['tags'][number]
+    ReturnType<typeof useAdminBlogContext>['tags'][number] & {
+        posts: BlogLoaderType['posts']
+    }
 >[] = [
     {
         accessorKey: 'name',
         header: 'Name',
     },
     {
-        accessorKey: 'postIDs',
+        accessorKey: 'posts',
         header: 'Posts',
         cell: ({ row }) => {
             // TODO: Open a dialog to show posts
-            return row.original.postIDs.length
+            return row.original.posts.length
         },
     },
     {
@@ -39,18 +41,18 @@ export const tagColumns: ColumnDef<
 ]
 
 export const categoryColumns: ColumnDef<
-    BlogLoaderType['categories'][number]
+    BlogLoaderType['categories'][number] & { posts: BlogLoaderType['posts'] }
 >[] = [
     {
         accessorKey: 'name',
         header: 'Name',
     },
     {
-        accessorKey: 'postIDs',
+        accessorKey: 'posts',
         header: 'Posts',
         cell: ({ row }) => {
             // TODO: Open a dialog to show posts
-            return row.original.postIDs.length
+            return row.original.posts.length
         },
     },
     {

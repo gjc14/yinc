@@ -1,8 +1,10 @@
 import { ActionFunctionArgs } from '@remix-run/node'
 
-import { prisma, S3 } from '~/lib/db/db.server'
+import { eq } from 'drizzle-orm'
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { userIs } from '~/lib/db/auth.server'
+import { db, S3 } from '~/lib/db/db.server'
+import { filesTable } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { PresignRequestSchema, PresignResponseSchema } from './schema'
 
@@ -32,9 +34,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         try {
             // Delete file from ObjectStorage and DB
             await deleteFile(key)
-            await prisma.objectStorage.delete({
-                where: { key },
-            })
+            await db.delete(filesTable).where(eq(filesTable.key, key))
 
             return Response.json({
                 msg: 'Files deleted successfully',
@@ -77,20 +77,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         )
 
         // Store file metadata in DB
-        const objectsInDatabase = await prisma.$transaction(
-            fileMetadata.map(file =>
-                prisma.objectStorage.create({
-                    data: {
+        const objectsInDatabase = await db.transaction(async tx => {
+            return await tx
+                .insert(filesTable)
+                .values(
+                    fileMetadata.map(file => ({
                         key: file.key,
                         name: file.name,
                         description: file.description,
                         userId: admin.id,
                         type: file.type,
                         size: file.size,
-                    },
-                })
-            )
-        )
+                    }))
+                )
+                .returning()
+        })
 
         const validatedResponse = PresignResponseSchema.parse({
             urls: presignedUrls.map(url => {

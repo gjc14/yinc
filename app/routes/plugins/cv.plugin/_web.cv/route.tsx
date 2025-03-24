@@ -8,8 +8,8 @@ import { Nav } from '../../_web.plugin/_web/components/nav'
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
     return data?.seo
         ? [
-              { title: data.seo.title },
-              { name: 'description', content: data.seo.description },
+              { title: data.seo.metaTitle },
+              { name: 'description', content: data.seo.metaDescription },
           ]
         : []
 }
@@ -30,7 +30,7 @@ export default function CV() {
 
     return (
         <>
-            <h1 className="visually-hidden">{seo?.title}</h1>
+            <h1 className="visually-hidden">{seo?.metaTitle}</h1>
             <UnderConstruction nav={<Nav />} footer={<Footer />} />
         </>
     )

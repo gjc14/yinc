@@ -6,7 +6,7 @@ import { useAdminContext } from '~/routes/_papa.admin/route'
 
 export const loader = async () => {
     try {
-        const { posts } = await getPosts()
+        const { posts } = await getPosts({ status: 'ALL' })
         const { tags } = await getTags()
         const { categories } = await getCategories()
         return { posts, tags, categories }

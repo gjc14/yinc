@@ -17,9 +17,27 @@ import { categoryColumns, tagColumns } from './components/columns'
 import { TaxonomyStateProvider } from './context'
 
 export default function AdminTaxonomy() {
-    const { tags, categories } = useAdminBlogContext()
-    const [tagsState, setTagsState] = useState(tags)
-    const [categoriesState, setCategoriesState] = useState(categories)
+    const { tags, categories, posts } = useAdminBlogContext()
+    const [tagsState, setTagsState] = useState(
+        tags.map(tag => {
+            return {
+                ...tag,
+                posts: posts.filter(post =>
+                    post.tags.map(t => t.id).includes(tag.id)
+                ),
+            }
+        })
+    )
+    const [categoriesState, setCategoriesState] = useState(
+        categories.map(category => {
+            return {
+                ...category,
+                posts: posts.filter(post =>
+                    post.categories.map(c => c.id).includes(category.id)
+                ),
+            }
+        })
+    )
 
     return (
         <TaxonomyStateProvider

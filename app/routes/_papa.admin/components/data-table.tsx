@@ -212,7 +212,7 @@ export const AdminDataTableMoreMenu = ({
     deleteTarget,
 }: {
     route: string
-    id: string
+    id: number
     children?: ReactNode
     hideDelete?: boolean
     deleteTarget?: string

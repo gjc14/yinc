@@ -1,12 +1,16 @@
-import { SubCategory } from '@prisma/client'
 import { useFetchers } from '@remix-run/react'
 import { useEffect, useState } from 'react'
+import { PostWithRelations } from '~/lib/db/post.server'
 
-import { CategoriesFromDB, TagsFromDB } from '~/lib/db/blog-taxonomy.server'
+import { Category, SubCategory, Tag } from '~/lib/db/schema'
 
 const usePendingCategories = (): typeof pendingState => {
     const fetchers = useFetchers()
-    const pendingState = useState<CategoriesFromDB>([])
+    const pendingState = useState<
+        (Category & { subCategories: SubCategory[] } & {
+            posts: PostWithRelations[]
+        })[]
+    >([])
     const [categoriesPendingAdd, setCategoriesPendingAdd] = pendingState
 
     useEffect(() => {
@@ -20,12 +24,18 @@ const usePendingCategories = (): typeof pendingState => {
         })
 
         const newPendingCategories = fetchersAddingCategory
-            .map(fetcher => ({
-                id: String(fetcher.formData?.get('id')),
-                name: String(fetcher.formData?.get('name')),
-                postIDs: [],
-                subCategories: [],
-            }))
+            .map(fetcher => {
+                return {
+                    id: Number(fetcher.formData?.get('id')),
+                    name: String(fetcher.formData?.get('name')),
+                    slug: '',
+                    description: '',
+                    subCategories: [],
+                    posts: [],
+                } as Category & { subCategories: SubCategory[] } & {
+                    posts: PostWithRelations[]
+                }
+            })
             .filter(
                 category =>
                     !categoriesPendingAdd.some(p => p.id === category.id)
@@ -41,7 +51,7 @@ const usePendingCategories = (): typeof pendingState => {
 
 const usePendingSubCategories = (): typeof pendingState => {
     const fetchers = useFetchers()
-    const pendingState = useState<CategoriesFromDB[number]['subCategories']>([])
+    const pendingState = useState<SubCategory[]>([])
     const [subCategoriesPendingAdd, setSubCategoriesPendingAdd] = pendingState
 
     useEffect(() => {
@@ -55,13 +65,16 @@ const usePendingSubCategories = (): typeof pendingState => {
             return gotchaSubCategory && isPOST && isSubmitting
         })
 
-        const newPendingSubCategories: SubCategory[] = fetchersAddingSubCategory
-            .map(fetcher => ({
-                id: String(fetcher.formData?.get('id')),
-                name: String(fetcher.formData?.get('name')),
-                postIDs: [],
-                categoryId: String(fetcher.formData?.get('parentId')),
-            }))
+        const newPendingSubCategories = fetchersAddingSubCategory
+            .map(fetcher => {
+                return {
+                    id: Number(fetcher.formData?.get('id')),
+                    name: String(fetcher.formData?.get('name')),
+                    categoryId: Number(fetcher.formData?.get('parentId')),
+                    description: '',
+                    slug: '',
+                } as SubCategory
+            })
             .filter(
                 subCategory =>
                     !subCategoriesPendingAdd.some(p => p.id === subCategory.id)
@@ -77,7 +90,7 @@ const usePendingSubCategories = (): typeof pendingState => {
 
 const usePendingTags = (): typeof pendingState => {
     const fetchers = useFetchers()
-    const pendingState = useState<TagsFromDB>([])
+    const pendingState = useState<(Tag & { posts: PostWithRelations[] })[]>([])
     const [tagsPendingAdd, setTagsPendingAdd] = pendingState
 
     useEffect(() => {
@@ -90,11 +103,15 @@ const usePendingTags = (): typeof pendingState => {
         })
 
         const newPendingTags = fetchersAddingTag
-            .map(fetcher => ({
-                id: String(fetcher.formData?.get('id')),
-                name: String(fetcher.formData?.get('name')),
-                postIDs: [],
-            }))
+            .map(fetcher => {
+                return {
+                    id: Number(fetcher.formData?.get('id')),
+                    name: String(fetcher.formData?.get('name')),
+                    description: '',
+                    slug: '',
+                    posts: [],
+                } as Tag & { posts: PostWithRelations[] }
+            })
             .filter(tag => !tagsPendingAdd?.some(p => p.id === tag.id))
 
         if (newPendingTags.length > 0) {

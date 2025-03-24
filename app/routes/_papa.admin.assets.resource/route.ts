@@ -1,7 +1,7 @@
 import { ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { LoaderFunctionArgs } from '@remix-run/node'
 
-import { prisma, S3 } from '~/lib/db/db.server'
+import { db, S3 } from '~/lib/db/db.server'
 import { FileMeta } from '../_papa.admin.api.object-storage/schema'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -18,8 +18,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const files = await Promise.all(
         Contents.map(async ({ Key, ETag, StorageClass }) => {
             if (!Key) return null
-            const fileMetadata = await prisma.objectStorage.findUnique({
-                where: { key: Key },
+            const fileMetadata = await db.query.filesTable.findFirst({
+                where: (t, { eq }) => eq(t.key, Key),
             })
             if (!fileMetadata) return null
             return {

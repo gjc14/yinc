@@ -32,7 +32,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
 
     try {
-        const { post, prev, next } = await getPostBySlug(params.postSlug)
+        const { post, prevPost, nextPost } = await getPostBySlug(
+            params.postSlug
+        )
         if (!post || (!preview && post.status !== 'PUBLISHED')) {
             throw new Response('Post not found', { status: 404 })
         }
@@ -41,7 +43,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
                   ...ExtensionKit({ openOnClick: true }),
               ])
             : '<p>This is an empty post</p>'
-        return { post, prev, next }
+        return { post, prevPost, nextPost }
     } catch (error) {
         console.error(error)
         throw new Response('Post not found', { status: 404 })
@@ -73,7 +75,7 @@ clientLoader.hydrate = true
 
 export default function BlogPost() {
     const navigate = useNavigate()
-    const { post, prev, next } = useLoaderData<typeof loader>()
+    const { post, prevPost, nextPost } = useLoaderData<typeof loader>()
     const lowlight = createLowlight(common)
     const languages = lowlight.listLanguages()
 
@@ -107,11 +109,11 @@ export default function BlogPost() {
 
             <article
                 className="w-full mx-auto text-xl"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: post.content || '' }}
             />
 
             <div>
-                <PostFooter post={post} next={next} prev={prev} />
+                <PostFooter post={post} next={nextPost} prev={prevPost} />
             </div>
         </div>
     )

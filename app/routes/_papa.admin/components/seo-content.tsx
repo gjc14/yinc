@@ -14,7 +14,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { isConventionalSuccess } from '~/lib/utils'
-import { SerializedSeo } from '~/routes/_papa.admin.seo/route'
+import { SeoLoaderType } from '~/routes/_papa.admin.seo/route'
 
 export const SeoContent = ({
     seo,
@@ -23,7 +23,7 @@ export const SeoContent = ({
     action,
     method,
 }: {
-    seo?: SerializedSeo
+    seo?: SeoLoaderType
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     action: string
@@ -88,7 +88,7 @@ export const SeoContent = ({
                         <Input
                             id="title"
                             name="title"
-                            defaultValue={seo?.title ?? undefined}
+                            defaultValue={seo?.metaTitle ?? undefined}
                             className="col-span-3"
                             placeholder="What's your title?"
                         />
@@ -100,7 +100,7 @@ export const SeoContent = ({
                         <Textarea
                             id="description"
                             name="description"
-                            defaultValue={seo?.description ?? undefined}
+                            defaultValue={seo?.metaDescription ?? undefined}
                             rows={5}
                             className="col-span-3"
                             placeholder="Sentense that catch pedestrians' eye ball..."

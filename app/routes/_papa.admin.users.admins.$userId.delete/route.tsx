@@ -13,12 +13,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const userId = params.userId
 
-    if (!userId) {
+    if (!userId || Number.isNaN(Number(userId))) {
         throw new Response('Invalid argument', { status: 400 })
     }
 
     try {
-        const { user } = await deleteUser({ id: userId })
+        const { user } = await deleteUser(Number(userId))
         return Response.json({
             msg: `${user.email} deleted successfully`,
         } satisfies ConventionalActionResponse)

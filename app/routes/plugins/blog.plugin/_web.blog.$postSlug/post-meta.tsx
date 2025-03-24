@@ -14,13 +14,13 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
                     <Avatar className="h-10 w-10">
                         <AvatarImage
                             src={
-                                post.author.imageUri ||
+                                post.author?.imageUri ||
                                 '/placeholders/avatar.png'
                             }
-                            alt={post.author.name || 'Author avatar'}
+                            alt={post.author?.name || 'Author avatar'}
                         />
                         <AvatarFallback>
-                            {post.author.name?.charAt(0) || 'P'}
+                            {post.author?.name?.charAt(0) || 'P'}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
@@ -28,13 +28,17 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
                             className="w-fit flex items-center font-medium text-base px-0"
                             variant={'link'}
                         >
-                            {post.author.name || post.author.email}
+                            {post.author?.name || post.author?.email}
                         </Button>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground text-wrap">
                             <span>{post.updatedAt.toDateString()}</span>
                             <span className="px-1">·</span>
                             <span>
-                                {Math.ceil(post.content.length / 250)} min read
+                                {post.content
+                                    ? `${Math.ceil(
+                                          post.content.length / 250
+                                      )} min read`
+                                    : '0 min read'}
                             </span>
                         </div>
                     </div>

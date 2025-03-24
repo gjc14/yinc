@@ -1,97 +1,107 @@
-import { prisma } from '~/lib/db/db.server'
+/**
+ * TODO: Add description and slug
+ */
+import { eq } from 'drizzle-orm'
+
+import { db } from '~/lib/db/db.server'
+import { generateSlug } from '../utils'
+import {
+    categoriesTable,
+    Category,
+    subCategoriesTable,
+    SubCategory,
+    Tag,
+    tagsTable,
+} from './schema'
 
 /**
  * Tag and Category functions
  */
 export const createCategory = async ({
-    id,
     name,
 }: {
-    id: string
     name: string
-}): Promise<{ category: typeof category }> => {
-    const category = await prisma.category.create({
-        data: { id, name },
-    })
+}): Promise<{ category: Category }> => {
+    const [category] = await db
+        .insert(categoriesTable)
+        .values({ name, slug: generateSlug(name), description: '' })
+        .returning()
     return { category }
 }
 
 export const getCategories = async (): Promise<{
-    categories: typeof categories
+    categories: (Category & { subCategories: SubCategory[] })[]
 }> => {
-    const categories = await prisma.category.findMany({
-        include: { subCategories: true },
+    const categories = await db.query.categoriesTable.findMany({
+        with: { subCategories: true },
     })
     return { categories }
 }
-export type CategoriesFromDB = Awaited<
-    ReturnType<typeof getCategories>
->['categories']
 
 export const deleteCategory = async (
-    id: string
-): Promise<{ category: typeof category }> => {
-    const category = await prisma.category.delete({
-        where: { id },
-    })
+    id: number
+): Promise<{ category: Category }> => {
+    const [category] = await db
+        .delete(categoriesTable)
+        .where(eq(categoriesTable.id, id))
+        .returning()
     return { category }
 }
 
 // Subcategory functions
-export const createSubcategory = async (props: {
-    id: string
+export const createSubcategory = async ({
+    name,
+    categoryId,
+}: {
     name: string
-    categoryId: string
-}): Promise<{ subcategory: typeof subcategory }> => {
-    const subcategory = await prisma.subCategory.create({
-        data: {
-            id: props.id,
-            name: props.name,
-            categoryId: props.categoryId,
-        },
-    })
+    categoryId: number
+}): Promise<{ subcategory: SubCategory }> => {
+    const [subcategory] = await db
+        .insert(subCategoriesTable)
+        .values({ name, categoryId, slug: generateSlug(name), description: '' })
+        .returning()
     return { subcategory }
 }
 
 export const getSubcategories = async (): Promise<{
-    subcategories: typeof subcategories
+    subcategories: SubCategory[]
 }> => {
-    const subcategories = await prisma.subCategory.findMany()
+    const subcategories = await db.query.subCategoriesTable.findMany()
     return { subcategories }
 }
 
 export const deleteSubcategory = async (
-    id: string
-): Promise<{ subcategory: typeof subcategory }> => {
-    const subcategory = await prisma.subCategory.delete({
-        where: { id },
-    })
+    id: number
+): Promise<{ subcategory: SubCategory }> => {
+    const [subcategory] = await db
+        .delete(subCategoriesTable)
+        .where(eq(subCategoriesTable.id, id))
+        .returning()
     return { subcategory }
 }
 
 // Tag functions
 export const createTag = async ({
-    id,
     name,
 }: {
-    id: string
     name: string
-}): Promise<{ tag: typeof tag }> => {
-    const tag = await prisma.tag.create({
-        data: { id, name },
-    })
+}): Promise<{ tag: Tag }> => {
+    const [tag] = await db
+        .insert(tagsTable)
+        .values({ name, slug: generateSlug(name), description: '' })
+        .returning()
     return { tag }
 }
 
-export const getTags = async (): Promise<{ tags: typeof tags }> => {
-    const tags = await prisma.tag.findMany()
+export const getTags = async (): Promise<{ tags: Tag[] }> => {
+    const tags = await db.query.tagsTable.findMany()
     return { tags }
 }
-export type TagsFromDB = Awaited<ReturnType<typeof getTags>>['tags']
 
-export const deleteTag = async (id: string): Promise<{ tag: typeof tag }> => {
-    const tag = await prisma.tag.delete({
-        where: { id },
-    })
+export const deleteTag = async (id: number): Promise<{ tag: Tag }> => {
+    const [tag] = await db
+        .delete(tagsTable)
+        .where(eq(tagsTable.id, id))
+        .returning()
     return { tag }
 }

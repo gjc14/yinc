@@ -87,3 +87,12 @@ export const generateBreadcrumbs = (pathname: string) => {
 
     return breadcrumbItems
 }
+
+export const generateSlug = (name: string) => {
+    return name
+        .replace(/^\s+|\s+$/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+}

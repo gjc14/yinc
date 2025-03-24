@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const FileMetaSchema = z
     .object({
-        id: z.string(),
+        id: z.number(),
         key: z.string(),
         url: z.string(),
         type: z.string(),
@@ -30,7 +30,7 @@ export type PresignRequest = z.infer<typeof PresignRequestSchema>
 
 // Response schemas
 export const PresignedUrlSchema = z.object({
-    id: z.string(), // From database
+    id: z.number(), // From database
     updatedAt: z.string(), // From database
     key: z.string(),
     presignedUrl: z.string().url(),

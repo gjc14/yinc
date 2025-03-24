@@ -211,7 +211,9 @@ export const FileCard = ({
                                 id="id"
                                 className="shadow-sm flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
                                 onClick={() => {
-                                    navigator.clipboard.writeText(file.id)
+                                    navigator.clipboard.writeText(
+                                        String(file.id)
+                                    )
                                     toast.success('Copied to clipboard')
                                 }}
                             >

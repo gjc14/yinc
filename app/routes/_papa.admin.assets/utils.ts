@@ -45,7 +45,7 @@ export const fetchPresignedPutUrls = async (
     files: FileMetaWithFile[]
 ): Promise<
     (FileMetaWithFile & {
-        id: string
+        id: number
         updatedAt: string
         presignedUrl: string
     })[]

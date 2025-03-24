@@ -8,7 +8,7 @@
 
 -   **Framework**: [React Router v7](https://reactrouter.com/home/)
 -   **Database**: [MongoDB](https://www.mongodb.com/)
--   **ORM**: [Prisma](https://www.prisma.io/)
+-   **ORM**: [Drizzle](https://orm.drizzle.team/)
 -   **Style**: [tailwindcss](https://tailwindcss.com/)
 -   **UI LIbrary**: [shadcn/ui](https://ui.shadcn.com/)
 -   **Email SDK**: [Resend](https://resend.com/)
@@ -98,8 +98,7 @@ mv .env.sample .env
 ```
 
 1. `SUPER_EMAIL`: Your super admin email.
-2. `DATABASE_URL`: We are using MongoDB, please replace your Username, Password,
-   and name your Database Name.
+2. `DATABASE_URL`: We are using PostgreSQL.
 3. (optional) In `/app/constants/env.ts` set `TURNSTILE_SITE_KEY`: This key is
    used to
    [get Turnstile token](https://developers.cloudflare.com/turnstile/get-started/)
@@ -128,13 +127,10 @@ mv .env.sample .env
 > [!WARNING]
 > VITE will expose any environment variable with _VITE_\_ prefix, please use it carefully.
 
-### 2. Install and generate prisma schema, then start
-
-Run this in `/` shell to install packages and
-[generate prisma schema for database](https://www.prisma.io/docs/orm/overview/databases/mongodb#how-to-use-prisma-orm-with-mongodb).
+### 2. Install and push database schema, then start
 
 ```sh
-npm i && npx prisma generate && npx prisma db push
+npm i && npx run db:push
 ```
 
 ### 3. Start in dev mode

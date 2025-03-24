@@ -21,7 +21,7 @@ import {
     DialogTrigger,
 } from '~/components/ui/dialog'
 import { Separator } from '~/components/ui/separator'
-import { CategoriesFromDB, TagsFromDB } from '~/lib/db/blog-taxonomy.server'
+import { Category, SubCategory, Tag } from '~/lib/db/schema'
 import { useTaxonomyState } from '../../context'
 import { CategoryPart } from './category-part'
 import { SubCategoryPart } from './sub-category-part'
@@ -31,14 +31,25 @@ import {
     usePendingSubCategories,
     usePendingTags,
 } from './utils'
+import { PostWithRelations } from '~/lib/db/post.server'
 
 export const actionRoute = '/admin/blog/taxonomy/resource'
 
 interface TaxonomyDialogProps {
-    tagsState?: TagsFromDB
-    setTagsState?: React.Dispatch<React.SetStateAction<TagsFromDB>>
-    categoriesState?: CategoriesFromDB
-    setCategoriesState?: React.Dispatch<React.SetStateAction<CategoriesFromDB>>
+    tagsState?: (Tag & { posts: PostWithRelations[] })[]
+    setTagsState?: React.Dispatch<
+        React.SetStateAction<(Tag & { posts: PostWithRelations[] })[]>
+    >
+    categoriesState?: (Category & { subCategories: SubCategory[] } & {
+        posts: PostWithRelations[]
+    })[]
+    setCategoriesState?: React.Dispatch<
+        React.SetStateAction<
+            (Category & { subCategories: SubCategory[] } & {
+                posts: PostWithRelations[]
+            })[]
+        >
+    >
     children?: React.ReactNode
 }
 

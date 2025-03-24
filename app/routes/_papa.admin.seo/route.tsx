@@ -24,9 +24,9 @@ import {
 import { SeoContent } from '~/routes/_papa.admin/components/seo-content'
 
 export const SeoUpdateSchmea = z.object({
-    id: z.string(),
-    title: z.string(),
-    description: z.string(),
+    id: z.number(),
+    metaTitle: z.string(),
+    metaDescription: z.string(),
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -55,11 +55,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     try {
         const { seo } = await updateSEO({
             id: zResult.data.id,
-            title: zResult.data.title,
-            description: zResult.data.description,
+            metaTitle: zResult.data.metaTitle,
+            metaDescription: zResult.data.metaDescription,
         })
         return Response.json({
-            msg: `SEO for ${seo.route || seo.title || 'unknown'} updated`,
+            msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} updated`,
         } satisfies ConventionalActionResponse)
     } catch (error) {
         console.error(error)
@@ -70,15 +70,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 export const loader = async () => {
-    const { seo } = await getSEOs()
+    const { seos } = await getSEOs()
 
-    return { seo }
+    return { seos }
 }
 
-export type SeoLoaderType = Awaited<ReturnType<typeof loader>>['seo'][number]
+export type SeoLoaderType = Awaited<ReturnType<typeof loader>>['seos'][number]
 
 export default function AdminSEO() {
-    const { seo } = useLoaderData<typeof loader>()
+    const { seos } = useLoaderData<typeof loader>()
     const [open, setOpen] = useState(false)
 
     return (
@@ -101,7 +101,7 @@ export default function AdminSEO() {
                     />
                 </AdminActions>
             </AdminHeader>
-            <DataTable columns={columns} data={seo}>
+            <DataTable columns={columns} data={seos}>
                 {table => (
                     <Input
                         placeholder="Filter route..."
@@ -127,10 +127,10 @@ export const columns: ColumnDef<SeoLoaderType>[] = [
     {
         accessorKey: 'route',
         header: 'Route',
-        accessorFn: row => row.route ?? `/blog/${row.Post?.slug}`,
+        accessorFn: row => row.route ?? `/blog/${row.post?.slug}`,
     },
     {
-        accessorKey: 'title',
+        accessorKey: 'metaTitle',
         header: 'Title',
     },
     {
@@ -139,7 +139,7 @@ export const columns: ColumnDef<SeoLoaderType>[] = [
         cell: ({ row }) => {
             return (
                 <span className="block w-28 md:w-60 truncate">
-                    {row.original.description}
+                    {row.original.metaDescription}
                 </span>
             )
         },
@@ -165,14 +165,14 @@ export const columns: ColumnDef<SeoLoaderType>[] = [
         cell: ({ row }) => {
             const [open, setOpen] = useState(false)
             const id = row.original.id
-            const title = row.original.title ?? undefined
+            const deleteTarget = row.original.metaTitle ?? undefined
 
             return (
                 <>
                     <AdminDataTableMoreMenu
                         route="seo"
                         id={id}
-                        deleteTarget={title}
+                        deleteTarget={deleteTarget}
                     >
                         <DropdownMenuItem onClick={() => setOpen(true)}>
                             Edit

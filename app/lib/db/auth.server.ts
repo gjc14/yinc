@@ -1,11 +1,11 @@
-import { User } from '@prisma/client'
 import { createCookie, redirect } from '@remix-run/node'
 import AES from 'crypto-js/aes'
 import Base64 from 'crypto-js/enc-base64'
 import Utf8 from 'crypto-js/enc-utf8'
 import { CreateEmailResponseSuccess, Resend } from 'resend'
+
 import MagicLinkEmail from '~/components/email/magic-link'
-import { UserRole } from '~/lib/schema/system'
+import { User } from './schema'
 import { getUserById } from './user.server'
 
 let COOKIE_SECRET = process.env.COOKIE_SECRET
@@ -24,15 +24,15 @@ export const authCookie = createCookie(`auth-${process.env.BASE_URL}`, {
 })
 
 interface MagicLinkPayload {
-    id: string
+    id: number
     email: string
     exp: number
 }
 
-export const getToken = async (id: string, email: string) => {
+export const getToken = async (id: number, email: string) => {
     const exp = Date.now() + 1000 * 60 * 10 // 10 minutes
     const encryptedData = AES.encrypt(
-        JSON.stringify({ id, email, exp }),
+        JSON.stringify({ id, email, exp } as MagicLinkPayload),
         process.env.AES_SECRET ?? ''
     ).toString()
     const base64Token = Base64.stringify(Utf8.parse(encryptedData))
@@ -86,7 +86,7 @@ class TokenExpiredError extends Error {
 
 export const verifyMagicLink = async (
     token: string
-): Promise<{ id: string; email: string } | null> => {
+): Promise<{ id: number; email: string } | null> => {
     try {
         const encryptedData = Utf8.stringify(Base64.parse(token))
         const decryptedData = AES.decrypt(

@@ -1,4 +1,3 @@
-import { Category } from '@prisma/client'
 import { Close, PopoverTrigger } from '@radix-ui/react-popover'
 import { Form, useSubmit } from '@remix-run/react'
 import { ObjectId } from 'bson'
@@ -9,12 +8,12 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Popover, PopoverContent } from '~/components/ui/popover'
-import { CategoriesFromDB } from '~/lib/db/blog-taxonomy.server'
+import { Category } from '~/lib/db/schema'
 import { actionRoute } from '.'
 
 const CategoryPart = (props: {
-    categories: CategoriesFromDB
-    onDelete: (id: string) => void
+    categories: Category[]
+    onDelete: (id: number) => void
 }) => {
     const submit = useSubmit()
     const { categories, onDelete } = props
@@ -88,7 +87,7 @@ const CategoryPart = (props: {
 
 const CategoryItem = (props: {
     category: Category
-    onDelete?: (id: string) => void
+    onDelete?: (id: number) => void
 }) => {
     const submit = useSubmit()
 

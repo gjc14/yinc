@@ -10,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { prisma } from '~/lib/db/db.server'
+import { db } from '~/lib/db/db.server'
 import { capitalize, ConventionalActionResponse } from '~/lib/utils'
 import {
     AdminActions,
@@ -47,16 +47,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     try {
-        await prisma.objectStorage.update({
-            where: {
-                id: newFileMetaData.id,
-                key: newFileMetaData.key,
-            },
-            data: {
+        const [newFile] = await db
+            .update(filesTable)
+            .set({
                 name: newFileMetaData.name,
                 description: newFileMetaData.description,
-            },
-        })
+            })
+            .where(
+                and(
+                    eq(filesTable.id, newFileMetaData.id),
+                    eq(filesTable.key, newFileMetaData.key)
+                )
+            )
+            .returning()
         return Response.json({
             msg: 'File updated',
             data: newFileMetaData,
@@ -69,7 +72,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 }
 
+import { and, eq } from 'drizzle-orm'
 import { CloudAlert } from 'lucide-react'
+import { filesTable } from '~/lib/db/schema'
 import { loader } from '../_papa.admin.assets.resource/route'
 export { loader } from '../_papa.admin.assets.resource/route'
 

@@ -1,11 +1,10 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { ActionFunctionArgs, redirect } from '@remix-run/node'
 import { z } from 'zod'
 
 import { TurnstileSiteVerify } from '~/components/captchas/turnstile'
 import { createUser } from '~/lib/db/user.server'
+import { UserRole, UserStatus } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
-import { UserRole, UserStatus } from '~/lib/schema/system'
 
 const captchaSchema = z.enum(['turnstile', 'recaptcha', 'hcaptcha'])
 
@@ -82,13 +81,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             msg: `Welcom! Subscribed with ${user.email}!`,
         } satisfies ConventionalActionResponse)
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-            if (error.code === 'P2002') {
-                return Response.json({
-                    err: 'Email already exists',
-                } satisfies ConventionalActionResponse)
-            }
-        }
+        // TODO: Handle user existing error
         console.error('Error creating user:', error)
         return Response.json({
             err: 'Failed to subscribe',

@@ -5,11 +5,16 @@ import {
     SetStateAction,
     useContext,
 } from 'react'
+import { PostWithRelations } from '~/lib/db/post.server'
 
 import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 
-type TagType = ReturnType<typeof useAdminBlogContext>['tags'][number]
-type CategoryType = ReturnType<typeof useAdminBlogContext>['categories'][number]
+type TagType = ReturnType<typeof useAdminBlogContext>['tags'][number] & {
+    posts: PostWithRelations[]
+}
+type CategoryType = ReturnType<
+    typeof useAdminBlogContext
+>['categories'][number] & { posts: PostWithRelations[] }
 
 interface TaxonomyStateContextType {
     tagsState: TagType[]

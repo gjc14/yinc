@@ -1,4 +1,3 @@
-import { SubCategory } from '@prisma/client'
 import { Close, PopoverTrigger } from '@radix-ui/react-popover'
 import { Form, useSubmit } from '@remix-run/react'
 import { ObjectId } from 'bson'
@@ -19,24 +18,25 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { CategoriesFromDB } from '~/lib/db/blog-taxonomy.server'
+
+import { Category, SubCategory } from '~/lib/db/schema'
 import { actionRoute } from '.'
 
 const SubCategoryPart = (props: {
-    categories: CategoriesFromDB
-    onDelete: (categoryId: string, subCategoryId: string) => void
+    categories: (Category & { subCategories: SubCategory[] })[]
+    onDelete: (categoryId: number, subCategoryId: number) => void
 }) => {
     const submit = useSubmit()
     const { categories, onDelete } = props
 
     // Getting subCategories
-    const [selectedCatId, setSelectedCatId] = useState<string>('')
+    const [selectedCatId, setSelectedCatId] = useState<number>()
     const selectedCat = categories?.find(cat => cat.id === selectedCatId)
     const subCategories = selectedCat?.subCategories || null
 
     useEffect(() => {
         if (!categories?.some(cat => cat.id === selectedCatId)) {
-            setSelectedCatId('')
+            setSelectedCatId(undefined)
         }
     }, [categories])
 
@@ -50,9 +50,9 @@ const SubCategoryPart = (props: {
 
             <div className="flex items-center gap-3">
                 <Select
-                    value={selectedCatId ?? ''}
+                    value={String(selectedCatId) ?? ''}
                     onValueChange={v => {
-                        setSelectedCatId(v)
+                        setSelectedCatId(Number(v))
                     }}
                 >
                     <SelectTrigger
@@ -68,7 +68,7 @@ const SubCategoryPart = (props: {
                             {categories?.map(category => (
                                 <SelectItem
                                     key={category.id}
-                                    value={category.id}
+                                    value={String(category.id)}
                                 >
                                     {category.name}
                                 </SelectItem>
@@ -152,7 +152,7 @@ const SubCategoryPart = (props: {
 
 export const SubcategoryItem = (props: {
     subcategory: SubCategory
-    onDelete?: (id: string) => void
+    onDelete?: (id: number) => void
 }) => {
     const submit = useSubmit()
 

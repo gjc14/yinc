@@ -30,13 +30,7 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
     files: many(filesTable),
 }))
 
-export const UserRole = [
-    'SUPERADMIN',
-    'ADMIN',
-    'AUTHOR',
-    'EDITOR',
-    'SUBSCRIBER',
-] as const
+export const UserRole = ['ADMIN', 'AUTHOR', 'EDITOR', 'SUBSCRIBER'] as const
 export type UserRole = (typeof UserRole)[number]
 export const UserRoleEnum = pgEnum('user_role', UserRole)
 

@@ -1,8 +1,9 @@
 import { LoaderFunctionArgs, redirect } from '@remix-run/node'
+
+import { MainWrapper } from '~/components/wrappers'
 import { authCookie, verifyMagicLink } from '~/lib/db/auth.server'
 import { getUserById, updateUser } from '~/lib/db/user.server'
-import { UserRole, UserStatus } from '~/lib/schema/system'
-import { MainWrapper } from '~/components/wrappers'
+import { UserRole, UserStatus } from '~/lib/db/schema'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const cookie = await authCookie.parse(request.headers.get('Cookie'))

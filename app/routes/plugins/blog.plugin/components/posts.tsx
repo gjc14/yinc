@@ -1,19 +1,13 @@
-import { Post } from '@prisma/client'
 import { Link } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
 
 import { Input } from '~/components/ui/input'
+import { PostWithRelations } from '~/lib/db/post.server'
 import { DataTable } from './post-data-table'
 
-export type DisplayPost = Post & {
-    author: { email: string; name: string | null }
-} & {
-    seo: { title: string | null; description: string | null }
-}
-
-export const LatestPosts = ({ posts }: { posts: DisplayPost[] }) => {
+export const LatestPosts = ({ posts }: { posts: PostWithRelations[] }) => {
     return (
         <div
             id="latest-post"
@@ -51,7 +45,7 @@ export const PostCollection = ({
     posts,
 }: {
     title: string
-    posts: DisplayPost[]
+    posts: PostWithRelations[]
 }) => {
     return (
         <div
@@ -79,7 +73,7 @@ const Posts = ({
     hidePagination,
     hideSearch,
 }: {
-    posts: DisplayPost[]
+    posts: PostWithRelations[]
     hidePagination?: boolean
     hideSearch?: boolean
 }) => {
@@ -116,7 +110,7 @@ const Posts = ({
     )
 }
 
-export const columns: ColumnDef<DisplayPost>[] = [
+export const columns: ColumnDef<PostWithRelations>[] = [
     {
         accessorKey: 'title',
         header: ({ column }) => {
@@ -125,9 +119,10 @@ export const columns: ColumnDef<DisplayPost>[] = [
         cell: ({ row }) => {
             const title = row.original.title
             const url = `/blog/${row.original.slug}`
-            const description = row.original.seo.description
+            const excerpt = row.original.excerpt
 
-            const author = row.original.author.name ?? row.original.author.email
+            const author =
+                row.original.author?.name ?? row.original.author?.email ?? 'P'
             const updatedAt = row.original.updatedAt
             return (
                 <div className="mx-2 my-3 flex flex-col text-pretty">
@@ -135,7 +130,7 @@ export const columns: ColumnDef<DisplayPost>[] = [
                         <Link to={url}>{title}</Link>
                     </h2>
                     <p className="mt-1 text-base text-muted-foreground">
-                        {description}
+                        {excerpt}
                     </p>
 
                     <div className="ml-1 pl-2 mt-3.5 md:mt-5 border-l-2 flex flex-col items-start justify-center gap-1">

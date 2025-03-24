@@ -15,7 +15,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const id = params.seoId
 
-    if (!id) {
+    if (!id || Number.isNaN(Number(id))) {
         console.log('Invalid arguments', id)
         return Response.json({
             err: `Invalid arguments`,
@@ -23,9 +23,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
 
     try {
-        const { seo } = await deleteSEO(id)
+        const { seo } = await deleteSEO(Number(id))
         return Response.json({
-            msg: `SEO for ${seo.route || seo.title || 'unknown'} delete`,
+            msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} delete`,
         } satisfies ConventionalActionResponse)
     } catch (error) {
         console.error(error)

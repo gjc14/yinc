@@ -1,19 +1,15 @@
-import { Tag } from '@prisma/client'
 import { useSubmit } from '@remix-run/react'
 import { ObjectId } from 'bson'
 import { XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { Tag } from '~/lib/db/schema'
 import { Badge } from '~/components/ui/badge'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { TagsFromDB } from '~/lib/db/blog-taxonomy.server'
 import { actionRoute } from '.'
 
-const TagPart = (props: {
-    tags: TagsFromDB
-    onDelete: (id: string) => void
-}) => {
+const TagPart = (props: { tags: Tag[]; onDelete: (id: number) => void }) => {
     const submit = useSubmit()
     const { tags, onDelete } = props
 
@@ -78,7 +74,7 @@ const TagPart = (props: {
     )
 }
 
-const TagItem = (props: { tag: Tag; onDelete?: (id: string) => void }) => {
+const TagItem = (props: { tag: Tag; onDelete?: (id: number) => void }) => {
     const submit = useSubmit()
 
     return (
@@ -87,7 +83,7 @@ const TagItem = (props: { tag: Tag; onDelete?: (id: string) => void }) => {
             <XCircle
                 className="h-4 w-4 cursor-pointer"
                 onClick={() => {
-                    props.onDelete?.(props.tag.id)
+                    props.onDelete?.(Number(props.tag.id))
                     submit(
                         { id: props.tag.id, intent: 'tag' },
                         {

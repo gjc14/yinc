@@ -1,4 +1,3 @@
-import { User } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import { Loader2, Save } from 'lucide-react'
 import { Button } from '~/components/ui/button'
@@ -19,7 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { UserRole, UserStatus } from '~/lib/schema/system'
+import { User, UserRole, UserStatus } from '~/lib/db/schema'
 
 export const UserContent = ({
     user,
@@ -96,7 +95,7 @@ export const UserContent = ({
                                 />
                             </SelectTrigger>
                             <SelectContent>
-                                {Object.values(UserRole.enum).map(role => (
+                                {Object.values(UserRole).map(role => (
                                     <SelectItem key={role} value={role}>
                                         {role}
                                     </SelectItem>
@@ -116,7 +115,7 @@ export const UserContent = ({
                                 />
                             </SelectTrigger>
                             <SelectContent>
-                                {Object.values(UserStatus.enum).map(status => (
+                                {Object.values(UserStatus).map(status => (
                                     <SelectItem key={status} value={status}>
                                         {status}
                                     </SelectItem>

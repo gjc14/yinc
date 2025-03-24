@@ -24,8 +24,26 @@ import {
 
 export default function AdminPost() {
     const { posts, tags, categories } = useAdminBlogContext()
-    const [tagsState, setTagsState] = useState(tags)
-    const [categoriesState, setCategoriesState] = useState(categories)
+    const [tagsState, setTagsState] = useState(
+        tags.map(tag => {
+            return {
+                ...tag,
+                posts: posts.filter(post =>
+                    post.tags.map(t => t.id).includes(tag.id)
+                ),
+            }
+        })
+    )
+    const [categoriesState, setCategoriesState] = useState(
+        categories.map(category => {
+            return {
+                ...category,
+                posts: posts.filter(post =>
+                    post.categories.map(c => c.id).includes(category.id)
+                ),
+            }
+        })
+    )
 
     return (
         <AdminSectionWrapper>
@@ -84,7 +102,7 @@ export const columns: ColumnDef<BlogLoaderType['posts'][number]>[] = [
     {
         accessorKey: 'author',
         header: 'Author',
-        accessorFn: row => row.author.name || 'author',
+        accessorFn: row => row.author?.name || 'author',
     },
     {
         id: 'Updated At',

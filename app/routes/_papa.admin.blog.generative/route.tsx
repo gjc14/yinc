@@ -1,4 +1,3 @@
-import { User } from '@prisma/client'
 import { useChat } from 'ai/react'
 import { CheckCheck, Copy, SendHorizonal, Sparkles } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -24,6 +23,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '~/components/ui/tooltip'
+import { User } from '~/lib/db/schema'
 import {
     Provider,
     Providers,
