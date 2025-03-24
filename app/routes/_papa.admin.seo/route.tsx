@@ -24,7 +24,7 @@ import {
 import { SeoContent } from '~/routes/_papa.admin/components/seo-content'
 
 export const SeoUpdateSchmea = z.object({
-    id: z.number(),
+    id: z.string().transform(val => Number(val)),
     metaTitle: z.string(),
     metaDescription: z.string(),
 })

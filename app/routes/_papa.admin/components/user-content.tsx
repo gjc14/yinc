@@ -34,7 +34,8 @@ export const UserContent = ({
     method: 'PUT' | 'POST'
 }) => {
     const fetcher = useFetcher()
-    const isSubmitting = fetcher.formAction === action
+    const isSubmitting =
+        fetcher.formAction === action && fetcher.state === 'submitting'
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

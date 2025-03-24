@@ -35,7 +35,7 @@ import { UserContent } from '~/routes/_papa.admin/components/user-content'
 import { useUsersContext } from '../_papa.admin.users/route'
 
 export const UserUpdateSchema = z.object({
-    id: z.number(),
+    id: z.string().transform(val => Number(val)),
     email: z.string().email(),
     name: z.string().nullable(),
     role: z.enum(UserRole),

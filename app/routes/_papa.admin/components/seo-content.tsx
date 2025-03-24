@@ -30,7 +30,8 @@ export const SeoContent = ({
     method: 'PUT' | 'POST'
 }) => {
     const fetcher = useFetcher()
-    const isSubmitting = fetcher.formAction === action
+    const isSubmitting =
+        fetcher.formAction === action && fetcher.state === 'submitting'
 
     useEffect(() => {
         if (
@@ -82,24 +83,24 @@ export const SeoContent = ({
                         </div>
                     )}
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="title" className="text-right">
+                        <Label htmlFor="metaTitle" className="text-right">
                             Title
                         </Label>
                         <Input
-                            id="title"
-                            name="title"
+                            id="metaTitle"
+                            name="metaTitle"
                             defaultValue={seo?.metaTitle ?? undefined}
                             className="col-span-3"
                             placeholder="What's your title?"
                         />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="description" className="text-right">
+                        <Label htmlFor="metaDescription" className="text-right">
                             Description
                         </Label>
                         <Textarea
-                            id="description"
-                            name="description"
+                            id="metaDescription"
+                            name="metaDescription"
                             defaultValue={seo?.metaDescription ?? undefined}
                             rows={5}
                             className="col-span-3"

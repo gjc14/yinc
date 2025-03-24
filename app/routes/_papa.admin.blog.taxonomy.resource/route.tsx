@@ -17,18 +17,18 @@ export type Intents = z.infer<typeof intentSchema>
 
 // Schema for both category and tag
 export const taxonomySchema = z.object({
-    id: z.number(),
+    id: z.string().transform(val => Number(val)),
     name: z.string(),
 })
 
 const subTaxonomySchema = z.object({
-    id: z.number(),
+    id: z.string().transform(val => Number(val)),
     name: z.string(),
-    parentId: z.number(),
+    parentId: z.string().transform(val => Number(val)),
 })
 
 const deleteSchema = z.object({
-    id: z.number(),
+    id: z.string().transform(val => Number(val)),
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {

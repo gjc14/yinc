@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const FileMetaSchema = z
     .object({
-        id: z.number(),
+        id: z.string().transform(val => Number(val)),
         key: z.string(),
         url: z.string(),
         type: z.string(),
