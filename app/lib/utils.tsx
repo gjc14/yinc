@@ -14,7 +14,13 @@ export const conventionalSuccessSchema = z.object({
         })
         .optional(),
 })
-export type ConventionalSuccess = z.infer<typeof conventionalSuccessSchema>
+export type ConventionalSuccess<T = unknown> = {
+    msg: string
+    data?: T
+    options?: {
+        preventAlert?: boolean
+    }
+}
 
 export const conventionalErrorSchema = z.object({
     err: z.string(),
@@ -25,10 +31,16 @@ export const conventionalErrorSchema = z.object({
         })
         .optional(),
 })
-export type ConventionalError = z.infer<typeof conventionalErrorSchema>
-export type ConventionalActionResponse =
-    | ConventionalSuccess
-    | ConventionalError
+export type ConventionalError<T = unknown> = {
+    err: string
+    data?: T
+    options?: {
+        preventAlert?: boolean
+    }
+}
+export type ConventionalActionResponse<T = unknown> =
+    | ConventionalSuccess<T>
+    | ConventionalError<T>
     | null
 
 export const isConventionalSuccess = (

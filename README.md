@@ -174,7 +174,13 @@ export const conventionalSuccessSchema = z.object({
         })
         .optional(),
 })
-export type ConventionalSuccess = z.infer<typeof conventionalSuccessSchema>
+export type ConventionalSuccess<T = unknown> = {
+    msg: string
+    data?: T
+    options?: {
+        preventAlert?: boolean
+    }
+}
 
 export const conventionalErrorSchema = z.object({
     err: z.string(),
@@ -185,10 +191,16 @@ export const conventionalErrorSchema = z.object({
         })
         .optional(),
 })
-export type ConventionalError = z.infer<typeof conventionalErrorSchema>
-export type ConventionalActionResponse =
-    | ConventionalSuccess
-    | ConventionalError
+export type ConventionalError<T = unknown> = {
+    err: string
+    data?: T
+    options?: {
+        preventAlert?: boolean
+    }
+}
+export type ConventionalActionResponse<T = unknown> =
+    | ConventionalSuccess<T>
+    | ConventionalError<T>
     | null
 
 return { msg: 'Action success 🎉' } satisfies ConventionalActionResponse
@@ -200,17 +212,31 @@ import { ActionFunctionArgs } from '@remix-run/node'
 
 import { ConventionalActionResponse } from '~/lib/utils'
 
+type ReturnData = {
+    name: string
+}
+
 export const action = async ({ request }: ActionFunctionArgs) => {
     if (a) {
         return Response.json({
             msg: `Welcome to PAPA!`,
-        } satisfies ConventionalActionResponse)
+            data: { name: newName },
+        } satisfies ConventionalActionResponse<ReturnData>)
     } else {
         return Response.json({
             err: 'Method not allowed',
         } satisfies ConventionalActionResponse)
     }
 }
+
+// If you use fetcher, you could benefit from the generic return data
+const fetcher = useFetcher<ReturnType>()
+
+useEffect(() => {
+    if (fetcher.status === 'loading' && fetcher.data.data) {
+        const returnedData = fetcher.data.data // Typed ReturnType
+    }
+}, [fetcher])
 ```
 
 ## Global Components
