@@ -1,6 +1,6 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
-import { LoaderFunctionArgs } from '@remix-run/node'
+import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import {
     ClientLoaderFunctionArgs,
     useLoaderData,
@@ -14,12 +14,25 @@ import { useEffect } from 'react'
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
 import { userIs } from '~/lib/db/auth.server'
 import { getPostBySlug } from '~/lib/db/post.server'
+import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils'
 import { FeaturedImage } from './featured-image'
 import { hilightInnerHTML } from './highlight-inner-html'
 import { PostFooter } from './post-footer'
 import { PostMeta } from './post-meta'
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+    if (!data || !data.meta) {
+        return []
+    }
+
+    return data.meta.metaTags
+}
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+    const { seo } = await getSEO(new URL(request.url).pathname)
+    const meta = seo ? createMeta(seo, new URL(request.url)) : null
+
     if (!params.postSlug) {
         throw new Response('Post not found', { status: 404 })
     }
@@ -43,7 +56,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
                   ...ExtensionKit({ openOnClick: true }),
               ])
             : '<p>This is an empty post</p>'
-        return { post, prevPost, nextPost }
+        return { post, prevPost, nextPost, meta }
     } catch (error) {
         console.error(error)
         throw new Response('Post not found', { status: 404 })

@@ -9,28 +9,29 @@ import { data, LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 
 import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils'
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-    return data?.seo
-        ? [
-              { title: data.seo.title },
-              { name: 'description', content: data.seo.description },
-          ]
-        : []
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+    if (!data || !data.meta) {
+        return []
+    }
+
+    return data.meta.metaTags
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(new URL(request.url).pathname)
+    const meta = seo ? createMeta(seo, new URL(request.url)) : null
 
     try {
         // You could directly return object
-        return { seo }
+        return { meta }
     } catch (error) {
         console.error(error)
         // Only when you want to return response will you need to use \`data\` function
         // Read more: https://reactrouter.com/how-to/headers#1-wrap-your-return-value-in-data
         return data(
-            { seo },
+            { meta },
             {
                 headers: {
                     'Cache-Control': 'no-store',
@@ -41,11 +42,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export default function ExamplePluginWebPage() {
-    const { seo } = useLoaderData<typeof loader>()
+    const { meta } = useLoaderData<typeof loader>()
 
     return (
         <div className="h-screen w-screen flex flex-col items-center justify-center space-y-2">
-            <h1 className="visually-hidden">{seo?.title}</h1>
+            <h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
             <h2>Example plugin web page</h2>
             <p className="text-3xl">🔨🔨🔨</p>
         </div>

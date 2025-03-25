@@ -52,8 +52,8 @@ export const capitalize = (string: string) => {
 }
 
 import { NavLink } from '@remix-run/react'
-import { BreadcrumbItem, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 import { z } from 'zod'
+import { BreadcrumbItem, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 
 export const generateBreadcrumbs = (pathname: string) => {
     const paths = pathname.split('/').filter(Boolean)
@@ -95,4 +95,71 @@ export const generateSlug = (name: string) => {
         .replace(/[^a-z0-9 -]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
+}
+
+import { Seo } from '~/lib/db/schema'
+
+export const createMeta = (seo: Seo, url: URL) => {
+    const metaTags = []
+
+    // Title
+    if (seo.metaTitle) {
+        metaTags.push({ title: seo.metaTitle })
+    }
+
+    // Description
+    if (seo.metaDescription) {
+        metaTags.push({ name: 'description', content: seo.metaDescription })
+    }
+
+    // Keywords
+    if (seo.keywords) {
+        metaTags.push({ name: 'keywords', content: seo.keywords })
+    }
+
+    // Open Graph tags
+    if (seo.metaTitle) {
+        metaTags.push({ property: 'og:title', content: seo.metaTitle })
+    }
+
+    if (seo.metaDescription) {
+        metaTags.push({
+            property: 'og:description',
+            content: seo.metaDescription,
+        })
+    }
+
+    // Open Graph Image
+    if (seo.ogImage) {
+        metaTags.push({ property: 'og:image', content: seo.ogImage })
+    }
+
+    // Other Open Graph tags
+    metaTags.push({ property: 'og:type', content: 'website' })
+
+    // Current URL
+    metaTags.push({
+        property: 'og:url',
+        content: url.href,
+    })
+
+    // Twitter Card
+    metaTags.push({ name: 'twitter:card', content: 'summary_large_image' })
+
+    if (seo.metaTitle) {
+        metaTags.push({ name: 'twitter:title', content: seo.metaTitle })
+    }
+
+    if (seo.metaDescription) {
+        metaTags.push({
+            name: 'twitter:description',
+            content: seo.metaDescription,
+        })
+    }
+
+    if (seo.ogImage) {
+        metaTags.push({ name: 'twitter:image', content: seo.ogImage })
+    }
+
+    return { metaTags, seo }
 }

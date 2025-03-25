@@ -3,20 +3,21 @@ import { useLoaderData } from '@remix-run/react'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils'
 import { SectionWrapper } from '../components/max-width-wrapper'
 import { PostCollection } from '../components/posts'
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-    return data?.seo
-        ? [
-              { title: data.seo.metaTitle },
-              { name: 'description', content: data.seo.metaDescription },
-          ]
-        : []
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+    if (!data || !data.meta) {
+        return []
+    }
+
+    return data.meta.metaTags
 }
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(new URL(request.url).pathname)
+    const meta = seo ? createMeta(seo, new URL(request.url)) : null
     const query = params.query ?? ''
 
     try {
@@ -24,19 +25,19 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
             status: 'PUBLISHED',
             tagFilter: [query],
         })
-        return { seo, posts, query }
+        return { meta, posts, query }
     } catch (error) {
         console.error(error)
-        return { seo, posts: [], query }
+        return { meta, posts: [], query }
     }
 }
 
 export default function Tag() {
-    const { seo, posts, query } = useLoaderData<typeof loader>()
+    const { meta, posts, query } = useLoaderData<typeof loader>()
 
     return (
         <>
-            <h1 className="visually-hidden">{seo?.metaTitle}</h1>
+            <h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
             <SectionWrapper className="mt-28">
                 <PostCollection
                     title={`Listing ${

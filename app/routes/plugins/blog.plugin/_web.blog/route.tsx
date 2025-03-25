@@ -1,9 +1,27 @@
+import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { Outlet } from '@remix-run/react'
 
 import { MainWrapper } from '~/components/wrappers'
+import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils'
 import { Footer } from '../../_web.plugin/_web/components/footer'
 import { Nav } from '../../_web.plugin/_web/components/nav'
 import { CTA } from '../components/cta'
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+    if (!data || !data.meta) {
+        return []
+    }
+
+    return data.meta.metaTags
+}
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const { seo } = await getSEO(new URL(request.url).pathname)
+    const meta = seo ? createMeta(seo, new URL(request.url)) : null
+
+    return { meta }
+}
 
 export default function Blog() {
     return (

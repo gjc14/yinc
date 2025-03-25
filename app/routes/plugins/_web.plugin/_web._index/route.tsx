@@ -3,27 +3,28 @@ import { ClientLoaderFunctionArgs, useLoaderData } from '@remix-run/react'
 
 import { MainWrapper } from '~/components/wrappers'
 import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils'
 import { Footer } from '../_web/components/footer'
 import { Nav } from '../_web/components/nav'
 import { Hero } from './hero'
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-    return data?.seo
-        ? [
-              { title: data.seo.metaTitle },
-              { name: 'description', content: data.seo.metaDescription },
-          ]
-        : []
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+    if (!data || !data.meta) {
+        return []
+    }
+
+    return data.meta.metaTags
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(new URL(request.url).pathname)
+    const meta = seo ? createMeta(seo, new URL(request.url)) : null
 
     try {
-        return { seo }
+        return { meta }
     } catch (error) {
         console.error(error)
-        return { seo }
+        return { meta }
     }
 }
 
@@ -42,14 +43,14 @@ export const clientLoader = async ({
 clientLoader.hydrate = true
 
 export default function Index() {
-    const { seo } = useLoaderData<typeof loader>()
+    const { meta } = useLoaderData<typeof loader>()
 
     return (
         <>
             <Nav />
 
             <MainWrapper>
-                <h1 className="visually-hidden">{seo?.metaTitle}</h1>
+                <h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
                 <Hero />
                 <Footer />
             </MainWrapper>

@@ -1,36 +1,38 @@
 import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+
 import { UnderConstruction } from '~/components/under-construction'
 import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils'
 import { Footer } from '../../_web.plugin/_web/components/footer'
 import { Nav } from '../../_web.plugin/_web/components/nav'
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-    return data?.seo
-        ? [
-              { title: data.seo.metaTitle },
-              { name: 'description', content: data.seo.metaDescription },
-          ]
-        : []
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+    if (!data || !data.meta) {
+        return []
+    }
+
+    return data.meta.metaTags
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(new URL(request.url).pathname)
+    const meta = seo ? createMeta(seo, new URL(request.url)) : null
 
     try {
-        return { seo }
+        return { meta }
     } catch (error) {
         console.error(error)
-        return { seo }
+        return { meta }
     }
 }
 
 export default function CV() {
-    const { seo } = useLoaderData<typeof loader>()
+    const { meta } = useLoaderData<typeof loader>()
 
     return (
         <>
-            <h1 className="visually-hidden">{seo?.metaTitle}</h1>
+            <h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
             <UnderConstruction nav={<Nav />} footer={<Footer />} />
         </>
     )
