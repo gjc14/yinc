@@ -1,9 +1,7 @@
-import { ObjectId } from 'bson'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import DefaultTipTap, { EditorRef } from '~/components/editor/default-tiptap'
-import { MultiSelect } from '~/components/multi-select'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -26,57 +24,58 @@ import {
 } from '~/components/ui/select'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
-import { Category, Post, PostStatus, Seo, Tag } from '~/lib/db/schema'
-import { generateSlug } from '~/lib/utils'
-
-export type PostContentEdit = Post & {
-    seo: {
-        title: Seo['metaTitle']
-        description: Seo['metaDescription']
-    }
-}
+import { PostWithRelations } from '~/lib/db/post.server'
+import { Category, PostStatus, Tag } from '~/lib/db/schema'
+import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
 
 interface PostContentProps {
-    post: PostContentEdit
-    onPostChange?: (post: PostContentEdit, dirty: boolean) => void
-    tags: any
-    categories: any
+    post: PostWithRelations
+    tags: Tag[]
+    categories: Category[]
 }
 
 // TODO: Add featured image; edit author; publish schedule
 // TODO: Editor upload image; link setting popup
-export const PostContent = ({
-    post,
-    onPostChange,
-    tags,
-    categories,
-}: PostContentProps) => {
+export const PostContent = ({ post, tags, categories }: PostContentProps) => {
     const editorRef = useRef<EditorRef | null>(null)
     const contentWrapperRef = useRef<HTMLDivElement>(null)
-    const localStorageContent = useRef<string | null>(null)
-    const [open, setOpen] = useState(false)
-    const [initRecoverUnsaved, setInitRecoverUnsaved] = useState(false)
-    const [postState, setPostState] = useState<PostContentEdit>(post)
-    const [newCategories, setNewCategories] = useState<Category[]>([])
-    const [newTags, setNewTags] = useState<Tag[]>([])
 
-    const postKey = `dirty-post-${postState.id}`
+    const [openRecoverAlert, setOpenRecoverAlert] = useState(false) // AlertDialog
+    const [initRecoverUnsaved, setInitRecoverUnsaved] = useState(false)
+    const [postState, setPostState] = useState<PostWithRelations>(post)
+
+    const postLocalStorageKey = `dirty-post-${postState.id}`
+
+    const removeLocalStorageContent = () => {
+        if (!window) return
+        window.localStorage.removeItem(postLocalStorageKey)
+        setInitRecoverUnsaved(true)
+    }
+
+    const recoverLocalStorageContent = () => {
+        if (!window) return
+        const postContentLocal = JSON.parse(
+            window.localStorage.getItem(postLocalStorageKey) || '{}'
+        )
+        setPostState(postContentLocal)
+        editorRef.current?.updateContent(postContentLocal.content)
+        setInitRecoverUnsaved(true)
+    }
 
     // Initialize recover/discard unsaved changes
     // 1. Recover 2. Discard 3. Nothing => setInitRecoverUnsaved(true)
     useEffect(() => {
         if (window) {
-            const dirtyPost = window.localStorage.getItem(postKey)
+            const dirtyPost = window.localStorage.getItem(postLocalStorageKey)
 
             if (dirtyPost) {
                 const isDirty = dirtyPost !== JSON.stringify(postState)
 
                 if (isDirty) {
-                    setOpen(true)
-                    localStorageContent.current = dirtyPost
+                    setOpenRecoverAlert(true)
                 } else {
                     setInitRecoverUnsaved(true)
-                    window.localStorage.removeItem(postKey)
+                    window.localStorage.removeItem(postLocalStorageKey)
                 }
             } else {
                 setInitRecoverUnsaved(true)
@@ -84,38 +83,25 @@ export const PostContent = ({
         }
     }, [])
 
-    // Update post content when post prop changes
-    useEffect(() => {
-        setPostState(post)
-        newCategories
-            .filter(c => !post.includes(c.id))
-            .forEach(c => {
-                setNewCategories(prev => prev.filter(nc => nc.id !== c.id))
-            })
-        newTags
-            .filter(t => !post.tagIDs.includes(t.id))
-            .forEach(t => {
-                setNewTags(prev => prev.filter(nt => nt.id !== t.id))
-            })
-    }, [post])
-
     // Update parent component and save dirty to local when post content changes
     useEffect(() => {
         const postChanged = JSON.stringify(postState)
         const isDirty = postChanged !== JSON.stringify(post)
-        onPostChange?.(postState, isDirty)
         // TODO: Didnt remove if it redirect from new page
         if (isDirty && window) {
-            window.localStorage.setItem(postKey, postChanged)
+            window.localStorage.setItem(postLocalStorageKey, postChanged)
         } else if (!isDirty && window && initRecoverUnsaved) {
             // Remove only if user has asked to recover unsaved changes (prevent removed on render)
-            window.localStorage.removeItem(postKey)
+            window.localStorage.removeItem(postLocalStorageKey)
         }
     }, [postState])
 
     return (
         <div className="w-full flex flex-col md:flex-row gap-5">
-            <AlertDialog open={open} onOpenChange={setOpen}>
+            <AlertDialog
+                open={openRecoverAlert}
+                onOpenChange={setOpenRecoverAlert}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
@@ -128,27 +114,10 @@ export const PostContent = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel
-                            onClick={() => {
-                                setInitRecoverUnsaved(true)
-                                window.localStorage.removeItem(postKey)
-                            }}
-                        >
+                        <AlertDialogCancel onClick={removeLocalStorageContent}>
                             Discard
                         </AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={() => {
-                                setInitRecoverUnsaved(true)
-
-                                const postContentLocal = JSON.parse(
-                                    localStorageContent.current || '{}'
-                                )
-                                setPostState(postContentLocal)
-                                editorRef.current?.updateContent(
-                                    postContentLocal.content
-                                )
-                            }}
-                        >
+                        <AlertDialogAction onClick={recoverLocalStorageContent}>
                             Recover
                         </AlertDialogAction>
                     </AlertDialogFooter>
@@ -184,16 +153,9 @@ export const PostContent = ({
                         ref={contentWrapperRef}
                         className="p-3 border border-border rounded-md"
                     >
-                        <input
-                            id="content"
-                            type="hidden"
-                            name="content"
-                            readOnly
-                            defaultValue={postState.content}
-                        />
                         <DefaultTipTap
                             ref={editorRef}
-                            content={postState.content}
+                            content={postState.content || undefined}
                             onUpdate={({ toJSON }) => {
                                 setPostState(prev => {
                                     const newPost = {
@@ -238,7 +200,7 @@ export const PostContent = ({
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
                         <SelectContent>
-                            {Object.values(PostStatus.enum).map(status => (
+                            {PostStatus.map(status => (
                                 <SelectItem key={status} value={status}>
                                     {status}
                                 </SelectItem>
@@ -293,7 +255,7 @@ export const PostContent = ({
                         name="excerpt"
                         rows={3}
                         placeholder="Short description about your post..."
-                        value={postState.excerpt}
+                        value={postState.excerpt || ''}
                         onChange={e => {
                             setPostState(prev => {
                                 const newPost = {
@@ -319,7 +281,7 @@ export const PostContent = ({
                                 }
                                 const newPost = {
                                     ...prev,
-                                    excerpt: text.slice(0, 150).trim() || '',
+                                    excerpt: generateSeoDescription(text),
                                 }
                                 return newPost
                             })
@@ -334,161 +296,13 @@ export const PostContent = ({
                 <div>
                     <Label htmlFor="categories">Categories</Label>
                     <div className="flex items-center gap-1.5">
-                        <input
-                            type="hidden"
-                            name="categoryIDs"
-                            defaultValue={postState.categoryIDs}
-                        />
-                        <input
-                            hidden
-                            name="newCategories"
-                            defaultValue={JSON.stringify(newCategories)}
-                        />
-                        <MultiSelect
-                            options={categories.map(c => ({
-                                value: c.id,
-                                label: c.name,
-                            }))}
-                            defaultSelected={postState.categoryIDs
-                                .map(categoryId => {
-                                    const category = categories.find(
-                                        c => c.id === categoryId
-                                    )
-                                    return category
-                                        ? {
-                                              value: category.id,
-                                              label: category.name,
-                                          }
-                                        : null
-                                })
-                                .filter(c => !!c)}
-                            onSelectedChange={selected => {
-                                setPostState(prev => {
-                                    const cIdArray = selected.map(s => s.value)
-                                    return {
-                                        ...prev,
-                                        categoryIDs: cIdArray,
-                                    }
-                                })
-                            }}
-                            onEnterNewValue={v => {
-                                const createId = String(new ObjectId())
-                                const newCategory: Category & {
-                                    subCategories: SubCategory[]
-                                } = {
-                                    id: createId,
-                                    name: v,
-                                    postIDs: [],
-                                    subCategories: [],
-                                }
-
-                                setPostState(prev => {
-                                    return {
-                                        ...prev,
-                                        categoryIDs: [
-                                            ...prev.categoryIDs,
-                                            newCategory.id,
-                                        ],
-                                    }
-                                })
-
-                                setNewCategories(prev => [...prev, newCategory])
-
-                                return createId
-                            }}
-                            onUnSelect={unSelected => {
-                                setNewCategories(prev => {
-                                    const newCategories = prev.filter(
-                                        c => c.id !== unSelected.value
-                                    )
-                                    return newCategories
-                                })
-                                setPostState(prev => {
-                                    return {
-                                        ...prev,
-                                        categoryIDs: prev.categoryIDs.filter(
-                                            c => c !== unSelected.value
-                                        ),
-                                    }
-                                })
-                            }}
-                            placeholder="Search categories..."
-                        />
+                        Select Categories
                     </div>
                 </div>
 
                 <div>
                     <Label htmlFor="tags">Tags</Label>
-                    <div className="flex items-center gap-1.5">
-                        <input
-                            type="hidden"
-                            name="tagIDs"
-                            defaultValue={postState.tagIDs}
-                        />
-                        <input
-                            hidden
-                            name="newTags"
-                            defaultValue={JSON.stringify(newTags)}
-                        />
-                        <MultiSelect
-                            options={tags.map(t => ({
-                                value: t.id,
-                                label: t.name,
-                            }))}
-                            defaultSelected={postState.tagIDs
-                                .map(tagId => {
-                                    const tag = tags.find(t => t.id === tagId)
-                                    return tag
-                                        ? { value: tag.id, label: tag.name }
-                                        : null
-                                })
-                                .filter(t => !!t)}
-                            onSelectedChange={selected => {
-                                setPostState(prev => {
-                                    const tIdArray = selected.map(s => s.value)
-                                    return {
-                                        ...prev,
-                                        tagIDs: tIdArray,
-                                    }
-                                })
-                            }}
-                            onEnterNewValue={v => {
-                                const createId = String(new ObjectId())
-                                const newTag: Tag = {
-                                    id: createId,
-                                    name: v,
-                                    postIDs: [],
-                                }
-
-                                setPostState(prev => {
-                                    return {
-                                        ...prev,
-                                        tagIDs: [...prev.tagIDs, newTag.id],
-                                    }
-                                })
-
-                                setNewTags(prev => [...prev, newTag])
-
-                                return createId
-                            }}
-                            onUnSelect={unSelected => {
-                                setNewTags(prev => {
-                                    return prev.filter(
-                                        t => t.id !== unSelected.value
-                                    )
-                                })
-                                setPostState(prev => {
-                                    return {
-                                        ...prev,
-                                        tagIDs: prev.tagIDs.filter(
-                                            t => t !== unSelected.value
-                                        ),
-                                    }
-                                })
-                            }}
-                            placeholder="Search tags..."
-                        />
-                    </div>
+                    <div className="flex items-center gap-1.5">Select Tags</div>
                 </div>
 
                 <Separator />
@@ -501,16 +315,16 @@ export const PostContent = ({
                             name="seo-title"
                             type="text"
                             placeholder="Meta tilte should match Title (H1) for SEO."
-                            value={postState.seo.title ?? ''}
+                            value={postState.seo.metaTitle ?? ''}
                             onChange={e => {
                                 setPostState(prev => {
                                     const newPost = {
                                         ...prev,
                                         seo: {
                                             ...prev.seo,
-                                            title: e.target.value,
+                                            metaTitle: e.target.value,
                                         },
-                                    }
+                                    } satisfies PostWithRelations
                                     return newPost
                                 })
                             }}
@@ -524,9 +338,9 @@ export const PostContent = ({
                                         ...prev,
                                         seo: {
                                             ...prev.seo,
-                                            title: postState.title,
+                                            metaTitle: postState.title,
                                         },
-                                    }
+                                    } satisfies PostWithRelations
                                     return newPost
                                 })
                             }}
@@ -543,16 +357,16 @@ export const PostContent = ({
                         name="seo-description"
                         rows={3}
                         placeholder="Short description about your post..."
-                        value={postState.seo.description ?? ''}
+                        value={postState.seo.metaDescription ?? ''}
                         onChange={e => {
                             setPostState(prev => {
                                 const newPost = {
                                     ...prev,
                                     seo: {
                                         ...prev.seo,
-                                        description: e.target.value,
+                                        metaDescription: e.target.value,
                                     },
-                                }
+                                } satisfies PostWithRelations
                                 return newPost
                             })
                         }}
@@ -574,10 +388,10 @@ export const PostContent = ({
                                     ...prev,
                                     seo: {
                                         ...prev.seo,
-                                        description:
-                                            text.slice(0, 150).trim() || '',
+                                        metaDescription:
+                                            generateSeoDescription(text),
                                     },
-                                }
+                                } satisfies PostWithRelations
                                 return newPost
                             })
                         }}

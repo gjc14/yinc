@@ -21,6 +21,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
+import { PostContent } from './post-content'
 
 export default function AdminPost() {
     const fetcher = useFetcher()
@@ -117,15 +118,15 @@ export default function AdminPost() {
                     e.preventDefault()
                     fetcher.submit(e.currentTarget, { method: 'PUT' })
                     setIsDirty(false)
+
+                    // window.localStorage.removeItem(`dirty-post-${post.id}`)  // Remove after saved
                 }}
             >
-                <input hidden name="id" defaultValue={post.id} />
-                {/* <PostContent
+                <PostContent
                     post={postContent}
                     tags={tags}
                     categories={categories}
-                    onPostChange={(_, dirty) => setIsDirty(dirty)}
-                /> */}
+                />
             </Form>
         </AdminSectionWrapper>
     )
