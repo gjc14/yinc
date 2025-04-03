@@ -27,29 +27,38 @@ import { Textarea } from '~/components/ui/textarea'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { Category, PostStatus, Tag } from '~/lib/db/schema'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
+import { areDifferentPosts } from './utils'
 
 interface PostContentProps {
     post: PostWithRelations
     tags: Tag[]
     categories: Category[]
+    onDirtyChange: (isDirty: boolean) => void
 }
 
 // TODO: Add featured image; edit author; publish schedule
 // TODO: Editor upload image; link setting popup
-export const PostContent = ({ post, tags, categories }: PostContentProps) => {
+export const PostContent = ({
+    post,
+    tags,
+    categories,
+    onDirtyChange,
+}: PostContentProps) => {
     const editorRef = useRef<EditorRef | null>(null)
     const contentWrapperRef = useRef<HTMLDivElement>(null)
+    const isDirtyPostInitialized = useRef(false)
 
     const [openRecoverAlert, setOpenRecoverAlert] = useState(false) // AlertDialog
-    const [initRecoverUnsaved, setInitRecoverUnsaved] = useState(false)
     const [postState, setPostState] = useState<PostWithRelations>(post)
+    const [isDirty, setIsDirty] = useState(false)
 
     const postLocalStorageKey = `dirty-post-${postState.id}`
 
     const removeLocalStorageContent = () => {
         if (!window) return
         window.localStorage.removeItem(postLocalStorageKey)
-        setInitRecoverUnsaved(true)
+
+        isDirtyPostInitialized.current = true
     }
 
     const recoverLocalStorageContent = () => {
@@ -59,39 +68,46 @@ export const PostContent = ({ post, tags, categories }: PostContentProps) => {
         )
         setPostState(postContentLocal)
         editorRef.current?.updateContent(postContentLocal.content)
-        setInitRecoverUnsaved(true)
+
+        isDirtyPostInitialized.current = true
     }
 
     // Initialize recover/discard unsaved changes
-    // 1. Recover 2. Discard 3. Nothing => setInitRecoverUnsaved(true)
+    // If not dirty initialized, if dirty initialized after recover/discard
     useEffect(() => {
         if (window) {
             const dirtyPost = window.localStorage.getItem(postLocalStorageKey)
 
             if (dirtyPost) {
-                const isDirty = dirtyPost !== JSON.stringify(postState)
-
-                if (isDirty) {
+                if (areDifferentPosts(postState, JSON.parse(dirtyPost))) {
                     setOpenRecoverAlert(true)
-                } else {
-                    setInitRecoverUnsaved(true)
-                    window.localStorage.removeItem(postLocalStorageKey)
                 }
             } else {
-                setInitRecoverUnsaved(true)
+                isDirtyPostInitialized.current = true
             }
         }
     }, [])
 
-    // Update parent component and save dirty to local when post content changes
+    // Save dirty to local when post content changes
     useEffect(() => {
-        const postChanged = JSON.stringify(postState)
-        const isDirty = postChanged !== JSON.stringify(post)
-        // TODO: Didnt remove if it redirect from new page
-        if (isDirty && window) {
-            window.localStorage.setItem(postLocalStorageKey, postChanged)
-        } else if (!isDirty && window && initRecoverUnsaved) {
-            // Remove only if user has asked to recover unsaved changes (prevent removed on render)
+        if (!window) return
+        if (!isDirtyPostInitialized.current) return
+
+        const diff = areDifferentPosts(postState, post)
+        if (diff) {
+            if (!isDirty) {
+                onDirtyChange(true)
+                setIsDirty(true)
+            }
+            window.localStorage.setItem(
+                postLocalStorageKey,
+                JSON.stringify(postState)
+            )
+        } else {
+            if (isDirty) {
+                onDirtyChange(false)
+                setIsDirty(false)
+            }
             window.localStorage.removeItem(postLocalStorageKey)
         }
     }, [postState])

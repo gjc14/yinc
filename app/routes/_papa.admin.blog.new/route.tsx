@@ -46,12 +46,14 @@ export default function AdminPost() {
                 <AdminTitle title="New Post"></AdminTitle>
                 <AdminActions>
                     <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button size={'sm'} variant={'destructive'}>
-                                <Trash height={16} width={16} />
-                                <p className="text-xs">Discard</p>
-                            </Button>
-                        </AlertDialogTrigger>
+                        {isDirty && (
+                            <AlertDialogTrigger asChild>
+                                <Button size={'sm'} variant={'destructive'}>
+                                    <Trash height={16} width={16} />
+                                    <p className="text-xs">Discard</p>
+                                </Button>
+                            </AlertDialogTrigger>
+                        )}
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>
@@ -70,6 +72,7 @@ export default function AdminPost() {
                                                 `dirty-post-${-1}`
                                             )
                                         }}
+                                        className="w-full"
                                     >
                                         Discard
                                     </AlertDialogAction>
@@ -78,7 +81,12 @@ export default function AdminPost() {
                         </AlertDialogContent>
                     </AlertDialog>
 
-                    <Button type="submit" form="new-post" size={'sm'}>
+                    <Button
+                        type="submit"
+                        disabled={!isDirty}
+                        form="new-post"
+                        size={'sm'}
+                    >
                         {isSubmitting ? (
                             <Loader2 size={16} className="animate-spin" />
                         ) : (
@@ -103,6 +111,7 @@ export default function AdminPost() {
                     post={generateNewPost(user)}
                     tags={tags}
                     categories={categories}
+                    onDirtyChange={isDirty => setIsDirty(isDirty)}
                 />
             </Form>
         </AdminSectionWrapper>

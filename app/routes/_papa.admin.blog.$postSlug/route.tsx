@@ -1,6 +1,6 @@
 import { Form, Link, useFetcher, useParams } from '@remix-run/react'
 import { ExternalLink, Loader2, Save, Trash } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import {
     AlertDialog,
@@ -38,14 +38,6 @@ export default function AdminPost() {
 
     const [isDirty, setIsDirty] = useState(false)
 
-    const postContent = useMemo(() => {
-        return {
-            ...post,
-            createdAt: new Date(post.createdAt),
-            updatedAt: new Date(post.updatedAt),
-        }
-    }, [post])
-
     const isSubmitting = fetcher.state === 'submitting'
 
     return (
@@ -56,25 +48,40 @@ export default function AdminPost() {
                     description={'Post id: ' + post.id}
                 ></AdminTitle>
                 <AdminActions>
-                    <Link
-                        to={`/blog/${post.slug}?preview=true`}
-                        target="_blank"
-                    >
-                        <Button variant={'link'}>
-                            {postContent.status !== 'PUBLISHED'
-                                ? 'Preview'
-                                : 'See'}{' '}
-                            post
-                            <ExternalLink size={12} />
-                        </Button>
-                    </Link>
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button size={'sm'} variant={'destructive'}>
-                                <Trash height={16} width={16} />
-                                <p className="text-xs">Discard</p>
+                    {post.status !== 'PUBLISHED' ? (
+                        !isDirty ? (
+                            <Link
+                                to={`/blog/${post.slug}?preview=true`}
+                                target="_blank"
+                            >
+                                <Button variant={'link'}>
+                                    Preview post
+                                    <ExternalLink size={12} />
+                                </Button>
+                            </Link>
+                        ) : (
+                            <Button variant={'link'} disabled>
+                                Preview post
+                                <ExternalLink size={12} />
                             </Button>
-                        </AlertDialogTrigger>
+                        )
+                    ) : (
+                        <Link to={`/blog/${post.slug}`} target="_blank">
+                            <Button variant={'link'}>
+                                See post
+                                <ExternalLink size={12} />
+                            </Button>
+                        </Link>
+                    )}
+                    <AlertDialog>
+                        {isDirty && (
+                            <AlertDialogTrigger asChild>
+                                <Button size={'sm'} variant={'destructive'}>
+                                    <Trash height={16} width={16} />
+                                    <p className="text-xs">Discard</p>
+                                </Button>
+                            </AlertDialogTrigger>
+                        )}
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>
@@ -90,9 +97,10 @@ export default function AdminPost() {
                                     <AlertDialogAction
                                         onClick={() => {
                                             window.localStorage.removeItem(
-                                                `dirty-post-${postContent.id}`
+                                                `dirty-post-${post.id}`
                                             )
                                         }}
+                                        className="w-full"
                                     >
                                         Discard
                                     </AlertDialogAction>
@@ -101,7 +109,12 @@ export default function AdminPost() {
                         </AlertDialogContent>
                     </AlertDialog>
 
-                    <Button type="submit" form="update-post" size={'sm'}>
+                    <Button
+                        type="submit"
+                        disabled={!isDirty}
+                        form="update-post"
+                        size={'sm'}
+                    >
                         {isSubmitting ? (
                             <Loader2 size={16} className="animate-spin" />
                         ) : (
@@ -123,9 +136,10 @@ export default function AdminPost() {
                 }}
             >
                 <PostContent
-                    post={postContent}
+                    post={post}
                     tags={tags}
                     categories={categories}
+                    onDirtyChange={isDirty => setIsDirty(isDirty)}
                 />
             </Form>
         </AdminSectionWrapper>
