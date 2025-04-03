@@ -19,12 +19,14 @@ import {
  */
 export const createCategory = async ({
     name,
+    description = '',
 }: {
     name: string
+    description?: string
 }): Promise<{ category: Category }> => {
     const [category] = await db
         .insert(categoriesTable)
-        .values({ name, slug: generateSlug(name), description: '' })
+        .values({ name, slug: generateSlug(name), description })
         .returning()
     return { category }
 }
@@ -50,15 +52,17 @@ export const deleteCategory = async (
 
 // Subcategory functions
 export const createSubcategory = async ({
-    name,
     categoryId,
+    name,
+    description = '',
 }: {
-    name: string
     categoryId: number
+    name: string
+    description?: string
 }): Promise<{ subcategory: SubCategory }> => {
     const [subcategory] = await db
         .insert(subCategoriesTable)
-        .values({ name, categoryId, slug: generateSlug(name), description: '' })
+        .values({ name, categoryId, slug: generateSlug(name), description })
         .returning()
     return { subcategory }
 }
@@ -83,12 +87,14 @@ export const deleteSubcategory = async (
 // Tag functions
 export const createTag = async ({
     name,
+    description = '',
 }: {
     name: string
+    description?: string
 }): Promise<{ tag: Tag }> => {
     const [tag] = await db
         .insert(tagsTable)
-        .values({ name, slug: generateSlug(name), description: '' })
+        .values({ name, slug: generateSlug(name), description })
         .returning()
     return { tag }
 }
