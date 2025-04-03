@@ -36,7 +36,7 @@ export const Hero = () => {
                     </svg>
                 </motion.div>
 
-                <article className="px-8 pb-8 md:py-16 lg:p-16 space-y-8 leading-4">
+                <div className="px-8 pb-8 md:py-16 lg:p-16 space-y-8 leading-4">
                     <motion.h2
                         {...fade()}
                         className="leading text-2xl font-bold mt-1"
@@ -54,28 +54,19 @@ export const Hero = () => {
                         / page. You could also find some useful components in
                         /app/components. 🚀
                     </motion.p>
-                    <motion.ul {...fade()} className="pl-3">
-                        <li>
-                            Papa is built on top of&nbsp;
-                            <a
-                                href="https://reactrouter.com/home"
-                                aria-label="Go to React Router v7 docs"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="Go to the React Router v7 docs"
-                            >
-                                <strong>React Router v7</strong>
-                            </a>
-                            .
-                        </li>
-                        {/* <li>
-                            You could add new plugin via cli&nbsp;
-                            <span className="bg-zinc-300 dark:bg-zinc-700 py-0.5 px-1 rounded">
-                                papa add {'<name>.plugin'}
-                            </span>
-                            , and add a papa.config.ts file.
-                        </li> */}
-                    </motion.ul>
+                    <motion.p {...fade()}>
+                        Papa is built on top of&nbsp;
+                        <a
+                            href="https://reactrouter.com/home"
+                            aria-label="Go to React Router v7 docs"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Go to the React Router v7 docs"
+                        >
+                            <strong>React Router v7</strong>
+                        </a>
+                        .
+                    </motion.p>
 
                     <div className="flex gap-3">
                         <a
@@ -97,7 +88,7 @@ export const Hero = () => {
                             <GitHubLogoIcon className="w-5 h-5" />
                         </a>
                     </div>
-                </article>
+                </div>
             </div>
         </section>
     )

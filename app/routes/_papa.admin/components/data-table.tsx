@@ -85,6 +85,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <section>
+            {/* TODO: remove pb-3 that will take space even no children and hideColumFilter is true */}
             <div className="flex pb-3 gap-2">
                 {children && children(table)}
 
@@ -148,6 +149,7 @@ export function DataTable<TData, TValue>({
                     ))}
                 </TableHeader>
                 <TableBody>
+                    {/* TODO: Hide if no select column */}
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map(row => (
                             <TableRow

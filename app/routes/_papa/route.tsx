@@ -28,7 +28,7 @@ export function ErrorBoundary() {
                         className="flex items-center space-x-2 text-base font-light"
                     >
                         <h2 className="text-base font-light">
-                            {error.statusText}
+                            {error.statusText ?? 'Error'}
                         </h2>
                         <Undo2 size={16} />
                     </Link>

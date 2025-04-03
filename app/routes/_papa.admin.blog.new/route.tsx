@@ -14,10 +14,8 @@ import {
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import {
-    generatePostSlug,
-    PostContentEdit,
-} from '~/routes/_papa.admin.blog.$postId/post-content'
+import { generateSlug } from '~/lib/utils'
+import { PostContentEdit } from '~/routes/_papa.admin.blog.$postSlug/post-content'
 import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 import {
     AdminActions,
@@ -100,7 +98,7 @@ export default function AdminPost() {
                         formData.set('title', title)
                     }
                     if (!slug) {
-                        slug = generatePostSlug(title)
+                        slug = generateSlug(title)
                         formData.set('slug', slug)
                     }
 

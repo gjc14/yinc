@@ -127,6 +127,7 @@ export const columns: ColumnDef<BlogLoaderType['posts'][number]>[] = [
         header: 'Edit',
         cell: ({ row }) => {
             const id = row.original.id
+            const slug = row.original.slug
             const title = row.original.title
 
             return (
@@ -135,7 +136,7 @@ export const columns: ColumnDef<BlogLoaderType['posts'][number]>[] = [
                     id={id}
                     deleteTarget={title}
                 >
-                    <Link to={`/admin/blog/${id}`}>
+                    <Link to={`/admin/blog/${slug}`}>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                     </Link>
                 </AdminDataTableMoreMenu>

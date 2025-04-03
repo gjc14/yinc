@@ -25,9 +25,9 @@ import {
 export default function AdminPost() {
     const fetcher = useFetcher()
     const params = useParams()
-    const postId = params.postId
+    const postSlug = params.postSlug
     const { posts, tags, categories } = useAdminBlogContext()
-    const post = posts.find(p => p.id === Number(postId))
+    const post = posts.find(p => p.slug === postSlug)
 
     if (!post) {
         return (
