@@ -7,7 +7,7 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { SubCategory } from '~/lib/db/schema'
-import { generateSlug } from '~/lib/utils'
+import { generateSlug } from '~/lib/utils/seo'
 import {
     AdminActions,
     AdminHeader,

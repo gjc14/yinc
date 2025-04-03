@@ -3,7 +3,7 @@ import { ClientLoaderFunctionArgs, useLoaderData } from '@remix-run/react'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
-import { createMeta } from '~/lib/utils'
+import { createMeta } from '~/lib/utils/seo'
 import { SectionWrapper } from '../components/max-width-wrapper'
 import { PostCollection } from '../components/posts'
 

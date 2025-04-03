@@ -14,7 +14,7 @@ import {
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { generateSlug } from '~/lib/utils'
+import { generateSlug } from '~/lib/utils/seo'
 import { PostContentEdit } from '~/routes/_papa.admin.blog.$postSlug/post-content'
 import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 import {

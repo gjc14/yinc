@@ -9,7 +9,7 @@ import { data, LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 
 import { getSEO } from '~/lib/db/seo.server'
-import { createMeta } from '~/lib/utils'
+import { createMeta } from '~/lib/utils/seo'
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     if (!data || !data.meta) {

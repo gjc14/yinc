@@ -4,7 +4,7 @@
 import { eq } from 'drizzle-orm'
 
 import { db } from '~/lib/db/db.server'
-import { generateSlug } from '../utils'
+import { generateSlug } from '../utils/seo'
 import {
     categoriesTable,
     Category,
