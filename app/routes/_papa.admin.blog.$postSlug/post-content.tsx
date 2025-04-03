@@ -27,6 +27,7 @@ import {
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { Category, Post, PostStatus, Seo, Tag } from '~/lib/db/schema'
+import { generateSlug } from '~/lib/utils'
 
 export type PostContentEdit = Post & {
     seo: {
@@ -40,15 +41,6 @@ interface PostContentProps {
     onPostChange?: (post: PostContentEdit, dirty: boolean) => void
     tags: any
     categories: any
-}
-
-export const generatePostSlug = (title: string) => {
-    return title
-        .replace(/^\s+|\s+$/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9 -]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
 }
 
 // TODO: Add featured image; edit author; publish schedule
@@ -278,7 +270,7 @@ export const PostContent = ({
                             type="button"
                             variant={'secondary'}
                             onClick={() => {
-                                const slug = generatePostSlug(postState.title)
+                                const slug = generateSlug(postState.title)
 
                                 setPostState(prev => {
                                     const newPost = {

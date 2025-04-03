@@ -6,7 +6,6 @@ import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { TaxonomyDialog } from '~/routes/_papa.admin.blog.taxonomy/components/taxonomy'
 import {
     AdminActions,
     AdminHeader,
@@ -50,12 +49,6 @@ export default function AdminPost() {
             <AdminHeader>
                 <AdminTitle title="Posts"></AdminTitle>
                 <AdminActions>
-                    <TaxonomyDialog
-                        tagsState={tagsState}
-                        setTagsState={setTagsState}
-                        categoriesState={categoriesState}
-                        setCategoriesState={setCategoriesState}
-                    />
                     <Link to="/admin/blog/new">
                         <Button size={'sm'}>
                             <PlusCircle size={16} />
