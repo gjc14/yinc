@@ -36,6 +36,9 @@ export const getCategories = async (): Promise<{
 }> => {
     const categories = await db.query.categoriesTable.findMany({
         with: { subCategories: true },
+        orderBy: (table, { asc }) => {
+            return asc(table.id)
+        },
     })
     return { categories }
 }
@@ -70,7 +73,11 @@ export const createSubcategory = async ({
 export const getSubcategories = async (): Promise<{
     subcategories: SubCategory[]
 }> => {
-    const subcategories = await db.query.subCategoriesTable.findMany()
+    const subcategories = await db.query.subCategoriesTable.findMany({
+        orderBy: (table, { asc }) => {
+            return asc(table.id)
+        },
+    })
     return { subcategories }
 }
 
@@ -100,7 +107,11 @@ export const createTag = async ({
 }
 
 export const getTags = async (): Promise<{ tags: Tag[] }> => {
-    const tags = await db.query.tagsTable.findMany()
+    const tags = await db.query.tagsTable.findMany({
+        orderBy: (table, { asc }) => {
+            return asc(table.id)
+        },
+    })
     return { tags }
 }
 

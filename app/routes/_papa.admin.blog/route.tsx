@@ -1,6 +1,6 @@
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
 
-import { getCategories, getTags } from '~/lib/db/blog-taxonomy.server'
+import { getCategories, getTags } from '~/lib/db/taxonomy.server'
 import { getPosts } from '~/lib/db/post.server'
 import { useAdminContext } from '~/routes/_papa.admin/route'
 

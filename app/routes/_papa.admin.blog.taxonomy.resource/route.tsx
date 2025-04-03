@@ -12,7 +12,7 @@ import {
     deleteCategory,
     deleteSubcategory,
     deleteTag,
-} from '~/lib/db/blog-taxonomy.server'
+} from '~/lib/db/taxonomy.server'
 import { Category, SubCategory, Tag } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
 
