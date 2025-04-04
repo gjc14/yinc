@@ -1,6 +1,6 @@
 import { Link, useFetcher, useParams } from '@remix-run/react'
 import { ExternalLink, Loader2, Save, Trash } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import {
     AlertDialog,
@@ -37,8 +37,6 @@ export default function AdminPost() {
     const post = posts.find(p => p.slug === postSlug)
 
     const isSubmitting = fetcher.state === 'submitting'
-
-    useEffect(() => {}, [fetcher])
 
     if (!post) {
         return (

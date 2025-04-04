@@ -1,6 +1,7 @@
-import { Link, useFetcher } from '@remix-run/react'
+import { Link, useFetcher, useNavigate, useNavigation } from '@remix-run/react'
 import { Loader2, PlusCircle, Trash } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { FullScreenLoading } from '~/components/loading'
 
 import {
     AlertDialog,
@@ -30,16 +31,35 @@ import {
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
 
-export default function AdminPost() {
-    const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()
+export default function AdminNewPost() {
+    const fetcher = useFetcher<ConventionalActionResponse<{ slug: string }>>()
+    const navigate = useNavigate()
+    const navigation = useNavigation()
+
     const { tags, categories, admin } = useAdminBlogContext()
+
     const postContentRef = useRef<PostContentHandle>(null)
     const [isDirty, setIsDirty] = useState(false)
 
     const isSubmitting = fetcher.state === 'submitting'
+    const isNavigating = navigation.state === 'loading'
+
+    useEffect(() => {
+        if (fetcher.state === 'loading' && fetcher.data) {
+            const { err, data } = fetcher.data
+            if (!err) {
+                navigate(`/admin/blog/${data?.slug}`)
+            } else {
+                console.error('Error creating post:', err)
+            }
+        }
+    }, [fetcher])
 
     return (
-        <AdminSectionWrapper>
+        <AdminSectionWrapper
+            className={`${isNavigating ? 'overflow-hidden' : ''}`}
+        >
+            {isNavigating && <FullScreenLoading contained />}
             <AdminHeader>
                 <AdminTitle title="New Post"></AdminTitle>
                 <AdminActions>
@@ -133,7 +153,9 @@ export default function AdminPost() {
                         ) : (
                             <PlusCircle size={16} />
                         )}
-                        <p className="text-xs">Create</p>
+                        <p className="text-xs">
+                            {isSubmitting ? 'Create' : 'Creating'}
+                        </p>
                     </Button>
                 </AdminActions>
             </AdminHeader>

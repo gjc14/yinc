@@ -62,7 +62,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
                 return {
                     msg: `Post ${post.title} created successfully`,
-                } satisfies ConventionalActionResponse
+                    data: {
+                        slug: post.slug,
+                    },
+                } satisfies ConventionalActionResponse<{ slug: string }>
             } catch (error) {
                 return handleError(error, request)
             }

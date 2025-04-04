@@ -1,3 +1,4 @@
+import { useFetcher, useNavigate } from '@remix-run/react'
 import {
     forwardRef,
     useEffect,
@@ -8,6 +9,7 @@ import {
 import { toast } from 'sonner'
 
 import DefaultTipTap, { EditorRef } from '~/components/editor/default-tiptap'
+import { FullScreenLoading } from '~/components/loading'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -32,6 +34,7 @@ import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { Category, PostStatus, Tag } from '~/lib/db/schema'
+import { ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
 import { areDifferentPosts } from './utils'
@@ -51,6 +54,9 @@ export interface PostContentHandle {
 // TODO: Editor upload image; link setting popup
 export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
     ({ post, tags, categories, onDirtyChange }, ref) => {
+        const fetcher = useFetcher<ConventionalActionResponse>()
+        const navigate = useNavigate()
+
         const editorRef = useRef<EditorRef | null>(null)
         const contentWrapperRef = useRef<HTMLDivElement>(null)
         const isDirtyPostInitialized = useRef(false)
@@ -102,9 +108,18 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
             []
         )
 
+        const isDeleting = fetcher.state !== 'idle'
+
         const handleDelete = () => {
-            toast.error(
-                'This feature is not implemented yet. Please delete the post from the list.'
+            fetcher.submit(
+                {
+                    id: postState.id,
+                },
+                {
+                    method: 'DELETE',
+                    action: '/admin/blog',
+                    encType: 'application/json',
+                }
             )
         }
 
@@ -146,12 +161,26 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
             }
         }, [postState])
 
+        useEffect(() => {
+            if (fetcher.state === 'loading' && fetcher.data) {
+                const { err } = fetcher.data
+                if (!err) {
+                    navigate('/admin/blog')
+                }
+            }
+        }, [fetcher])
+
         useImperativeHandle(ref, () => ({
             getPostState: () => postState,
         }))
 
         return (
-            <div className="w-full flex flex-wrap justify-center gap-5">
+            <div
+                className={`w-full flex flex-wrap justify-center gap-5 ${
+                    isDeleting ? ' overflow-hidden' : ''
+                }`}
+            >
+                {isDeleting && <FullScreenLoading contained />}
                 <AlertDialog
                     open={openRecoverAlert}
                     onOpenChange={setOpenRecoverAlert}
@@ -456,20 +485,26 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
                         </Button>
                     </div>
 
-                    <Separator />
+                    {postState.id !== -1 && (
+                        <>
+                            <Separator />
 
-                    <div className="w-full flex flex-col p-3 bg-destructive/70 border rounded-lg space-y-3">
-                        <h4>⚠️ Danger Zone</h4>
-                        <div className="flex items-center justify-between border rounded-md py-1 px-2 bg-muted/60">
-                            <div className="flex flex-col gap-0.5">
-                                <p>Delete this post</p>
-                                <p className="text-destructive-foreground/60">
-                                    This action cannot be undone.
-                                </p>
+                            <div className="w-full flex flex-col p-3 bg-destructive/70 border rounded-lg space-y-3">
+                                <h4>⚠️ Danger Zone</h4>
+                                <div className="flex items-center justify-between border rounded-md py-1 px-2 bg-muted/60">
+                                    <div className="flex flex-col gap-0.5">
+                                        <p>Delete this post</p>
+                                        <p className="text-destructive-foreground/60">
+                                            This action cannot be undone.
+                                        </p>
+                                    </div>
+                                    <Button onClick={handleDelete}>
+                                        Delete Post
+                                    </Button>
+                                </div>
                             </div>
-                            <Button onClick={handleDelete}>Delete Post</Button>
-                        </div>
-                    </div>
+                        </>
+                    )}
                 </section>
             </div>
         )
