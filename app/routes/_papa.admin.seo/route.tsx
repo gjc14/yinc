@@ -1,5 +1,5 @@
 import { ActionFunctionArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { PlusCircle } from 'lucide-react'
 import { useState } from 'react'
@@ -163,6 +163,7 @@ export const columns: ColumnDef<SeoLoaderType>[] = [
         accessorKey: 'id',
         header: 'Edit',
         cell: ({ row }) => {
+            const fetcher = useFetcher()
             const [open, setOpen] = useState(false)
             const id = row.original.id
             const deleteTarget = row.original.metaTitle ?? undefined
@@ -170,9 +171,18 @@ export const columns: ColumnDef<SeoLoaderType>[] = [
             return (
                 <>
                     <AdminDataTableMoreMenu
-                        route="seo"
                         id={id}
                         deleteTarget={deleteTarget}
+                        onDelete={() => {
+                            fetcher.submit(
+                                { id },
+                                {
+                                    method: 'DELETE',
+                                    action: `/admin/seo/${id}/delete`,
+                                    encType: 'application/json',
+                                }
+                            )
+                        }}
                     >
                         <DropdownMenuItem onClick={() => setOpen(true)}>
                             Edit

@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react'
+import { Link, useFetcher } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
@@ -118,15 +118,26 @@ export const columns: ColumnDef<PostLoaded>[] = [
         accessorKey: 'id',
         header: 'Edit',
         cell: ({ row }) => {
+            const fetcher = useFetcher()
+
             const id = row.original.id
             const slug = row.original.slug
             const title = row.original.title
 
             return (
                 <AdminDataTableMoreMenu
-                    route="blog"
                     id={id}
                     deleteTarget={title}
+                    onDelete={() => {
+                        fetcher.submit(
+                            { id },
+                            {
+                                method: 'DELETE',
+                                action: `/admin/blog/${id}/delete`,
+                                encType: 'application/json',
+                            }
+                        )
+                    }}
                 >
                     <Link to={`/admin/blog/${slug}`}>
                         <DropdownMenuItem>Edit</DropdownMenuItem>

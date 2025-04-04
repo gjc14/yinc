@@ -193,6 +193,7 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
         accessorKey: 'id',
         header: 'Edit',
         cell: ({ row }) => {
+            const fetcher = useFetcher()
             const [open, setOpen] = useState(false)
             const id = row.original.id
             const userEmail = row.original.email
@@ -200,9 +201,18 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
             return (
                 <>
                     <AdminDataTableMoreMenu
-                        route="users/admins"
                         id={id}
                         deleteTarget={userEmail}
+                        onDelete={() => {
+                            fetcher.submit(
+                                { id },
+                                {
+                                    method: 'DELETE',
+                                    action: `/admin/users/admins/${id}/delete`,
+                                    encType: 'application/json',
+                                }
+                            )
+                        }}
                     >
                         <DropdownMenuItem onClick={() => setOpen(true)}>
                             Edit

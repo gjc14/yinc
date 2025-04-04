@@ -207,17 +207,17 @@ export function DataTable<TData, TValue>({
 }
 
 export const AdminDataTableMoreMenu = ({
-    route,
     id,
     children,
     hideDelete,
     deleteTarget,
+    onDelete,
 }: {
-    route: string
     id: number
     children?: ReactNode
     hideDelete?: boolean
     deleteTarget?: string
+    onDelete?: () => void
 }) => {
     const fetcher = useFetcher()
     const [open, setOpen] = useState(false)
@@ -275,12 +275,7 @@ export const AdminDataTableMoreMenu = ({
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            onClick={() =>
-                                fetcher.submit(null, {
-                                    method: 'DELETE',
-                                    action: `/admin/${route}/${id}/delete`,
-                                })
-                            }
+                            onClick={onDelete}
                         >
                             Continue
                         </AlertDialogAction>
