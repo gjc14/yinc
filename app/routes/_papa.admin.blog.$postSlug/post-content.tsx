@@ -26,6 +26,7 @@ import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { Category, PostStatus, Tag } from '~/lib/db/schema'
+import { useDebounce } from '~/lib/utils/debounce'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
 import { areDifferentPosts } from './utils'
 
@@ -72,6 +73,29 @@ export const PostContent = ({
         isDirtyPostInitialized.current = true
     }
 
+    const debouncedContentUpdate = useDebounce(
+        (content: string) => {
+            setPostState(prev => ({
+                ...prev,
+                content,
+            }))
+        },
+        500,
+        []
+    )
+
+    const debouncedLocalStorageUpdate = useDebounce(
+        (post: PostWithRelations) => {
+            if (!window) return
+            window.localStorage.setItem(
+                postLocalStorageKey,
+                JSON.stringify(post)
+            )
+        },
+        500,
+        []
+    )
+
     // Initialize recover/discard unsaved changes
     // If not dirty initialized, if dirty initialized after recover/discard
     useEffect(() => {
@@ -99,10 +123,7 @@ export const PostContent = ({
                 onDirtyChange(true)
                 setIsDirty(true)
             }
-            window.localStorage.setItem(
-                postLocalStorageKey,
-                JSON.stringify(postState)
-            )
+            debouncedLocalStorageUpdate(postState)
         } else {
             if (isDirty) {
                 onDirtyChange(false)
@@ -173,13 +194,7 @@ export const PostContent = ({
                             ref={editorRef}
                             content={postState.content || undefined}
                             onUpdate={({ toJSON }) => {
-                                setPostState(prev => {
-                                    const newPost = {
-                                        ...prev,
-                                        content: toJSON(),
-                                    }
-                                    return newPost
-                                })
+                                debouncedContentUpdate(toJSON())
                             }}
                             onFocus={() => {
                                 contentWrapperRef.current?.classList.add(
