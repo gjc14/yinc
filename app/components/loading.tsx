@@ -11,9 +11,22 @@ export const Loading = ({
     return <Loader2 size={size} className={cn('animate-spin', className)} />
 }
 
-export const FullScreenLoading = () => {
+export const FullScreenLoading = ({
+    contained = false,
+    className,
+}: {
+    contained?: boolean
+    className?: string
+}) => {
     return (
-        <div className="z-[9999] fixed inset-0 flex justify-center items-center backdrop-blur-md">
+        <div
+            className={cn(
+                `z-[9999] ${
+                    contained ? 'absolute' : 'fixed'
+                } inset-0 flex justify-center items-center backdrop-blur-md`,
+                className
+            )}
+        >
             <SymmetrySpinner />
         </div>
     )
