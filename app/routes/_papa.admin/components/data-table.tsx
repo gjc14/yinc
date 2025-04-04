@@ -7,6 +7,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    RowSelectionState,
     SortingState,
     Table as TableType,
     useReactTable,
@@ -14,6 +15,7 @@ import {
 } from '@tanstack/react-table'
 import { EyeOff, Loader2, MoreHorizontal } from 'lucide-react'
 import { ReactNode, useState } from 'react'
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,6 +27,7 @@ import {
     AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
+import { Checkbox } from '~/components/ui/checkbox'
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -48,6 +51,9 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
     children?: (table: TableType<TData>) => React.ReactNode
     hideColumnFilter?: boolean
+    selectable?: boolean
+    rowSelection?: RowSelectionState
+    setRowSelection?: React.Dispatch<React.SetStateAction<RowSelectionState>>
 }
 
 // TODO: all filterable and sortable columns
@@ -56,17 +62,33 @@ export function DataTable<TData, TValue>({
     data,
     children,
     hideColumnFilter,
+    selectable = true,
+    rowSelection: externalRowSelection,
+    setRowSelection: externalSetRowSelection,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const [rowSelection, setRowSelection] = useState({})
+
+    const [internalRowSelection, setInternalRowSelection] =
+        useState<RowSelectionState>({})
+    const rowSelection =
+        externalRowSelection !== undefined
+            ? externalRowSelection
+            : internalRowSelection
+    const setRowSelection =
+        externalSetRowSelection !== undefined
+            ? externalSetRowSelection
+            : setInternalRowSelection
 
     const table = useReactTable({
         data,
-        columns,
+        columns: [
+            ...(selectable ? [createSelectColumn<TData>()] : []),
+            ...columns,
+        ],
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
@@ -84,9 +106,8 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <section>
-            {/* TODO: remove pb-3 that will take space even no children and hideColumFilter is true */}
-            <div className="flex pb-3 gap-2">
+        <section className="flex flex-col gap-3">
+            <div className="flex gap-2">
                 {children && children(table)}
 
                 {!hideColumnFilter && (
@@ -149,7 +170,6 @@ export function DataTable<TData, TValue>({
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {/* TODO: Hide if no select column */}
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map(row => (
                             <TableRow
@@ -181,10 +201,13 @@ export function DataTable<TData, TValue>({
                 </TableBody>
             </Table>
             <div className="flex items-center justify-end space-x-2 pt-4">
-                <div className="flex-1 text-sm text-muted-foreground pl-2.5">
-                    {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
+                {selectable && (
+                    <div className="flex-1 text-sm text-muted-foreground pl-2.5">
+                        {table.getFilteredSelectedRowModel().rows.length} of{' '}
+                        {table.getFilteredRowModel().rows.length} row(s)
+                        selected.
+                    </div>
+                )}
                 <Button
                     variant="outline"
                     size="sm"
@@ -204,6 +227,35 @@ export function DataTable<TData, TValue>({
             </div>
         </section>
     )
+}
+
+function createSelectColumn<T>(): ColumnDef<T> {
+    return {
+        id: '_select',
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && 'indeterminate')
+                }
+                onCheckedChange={value =>
+                    table.toggleAllPageRowsSelected(!!value)
+                }
+                aria-label="Select all"
+                className="mr-1"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={value => row.toggleSelected(!!value)}
+                aria-label="Select row"
+                className="mr-1"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    }
 }
 
 export const AdminDataTableMoreMenu = ({
