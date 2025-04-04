@@ -1,6 +1,6 @@
-import { Form, Link, useFetcher, useParams } from '@remix-run/react'
+import { Link, useFetcher, useParams } from '@remix-run/react'
 import { ExternalLink, Loader2, Save, Trash } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
     AlertDialog,
@@ -14,6 +14,8 @@ import {
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
+import { PostWithRelations } from '~/lib/db/post.server'
+import { ConventionalActionResponse } from '~/lib/utils'
 import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 import {
     AdminActions,
@@ -21,13 +23,16 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
-import { PostContent } from './post-content'
+import { PostContent, PostContentHandle } from './post-content'
 
 export default function AdminPost() {
-    const fetcher = useFetcher()
+    const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()
     const params = useParams()
-    const postSlug = params.postSlug
     const { posts, tags, categories } = useAdminBlogContext()
+    const postContentRef = useRef<PostContentHandle>(null)
+    const [isDirty, setIsDirty] = useState(false)
+
+    const postSlug = params.postSlug
     const post = posts.find(p => p.slug === postSlug)
 
     if (!post) {
@@ -36,9 +41,9 @@ export default function AdminPost() {
         )
     }
 
-    const [isDirty, setIsDirty] = useState(false)
-
     const isSubmitting = fetcher.state === 'submitting'
+
+    useEffect(() => {}, [fetcher])
 
     return (
         <AdminSectionWrapper>
@@ -111,9 +116,23 @@ export default function AdminPost() {
 
                     <Button
                         type="submit"
-                        disabled={!isDirty}
-                        form="update-post"
                         size={'sm'}
+                        disabled={!isDirty}
+                        onClick={() => {
+                            const postState =
+                                postContentRef.current?.getPostState()
+                            if (!postState) return
+
+                            fetcher.submit(JSON.stringify(postState), {
+                                method: 'PUT', // Update
+                                encType: 'application/json',
+                                action: '/admin/blog',
+                            })
+
+                            // TODO: Handle form submission
+                            // setIsDirty(false)
+                            // window.localStorage.removeItem(`dirty-post-${post.id}`)
+                        }}
                     >
                         {isSubmitting ? (
                             <Loader2 size={16} className="animate-spin" />
@@ -125,23 +144,13 @@ export default function AdminPost() {
                 </AdminActions>
             </AdminHeader>
 
-            <Form
-                id="update-post"
-                onSubmit={e => {
-                    e.preventDefault()
-                    fetcher.submit(e.currentTarget, { method: 'PUT' })
-                    setIsDirty(false)
-
-                    // window.localStorage.removeItem(`dirty-post-${post.id}`)  // Remove after saved
-                }}
-            >
-                <PostContent
-                    post={post}
-                    tags={tags}
-                    categories={categories}
-                    onDirtyChange={isDirty => setIsDirty(isDirty)}
-                />
-            </Form>
+            <PostContent
+                ref={postContentRef}
+                post={post}
+                tags={tags}
+                categories={categories}
+                onDirtyChange={isDirty => setIsDirty(isDirty)}
+            />
         </AdminSectionWrapper>
     )
 }

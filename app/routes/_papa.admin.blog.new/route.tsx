@@ -1,6 +1,6 @@
 import { Form, Link, useFetcher } from '@remix-run/react'
 import { Loader2, PlusCircle, Trash } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import {
     AlertDialog,
@@ -16,7 +16,11 @@ import {
 import { Button } from '~/components/ui/button'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, User } from '~/lib/db/schema'
-import { PostContent } from '~/routes/_papa.admin.blog.$postSlug/post-content'
+import { ConventionalActionResponse } from '~/lib/utils'
+import {
+    PostContent,
+    PostContentHandle,
+} from '~/routes/_papa.admin.blog.$postSlug/post-content'
 import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 import {
     AdminActions,
@@ -26,8 +30,9 @@ import {
 } from '~/routes/_papa.admin/components/admin-wrapper'
 
 export default function AdminPost() {
-    const fetcher = useFetcher()
+    const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()
     const { tags, categories, admin } = useAdminBlogContext()
+    const postContentRef = useRef<PostContentHandle>(null)
     const [isDirty, setIsDirty] = useState(false)
 
     const isSubmitting = fetcher.state === 'submitting'
@@ -75,37 +80,41 @@ export default function AdminPost() {
 
                     <Button
                         type="submit"
-                        disabled={!isDirty}
-                        form="new-post"
                         size={'sm'}
+                        disabled={!isDirty}
+                        onClick={() => {
+                            const postState =
+                                postContentRef.current?.getPostState()
+                            if (!postState) return
+
+                            fetcher.submit(JSON.stringify(postState), {
+                                method: 'POST', // Create
+                                encType: 'application/json',
+                                action: '/admin/blog',
+                            })
+
+                            // TODO: Handle form submission
+                            // setIsDirty(false)
+                            // window.localStorage.removeItem(`dirty-post-${post.id}`)
+                        }}
                     >
                         {isSubmitting ? (
                             <Loader2 size={16} className="animate-spin" />
                         ) : (
                             <PlusCircle size={16} />
                         )}
-                        <p className="text-xs">Save</p>
+                        <p className="text-xs">Create</p>
                     </Button>
                 </AdminActions>
             </AdminHeader>
 
-            <Form
-                id="new-post"
-                onSubmit={e => {
-                    e.preventDefault()
-                    fetcher.submit(e.currentTarget, { method: 'POST' })
-                    setIsDirty(false)
-
-                    // window.localStorage.removeItem(`dirty-post-${-1}`)  // Remove after saved
-                }}
-            >
-                <PostContent
-                    post={generateNewPost(admin)}
-                    tags={tags}
-                    categories={categories}
-                    onDirtyChange={isDirty => setIsDirty(isDirty)}
-                />
-            </Form>
+            <PostContent
+                ref={postContentRef}
+                post={generateNewPost(admin)}
+                tags={tags}
+                categories={categories}
+                onDirtyChange={isDirty => setIsDirty(isDirty)}
+            />
         </AdminSectionWrapper>
     )
 }
