@@ -36,15 +36,15 @@ export default function AdminPost() {
     const postSlug = params.postSlug
     const post = posts.find(p => p.slug === postSlug)
 
+    const isSubmitting = fetcher.state === 'submitting'
+
+    useEffect(() => {}, [fetcher])
+
     if (!post) {
         return (
             <h2 className="grow flex items-center justify-center">Not found</h2>
         )
     }
-
-    const isSubmitting = fetcher.state === 'submitting'
-
-    useEffect(() => {}, [fetcher])
 
     return (
         <AdminSectionWrapper>
