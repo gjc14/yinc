@@ -16,6 +16,7 @@ import {
 import { Button } from '~/components/ui/button'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { ConventionalActionResponse } from '~/lib/utils'
+import { generateSlug } from '~/lib/utils/seo'
 import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
 import {
     AdminActions,
@@ -123,15 +124,46 @@ export default function AdminPost() {
                                 postContentRef.current?.getPostState()
                             if (!postState) return
 
-                            fetcher.submit(JSON.stringify(postState), {
+                            const date = new Date()
+                            const now = `${date.getFullYear()}/${String(
+                                date.getMonth() + 1
+                            ).padStart(2, '0')}/${String(
+                                date.getDate()
+                            ).padStart(2, '0')}@${String(
+                                date.getHours()
+                            ).padStart(2, '0')}:${String(
+                                date.getMinutes()
+                            ).padStart(2, '0')}:${String(
+                                date.getSeconds()
+                            ).padStart(2, '0')}`
+                            // Remove date fields and set default values
+                            const postReady = {
+                                ...postState,
+                                title: postState.title || `Post-${now}`,
+                                slug:
+                                    postState.slug ||
+                                    generateSlug(
+                                        postState.title || `Post-${now}`
+                                    ),
+                                createdAt: undefined,
+                                updatedAt: undefined,
+                                seo: {
+                                    ...postState.seo,
+                                    createdAt: undefined,
+                                    updatedAt: undefined,
+                                },
+                            }
+
+                            fetcher.submit(JSON.stringify(postReady), {
                                 method: 'PUT', // Update
                                 encType: 'application/json',
                                 action: '/admin/blog',
                             })
 
-                            // TODO: Handle form submission
-                            // setIsDirty(false)
-                            // window.localStorage.removeItem(`dirty-post-${post.id}`)
+                            setIsDirty(false)
+                            window.localStorage.removeItem(
+                                `dirty-post-${post.id}`
+                            )
                         }}
                     >
                         {isSubmitting ? (

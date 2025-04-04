@@ -1,4 +1,4 @@
-import { Form, Link, useFetcher } from '@remix-run/react'
+import { Link, useFetcher } from '@remix-run/react'
 import { Loader2, PlusCircle, Trash } from 'lucide-react'
 import { useRef, useState } from 'react'
 
@@ -17,6 +17,7 @@ import { Button } from '~/components/ui/button'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, User } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
+import { generateSlug } from '~/lib/utils/seo'
 import {
     PostContent,
     PostContentHandle,
@@ -87,15 +88,44 @@ export default function AdminPost() {
                                 postContentRef.current?.getPostState()
                             if (!postState) return
 
-                            fetcher.submit(JSON.stringify(postState), {
+                            const date = new Date()
+                            const now = `${date.getFullYear()}/${String(
+                                date.getMonth() + 1
+                            ).padStart(2, '0')}/${String(
+                                date.getDate()
+                            ).padStart(2, '0')}@${String(
+                                date.getHours()
+                            ).padStart(2, '0')}:${String(
+                                date.getMinutes()
+                            ).padStart(2, '0')}:${String(
+                                date.getSeconds()
+                            ).padStart(2, '0')}`
+                            // Remove date fields and set default values
+                            const postReady = {
+                                ...postState,
+                                title: postState.title || `Post-${now}`,
+                                slug:
+                                    postState.slug ||
+                                    generateSlug(
+                                        postState.title || `Post-${now}`
+                                    ),
+                                createdAt: undefined,
+                                updatedAt: undefined,
+                                seo: {
+                                    ...postState.seo,
+                                    createdAt: undefined,
+                                    updatedAt: undefined,
+                                },
+                            }
+
+                            fetcher.submit(JSON.stringify(postReady), {
                                 method: 'POST', // Create
                                 encType: 'application/json',
                                 action: '/admin/blog',
                             })
 
-                            // TODO: Handle form submission
-                            // setIsDirty(false)
-                            // window.localStorage.removeItem(`dirty-post-${post.id}`)
+                            setIsDirty(false)
+                            window.localStorage.removeItem(`dirty-post-${-1}`)
                         }}
                     >
                         {isSubmitting ? (
