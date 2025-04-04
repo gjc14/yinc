@@ -5,49 +5,39 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export const conventionalSuccessSchema = z.object({
-    msg: z.string(),
-    data: z.unknown().optional(),
-    options: z
-        .object({
-            preventAlert: z.boolean().optional(),
-        })
-        .optional(),
-})
-export type ConventionalSuccess<T = unknown> = {
-    msg: string
+export type ConventionalActionResponse<T = unknown> = {
+    msg?: string
+    err?: string
     data?: T
     options?: {
         preventAlert?: boolean
     }
 }
 
-export const conventionalErrorSchema = z.object({
-    err: z.string(),
-    data: z.unknown().optional(),
-    options: z
-        .object({
-            preventAlert: z.boolean().optional(),
-        })
-        .optional(),
-})
+export type ConventionalSuccess<T = unknown> = {
+    msg: string
+    err?: undefined
+    data?: T
+    options?: {
+        preventAlert?: boolean
+    }
+}
+
 export type ConventionalError<T = unknown> = {
+    msg?: undefined
     err: string
     data?: T
     options?: {
         preventAlert?: boolean
     }
 }
-export type ConventionalActionResponse<T = unknown> =
-    | ConventionalSuccess<T>
-    | ConventionalError<T>
-    | null
 
 export const isConventionalSuccess = (
     fetcherData: unknown
 ): fetcherData is ConventionalSuccess => {
     if (typeof fetcherData !== 'object' || fetcherData === null) return false
     if (!('msg' in fetcherData)) return false
+    if ('err' in fetcherData && fetcherData.err) return false
     return true
 }
 
@@ -55,7 +45,7 @@ export const isConventionalError = (
     fetcherData: unknown
 ): fetcherData is ConventionalError => {
     if (typeof fetcherData !== 'object' || fetcherData === null) return false
-    if (!('err' in fetcherData)) return false
+    if (!('err' in fetcherData) || !fetcherData.err) return false
     return true
 }
 
@@ -64,7 +54,6 @@ export const capitalize = (string: string) => {
 }
 
 import { NavLink } from '@remix-run/react'
-import { z } from 'zod'
 import { BreadcrumbItem, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 
 export const generateBreadcrumbs = (pathname: string) => {

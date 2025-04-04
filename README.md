@@ -165,44 +165,6 @@ npm run dev
 Refer to: [Definitions in lib/utils](./app/lib/utils.tsx)
 
 ```ts
-export const conventionalSuccessSchema = z.object({
-    msg: z.string(),
-    data: z.unknown().optional(),
-    options: z
-        .object({
-            preventAlert: z.boolean().optional(),
-        })
-        .optional(),
-})
-export type ConventionalSuccess<T = unknown> = {
-    msg: string
-    data?: T
-    options?: {
-        preventAlert?: boolean
-    }
-}
-
-export const conventionalErrorSchema = z.object({
-    err: z.string(),
-    data: z.unknown().optional(),
-    options: z
-        .object({
-            preventAlert: z.boolean().optional(),
-        })
-        .optional(),
-})
-export type ConventionalError<T = unknown> = {
-    err: string
-    data?: T
-    options?: {
-        preventAlert?: boolean
-    }
-}
-export type ConventionalActionResponse<T = unknown> =
-    | ConventionalSuccess<T>
-    | ConventionalError<T>
-    | null
-
 return { msg: 'Action success 🎉' } satisfies ConventionalActionResponse
 return { err: 'Something went wrong 🚨' } satisfies ConventionalActionResponse
 ```

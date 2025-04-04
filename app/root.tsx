@@ -28,7 +28,7 @@ import { useCookieTheme } from './hooks/use-cookie-theme'
 import { ClientHintCheck, getHints } from './lib/client-hints/client-hints'
 import { subscribeToSchemeChange } from './lib/client-hints/color-schema'
 import { commitFlashSession, getFlashSession } from './lib/sessions.server'
-import { conventionalErrorSchema, conventionalSuccessSchema } from './lib/utils'
+import { isConventionalError, isConventionalSuccess } from './lib/utils'
 
 export function Layout({ children }: { children: React.ReactNode }) {
     const theme = useCookieTheme()
@@ -137,23 +137,25 @@ export default function App() {
             )
 
             successResponses.forEach(fetcher => {
-                const { success, data, error } =
-                    conventionalSuccessSchema.safeParse(fetcher.data)
-                if (success) {
-                    !data.options?.preventAlert && toast.success(data.msg)
+                if (isConventionalSuccess(fetcher.data)) {
+                    !fetcher.data.options?.preventAlert &&
+                        toast.success(fetcher.data.msg)
                 } else {
-                    console.warn(error)
+                    console.warn(
+                        'Your action response is not a conventional success'
+                    )
                 }
                 cleanedKeys.set(fetcher.key, currentTimestamp)
             })
             errorResponses.forEach(fetcher => {
-                const { success, data, error } =
-                    conventionalErrorSchema.safeParse(fetcher.data)
-                if (success) {
-                    console.error(data.err)
-                    !data.options?.preventAlert && toast.error(data.err)
+                if (isConventionalError(fetcher.data)) {
+                    console.error(fetcher.data.err)
+                    !fetcher.data.options?.preventAlert &&
+                        toast.error(fetcher.data.err)
                 } else {
-                    console.warn(error)
+                    console.warn(
+                        'Your action response is not a conventional error'
+                    )
                 }
                 cleanedKeys.set(fetcher.key, currentTimestamp)
             })
