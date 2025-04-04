@@ -133,7 +133,7 @@ export const columns: ColumnDef<PostLoaded>[] = [
                             { id },
                             {
                                 method: 'DELETE',
-                                action: `/admin/blog/${id}/delete`,
+                                action: `/admin/blog`,
                                 encType: 'application/json',
                             }
                         )
