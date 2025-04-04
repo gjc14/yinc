@@ -1,5 +1,4 @@
-import { LoaderFunctionArgs } from '@remix-run/node'
-import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Form, Link, useFetcher } from '@remix-run/react'
 import { Loader2, PlusCircle, Trash } from 'lucide-react'
 import { useState } from 'react'
 
@@ -15,7 +14,6 @@ import {
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { userIs } from '~/lib/db/auth.server'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, User } from '~/lib/db/schema'
 import { PostContent } from '~/routes/_papa.admin.blog.$postSlug/post-content'
@@ -27,15 +25,9 @@ import {
     AdminTitle,
 } from '~/routes/_papa.admin/components/admin-wrapper'
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const { user } = await userIs(request, ['ADMIN'])
-    return { user }
-}
-
 export default function AdminPost() {
     const fetcher = useFetcher()
-    const { user } = useLoaderData<typeof loader>()
-    const { tags, categories } = useAdminBlogContext()
+    const { tags, categories, admin } = useAdminBlogContext()
     const [isDirty, setIsDirty] = useState(false)
 
     const isSubmitting = fetcher.state === 'submitting'
@@ -108,7 +100,7 @@ export default function AdminPost() {
                 }}
             >
                 <PostContent
-                    post={generateNewPost(user)}
+                    post={generateNewPost(admin)}
                     tags={tags}
                     categories={categories}
                     onDirtyChange={isDirty => setIsDirty(isDirty)}

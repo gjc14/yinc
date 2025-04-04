@@ -23,8 +23,9 @@ export default function AdminBlog() {
     return <Outlet context={{ ...loaderDate, ...adminContext }} />
 }
 
-export type BlogLoaderType = Awaited<ReturnType<typeof loader>>
-
 export const useAdminBlogContext = () => {
-    return useOutletContext<BlogLoaderType>()
+    return useOutletContext<
+        ReturnType<typeof useLoaderData<typeof loader>> &
+            ReturnType<typeof useAdminContext>
+    >()
 }

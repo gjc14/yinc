@@ -59,8 +59,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const MemoAdminSidebar = memo(AdminSidebar)
 
 export default function Admin() {
-    const { admin, pluginRoutes, sidebarStatus } =
-        useLoaderData<typeof loader>()
+    const adminLoaderData = useLoaderData<typeof loader>()
+    const { admin, pluginRoutes, sidebarStatus } = adminLoaderData
     const location = useLocation()
     const breadcrumbPaths = generateBreadcrumbs(location.pathname)
 
@@ -95,7 +95,7 @@ export default function Admin() {
                     </div>
                 </header>
 
-                <Outlet context={{ admin, pluginRoutes }} />
+                <Outlet context={adminLoaderData} />
             </SidebarInset>
         </SidebarProvider>
     )

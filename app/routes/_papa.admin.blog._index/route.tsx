@@ -16,10 +16,7 @@ import {
     AdminDataTableMoreMenu,
     DataTable,
 } from '~/routes/_papa.admin/components/data-table'
-import {
-    useAdminBlogContext,
-    type BlogLoaderType,
-} from '../_papa.admin.blog/route'
+import { useAdminBlogContext } from '../_papa.admin.blog/route'
 
 export default function AdminPost() {
     const { posts, tags, categories } = useAdminBlogContext()
@@ -79,7 +76,9 @@ export default function AdminPost() {
     )
 }
 
-export const columns: ColumnDef<BlogLoaderType['posts'][number]>[] = [
+type PostLoaded = ReturnType<typeof useAdminBlogContext>['posts'][number]
+
+export const columns: ColumnDef<PostLoaded>[] = [
     {
         accessorKey: 'title',
         header: 'Title',
