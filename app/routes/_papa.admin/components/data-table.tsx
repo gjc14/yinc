@@ -14,7 +14,7 @@ import {
     VisibilityState,
 } from '@tanstack/react-table'
 import { EyeOff, Loader2, MoreHorizontal } from 'lucide-react'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 
 import {
     AlertDialog,
@@ -45,6 +45,7 @@ import {
     TableHeader,
     TableRow,
 } from '~/components/ui/table'
+import { cn } from '~/lib/utils'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -54,6 +55,12 @@ interface DataTableProps<TData, TValue> {
     selectable?: boolean
     rowSelection?: RowSelectionState
     setRowSelection?: React.Dispatch<React.SetStateAction<RowSelectionState>>
+    rowGroupStyle?: RowGroupStyle[]
+}
+
+type RowGroupStyle = {
+    className: string
+    rowIds: Set<string>
 }
 
 // TODO: all filterable and sortable columns
@@ -65,6 +72,7 @@ export function DataTable<TData, TValue>({
     selectable = true,
     rowSelection: externalRowSelection,
     setRowSelection: externalSetRowSelection,
+    rowGroupStyle,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -104,6 +112,21 @@ export function DataTable<TData, TValue>({
             rowSelection,
         },
     })
+
+    const getRowClassName = useCallback(
+        (rowId: string) => {
+            if (!rowGroupStyle || rowGroupStyle.length === 0) {
+                return ''
+            }
+
+            const styleGroups = rowGroupStyle
+                ?.filter(rowGroup => rowGroup.rowIds.has(rowId))
+                .map(g => g.className)
+
+            return styleGroups.length > 0 ? styleGroups : ''
+        },
+        [rowGroupStyle]
+    )
 
     return (
         <section className="flex flex-col gap-3">
@@ -171,23 +194,32 @@ export function DataTable<TData, TValue>({
                 </TableHeader>
                 <TableBody>
                     {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map(row => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && 'selected'}
-                                aria-label="table-row"
-                                className="border-border"
-                            >
-                                {row.getVisibleCells().map(cell => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
+                        table.getRowModel().rows.map(row => {
+                            const customClasses = getRowClassName(row.id)
+
+                            return (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={
+                                        row.getIsSelected() && 'selected'
+                                    }
+                                    aria-label="table-row"
+                                    className={cn(
+                                        'border-border',
+                                        customClasses
+                                    )}
+                                >
+                                    {row.getVisibleCells().map(cell => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            )
+                        })
                     ) : (
                         <TableRow>
                             <TableCell
