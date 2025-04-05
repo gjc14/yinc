@@ -291,7 +291,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
                     </div>
                 </section>
 
-                <section className="w-auto max-w-[calc(65ch+1.5rem)] grow flex flex-col gap-5 mb-12">
+                <section className="w-min max-w-[calc(65ch+1.5rem)] grow flex flex-col gap-5 mb-12">
                     <PostMetaPart
                         postState={postState}
                         setPostState={setPostState}
