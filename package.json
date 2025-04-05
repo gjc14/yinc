@@ -6,7 +6,7 @@
     "scripts": {
         "build": "remix vite:build",
         "dev": "remix vite:dev",
-        "init": " tsx scripts/init.ts && npm run db:push && tsx scripts/init-admin.ts",
+        "init": " tsx scripts/init.ts && npm run db:push && tsx scripts/init-admin.ts && npm run dev",
         "create-plugin:admin": "tsx scripts/create-admin-plugin.ts",
         "create-plugin:web": "tsx scripts/create-web-plugin.ts",
         "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
