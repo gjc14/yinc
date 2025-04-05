@@ -29,12 +29,13 @@ import { PostContent, PostContentHandle } from './post-content'
 export default function AdminPost() {
     const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()
     const params = useParams()
-    const { posts, tags, categories } = useAdminBlogContext()
+
+    const { tags, categories, posts } = useAdminBlogContext()
+
     const postContentRef = useRef<PostContentHandle>(null)
     const [isDirty, setIsDirty] = useState(false)
 
-    const postSlug = params.postSlug
-    const post = posts.find(p => p.slug === postSlug)
+    const post = posts.find(p => p.slug === params.postSlug)
 
     const isSubmitting = fetcher.state === 'submitting'
 

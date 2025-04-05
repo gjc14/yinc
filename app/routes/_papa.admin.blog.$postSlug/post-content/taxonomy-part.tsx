@@ -7,6 +7,8 @@ import { MultiSelect } from '~/components/multi-select'
 import { Label } from '~/components/ui/label'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { Category, Tag } from '~/lib/db/schema'
+import { generateNewCategory } from '~/routes/_papa.admin.blog.taxonomy/components/category'
+import { generateNewTag } from '~/routes/_papa.admin.blog.taxonomy/components/tag'
 
 export const TaxonomyPart = ({
     postState,
@@ -38,17 +40,19 @@ export const TaxonomyPart = ({
                                 areSelected.some(s => +s.value === c.id)
                             )
 
-                            setPostState(prev => {
-                                const newPost = {
-                                    ...prev,
-                                    categories: selectedCat,
-                                } satisfies PostWithRelations
-                                return newPost
-                            })
-                        }}
-                        onEnterNewValue={() => {
-                            // TODO: Add to create require state
-                            return 'new-id-' + Date.now()
+                            const newCatValues = areSelected
+                                .filter(
+                                    selected =>
+                                        !categories.some(
+                                            c => String(c.id) === selected.value
+                                        )
+                                )
+                                .map(nc => generateNewCategory(nc.label))
+
+                            setPostState(prev => ({
+                                ...prev,
+                                categories: [...selectedCat, ...newCatValues],
+                            }))
                         }}
                     />
                 </div>
@@ -71,17 +75,19 @@ export const TaxonomyPart = ({
                                 areSelected.some(s => +s.value === t.id)
                             )
 
-                            setPostState(prev => {
-                                const newPost = {
-                                    ...prev,
-                                    tags: selectedTags,
-                                } satisfies PostWithRelations
-                                return newPost
-                            })
-                        }}
-                        onEnterNewValue={() => {
-                            // TODO: Add to create require state
-                            return 'new-id-' + Date.now()
+                            const newTagValues = areSelected
+                                .filter(
+                                    selected =>
+                                        !tags.some(
+                                            t => String(t.id) === selected.value
+                                        )
+                                )
+                                .map(newTag => generateNewTag(newTag.label))
+
+                            setPostState(prev => ({
+                                ...prev,
+                                tags: [...selectedTags, ...newTagValues],
+                            }))
                         }}
                     />
                 </div>
