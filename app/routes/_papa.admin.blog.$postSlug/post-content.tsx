@@ -141,6 +141,18 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
             }
         }, [])
 
+        useEffect(() => {
+            // Every time post loaded, check current edit state with post loaded
+            const diff = areDifferentPosts(postState, post)
+            if (diff) {
+                onDirtyChange(true)
+                setIsDirty(true)
+            } else {
+                onDirtyChange(false)
+                setIsDirty(false)
+            }
+        }, [post])
+
         // Save dirty to local when post content changes
         useEffect(() => {
             if (!window) return
