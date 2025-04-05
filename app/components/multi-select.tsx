@@ -101,7 +101,7 @@ export const MultiSelect = ({
                 }
             }
         },
-        [isComposing, onEnterNewValue]
+        [isComposing, onEnterNewValue, selected]
     )
 
     const selectables = options.filter(option => {
