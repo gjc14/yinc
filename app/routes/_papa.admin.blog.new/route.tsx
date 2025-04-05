@@ -1,6 +1,6 @@
 import { Link, useFetcher, useNavigate, useNavigation } from '@remix-run/react'
 import { Loader2, PlusCircle, Trash } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FullScreenLoading } from '~/components/loading'
 
 import {
@@ -40,6 +40,8 @@ export default function AdminNewPost() {
 
     const postContentRef = useRef<PostContentHandle>(null)
     const [isDirty, setIsDirty] = useState(false)
+
+    const post = useMemo(() => generateNewPost(admin), [admin])
 
     const isSubmitting = fetcher.state === 'submitting'
     const isNavigating = navigation.state === 'loading'
@@ -154,7 +156,7 @@ export default function AdminNewPost() {
                             <PlusCircle size={16} />
                         )}
                         <p className="text-xs">
-                            {isSubmitting ? 'Create' : 'Creating'}
+                            {isSubmitting ? 'Creating...' : 'Create'}
                         </p>
                     </Button>
                 </AdminActions>
@@ -162,7 +164,7 @@ export default function AdminNewPost() {
 
             <PostContent
                 ref={postContentRef}
-                post={generateNewPost(admin)}
+                post={post}
                 tags={tags}
                 categories={categories.map(c => {
                     const { subCategories, ...categoryWithoutSub } = c
