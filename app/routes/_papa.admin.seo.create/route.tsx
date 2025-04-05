@@ -1,5 +1,8 @@
 import { ActionFunctionArgs } from '@remix-run/node'
+import pkg from 'pg'
 import { z } from 'zod'
+
+const { DatabaseError } = pkg
 
 import { userIs } from '~/lib/db/auth.server'
 import { createSEO } from '~/lib/db/seo.server'
@@ -45,6 +48,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} created`,
         } satisfies ConventionalActionResponse)
     } catch (error) {
+        if (error instanceof DatabaseError) {
+            return Response.json({
+                err: error.detail,
+            } satisfies ConventionalActionResponse)
+        }
+
         console.error(error)
         return Response.json({
             err: 'Failed to create SEO',
