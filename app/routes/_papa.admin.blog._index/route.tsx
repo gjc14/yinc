@@ -1,7 +1,7 @@
 import { Link, useFetcher } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, PlusCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
@@ -40,6 +40,12 @@ export default function AdminPost() {
             }
         })
     )
+    const [rowSelection, setRowSelection] = useState({})
+    const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+
+    useEffect(() => {
+        console.log('rowSelection', rowSelection)
+    }, [rowSelection, rowsDeleting])
 
     return (
         <AdminSectionWrapper>
@@ -54,7 +60,24 @@ export default function AdminPost() {
                     </Link>
                 </AdminActions>
             </AdminHeader>
-            <DataTable columns={columns} data={posts} hideColumnFilter>
+            <DataTable
+                columns={columns}
+                data={posts.map(p => {
+                    return {
+                        ...p,
+                        setRowsDeleting,
+                    }
+                })}
+                hideColumnFilter
+                rowSelection={rowSelection}
+                setRowSelection={setRowSelection}
+                rowGroupStyle={[
+                    {
+                        rowIds: rowsDeleting,
+                        className: 'opacity-50 pointer-events-none',
+                    },
+                ]}
+            >
                 {table => (
                     <Input
                         placeholder="Filter title..."
@@ -78,7 +101,11 @@ export default function AdminPost() {
 
 type PostLoaded = ReturnType<typeof useAdminBlogContext>['posts'][number]
 
-export const columns: ColumnDef<PostLoaded>[] = [
+export const columns: ColumnDef<
+    PostLoaded & {
+        setRowsDeleting: React.Dispatch<React.SetStateAction<Set<string>>>
+    }
+>[] = [
     {
         accessorKey: 'title',
         header: 'Title',
@@ -120,9 +147,26 @@ export const columns: ColumnDef<PostLoaded>[] = [
         cell: ({ row }) => {
             const fetcher = useFetcher()
 
+            const rowId = row.id
             const id = row.original.id
             const slug = row.original.slug
             const title = row.original.title
+
+            useEffect(() => {
+                if (fetcher.state !== 'idle') {
+                    row.original.setRowsDeleting(prev => {
+                        const newSet = new Set(prev)
+                        newSet.add(rowId)
+                        return newSet
+                    })
+                } else {
+                    row.original.setRowsDeleting(prev => {
+                        const newSet = new Set(prev)
+                        newSet.delete(rowId)
+                        return newSet
+                    })
+                }
+            }, [fetcher.state])
 
             return (
                 <AdminDataTableMoreMenu
