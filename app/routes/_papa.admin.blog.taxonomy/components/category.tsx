@@ -108,7 +108,7 @@ const SubCategoryComponent = ({
 
 export const generateNewCategory = (newCategoryName: string) => {
     return {
-        id: -Math.random() * 1000,
+        id: -(Math.floor(Math.random() * 2147483648) + 1),
         name: newCategoryName,
         slug: generateSlug(newCategoryName),
         description: '',
@@ -192,7 +192,7 @@ export const generateNewSubCategory = (
     categoryId: number
 ) => {
     return {
-        id: -Math.random() * 1000,
+        id: -(Math.floor(Math.random() * 2147483648) + 1),
         name: newSubcategoryName,
         slug: generateSlug(newSubcategoryName),
         description: '',
