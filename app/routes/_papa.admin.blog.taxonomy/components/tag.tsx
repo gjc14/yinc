@@ -1,18 +1,16 @@
+import { Form, useFetcher, useSubmit } from '@remix-run/react'
 import { CircleX, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 
-import { useFetcher, useSubmit } from '@remix-run/react'
-import { Form } from 'react-router-dom'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { generateSlug } from '~/lib/utils/seo'
+import { actionRoute } from '../route'
 import { TagType } from '../type'
 
-import { actionRoute } from '../route'
-
 // Tag Component
-const TagComponent = ({ tag }: { tag: TagType }) => {
+const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {
     const fetcher = useFetcher()
     const isDeleting = fetcher.state !== 'idle'
 
@@ -26,12 +24,12 @@ const TagComponent = ({ tag }: { tag: TagType }) => {
             <CircleX
                 className={
                     'h-5 w-5' +
-                    (isDeleting
+                    (isDeleting || tag._isPending
                         ? ' opacity-50 cursor-not-allowed'
                         : ' cursor-pointer hover:text-destructive')
                 }
                 onClick={() => {
-                    if (isDeleting) return
+                    if (isDeleting || tag._isPending) return
 
                     fetcher.submit(
                         { id: tag.id, intent: 'tag' },

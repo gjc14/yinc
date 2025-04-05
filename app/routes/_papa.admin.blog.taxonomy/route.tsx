@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 
+import { SubCategory } from '~/lib/db/schema'
 import {
     AdminActions,
     AdminHeader,
@@ -9,6 +10,7 @@ import {
 import { useAdminBlogContext } from '../_papa.admin.blog/route'
 import { CategoriesSection, SubcategoriesSection } from './components/category'
 import { TagsSection } from './components/tag'
+import { CategoryType, TagType } from './type'
 import {
     usePendingCategories,
     usePendingSubCategories,
@@ -24,15 +26,19 @@ export default function AdminTaxonomy() {
         categories: categoriesLoader,
         posts: postsLoader,
     } = useAdminBlogContext()
-    const pendingTags = usePendingTags()
-    const pendingCategories = usePendingCategories()
-    const pendingSubCategories = usePendingSubCategories()
+
+    const pendingTags: (TagType & { _isPending: true })[] =
+        usePendingTags().map(p => ({ ...p, _isPending: true }))
+    const pendingCategories: (CategoryType & { _isPending: true })[] =
+        usePendingCategories().map(p => ({ ...p, _isPending: true }))
+    const pendingSubCategories: (SubCategory & { _isPending: true })[] =
+        usePendingSubCategories().map(p => ({ ...p, _isPending: true }))
 
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
         null
     )
 
-    const tags = useMemo(
+    const tags: (TagType & { _isPending?: true })[] = useMemo(
         () => [
             ...tagsLoader.map(tag => {
                 return {
@@ -50,7 +56,7 @@ export default function AdminTaxonomy() {
         [tagsLoader, postsLoader, pendingTags]
     )
 
-    const categories = useMemo(
+    const categories: (CategoryType & { _isPending?: true })[] = useMemo(
         () => [
             ...categoriesLoader.map(category => {
                 const thisPendingSub = pendingSubCategories.filter(

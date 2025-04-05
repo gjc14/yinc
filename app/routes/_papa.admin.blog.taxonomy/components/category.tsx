@@ -1,8 +1,7 @@
+import { Form, useFetcher, useSubmit } from '@remix-run/react'
 import { CircleX, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 
-import { useFetcher, useSubmit } from '@remix-run/react'
-import { Form } from 'react-router-dom'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
@@ -17,7 +16,7 @@ const CategoryComponent = ({
     selectedCategoryId,
     onClick,
 }: {
-    cat: CategoryType
+    cat: CategoryType & { _isPending?: true }
     selectedCategoryId: number | null
     onClick: () => void
 }) => {
@@ -46,14 +45,14 @@ const CategoryComponent = ({
             <CircleX
                 className={
                     'h-5 w-5' +
-                    (isDeleting
+                    (isDeleting || cat._isPending
                         ? ' opacity-50 cursor-not-allowed'
                         : ' cursor-pointer hover:text-destructive')
                 }
                 onClick={e => {
                     e.stopPropagation()
 
-                    if (isDeleting) return
+                    if (isDeleting || cat._isPending) return
 
                     fetcher.submit(
                         { id: cat.id, intent: 'category' },
@@ -72,7 +71,7 @@ const CategoryComponent = ({
 const SubCategoryComponent = ({
     subcategory,
 }: {
-    subcategory: SubCategory
+    subcategory: SubCategory & { _isPending?: true }
 }) => {
     const fetcher = useFetcher()
     const isDeleting = fetcher.state !== 'idle'
@@ -87,12 +86,12 @@ const SubCategoryComponent = ({
             <CircleX
                 className={
                     'h-5 w-5' +
-                    (isDeleting
+                    (isDeleting || subcategory._isPending
                         ? ' opacity-50 cursor-not-allowed'
                         : ' cursor-pointer hover:text-destructive')
                 }
                 onClick={() => {
-                    if (isDeleting) return
+                    if (isDeleting || subcategory._isPending) return
 
                     fetcher.submit(
                         { id: subcategory.id, intent: 'subcategory' },
