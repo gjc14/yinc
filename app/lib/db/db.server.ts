@@ -11,6 +11,10 @@ if (!process.env.DATABASE_URL) {
 
 export const db = drizzle(process.env.DATABASE_URL, { schema })
 
+export type TransactionType = Parameters<
+    Parameters<(typeof db)['transaction']>[0]
+>[0]
+
 /**
  * Object Storage
  */
