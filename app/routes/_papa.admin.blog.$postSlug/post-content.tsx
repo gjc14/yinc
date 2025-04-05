@@ -61,7 +61,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
         const contentWrapperRef = useRef<HTMLDivElement>(null)
         const isDirtyPostInitialized = useRef(false)
 
-        const [openRecoverAlert, setOpenRecoverAlert] = useState(false) // AlertDialog
+        const [openAlert, setOpenAlert] = useState(false) // AlertDialog
         const [postState, setPostState] = useState<PostWithRelations>(post)
         const [isDirty, setIsDirty] = useState(false)
 
@@ -132,7 +132,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 
                 if (dirtyPost) {
                     if (areDifferentPosts(postState, JSON.parse(dirtyPost))) {
-                        setOpenRecoverAlert(true)
+                        setOpenAlert(true)
                     }
                 } else {
                     isDirtyPostInitialized.current = true
@@ -181,31 +181,56 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
                 }`}
             >
                 {isDeleting && <FullScreenLoading contained />}
-                <AlertDialog
-                    open={openRecoverAlert}
-                    onOpenChange={setOpenRecoverAlert}
-                >
+                <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>
-                                Unsaved changes detected
+                                {isDirtyPostInitialized.current
+                                    ? 'Are you absolutely sure?'
+                                    : 'Unsaved changes detected'}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                Do you want to recover your unsaved changes? For
-                                post <strong>{postState.title}</strong> (id:{' '}
-                                {postState.id})
+                                {isDirtyPostInitialized.current ? (
+                                    <>
+                                        This action cannot be undone. This will
+                                        permanently delete{' '}
+                                        <span className="font-bold text-primary">
+                                            {postState.title}
+                                        </span>{' '}
+                                        (id: {postState.id}).
+                                    </>
+                                ) : (
+                                    <>
+                                        Do you want to recover your unsaved
+                                        changes? For post{' '}
+                                        <strong>{postState.title}</strong> (id:{' '}
+                                        {postState.id})
+                                    </>
+                                )}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel
-                                onClick={removeLocalStorageContent}
+                                onClick={() =>
+                                    isDirtyPostInitialized.current
+                                        ? setOpenAlert(false)
+                                        : removeLocalStorageContent()
+                                }
                             >
-                                Discard
+                                {isDirtyPostInitialized.current
+                                    ? 'Cancel'
+                                    : 'Discard'}
                             </AlertDialogCancel>
                             <AlertDialogAction
-                                onClick={recoverLocalStorageContent}
+                                onClick={() =>
+                                    isDirtyPostInitialized.current
+                                        ? handleDelete()
+                                        : recoverLocalStorageContent()
+                                }
                             >
-                                Recover
+                                {isDirtyPostInitialized.current
+                                    ? 'Delete permanently'
+                                    : 'Recover'}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
@@ -498,7 +523,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
                                             This action cannot be undone.
                                         </p>
                                     </div>
-                                    <Button onClick={handleDelete}>
+                                    <Button onClick={() => setOpenAlert(true)}>
                                         Delete Post
                                     </Button>
                                 </div>
