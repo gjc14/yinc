@@ -1,6 +1,6 @@
 import { asc, desc, eq, gt, inArray, like, lt, SQL } from 'drizzle-orm'
 
-import { db } from '~/lib/db/db.server'
+import { db, TransactionType } from '~/lib/db/db.server'
 import {
     categoriesTable,
     Category,
@@ -275,8 +275,8 @@ type CreatePostProps = Omit<
     typeof postsTable.$inferInsert,
     'id' | 'createdAt' | 'updatedAt'
 > & {
-    tags: Pick<Tag, 'id'>[]
-    categories: Pick<Category, 'id'>[]
+    tags: (typeof tagsTable.$inferSelect)[]
+    categories: (typeof categoriesTable.$inferSelect)[]
 } & {
     seo: Pick<Seo, 'metaDescription' | 'metaTitle'>
 }
@@ -328,47 +328,12 @@ export const createPost = async (
             })
             .returning()
 
-        let tagsRelated: Tag[] = []
-        if (tags.length > 0) {
-            const postsToTagsUpdated = await tx
-                .insert(postsToTags)
-                .values(
-                    tags.map(tag => ({
-                        postId: postCreated.id,
-                        tagId: tag.id,
-                    }))
-                )
-                .returning()
-
-            const tagIds = postsToTagsUpdated.map(relation => relation.tagId)
-
-            tagsRelated = await tx
-                .select()
-                .from(tagsTable)
-                .where(inArray(tagsTable.id, tagIds))
-        }
-
-        let categoriesRelated: Category[] = []
-        if (categories.length > 0) {
-            const postsToCategoriesUpdated = await tx
-                .insert(postsToCategories)
-                .values(
-                    categories.map(category => ({
-                        postId: postCreated.id,
-                        categoryId: category.id,
-                    }))
-                )
-                .returning()
-
-            const categoryIds = postsToCategoriesUpdated.map(
-                relation => relation.categoryId
-            )
-
-            categoriesRelated = await tx
-                .select()
-                .from(categoriesTable)
-                .where(inArray(categoriesTable.id, categoryIds))
-        }
+        const tagsRelated = await processTaxonomyTags(tx, tags, postCreated.id)
+        const categoriesRelated = await processTaxonomyCategories(
+            tx,
+            categories,
+            postCreated.id
+        )
 
         return {
             ...postCreated,
@@ -434,61 +399,12 @@ export const updatePost = async (
             .where(eq(seosTable.postId, id))
             .returning()
 
-        let tagsRelated: Tag[] = []
-
-        const postsToTagsUpdated = await tx
-            .delete(postsToTags)
-            .where(eq(postsToTags.postId, id))
-            .returning()
-            .then(() => {
-                if (tags.length === 0) return [] // Ment to delete all
-                return tx
-                    .insert(postsToTags)
-                    .values(
-                        tags.map(tag => ({
-                            postId: id,
-                            tagId: tag.id,
-                        }))
-                    )
-                    .returning()
-            })
-
-        if (postsToTagsUpdated.length > 0) {
-            const tagIds = postsToTagsUpdated.map(relation => relation.tagId)
-            tagsRelated = await tx
-                .select()
-                .from(tagsTable)
-                .where(inArray(tagsTable.id, tagIds))
-        }
-
-        let categoriesRelated: Category[] = []
-
-        const postsToCategoriesUpdated = await tx
-            .delete(postsToCategories)
-            .where(eq(postsToCategories.postId, id))
-            .returning()
-            .then(() => {
-                if (categories.length === 0) return [] // Ment to delete all
-                return tx
-                    .insert(postsToCategories)
-                    .values(
-                        categories.map(category => ({
-                            postId: id,
-                            categoryId: category.id,
-                        }))
-                    )
-                    .returning()
-            })
-
-        if (postsToCategoriesUpdated.length > 0) {
-            const categoryIds = postsToCategoriesUpdated.map(
-                relation => relation.categoryId
-            )
-            categoriesRelated = await tx
-                .select()
-                .from(categoriesTable)
-                .where(inArray(categoriesTable.id, categoryIds))
-        }
+        const tagsRelated = await processTaxonomyTags(tx, tags, id)
+        const categoriesRelated = await processTaxonomyCategories(
+            tx,
+            categories,
+            id
+        )
 
         return {
             ...postUpdated,
@@ -508,4 +424,134 @@ export const deletePost = async (id: number): Promise<{ post: Post }> => {
         .where(eq(postsTable.id, id))
         .returning()
     return { post }
+}
+
+export const processTaxonomyTags = async (
+    tx: TransactionType,
+    tags: Tag[],
+    postId: number
+): Promise<Tag[]> => {
+    // New tags are negative IDs
+    const existingTags = tags.filter(tag => tag.id > 0)
+    const newTags = tags.filter(tag => tag.id < 0)
+
+    // Check if names are unique
+    const newTagNames = newTags.map(tag => tag.name)
+    const existingNewTags = await tx
+        .select()
+        .from(tagsTable)
+        .where(inArray(tagsTable.name, newTagNames))
+
+    // Filter tags that with name already exist
+    const tagsToInsert = newTags.filter(
+        newTag => !existingNewTags.some(tag => tag.name === newTag.name)
+    )
+
+    // Insert new tags
+    let insertedTags: Tag[] = []
+    if (tagsToInsert.length > 0) {
+        insertedTags = await tx
+            .insert(tagsTable)
+            .values(
+                tagsToInsert.map(tag => ({
+                    name: tag.name,
+                    slug: tag.slug,
+                    description: tag.description,
+                }))
+            )
+            .returning()
+    }
+
+    // Combine existing new tags and newly created tags
+    const createdTagIds = [
+        ...existingNewTags.map(tag => tag.id),
+        ...insertedTags.map(tag => tag.id),
+    ]
+
+    const allTagIds = [...existingTags.map(tag => tag.id), ...createdTagIds]
+
+    // Clear existing relations
+    await tx.delete(postsToTags).where(eq(postsToTags.postId, postId))
+
+    // Create new relations
+    if (allTagIds.length > 0) {
+        await tx.insert(postsToTags).values(
+            allTagIds.map(tagId => ({
+                postId: postId,
+                tagId: tagId,
+            }))
+        )
+
+        return await tx
+            .select()
+            .from(tagsTable)
+            .where(inArray(tagsTable.id, allTagIds))
+    }
+
+    return []
+}
+
+export const processTaxonomyCategories = async (
+    tx: TransactionType,
+    categories: Category[],
+    postId: number
+): Promise<Category[]> => {
+    // New categories are negative IDs
+    const existingCats = categories.filter(cat => cat.id > 0)
+    const newCategories = categories.filter(cat => cat.id < 0)
+
+    // Check if names are unique
+    const newCatNames = newCategories.map(cat => cat.name)
+    const existingNewCats = await tx
+        .select()
+        .from(categoriesTable)
+        .where(inArray(categoriesTable.name, newCatNames))
+
+    // Filter cats that with name already exist
+    const catsToInsert = newCategories.filter(
+        newCat => !existingNewCats.some(cat => cat.name === newCat.name)
+    )
+
+    // Insert new cats
+    let insertedCats: Category[] = []
+    if (catsToInsert.length > 0) {
+        insertedCats = await tx
+            .insert(categoriesTable)
+            .values(
+                catsToInsert.map(cat => ({
+                    name: cat.name,
+                    slug: cat.slug,
+                    description: cat.description,
+                }))
+            )
+            .returning()
+    }
+
+    // Combine existing new cats and newly created cats
+    const createdCatIds = [
+        ...existingNewCats.map(cat => cat.id),
+        ...insertedCats.map(cat => cat.id),
+    ]
+
+    const allCatIds = [...existingCats.map(cat => cat.id), ...createdCatIds]
+
+    await tx
+        .delete(postsToCategories)
+        .where(eq(postsToCategories.postId, postId))
+
+    if (allCatIds.length > 0) {
+        await tx.insert(postsToCategories).values(
+            allCatIds.map(categoryId => ({
+                postId: postId,
+                categoryId: categoryId,
+            }))
+        )
+
+        return await tx
+            .select()
+            .from(categoriesTable)
+            .where(inArray(categoriesTable.id, allCatIds))
+    }
+
+    return []
 }

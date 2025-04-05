@@ -1,6 +1,6 @@
 import { ActionFunctionArgs } from '@remix-run/node'
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
-import { createInsertSchema } from 'drizzle-zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import pkg from 'pg'
 import { z } from 'zod'
 
@@ -11,7 +11,7 @@ import {
     getPosts,
     updatePost,
 } from '~/lib/db/post.server'
-import { postsTable } from '~/lib/db/schema'
+import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { useAdminContext } from '~/routes/_papa.admin/route'
@@ -24,16 +24,8 @@ const { DatabaseError } = pkg
  */
 const postInsertUpdateSchema = createInsertSchema(postsTable)
 const taxonomyInsertUpdateSchema = z.object({
-    tags: z.array(
-        z.object({
-            id: z.number(),
-        })
-    ),
-    categories: z.array(
-        z.object({
-            id: z.number(),
-        })
-    ),
+    tags: createSelectSchema(tagsTable).array(),
+    categories: createSelectSchema(categoriesTable).array(),
 })
 const seoInsertUpdateSchema = z.object({
     seo: z.object({
