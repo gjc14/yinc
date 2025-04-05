@@ -17,22 +17,23 @@ import {
 } from '~/components/ui/command'
 
 type Option = Record<'value' | 'label', string>
+type SelectState = Option[]
 
 interface MultiSelectInputProps {
     options: Option[]
+    selected?: SelectState
     defaultSelected?: Option[]
-    onSelectedChange?: (optionsSelected: Option[]) => void
+    onSelectedChange?: (selected: SelectState) => void
     onUnSelect?: (option: Option) => void
     onEnterNewValue?: (value: string) => string
     placeholder?: string
-    // className?: string  // className is not functional with cn() in div
-    // id?: string  // id is controlled by cmdk
 }
 
 /**
  * @param options - Array of { value, label } to select from
- * @param defaultSelected - Array of { value, label } to be selected by default
- * @param onSelectedChange - Callback function to be called when the selected options change, returns option selected
+ * @param selected - Current selected options (controlled mode)
+ * @param defaultSelected - Array of { value, label } to be selected by default (uncontrolled mode)
+ * @param onSelectedChange - Callback function to be called when the selected options change, returns all selected options
  * @param onUnSelect - Callback function to be called when an option is unselected
  * @param onEnterNewValue - Callback function to generate id for when the new value entered, id default to label
  * @param placeholder - Placeholder text for the input field
@@ -40,6 +41,7 @@ interface MultiSelectInputProps {
  */
 export const MultiSelect = ({
     options,
+    selected: controlledSelected,
     defaultSelected,
     onSelectedChange,
     onUnSelect,
@@ -49,26 +51,45 @@ export const MultiSelect = ({
     const inputRef = React.useRef<HTMLInputElement>(null)
     const getCommandStateRef = React.useRef<GetCommandStateRef>(null)
     const [open, setOpen] = React.useState(false)
-    const [selected, setSelected] = React.useState<Option[]>(
+    const [internalSelected, setInternalSelected] = React.useState<Option[]>(
         defaultSelected ?? []
     )
     const [inputValue, setInputValue] = React.useState('')
     const [isComposing, setIsComposing] = React.useState(false)
 
+    // Determine if we're in controlled or uncontrolled mode
+    const isControlled = controlledSelected !== undefined
+    const selected = isControlled ? controlledSelected : internalSelected
+
+    // Update internal state when controlled value changes
+    React.useEffect(() => {
+        if (isControlled && controlledSelected) {
+            setInternalSelected(controlledSelected)
+        }
+    }, [isControlled, controlledSelected])
+
+    // Update selected state function that handles both controlled and uncontrolled modes
+    const updateSelected = React.useCallback(
+        (newSelected: SelectState) => {
+            if (!isControlled) {
+                setInternalSelected(newSelected)
+            }
+            onSelectedChange?.(newSelected)
+        },
+        [isControlled, onSelectedChange]
+    )
+
     const handleUnselect = React.useCallback(
         (option: MultiSelectInputProps['options'][number]) => {
-            setSelected(prev => {
-                const newSelected = prev.filter(s => s.value !== option.value)
+            const newSelected = selected.filter(s => s.value !== option.value)
 
-                // This is a workaround to make sure the unselect callback is called after the selected state is updated, prevent Warning: Cannot update a component (PostContent) while rendering a different component (MultiSelect).
-                setTimeout(() => {
-                    onUnSelect?.(option)
-                    onSelectedChange?.(newSelected)
-                }, 0)
-                return newSelected
-            })
+            // This is a workaround to make sure the unselect callback is called after the selected state is updated
+            setTimeout(() => {
+                onUnSelect?.(option)
+                updateSelected(newSelected)
+            }, 0)
         },
-        []
+        [selected, onUnSelect, updateSelected]
     )
 
     const handleKeyDown = React.useCallback(
@@ -83,10 +104,11 @@ export const MultiSelect = ({
                             .count === 0
                     ) {
                         const id = onEnterNewValue?.(input.value) ?? input.value
-                        setSelected(prev => {
-                            return [...prev, { value: id, label: input.value }]
-                        })
-
+                        const newSelected = [
+                            ...selected,
+                            { value: id, label: input.value },
+                        ]
+                        updateSelected(newSelected)
                         setInputValue('')
                     }
                 }
@@ -101,7 +123,7 @@ export const MultiSelect = ({
                 }
             }
         },
-        [isComposing, onEnterNewValue, selected]
+        [isComposing, onEnterNewValue, selected, handleUnselect, updateSelected]
     )
 
     const selectables = options.filter(option => {
@@ -182,16 +204,11 @@ export const MultiSelect = ({
                                                 }}
                                                 onSelect={value => {
                                                     setInputValue('')
-                                                    setSelected(prev => {
-                                                        const newSelected = [
-                                                            ...prev,
-                                                            option,
-                                                        ]
-                                                        onSelectedChange?.(
-                                                            newSelected
-                                                        )
-                                                        return newSelected
-                                                    })
+                                                    const newSelected = [
+                                                        ...selected,
+                                                        option,
+                                                    ]
+                                                    updateSelected(newSelected)
                                                 }}
                                                 className={'cursor-pointer'}
                                             >
