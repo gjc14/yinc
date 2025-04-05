@@ -164,7 +164,10 @@ export default function AdminNewPost() {
                 ref={postContentRef}
                 post={generateNewPost(admin)}
                 tags={tags}
-                categories={categories}
+                categories={categories.map(c => {
+                    const { subCategories, ...categoryWithoutSub } = c
+                    return categoryWithoutSub
+                })}
                 onDirtyChange={isDirty => setIsDirty(isDirty)}
             />
         </AdminSectionWrapper>
