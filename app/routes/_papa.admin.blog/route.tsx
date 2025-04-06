@@ -1,7 +1,6 @@
 import { ActionFunctionArgs } from '@remix-run/node'
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
-import pkg from 'pg'
 import { z } from 'zod'
 
 import { userIs } from '~/lib/db/auth.server'
@@ -14,9 +13,8 @@ import {
 import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'
 import { ConventionalActionResponse } from '~/lib/utils'
+import { handleError } from '~/lib/utils/server'
 import { useAdminContext } from '~/routes/_papa.admin/route'
-
-const { DatabaseError } = pkg
 
 /**
  * createInsertSchema(postsTable) is used for create and update
@@ -134,32 +132,4 @@ export const useAdminBlogContext = () => {
         ReturnType<typeof useLoaderData<typeof loader>> &
             ReturnType<typeof useAdminContext>
     >()
-}
-
-const handleError = (error: unknown, request: Request) => {
-    if (error instanceof z.ZodError) {
-        console.error(error.message)
-        return Response.json({
-            err: 'Internal error: Invalid argument',
-        } satisfies ConventionalActionResponse)
-    }
-
-    if (error instanceof DatabaseError) {
-        console.error(error)
-        return Response.json({
-            err: error.detail ?? 'Database error',
-        } satisfies ConventionalActionResponse)
-    }
-
-    if (error instanceof Error) {
-        console.error(error.message)
-        return Response.json({
-            err: error.message,
-        } satisfies ConventionalActionResponse)
-    }
-
-    console.error(error)
-    return Response.json({
-        err: 'Internal error: Unknown error',
-    } satisfies ConventionalActionResponse)
 }

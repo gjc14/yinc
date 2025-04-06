@@ -1,10 +1,8 @@
 import { ActionFunctionArgs, redirect } from '@remix-run/node'
 import { z } from 'zod'
 
-import pkg from 'pg'
-const { DatabaseError } = pkg
-
 import { userIs } from '~/lib/db/auth.server'
+import { Category, SubCategory, Tag } from '~/lib/db/schema'
 import {
     createCategory,
     createSubcategory,
@@ -13,8 +11,8 @@ import {
     deleteSubcategory,
     deleteTag,
 } from '~/lib/db/taxonomy.server'
-import { Category, SubCategory, Tag } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
+import { handleError } from '~/lib/utils/server'
 
 const intentSchema = z.enum(['category', 'subcategory', 'tag'])
 export type Intents = z.infer<typeof intentSchema>
@@ -55,6 +53,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     const formObject = Object.fromEntries(formData)
 
+    const errorMessage = `Failed to ${
+        request.method === 'POST' ? 'create' : 'delete'
+    } ${intent}`
+
     switch (data) {
         case 'category': {
             const deleteMesage = (name: string) => {
@@ -89,7 +91,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                     } satisfies ConventionalActionResponse)
                 }
             } catch (error) {
-                return handleError(error, request, 'category')
+                return handleError(error, request, {
+                    errorMessage,
+                })
             }
         }
 
@@ -127,7 +131,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                     } satisfies ConventionalActionResponse)
                 }
             } catch (error) {
-                return handleError(error, request, 'subcategory')
+                return handleError(error, request, {
+                    errorMessage,
+                })
             }
         }
 
@@ -161,7 +167,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                     } satisfies ConventionalActionResponse)
                 }
             } catch (error) {
-                return handleError(error, request, 'tag')
+                return handleError(error, request, {
+                    errorMessage,
+                })
             }
         }
 
@@ -169,29 +177,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             throw new Response('Invalid argument', { status: 400 })
         }
     }
-}
-
-const handleError = (error: unknown, request: Request, intent: Intents) => {
-    if (error instanceof z.ZodError) {
-        console.error(error.message)
-        return Response.json({
-            err: 'Internal error: Invalid argument',
-        } satisfies ConventionalActionResponse)
-    }
-
-    if (error instanceof DatabaseError) {
-        console.error(error)
-        return Response.json({
-            err: error.detail ?? 'Database error',
-        } satisfies ConventionalActionResponse)
-    }
-
-    console.error(error)
-    return Response.json({
-        err: `Failed to ${
-            request.method === 'POST' ? 'create' : 'delete'
-        } ${intent}`,
-    } satisfies ConventionalActionResponse)
 }
 
 export const loader = () => {
