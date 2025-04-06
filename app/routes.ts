@@ -32,8 +32,14 @@ export default [
         route('assets/:visibility', './routes/papa/assets/route.tsx'),
         route('assets/error', './routes/papa/assets/error.tsx'),
 
-        // Admin layout
+        // Auth
+        route('/admin/signin', './routes/papa/auth/signin/route.tsx'),
+        route('/admin/signout', './routes/papa/auth/signout/route.tsx'),
+        route('/admin/magic', './routes/papa/auth/magic/route.tsx'),
+
+        // Admin route
         ...prefix('/admin', [
+            // Admin layout
             layout('./routes/papa/admin/layout.tsx', [
                 index('./routes/papa/admin/index/route.tsx'),
 
@@ -136,6 +142,7 @@ export default [
                         './routes/papa/admin/admins/resource.ts'
                     ),
                 ]),
+
                 // Adding admin plugins
             ]),
         ]),
