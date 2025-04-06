@@ -1,9 +1,9 @@
 import {
     type RouteConfig,
     index,
-    route,
     layout,
     prefix,
+    route,
 } from '@remix-run/route-config'
 
 export default [
@@ -13,11 +13,8 @@ export default [
             layout('./routes/web/blog/layout.tsx', [
                 index('./routes/web/blog/index/route.tsx'),
                 route(':postSlug', './routes/web/blog/post-slug/route.tsx'),
-                route(
-                    '/category/:query',
-                    './routes/web/blog/category/route.tsx'
-                ),
-                route('/tag/:query', './routes/web/blog/tag/route.tsx'),
+                route('/category', './routes/web/blog/category/route.tsx'),
+                route('/tag', './routes/web/blog/tag/route.tsx'),
                 route('/subscribe', './routes/web/blog/subscribe/route.tsx'),
             ]),
         ]),

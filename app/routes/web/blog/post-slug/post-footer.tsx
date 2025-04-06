@@ -27,7 +27,7 @@ export const PostFooter = ({
                             <Badge
                                 className="px-2.5 py-1 rounded-full md:text-sm cursor-pointer"
                                 onClick={() =>
-                                    navigate(`/blog/tag/${tag.name}`)
+                                    navigate(`/blog/tag?q=${tag.slug}`)
                                 }
                             >
                                 {tag.name}

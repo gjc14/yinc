@@ -15,37 +15,39 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     return data.meta.metaTags
 }
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-    const { seo } = await getSEO(new URL(request.url).pathname)
-    const meta = seo ? createMeta(seo, new URL(request.url)) : null
-    const query = params.query ?? ''
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const url = new URL(request.url)
+    const { seo } = await getSEO(url.pathname)
+    const meta = seo ? createMeta(seo, url) : null
+    const slug = url.searchParams.get('q')
+    if (!slug) return { meta, posts: [], slug: '' }
 
     try {
         const { posts } = await getPosts({
             status: 'PUBLISHED',
-            tagFilter: [query],
+            tagFilter: [slug],
         })
-        return { meta, posts, query }
+        return { meta, posts, slug }
     } catch (error) {
         console.error(error)
-        return { meta, posts: [], query }
+        return { meta, posts: [], slug }
     }
 }
 
 export default function Tag() {
-    const { meta, posts, query } = useLoaderData<typeof loader>()
+    const { meta, posts, slug } = useLoaderData<typeof loader>()
 
     return (
         <>
             <h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
             <SectionWrapper className="mt-28">
                 <PostCollection
-                    title={`Listing ${
+                    title={`${
                         posts.length !== 0
-                            ? `${posts.length}${
-                                  posts.length === 0 ? ' post' : ' posts'
-                              } in ${query}`
-                            : 'all posts'
+                            ? `Listing ${posts.length} ${
+                                  posts.length === 1 ? 'post' : 'posts'
+                              } in ${slug}`
+                            : 'No posts found'
                     }`}
                     posts={posts.map(post => {
                         return {

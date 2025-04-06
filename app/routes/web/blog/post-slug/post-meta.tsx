@@ -54,7 +54,7 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
                         <div className="mr-auto">
                             {post.categories.map((c, i) => (
                                 <>
-                                    <Link to={`/blog/category/${c.name}`}>
+                                    <Link to={`/blog/category?q=${c.slug}`}>
                                         <Button
                                             variant={'link'}
                                             className="h-fit p-0"
