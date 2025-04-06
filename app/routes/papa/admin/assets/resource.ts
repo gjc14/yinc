@@ -3,8 +3,11 @@ import { LoaderFunctionArgs } from '@remix-run/node'
 
 import { db, S3 } from '~/lib/db/db.server'
 import { FileMeta } from '../api/object-storage/schema'
+import { userIs } from '~/lib/db/auth.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+    await userIs(request, ['ADMIN'])
+
     if (!S3) return { hasObjectStorage: false, files: [] as FileMeta[] }
 
     const url = new URL(request.url)
