@@ -36,7 +36,24 @@ export default [
         ...prefix('/admin', [
             layout('./routes/papa/admin/layout.tsx', [
                 index('./routes/papa/admin/index/route.tsx'),
-                //     route('account', ''),
+                // Account
+                ...prefix('/account', [
+                    layout('./routes/papa/admin/account/layout.tsx', [
+                        index('./routes/papa/admin/account/index/route.tsx'),
+                        route(
+                            '/billing',
+                            './routes/papa/admin/account/billing/route.tsx'
+                        ),
+                        route(
+                            '/notification',
+                            './routes/papa/admin/account/notification/route.tsx'
+                        ),
+                        route(
+                            '/security',
+                            './routes/papa/admin/account/security/route.tsx'
+                        ),
+                    ]),
+                ]),
                 //     route('api', ''),
                 //     route('assets', ''),
                 //     route('blog', ''),

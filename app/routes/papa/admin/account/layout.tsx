@@ -6,13 +6,13 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-import { useAdminContext } from '../papa/admin/layout'
+import { useAdminContext } from '../layout'
 
 const AdminAccountRoutes: RouteButton[] = [
-    { to: '.', title: 'Profile' },
-    { to: 'billing', title: 'Billing' },
-    { to: 'notification', title: 'Notification' },
-    { to: 'security', title: 'Security' },
+    { to: '/admin/account', title: 'Profile' },
+    { to: '/admin/account/billing', title: 'Billing' },
+    { to: '/admin/account/notification', title: 'Notification' },
+    { to: '/admin/account/security', title: 'Security' },
 ]
 
 export default function AdminAccount() {
