@@ -32,7 +32,7 @@ import {
     DataTable,
 } from '~/routes/papa/admin/components/data-table'
 import { UserContent } from '~/routes/papa/admin/components/user-content'
-import { useUsersContext } from '../_papa.admin.users/route'
+import { useUsersContext } from '../layout'
 
 export const UserUpdateSchema = z.object({
     id: z.string().transform(val => Number(val)),

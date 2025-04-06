@@ -125,13 +125,23 @@ export default [
                     index('./routes/papa/admin/seo/index.tsx'),
                     route('/resource', './routes/papa/admin/seo/resource.ts'),
                 ]),
-                //     route('api', ''),
-                //     route('assets', ''),
-                //     route('blog', ''),
-                //     route('company', ''),
-                //     route('seo', ''),
-                //     route('users', ''),
-                //     route('admins', ''),
+                ...prefix('/users', [
+                    layout('./routes/papa/admin/users/layout.tsx', [
+                        index('./routes/papa/admin/users/index/route.tsx'),
+                        route(
+                            '/:userId/delete',
+                            './routes/papa/admin/users/user-delete/route.tsx'
+                        ),
+                        route(
+                            '/admins',
+                            './routes/papa/admin/users/admins/route.tsx'
+                        ),
+                        route(
+                            '/admins/invite',
+                            './routes/papa/admin/users/admins/invite-admin/route.tsx'
+                        ),
+                    ]),
+                ]),
                 // Adding admin plugins
             ]),
         ]),

@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
 
 import { getUsers } from '~/lib/db/user.server'
-export { action } from '~/routes/_papa.admin.users.admins/route'
+export { action } from '~/routes/papa/admin/users/admins/route'
 
 export const loader = async () => {
     const { users } = await getUsers()

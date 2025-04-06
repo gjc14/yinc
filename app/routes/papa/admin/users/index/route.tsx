@@ -13,9 +13,9 @@ import {
     DataTable,
 } from '~/routes/papa/admin/components/data-table'
 import { UserContent } from '~/routes/papa/admin/components/user-content'
-import { useUsersContext } from '../_papa.admin.users/route'
+import { useUsersContext } from '../layout'
 
-export { action } from '~/routes/_papa.admin.users.admins/route'
+export { action } from '~/routes/papa/admin/users/admins/route'
 
 export default function AdminAllUsers() {
     const { users } = useUsersContext()
