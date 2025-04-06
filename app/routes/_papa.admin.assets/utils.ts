@@ -5,7 +5,7 @@ import {
     FileMetaWithFile,
     PresignRequest,
     PresignResponseSchema,
-} from '~/routes/_papa.admin.api.object-storage/schema'
+} from '~/routes/papa/admin/api/object-storage/schema'
 
 /**
  * Generate a role and type based storage key for the file, for example:

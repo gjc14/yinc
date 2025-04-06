@@ -27,7 +27,7 @@ import { cn } from '~/lib/utils'
 import {
     FileMeta,
     FileMetaWithFile,
-} from '~/routes/_papa.admin.api.object-storage/schema'
+} from '~/routes/papa/admin/api/object-storage/schema'
 import {
     deleteFileFetch,
     fetchPresignedPutUrls,

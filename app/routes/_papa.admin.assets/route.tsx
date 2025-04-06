@@ -18,7 +18,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-import { FileMetaSchema } from '../_papa.admin.api.object-storage/schema'
+import { FileMetaSchema } from '../papa/admin/api/object-storage/schema'
 import { FileGrid } from './components/file-grid'
 
 const displayOptions = ['all', 'image', 'video', 'audio', 'file'] as const

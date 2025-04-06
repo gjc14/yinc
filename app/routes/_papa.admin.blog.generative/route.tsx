@@ -28,7 +28,7 @@ import {
     Provider,
     Providers,
     providers,
-} from '~/routes/_papa.admin.api.ai.chat/route'
+} from '~/routes/papa/admin/api/ai-chat/route'
 import {
     AdminActions,
     AdminHeader,

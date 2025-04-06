@@ -2,7 +2,7 @@ import { ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { LoaderFunctionArgs } from '@remix-run/node'
 
 import { db, S3 } from '~/lib/db/db.server'
-import { FileMeta } from '../_papa.admin.api.object-storage/schema'
+import { FileMeta } from '../papa/admin/api/object-storage/schema'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     if (!S3) return { hasObjectStorage: false, files: [] as FileMeta[] }

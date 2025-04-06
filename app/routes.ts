@@ -36,6 +36,18 @@ export default [
         ...prefix('/admin', [
             layout('./routes/papa/admin/layout.tsx', [
                 index('./routes/papa/admin/index/route.tsx'),
+
+                // Admin API
+                ...prefix('/api', [
+                    route(
+                        '/ai/chat',
+                        './routes/papa/admin/api/ai-chat/route.tsx'
+                    ),
+                    route(
+                        '/object-storage',
+                        './routes/papa/admin/api/object-storage/route.tsx'
+                    ),
+                ]),
                 // Account
                 ...prefix('/account', [
                     layout('./routes/papa/admin/account/layout.tsx', [
