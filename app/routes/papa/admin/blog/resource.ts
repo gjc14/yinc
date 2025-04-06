@@ -102,7 +102,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 }
 
-const handleError = (error: unknown, request: Request) => {
+export const handleError = (error: unknown, request: Request) => {
     if (error instanceof z.ZodError) {
         console.error(error.message)
         return Response.json({

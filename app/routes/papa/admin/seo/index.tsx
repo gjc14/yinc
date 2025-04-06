@@ -1,16 +1,12 @@
-import { ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { PlusCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { z } from 'zod'
 
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { userIs } from '~/lib/db/auth.server'
-import { getSEOs, updateSEO } from '~/lib/db/seo.server'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { getSEOs } from '~/lib/db/seo.server'
 import {
     AdminActions,
     AdminHeader,
@@ -22,52 +18,6 @@ import {
     DataTable,
 } from '~/routes/papa/admin/components/data-table'
 import { SeoContent } from '~/routes/papa/admin/components/seo-content'
-
-export const SeoUpdateSchmea = z.object({
-    id: z.string().transform(val => Number(val)),
-    metaTitle: z.string(),
-    metaDescription: z.string(),
-})
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-    if (request.method !== 'PUT') {
-        return Response.json({
-            err: 'Method not allowed',
-        } satisfies ConventionalActionResponse)
-    }
-
-    await userIs(request, ['ADMIN'])
-
-    const formData = await request.formData()
-    const updateSeoData = Object.fromEntries(formData)
-
-    const zResult = SeoUpdateSchmea.safeParse(updateSeoData)
-
-    if (!zResult.success || !zResult.data) {
-        const message = zResult.error.issues
-            .map(issue => `${issue.message} ${issue.path[0]}`)
-            .join(' & ')
-        return Response.json({
-            err: message,
-        } satisfies ConventionalActionResponse)
-    }
-
-    try {
-        const { seo } = await updateSEO({
-            id: zResult.data.id,
-            metaTitle: zResult.data.metaTitle,
-            metaDescription: zResult.data.metaDescription,
-        })
-        return Response.json({
-            msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} updated`,
-        } satisfies ConventionalActionResponse)
-    } catch (error) {
-        console.error(error)
-        return Response.json({
-            err: 'Failed to update SEO',
-        } satisfies ConventionalActionResponse)
-    }
-}
 
 export const loader = async () => {
     const { seos } = await getSEOs()
@@ -96,7 +46,7 @@ export default function AdminSEO() {
                     </Button>
                     <SeoContent
                         method="POST"
-                        action={`/admin/seo/create`}
+                        action={`/admin/seo/resource`}
                         open={open}
                         setOpen={setOpen}
                     />
@@ -214,8 +164,7 @@ export const columns: ColumnDef<
                                 { id },
                                 {
                                     method: 'DELETE',
-                                    action: `/admin/seo/${id}/delete`,
-                                    encType: 'application/json',
+                                    action: `/admin/seo/resource`,
                                 }
                             )
                         }}
@@ -226,7 +175,7 @@ export const columns: ColumnDef<
                     </AdminDataTableMoreMenu>
                     <SeoContent
                         method="PUT"
-                        action={`/admin/seo`}
+                        action={`/admin/seo/resource`}
                         seo={row.original}
                         open={open}
                         setOpen={setOpen}
