@@ -40,7 +40,7 @@ export function ErrorBoundary() {
                     </p>
                     <div className="inline-block">
                         <p className="text-xs font-light text-left">
-                            © 2024 CHIU YIN CHEN @Taipei
+                            © ${new Date().getFullYear()} CHIU YIN CHEN @Taipei
                         </p>
                     </div>
                 </div>

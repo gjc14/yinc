@@ -13,7 +13,7 @@ export const Footer = () => {
     return (
         <footer className="w-full py-3 px-6 mt-auto flex flex-col-reverse items-center justify-center gap-2 lg:flex-row lg:gap-8 border-t">
             <p className="text-sm text-primary">
-                Built somewhere on the 🌏. © 2024{' '}
+                Built somewhere on the 🌏. © {new Date().getFullYear()}{' '}
                 <a
                     href="https://papacms.com"
                     aria-label="Go to papa"
