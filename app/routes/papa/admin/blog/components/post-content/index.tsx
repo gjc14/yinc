@@ -26,7 +26,7 @@ import { PostWithRelations } from '~/lib/db/post.server'
 import { Category, Tag } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
-import { areDifferentPosts } from '../utils'
+import { areDifferentPosts } from '../../utils'
 import { DangerZone } from './danger-zone'
 import { PostMetaPart } from './post-meta-part'
 import { SeoPart } from './seo-part'
@@ -110,7 +110,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
                 },
                 {
                     method: 'DELETE',
-                    action: '/admin/blog',
+                    action: '/admin/blog/resource',
                     encType: 'application/json',
                 }
             )

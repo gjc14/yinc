@@ -74,6 +74,30 @@ export default [
                         ),
                     ]),
                 ]),
+                // Blog
+                ...prefix('/blog', [
+                    layout('./routes/papa/admin/blog/layout.tsx', [
+                        index('./routes/papa/admin/blog/index/route.tsx'),
+                        route(
+                            '/generative',
+                            './routes/papa/admin/blog/generative/route.tsx'
+                        ),
+                        route('/new', './routes/papa/admin/blog/new/route.tsx'),
+                        route(
+                            '/:postSlug',
+                            './routes/papa/admin/blog/post-slug/route.tsx'
+                        ),
+                        ...prefix('/taxonomy', [
+                            index(
+                                './routes/papa/admin/blog/taxonomy/index.tsx'
+                            ),
+                            route(
+                                '/resource',
+                                './routes/papa/admin/blog/taxonomy/resource.ts'
+                            ),
+                        ]),
+                    ]),
+                ]),
                 //     route('api', ''),
                 //     route('assets', ''),
                 //     route('blog', ''),

@@ -19,11 +19,8 @@ import { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, User } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
-import {
-    PostContent,
-    PostContentHandle,
-} from '~/routes/_papa.admin.blog.$postSlug/post-content'
-import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
+import { PostContent, PostContentHandle } from '../components/post-content'
+import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import {
     AdminActions,
     AdminHeader,

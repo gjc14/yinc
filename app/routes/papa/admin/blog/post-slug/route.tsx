@@ -17,14 +17,14 @@ import { Button } from '~/components/ui/button'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
-import { useAdminBlogContext } from '~/routes/_papa.admin.blog/route'
+import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import {
     AdminActions,
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-import { PostContent, PostContentHandle } from './post-content'
+import { PostContent, PostContentHandle } from '../components/post-content'
 
 export default function AdminPost() {
     const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()

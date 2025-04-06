@@ -7,8 +7,8 @@ import { MultiSelect } from '~/components/multi-select'
 import { Label } from '~/components/ui/label'
 import { PostWithRelations } from '~/lib/db/post.server'
 import { Category, Tag } from '~/lib/db/schema'
-import { generateNewCategory } from '~/routes/_papa.admin.blog.taxonomy/components/category'
-import { generateNewTag } from '~/routes/_papa.admin.blog.taxonomy/components/tag'
+import { generateNewCategory } from '~/routes/papa/admin/blog/taxonomy/components/category'
+import { generateNewTag } from '~/routes/papa/admin/blog/taxonomy/components/tag'
 
 export const TaxonomyPart = ({
     postState,

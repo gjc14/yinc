@@ -16,7 +16,7 @@ import {
     AdminDataTableMoreMenu,
     DataTable,
 } from '~/routes/papa/admin/components/data-table'
-import { useAdminBlogContext } from '../_papa.admin.blog/route'
+import { useAdminBlogContext } from '../layout'
 
 export default function AdminPost() {
     const { posts, tags, categories } = useAdminBlogContext()
@@ -177,7 +177,7 @@ export const columns: ColumnDef<
                             { id },
                             {
                                 method: 'DELETE',
-                                action: `/admin/blog`,
+                                action: `/admin/blog/resource`,
                                 encType: 'application/json',
                             }
                         )

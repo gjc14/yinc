@@ -7,7 +7,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-import { useAdminBlogContext } from '../_papa.admin.blog/route'
+import { useAdminBlogContext } from '../layout'
 import { CategoriesSection, SubcategoriesSection } from './components/category'
 import { TagsSection } from './components/tag'
 import { CategoryType, TagType } from './type'
