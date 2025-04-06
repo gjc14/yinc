@@ -77,6 +77,7 @@ export const SeoContent = ({
                             <Input
                                 id="route"
                                 name="route"
+                                defaultValue={seo?.route ?? undefined}
                                 className="col-span-3"
                                 placeholder="What's your route?"
                             />
