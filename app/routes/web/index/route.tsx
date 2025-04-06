@@ -4,8 +4,8 @@ import { ClientLoaderFunctionArgs, useLoaderData } from '@remix-run/react'
 import { MainWrapper } from '~/components/wrappers'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
-import { Footer } from '../_web/components/footer'
-import { Nav } from '../_web/components/nav'
+import { Footer } from '../components/footer'
+import { Nav } from '../components/nav'
 import { Hero } from './hero'
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {

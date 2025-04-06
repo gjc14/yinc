@@ -2,7 +2,7 @@
  * @see https://developers.google.com/search/docs/advanced/sitemaps/build-sitemap
  */
 import { getPosts } from '~/lib/db/post.server'
-import { siteRoutes } from './_web/components/footer'
+import { siteRoutes } from './web/components/footer'
 
 export const toXmlSitemap = (pages: { url: string; lastmod: Date }[]) => {
     // TODO: Add lastmod

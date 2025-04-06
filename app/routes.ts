@@ -1,6 +1,47 @@
-import { type RouteConfig } from '@remix-run/route-config'
+import {
+    type RouteConfig,
+    index,
+    route,
+    layout,
+    prefix,
+} from '@remix-run/route-config'
 
-export default [] satisfies RouteConfig
+export default [
+    layout('./routes/web/layout.tsx', [
+        index('./routes/web/index/route.tsx'),
+        ...prefix('/blog', [
+            layout('./routes/web/blog/layout.tsx', [
+                index('./routes/web/blog/index/route.tsx'),
+                route(':postSlug', './routes/web/blog/post-slug/route.tsx'),
+                route(
+                    '/category/:query',
+                    './routes/web/blog/category/route.tsx'
+                ),
+                route('/tag/:query', './routes/web/blog/tag/route.tsx'),
+                route('/subscribe', './routes/web/blog/subscribe/route.tsx'),
+            ]),
+        ]),
+        route('/*', './routes/web/$/route.tsx'),
+
+        // Adding web plugins
+    ]),
+
+    // // PAPA layout
+    // layout('./routes/layout.tsx', [
+    // // Admin layout
+    // layout('./routes/admin/layout/route.tsx', [
+    //     index('./routes/admin/index/route.tsx'),
+    //     route('account', ''),
+    //     route('api', ''),
+    //     route('assets', ''),
+    //     route('blog', ''),
+    //     route('company', ''),
+    //     route('seo', ''),
+    //     route('users', ''),
+    //     route('admins', ''),
+    //     // Adding admin plugins
+    // ]),
+] satisfies RouteConfig
 
 /**
  * Get all plugin folder which match *.plugin in directory /app/routes/plugins as flat route.
