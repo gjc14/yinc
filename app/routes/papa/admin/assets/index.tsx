@@ -18,7 +18,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-import { FileMetaSchema } from '../papa/admin/api/object-storage/schema'
+import { FileMetaSchema } from '../api/object-storage/schema'
 import { FileGrid } from './components/file-grid'
 
 const displayOptions = ['all', 'image', 'video', 'audio', 'file'] as const
@@ -75,8 +75,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 import { and, eq } from 'drizzle-orm'
 import { CloudAlert } from 'lucide-react'
 import { filesTable } from '~/lib/db/schema'
-import { loader } from '../_papa.admin.assets.resource/route'
-export { loader } from '../_papa.admin.assets.resource/route'
+import { loader } from './resource'
+export { loader } from './resource'
 
 export default function AdminAsset() {
     const submit = useSubmit()

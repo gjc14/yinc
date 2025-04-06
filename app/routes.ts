@@ -48,6 +48,14 @@ export default [
                         './routes/papa/admin/api/object-storage/route.tsx'
                     ),
                 ]),
+                // Assets
+                ...prefix('/assets', [
+                    index('./routes/papa/admin/assets/index.tsx'),
+                    route(
+                        '/resource',
+                        './routes/papa/admin/assets/resource.ts'
+                    ),
+                ]),
                 // Account
                 ...prefix('/account', [
                     layout('./routes/papa/admin/account/layout.tsx', [
