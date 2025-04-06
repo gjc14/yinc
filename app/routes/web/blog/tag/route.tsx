@@ -20,22 +20,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { seo } = await getSEO(url.pathname)
     const meta = seo ? createMeta(seo, url) : null
     const slug = url.searchParams.get('q')
-    if (!slug) return { meta, posts: [], slug: '' }
+    if (!slug) return { meta, posts: [] }
 
     try {
-        const { posts } = await getPosts({
+        const { posts, tagsFilter } = await getPosts({
             status: 'PUBLISHED',
-            tagFilter: [slug],
+            tagsFilter: [slug],
         })
-        return { meta, posts, slug }
+        return { meta, posts, tagsFilter }
     } catch (error) {
         console.error(error)
-        return { meta, posts: [], slug }
+        return { meta, posts: [] }
     }
 }
 
 export default function Tag() {
-    const { meta, posts, slug } = useLoaderData<typeof loader>()
+    const { meta, posts, tagsFilter } = useLoaderData<typeof loader>()
+
+    const tagNames = tagsFilter?.map(tag => tag.name)
 
     return (
         <>
@@ -46,7 +48,7 @@ export default function Tag() {
                         posts.length !== 0
                             ? `Listing ${posts.length} ${
                                   posts.length === 1 ? 'post' : 'posts'
-                              } in ${slug}`
+                              } in ${tagNames?.join(', ') ?? 'a tag filter'}`
                             : 'No posts found'
                     }`}
                     posts={posts.map(post => {

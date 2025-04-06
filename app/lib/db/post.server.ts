@@ -29,8 +29,8 @@ export const getPosts = async (
         pageSize?: number
         direction?: 'next' | 'previous'
         status?: PostStatus | 'ALL'
-        categoryFilter?: string[]
-        tagFilter?: string[]
+        categoriesFilter?: string[]
+        tagsFilter?: string[]
         titleQuery?: string
     } = {}
 ): Promise<{
@@ -38,6 +38,8 @@ export const getPosts = async (
     nextCursor: number | null
     prevCursor: number | null
     totalCount: number
+    categoriesFilter?: Category[]
+    tagsFilter?: Tag[]
     hasMore: boolean
 }> => {
     const {
@@ -45,10 +47,32 @@ export const getPosts = async (
         pageSize = 10,
         direction = 'next',
         status = 'PUBLISHED', // Default status is PUBLISHED
-        categoryFilter = [],
-        tagFilter = [],
+        categoriesFilter,
+        tagsFilter,
         titleQuery = '',
     } = props
+
+    let filteredPostIds: number[] | undefined = undefined
+    let categories: Category[] | undefined = undefined
+    let tags: Tag[] | undefined = undefined
+
+    if (categoriesFilter && categoriesFilter.length > 0) {
+        const { categoriessWithPostIds, postIds } =
+            await getPostIdsByCategorySlugs(categoriesFilter)
+        categories = categoriessWithPostIds
+        filteredPostIds = [...postIds]
+    }
+    if (tagsFilter && tagsFilter.length > 0) {
+        const { tagsWithPostIds, postIds } = await getPostIdsByTagSlugs(
+            tagsFilter
+        )
+        tags = tagsWithPostIds
+        if (filteredPostIds) {
+            filteredPostIds = filteredPostIds.filter(id => postIds.includes(id)) // Inner join
+        } else {
+            filteredPostIds = [...postIds]
+        }
+    }
 
     const statusCondition =
         status !== 'ALL' ? [eq(postsTable.status, status)] : []
@@ -72,12 +96,7 @@ export const getPosts = async (
             and(
                 ...baseConditions,
                 ...cursorCondition,
-                ...(tagFilter.length > 0
-                    ? [inArray(tagsTable.name, tagFilter)]
-                    : []),
-                ...(categoryFilter.length > 0
-                    ? [inArray(categoriesTable.name, categoryFilter)]
-                    : [])
+                ...(filteredPostIds ? [inArray(posts.id, filteredPostIds)] : [])
             ),
         with: {
             author: true,
@@ -103,9 +122,9 @@ export const getPosts = async (
     const posts = postsRaw.map(post => {
         return {
             ...post,
-            tags: post.postsToTags.map(relation => relation.tag),
+            tags: post.postsToTags.map(association => association.tag),
             categories: post.postsToCategories.map(
-                relation => relation.category
+                association => association.category
             ),
         }
     })
@@ -127,8 +146,51 @@ export const getPosts = async (
         nextCursor: hasMore ? nextCursor : null,
         prevCursor: cursor ? prevCursor : null,
         totalCount: posts.length,
+        categoriesFilter: categories,
+        tagsFilter: tags,
         hasMore,
     }
+}
+
+export const getPostIdsByTagSlugs = async (
+    tagSlugs: string[]
+): Promise<{ tagsWithPostIds: typeof tagsWithPostIds; postIds: number[] }> => {
+    const tagsWithPostIds = await db.query.tagsTable.findMany({
+        where: (tags, { inArray }) => inArray(tags.slug, tagSlugs),
+        with: {
+            postsToTags: {
+                columns: {
+                    postId: true,
+                },
+            },
+        },
+    })
+    const filteredPostIds = tagsWithPostIds.flatMap(t =>
+        t.postsToTags.flatMap(t => t.postId)
+    )
+    return { tagsWithPostIds, postIds: filteredPostIds }
+}
+
+export const getPostIdsByCategorySlugs = async (
+    categorySlugs: string[]
+): Promise<{
+    categoriessWithPostIds: typeof catsWithPostIds
+    postIds: number[]
+}> => {
+    const catsWithPostIds = await db.query.categoriesTable.findMany({
+        where: (cats, { inArray }) => inArray(cats.slug, categorySlugs),
+        with: {
+            postsToCategories: {
+                columns: {
+                    postId: true,
+                },
+            },
+        },
+    })
+    const filteredPostIds = catsWithPostIds.flatMap(t =>
+        t.postsToCategories.flatMap(t => t.postId)
+    )
+    return { categoriessWithPostIds: catsWithPostIds, postIds: filteredPostIds }
 }
 
 export const getPost = async (
@@ -155,9 +217,9 @@ export const getPost = async (
     const post = postRaw
         ? {
               ...postRaw,
-              tags: postRaw.postsToTags.map(relation => relation.tag),
+              tags: postRaw.postsToTags.map(association => association.tag),
               categories: postRaw.postsToCategories.map(
-                  relation => relation.category
+                  association => association.category
               ),
           }
         : null
@@ -198,9 +260,9 @@ export const getPostBySlug = async (
 
     const post = {
         ...postRaw,
-        tags: postRaw.postsToTags.map(relation => relation.tag),
+        tags: postRaw.postsToTags.map(association => association.tag),
         categories: postRaw.postsToCategories.map(
-            relation => relation.category
+            association => association.category
         ),
     }
 
@@ -247,9 +309,9 @@ export const getPostBySlug = async (
     const prevPost = prevPostRaw
         ? {
               ...prevPostRaw,
-              tags: prevPostRaw.postsToTags.map(relation => relation.tag),
+              tags: prevPostRaw.postsToTags.map(association => association.tag),
               categories: prevPostRaw.postsToCategories.map(
-                  relation => relation.category
+                  association => association.category
               ),
           }
         : null
@@ -257,9 +319,9 @@ export const getPostBySlug = async (
     const nextPost = nextPostRaw
         ? {
               ...nextPostRaw,
-              tags: nextPostRaw.postsToTags.map(relation => relation.tag),
+              tags: nextPostRaw.postsToTags.map(association => association.tag),
               categories: nextPostRaw.postsToCategories.map(
-                  relation => relation.category
+                  association => association.category
               ),
           }
         : null
