@@ -102,6 +102,24 @@ export default [
                         ]),
                     ]),
                 ]),
+                // Company
+                ...prefix('/company', [
+                    layout('./routes/papa/admin/company/layout.tsx', [
+                        index('./routes/papa/admin/company/index/route.tsx'),
+                        route(
+                            '/billing',
+                            './routes/papa/admin/company/billing/route.tsx'
+                        ),
+                        route(
+                            '/notification',
+                            './routes/papa/admin/company/notification/route.tsx'
+                        ),
+                        route(
+                            '/security',
+                            './routes/papa/admin/company/security/route.tsx'
+                        ),
+                    ]),
+                ]),
                 //     route('api', ''),
                 //     route('assets', ''),
                 //     route('blog', ''),
