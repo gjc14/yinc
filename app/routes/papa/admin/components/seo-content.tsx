@@ -14,7 +14,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { isConventionalSuccess } from '~/lib/utils'
-import { SeoLoaderType } from '~/routes/_papa.admin.seo/route'
+import { SeoLoaderType } from '~/routes/papa/admin/seo'
 
 export const SeoContent = ({
     seo,

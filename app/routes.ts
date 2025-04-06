@@ -120,6 +120,18 @@ export default [
                         ),
                     ]),
                 ]),
+                // SEO
+                ...prefix('/seo', [
+                    index('./routes/papa/admin/seo/index.tsx'),
+                    route(
+                        '/:seoId/delete',
+                        './routes/papa/admin/seo/delete/route.tsx'
+                    ),
+                    route(
+                        '/create',
+                        './routes/papa/admin/seo/create/route.tsx'
+                    ),
+                ]),
                 //     route('api', ''),
                 //     route('assets', ''),
                 //     route('blog', ''),
