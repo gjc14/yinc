@@ -126,21 +126,15 @@ export default [
                     route('/resource', './routes/papa/admin/seo/resource.ts'),
                 ]),
                 ...prefix('/users', [
-                    layout('./routes/papa/admin/users/layout.tsx', [
-                        index('./routes/papa/admin/users/index/route.tsx'),
-                        route(
-                            '/:userId/delete',
-                            './routes/papa/admin/users/user-delete/route.tsx'
-                        ),
-                        route(
-                            '/admins',
-                            './routes/papa/admin/users/admins/route.tsx'
-                        ),
-                        route(
-                            '/admins/invite',
-                            './routes/papa/admin/users/admins/invite-admin/route.tsx'
-                        ),
-                    ]),
+                    index('./routes/papa/admin/users/index.tsx'),
+                    route('/resource', './routes/papa/admin/users/resource.ts'),
+                ]),
+                ...prefix('/admins', [
+                    index('./routes/papa/admin/admins/index.tsx'),
+                    route(
+                        '/resource',
+                        './routes/papa/admin/admins/resource.ts'
+                    ),
                 ]),
                 // Adding admin plugins
             ]),

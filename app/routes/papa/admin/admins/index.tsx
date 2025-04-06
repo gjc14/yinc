@@ -1,9 +1,7 @@
-import { ActionFunctionArgs } from '@remix-run/node'
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { Loader2, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
-import { z } from 'zod'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -17,10 +15,7 @@ import {
 } from '~/components/ui/dialog'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { userIs } from '~/lib/db/auth.server'
-import { UserRole, UserStatus } from '~/lib/db/schema'
-import { updateUser } from '~/lib/db/user.server'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { getUsers } from '~/lib/db/user.server'
 import {
     AdminActions,
     AdminHeader,
@@ -32,71 +27,17 @@ import {
     DataTable,
 } from '~/routes/papa/admin/components/data-table'
 import { UserContent } from '~/routes/papa/admin/components/user-content'
-import { useUsersContext } from '../layout'
 
-export const UserUpdateSchema = z.object({
-    id: z.string().transform(val => Number(val)),
-    email: z.string().email(),
-    name: z.string().nullable(),
-    role: z.enum(UserRole),
-    status: z.enum(UserStatus),
-})
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-    if (request.method !== 'PUT') {
-        return Response.json({
-            data: null,
-            err: 'Invalid method',
-        } satisfies ConventionalActionResponse)
-    }
-
-    await userIs(request, ['ADMIN'])
-
-    const formData = await request.formData()
-    const updateUserData = Object.fromEntries(formData)
-
-    const zResult = UserUpdateSchema.safeParse(updateUserData)
-
-    if (!zResult.success || !zResult.data) {
-        console.log('updateUserData', zResult.error.issues)
-        const message = zResult.error.issues
-            .map(issue => `${issue.message} ${issue.path[0]}`)
-            .join(' & ')
-        return Response.json({
-            data: zResult.error.issues,
-            err: message,
-        } satisfies ConventionalActionResponse)
-    }
-
-    try {
-        const { user } = await updateUser({
-            id: zResult.data.id,
-            data: {
-                email: zResult.data.email,
-                name: zResult.data.name,
-                role: zResult.data.role,
-                status: zResult.data.status,
-            },
-        })
-
-        return Response.json({
-            msg: 'Success update ' + (user.name || user.email),
-        } satisfies ConventionalActionResponse)
-    } catch (error) {
-        console.error(error)
-        return Response.json({
-            data: null,
-            err: 'Failed to update user',
-        } satisfies ConventionalActionResponse)
-    }
+export const loader = async () => {
+    return await getUsers()
 }
 
 export default function AdminAdminUsers() {
     const fetcher = useFetcher()
-    const { users: allUsers } = useUsersContext()
+    const { users: allUsers } = useLoaderData<typeof loader>()
     const users = allUsers.filter(user => user.role === 'ADMIN')
 
-    const isSubmitting = fetcher.formAction === '/admin/users/admins/invite'
+    const isSubmitting = fetcher.state === 'submitting'
 
     return (
         <AdminSectionWrapper>
@@ -128,7 +69,7 @@ export default function AdminAdminUsers() {
                             <fetcher.Form
                                 className="flex gap-1.5"
                                 method="POST"
-                                action="/admin/users/admins/invite"
+                                action="/admin/admins/resource"
                             >
                                 <Input
                                     placeholder="Email"
@@ -136,7 +77,7 @@ export default function AdminAdminUsers() {
                                     name="email"
                                 />
                                 <DialogClose asChild>
-                                    <Button type="submit">{'Invite'}</Button>
+                                    <Button type="submit">Invite</Button>
                                 </DialogClose>
                             </fetcher.Form>
                         </DialogContent>
@@ -165,7 +106,7 @@ export default function AdminAdminUsers() {
     )
 }
 
-type UsersLoaderType = ReturnType<typeof useUsersContext>['users'][number]
+type UsersLoaderType = Awaited<ReturnType<typeof loader>>['users'][number]
 
 export const columns: ColumnDef<UsersLoaderType>[] = [
     {
@@ -208,8 +149,7 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
                                 { id },
                                 {
                                     method: 'DELETE',
-                                    action: `/admin/users/admins/${id}/delete`,
-                                    encType: 'application/json',
+                                    action: `/admin/admins/resource`,
                                 }
                             )
                         }}
@@ -220,7 +160,7 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
                     </AdminDataTableMoreMenu>
                     <UserContent
                         method="PUT"
-                        action={`/admin/users/admins`}
+                        action={`/admin/admins/resource`}
                         user={{
                             ...row.original,
                             updatedAt: new Date(row.original.updatedAt),

@@ -1,8 +1,9 @@
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
+import { getUsers } from '~/lib/db/user.server'
 import {
     AdminHeader,
     AdminSectionWrapper,
@@ -13,12 +14,13 @@ import {
     DataTable,
 } from '~/routes/papa/admin/components/data-table'
 import { UserContent } from '~/routes/papa/admin/components/user-content'
-import { useUsersContext } from '../layout'
 
-export { action } from '~/routes/papa/admin/users/admins/route'
+export const loader = async () => {
+    return await getUsers()
+}
 
 export default function AdminAllUsers() {
-    const { users } = useUsersContext()
+    const { users } = useLoaderData<typeof loader>()
 
     return (
         <AdminSectionWrapper>
@@ -47,7 +49,7 @@ export default function AdminAllUsers() {
     )
 }
 
-type UsersLoaderType = ReturnType<typeof useUsersContext>['users'][number]
+type UsersLoaderType = Awaited<ReturnType<typeof loader>>['users'][number]
 
 export const columns: ColumnDef<UsersLoaderType>[] = [
     {

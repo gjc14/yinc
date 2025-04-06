@@ -31,7 +31,6 @@ const MainNavItems: PapaAdminMenuItem[] = [
         iconName: 'user-round',
         title: 'Users',
         url: '/admin/users',
-        sub: [{ title: 'Admin', url: 'admins' }],
     },
     {
         iconName: 'pen',
@@ -44,6 +43,11 @@ const MainNavItems: PapaAdminMenuItem[] = [
     },
     { iconName: 'text-search', title: 'SEO', url: '/admin/seo' },
     { iconName: 'database', title: 'Assets', url: '/admin/assets' },
+    {
+        iconName: 'user-cog-2',
+        title: 'Admins',
+        url: '/admin/admins',
+    },
 ]
 
 const SecondaryNavItems: NavSecondaryItem[] = [
