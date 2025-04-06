@@ -18,7 +18,8 @@ export default function AssetsError() {
         <div className="h-screen w-screen grow flex flex-col items-center justify-center">
             <h1>Asset Error</h1>
             <p>
-                {status || '999'} | {statusText || 'Unknown error'}
+                {status || 'Unknown status code'} |{' '}
+                {statusText || 'Unknown error'}
             </p>
         </div>
     )

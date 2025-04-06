@@ -26,21 +26,27 @@ export default [
         // Adding web plugins
     ]),
 
-    // // PAPA layout
-    // layout('./routes/layout.tsx', [
-    // // Admin layout
-    // layout('./routes/admin/layout/route.tsx', [
-    //     index('./routes/admin/index/route.tsx'),
-    //     route('account', ''),
-    //     route('api', ''),
-    //     route('assets', ''),
-    //     route('blog', ''),
-    //     route('company', ''),
-    //     route('seo', ''),
-    //     route('users', ''),
-    //     route('admins', ''),
-    //     // Adding admin plugins
-    // ]),
+    // PAPA layout
+    layout('./routes/papa/layout.tsx', [
+        // PAPA assets resource route
+        route('assets/:visibility', './routes/papa/assets/route.tsx'),
+        route('assets/error', './routes/papa/assets/error.tsx'),
+
+        // // Admin layout
+        // ...prefix('/admin', [
+        // layout('./routes/admin/layout/route.tsx', [
+        //     index('./routes/admin/index/route.tsx'),
+        //     route('account', ''),
+        //     route('api', ''),
+        //     route('assets', ''),
+        //     route('blog', ''),
+        //     route('company', ''),
+        //     route('seo', ''),
+        //     route('users', ''),
+        //     route('admins', ''),
+        //     // Adding admin plugins
+        // ]),
+    ]),
 ] satisfies RouteConfig
 
 /**
