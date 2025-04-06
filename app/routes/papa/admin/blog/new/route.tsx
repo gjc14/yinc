@@ -140,7 +140,7 @@ export default function AdminNewPost() {
                             fetcher.submit(JSON.stringify(postReady), {
                                 method: 'POST', // Create
                                 encType: 'application/json',
-                                action: '/admin/blog',
+                                action: '/admin/blog/resource',
                             })
 
                             setIsDirty(false)

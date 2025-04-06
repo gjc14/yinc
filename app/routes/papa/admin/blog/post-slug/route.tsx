@@ -156,7 +156,7 @@ export default function AdminPost() {
                             fetcher.submit(JSON.stringify(postReady), {
                                 method: 'PUT', // Update
                                 encType: 'application/json',
-                                action: '/admin/blog',
+                                action: '/admin/blog/resource',
                             })
 
                             setIsDirty(false)

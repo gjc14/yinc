@@ -87,6 +87,10 @@ export default [
                             '/:postSlug',
                             './routes/papa/admin/blog/post-slug/route.tsx'
                         ),
+                        route(
+                            '/resource',
+                            './routes/papa/admin/blog/resource.ts'
+                        ),
                         ...prefix('/taxonomy', [
                             index(
                                 './routes/papa/admin/blog/taxonomy/index.tsx'
