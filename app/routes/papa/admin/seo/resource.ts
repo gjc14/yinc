@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { userIs } from '~/lib/db/auth.server'
 import { createSEO, deleteSEO, updateSEO } from '~/lib/db/seo.server'
 import { ConventionalActionResponse } from '~/lib/utils'
-import { handleError } from '../blog/resource'
+import { handleError } from '~/lib/utils/server'
 
 export const SeoCreateSchmea = z.object({
     metaTitle: z.string(),

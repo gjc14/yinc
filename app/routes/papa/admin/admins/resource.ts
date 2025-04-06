@@ -5,7 +5,7 @@ import { getToken, sendMagicLink, userIs } from '~/lib/db/auth.server'
 import { usersTable } from '~/lib/db/schema'
 import { createUser, deleteUser, updateUser } from '~/lib/db/user.server'
 import { ConventionalActionResponse, isValidEmail } from '~/lib/utils'
-import { handleError } from '../blog/resource'
+import { handleError } from '~/lib/utils/server'
 
 const userUpdateSchema = createUpdateSchema(usersTable).required().omit({
     createdAt: true,

@@ -1,14 +1,12 @@
 import { ActionFunctionArgs } from '@remix-run/node'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
-import pkg from 'pg'
 import { z } from 'zod'
 
 import { userIs } from '~/lib/db/auth.server'
 import { createPost, deletePost, updatePost } from '~/lib/db/post.server'
 import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
 import { ConventionalActionResponse } from '~/lib/utils'
-
-const { DatabaseError } = pkg
+import { handleError } from '~/lib/utils/server'
 
 /**
  * createInsertSchema(postsTable) is used for create and update
@@ -100,32 +98,4 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         default:
             throw new Response('Method not allowed', { status: 405 })
     }
-}
-
-export const handleError = (error: unknown, request: Request) => {
-    if (error instanceof z.ZodError) {
-        console.error(error.message)
-        return Response.json({
-            err: 'Internal error: Invalid argument',
-        } satisfies ConventionalActionResponse)
-    }
-
-    if (error instanceof DatabaseError) {
-        console.error(error)
-        return Response.json({
-            err: error.detail ?? 'Database error',
-        } satisfies ConventionalActionResponse)
-    }
-
-    if (error instanceof Error) {
-        console.error(error.message)
-        return Response.json({
-            err: error.message,
-        } satisfies ConventionalActionResponse)
-    }
-
-    console.error(error)
-    return Response.json({
-        err: 'Internal error: Unknown error',
-    } satisfies ConventionalActionResponse)
 }
