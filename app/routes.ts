@@ -140,6 +140,10 @@ export default [
             ]),
         ]),
     ]),
+
+    // SEO
+    route('/robots.txt', './routes/_robots.txt.ts'),
+    route('/sitemap.xml', './routes/_sitemap.xml.ts'),
 ] satisfies RouteConfig
 
 /**
