@@ -4,8 +4,8 @@ import { useLoaderData } from '@remix-run/react'
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
-import { SectionWrapper } from '../components/max-width-wrapper'
-import { PostCollection } from '../components/posts'
+import { SectionWrapper } from '../_web.blog/components/max-width-wrapper'
+import { PostCollection } from '../_web.blog/components/posts'
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     if (!data || !data.meta) {
@@ -23,7 +23,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     try {
         const { posts } = await getPosts({
             status: 'PUBLISHED',
-            categoryFilter: [query],
+            tagFilter: [query],
         })
         return { meta, posts, query }
     } catch (error) {
@@ -32,7 +32,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
 }
 
-export default function Category() {
+export default function Tag() {
     const { meta, posts, query } = useLoaderData<typeof loader>()
 
     return (

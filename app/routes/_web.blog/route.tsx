@@ -4,9 +4,9 @@ import { Outlet } from '@remix-run/react'
 import { MainWrapper } from '~/components/wrappers'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
-import { Footer } from '../../_web.plugin/_web/components/footer'
-import { Nav } from '../../_web.plugin/_web/components/nav'
-import { CTA } from '../components/cta'
+import { Footer } from '../_web/components/footer'
+import { Nav } from '../_web/components/nav'
+import { CTA } from './components/cta'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
     if (!data || !data.meta) {

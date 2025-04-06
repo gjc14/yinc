@@ -4,8 +4,8 @@ import { useLoaderData } from '@remix-run/react'
 import { UnderConstruction } from '~/components/under-construction'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
-import { Footer } from '../../_web.plugin/_web/components/footer'
-import { Nav } from '../../_web.plugin/_web/components/nav'
+import { Footer } from '~/routes/_web/components/footer'
+import { Nav } from '~/routes/_web/components/nav'
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     if (!data || !data.meta) {

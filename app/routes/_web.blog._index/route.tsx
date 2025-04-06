@@ -4,8 +4,8 @@ import { ClientLoaderFunctionArgs, useLoaderData } from '@remix-run/react'
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
-import { SectionWrapper } from '../components/max-width-wrapper'
-import { PostCollection } from '../components/posts'
+import { SectionWrapper } from '../_web.blog/components/max-width-wrapper'
+import { PostCollection } from '../_web.blog/components/posts'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
     if (!data || !data.meta) {
