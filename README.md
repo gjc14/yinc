@@ -213,7 +213,7 @@ Reference:
 ```tsx
 import { ColumnDef } from '@tanstack/react-table'
 
-import { DataTable } from '~/routes/_papa.admin/components/data-table'
+import { DataTable } from '~/routes/papa/admin/components/data-table'
 
 type TagType = {
     name: string

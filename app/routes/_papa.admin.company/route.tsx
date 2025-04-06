@@ -5,8 +5,8 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
-import { useAdminContext } from '../_papa.admin/route'
+} from '~/routes/papa/admin/components/admin-wrapper'
+import { useAdminContext } from '../papa/admin/layout'
 
 const AdminCompanyRoutes: RouteButton[] = [
     { to: '.', title: 'Profile' },

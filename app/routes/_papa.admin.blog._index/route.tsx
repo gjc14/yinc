@@ -11,11 +11,11 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
+} from '~/routes/papa/admin/components/admin-wrapper'
 import {
     AdminDataTableMoreMenu,
     DataTable,
-} from '~/routes/_papa.admin/components/data-table'
+} from '~/routes/papa/admin/components/data-table'
 import { useAdminBlogContext } from '../_papa.admin.blog/route'
 
 export default function AdminPost() {

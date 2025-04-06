@@ -16,12 +16,12 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
+} from '~/routes/papa/admin/components/admin-wrapper'
 import {
     AdminDataTableMoreMenu,
     DataTable,
-} from '~/routes/_papa.admin/components/data-table'
-import { SeoContent } from '~/routes/_papa.admin/components/seo-content'
+} from '~/routes/papa/admin/components/data-table'
+import { SeoContent } from '~/routes/papa/admin/components/seo-content'
 
 export const SeoUpdateSchmea = z.object({
     id: z.string().transform(val => Number(val)),

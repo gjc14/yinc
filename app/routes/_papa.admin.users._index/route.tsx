@@ -7,12 +7,12 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
+} from '~/routes/papa/admin/components/admin-wrapper'
 import {
     AdminDataTableMoreMenu,
     DataTable,
-} from '~/routes/_papa.admin/components/data-table'
-import { UserContent } from '~/routes/_papa.admin/components/user-content'
+} from '~/routes/papa/admin/components/data-table'
+import { UserContent } from '~/routes/papa/admin/components/user-content'
 import { useUsersContext } from '../_papa.admin.users/route'
 
 export { action } from '~/routes/_papa.admin.users.admins/route'

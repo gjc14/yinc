@@ -17,7 +17,7 @@ import {
 } from '~/components/ui/sidebar'
 import { userIs } from '~/lib/db/auth.server'
 import { generateBreadcrumbs } from '~/lib/utils'
-import { AdminSidebar } from '~/routes/_papa.admin/components/admin-sidebar'
+import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
 import { getPluginConfigs } from '~/routes/plugins/utils/get-plugin-configs.server'
 
 export const meta: MetaFunction = () => {

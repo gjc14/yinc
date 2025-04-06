@@ -34,8 +34,8 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
-import { useAdminContext } from '~/routes/_papa.admin/route'
+} from '~/routes/papa/admin/components/admin-wrapper'
+import { useAdminContext } from '~/routes/papa/admin/layout'
 import { LoaderHR } from './components/loader'
 
 export default function AdminGenerativeAI() {

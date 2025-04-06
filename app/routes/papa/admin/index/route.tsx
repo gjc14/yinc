@@ -1,4 +1,4 @@
-import { AdminSectionWrapper } from '~/routes/_papa.admin/components/admin-wrapper'
+import { AdminSectionWrapper } from '~/routes/papa/admin/components/admin-wrapper'
 
 export default function AdminIndex() {
     return (

@@ -23,7 +23,7 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
+} from '~/routes/papa/admin/components/admin-wrapper'
 import { PostContent, PostContentHandle } from './post-content'
 
 export default function AdminPost() {

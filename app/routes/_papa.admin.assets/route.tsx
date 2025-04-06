@@ -17,7 +17,7 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
+} from '~/routes/papa/admin/components/admin-wrapper'
 import { FileMetaSchema } from '../_papa.admin.api.object-storage/schema'
 import { FileGrid } from './components/file-grid'
 

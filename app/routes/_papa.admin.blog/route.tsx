@@ -14,7 +14,7 @@ import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'
 import { ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
-import { useAdminContext } from '~/routes/_papa.admin/route'
+import { useAdminContext } from '~/routes/papa/admin/layout'
 
 /**
  * createInsertSchema(postsTable) is used for create and update

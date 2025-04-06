@@ -7,13 +7,13 @@ import {
     SidebarFooter,
     SidebarHeader,
 } from '~/components/ui/sidebar'
-import { NavMain } from '~/routes/_papa.admin/components/nav/nav-main'
-import { NavPlugins } from '~/routes/_papa.admin/components/nav/nav-plugins'
+import { NavMain } from '~/routes/papa/admin/components/nav/nav-main'
+import { NavPlugins } from '~/routes/papa/admin/components/nav/nav-plugins'
 import {
     NavSecondary,
     NavSecondaryItem,
-} from '~/routes/_papa.admin/components/nav/nav-secondary'
-import { NavUser } from '~/routes/_papa.admin/components/nav/nav-user'
+} from '~/routes/papa/admin/components/nav/nav-secondary'
+import { NavUser } from '~/routes/papa/admin/components/nav/nav-user'
 import { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
 import { ServiceSwicher, ServiceSwicherProps } from './service-swicher'
 

@@ -29,7 +29,7 @@ import {
     AdminHeader,
     AdminSectionWrapper,
     AdminTitle,
-} from '~/routes/_papa.admin/components/admin-wrapper'
+} from '~/routes/papa/admin/components/admin-wrapper'
 
 export default function AdminNewPost() {
     const fetcher = useFetcher<ConventionalActionResponse<{ slug: string }>>()
