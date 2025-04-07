@@ -1,12 +1,12 @@
-import { type ActionFunctionArgs } from 'react-router'
 import { eq } from 'drizzle-orm'
+import { type ActionFunctionArgs } from 'react-router'
 
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
-import { userIs } from '~/lib/db/auth.server'
 import { db, S3 } from '~/lib/db/db.server'
 import { filesTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { PresignRequestSchema, PresignResponseSchema } from './schema'
+import { validateAdminSession } from '~/routes/papa/auth/utils'
 
 // Presign url for uploading assets, and delete function
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -20,7 +20,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         } satisfies ConventionalActionResponse)
     }
 
-    const { user: admin } = await userIs(request, ['ADMIN'])
+    const adminSession = await validateAdminSession(request)
 
     const jsonData = await request.json()
 
@@ -85,7 +85,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                         key: file.key,
                         name: file.name,
                         description: file.description,
-                        userId: admin.id,
+                        userId: adminSession.user.id,
                         type: file.type,
                         size: file.size,
                     }))

@@ -17,41 +17,38 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '~/components/ui/sidebar'
-import { auth } from '~/lib/auth/auth.server'
-import { userIs } from '~/lib/db/auth.server'
 import { generateBreadcrumbs } from '~/lib/utils'
 import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
 import { getPluginConfigs } from '~/routes/plugins/utils/get-plugin-configs.server'
+import { validateAdminSession } from '../auth/utils'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Admin' }, { name: 'description', content: 'Admin page' }]
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const session = await auth.api.getSession(request)
+const parseSidebarStatus = (cookieHeader: string) => {
+    const cookies = Object.fromEntries(
+        cookieHeader.split(';').map(cookie => {
+            const [name, value] = cookie.trim().split('=')
+            return [name, decodeURIComponent(value)]
+        })
+    )
 
-    if (!session) {
+    return cookies[SIDEBAR_COOKIE_NAME]
+}
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const usesrSession = await validateAdminSession(request)
+
+    if (!usesrSession) {
         throw redirect('/admin/signin')
     }
-
-    const { user: admin } = await userIs(request, ['ADMIN'])
 
     const cookieHeader = request.headers.get('Cookie')
 
-    let parsedSidebarStatus = null
-    if (cookieHeader) {
-        const cookies = Object.fromEntries(
-            cookieHeader.split(';').map(cookie => {
-                const [name, value] = cookie.trim().split('=')
-                return [name, decodeURIComponent(value)]
-            })
-        )
-        parsedSidebarStatus = cookies[SIDEBAR_COOKIE_NAME]
-    }
-
-    if (!admin) {
-        throw redirect('/admin/signin')
-    }
+    const parsedSidebarStatus = cookieHeader
+        ? parseSidebarStatus(cookieHeader)
+        : null
 
     const pluginConfigs = await getPluginConfigs()
     const pluginRoutes = pluginConfigs
@@ -59,7 +56,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         .filter(routeItem => !!routeItem)
 
     return {
-        admin: admin,
+        admin: usesrSession.user,
         pluginRoutes: pluginRoutes,
         sidebarStatus: parsedSidebarStatus === 'true',
     }
@@ -75,11 +72,11 @@ export default function Admin() {
 
     const memoizedUser = useMemo(
         () => ({
-            name: admin.name ?? 'u-papa',
+            name: admin.name ?? 'Papa Fritas',
             email: admin.email,
-            avatar: admin.imageUri ?? '/placeholders/avatar.png',
+            avatar: admin.image ?? '/placeholders/avatar.png',
         }),
-        [admin.name, admin.email, admin.imageUri]
+        [admin.name, admin.email, admin.image]
     )
 
     const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])

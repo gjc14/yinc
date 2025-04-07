@@ -1,10 +1,9 @@
-import { type ActionFunctionArgs, redirect } from 'react-router'
+import { redirect, type ActionFunctionArgs } from 'react-router'
 import { z } from 'zod'
 
 import { TurnstileSiteVerify } from '~/components/captchas/turnstile'
-import { createUser } from '~/lib/db/user-old.server'
-import { UserRole, UserStatus } from '~/lib/db/schema'
-import { type ConventionalActionResponse } from '~/lib/utils'
+import { auth } from '~/lib/auth/auth.server'
+import { isValidEmail, type ConventionalActionResponse } from '~/lib/utils'
 
 const captchaSchema = z.enum(['turnstile', 'recaptcha', 'hcaptcha'])
 
@@ -63,19 +62,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     // Create
     const email = formData.get('email')
-    const zResult = z.string().trim().email().safeParse(email)
-    if (!zResult.success) {
+    if (typeof email !== 'string' || !isValidEmail(email)) {
         return Response.json({
             err: 'Invalid arguments',
         } satisfies ConventionalActionResponse)
     }
 
-    const { role, status } = {
-        role: 'SUBSCRIBER',
-        status: 'ACTIVE',
-    } satisfies { role: UserRole; status: UserStatus }
     try {
-        const { user } = await createUser(zResult.data, role, status)
+        const { user } = await auth.api.createUser({
+            body: {
+                email,
+                password: '',
+                name: '',
+                role: 'user',
+            },
+        })
 
         return Response.json({
             msg: `Welcom! Subscribed with ${user.email}!`,

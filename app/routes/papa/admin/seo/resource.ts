@@ -1,10 +1,10 @@
 import { type ActionFunctionArgs } from 'react-router'
 import { z } from 'zod'
 
-import { userIs } from '~/lib/db/auth.server'
 import { createSEO, deleteSEO, updateSEO } from '~/lib/db/seo.server'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
+import { validateAdminSession } from '../../auth/utils'
 
 export const SeoCreateSchmea = z.object({
     metaTitle: z.string(),
@@ -27,7 +27,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         } satisfies ConventionalActionResponse)
     }
 
-    await userIs(request, ['ADMIN'])
+    await validateAdminSession(request)
 
     const formData = await request.formData()
     const seoRequested = Object.fromEntries(formData)

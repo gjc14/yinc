@@ -2,8 +2,8 @@
  * Proxy requests to the presigned URL of the asset
  */
 import { type LoaderFunctionArgs, redirect } from 'react-router'
+import { auth } from '~/lib/auth/auth.server'
 import { getFileUrl } from '~/lib/db/asset.server'
-import { userIs } from '~/lib/db/auth.server'
 
 // Usage: papacms.com/assets/my-file-key?visibility=public
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -21,9 +21,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     if (visibility !== 'public') {
         // TODO: provide allowed roles
-        const { user: userAllowed } = await userIs(request, ['ADMIN'], '')
+        const session = await auth.api.getSession(request)
+        const isAdmin = session?.user.role === 'admin'
 
-        if (!userAllowed)
+        if (!isAdmin)
             return redirect(
                 '/assets/error' + '?status=404' + '&statusText=File not found'
             )

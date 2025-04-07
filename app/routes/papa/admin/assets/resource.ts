@@ -2,11 +2,11 @@ import { ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { type LoaderFunctionArgs } from 'react-router'
 
 import { db, S3 } from '~/lib/db/db.server'
+import { validateAdminSession } from '../../auth/utils'
 import { type FileMeta } from '../api/object-storage/schema'
-import { userIs } from '~/lib/db/auth.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    await userIs(request, ['ADMIN'])
+    await validateAdminSession(request)
 
     if (!S3) return { hasObjectStorage: false, files: [] as FileMeta[] }
 

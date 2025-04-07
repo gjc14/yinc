@@ -33,6 +33,6 @@ export default function AdminCompany() {
     )
 }
 
-export const useAccountContext = () => {
-    return useOutletContext<typeof useAdminContext>()
+export const useCompanyContext = () => {
+    return useOutletContext<ReturnType<typeof useAdminContext>>()
 }

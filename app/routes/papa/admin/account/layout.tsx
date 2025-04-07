@@ -34,5 +34,5 @@ export default function AdminAccount() {
 }
 
 export const useAccountContext = () => {
-    return useOutletContext<typeof useAdminContext>()
+    return useOutletContext<ReturnType<typeof useAdminContext>>()
 }

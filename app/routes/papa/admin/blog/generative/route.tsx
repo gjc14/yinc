@@ -23,7 +23,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '~/components/ui/tooltip'
-import type { User } from '~/lib/db/schema'
 import {
     type Provider,
     type Providers,
@@ -127,12 +126,7 @@ export default function AdminGenerativeAI() {
                                     <ChatUser
                                         key={message.id}
                                         message={message.content}
-                                        user={{
-                                            ...admin,
-                                            updatedAt: new Date(
-                                                admin.updatedAt
-                                            ),
-                                        }}
+                                        user={admin}
                                     />
                                 )
                             } else {
@@ -245,7 +239,13 @@ const SelectProvider = ({
     )
 }
 
-const ChatUser = ({ message, user }: { message: string; user?: User }) => {
+const ChatUser = ({
+    message,
+    user,
+}: {
+    message: string
+    user: ReturnType<typeof useAdminContext>['admin']
+}) => {
     const [copied, setCopied] = useState(false)
 
     return (
@@ -278,11 +278,7 @@ const ChatUser = ({ message, user }: { message: string; user?: User }) => {
             </div>
             <Avatar className="h-8 w-8 flex items-center justify-center rounded-full">
                 <AvatarImage
-                    src={
-                        user?.imageUri
-                            ? user.imageUri
-                            : '/placeholders/avatar.png'
-                    }
+                    src={user?.image ? user.image : '/placeholders/avatar.png'}
                     alt={
                         user?.name
                             ? user.name
@@ -291,7 +287,7 @@ const ChatUser = ({ message, user }: { message: string; user?: User }) => {
                             : 'user'
                     }
                 />
-                <AvatarFallback className="rounded-lg">WB</AvatarFallback>
+                <AvatarFallback className="rounded-lg">PA</AvatarFallback>
             </Avatar>
         </div>
     )

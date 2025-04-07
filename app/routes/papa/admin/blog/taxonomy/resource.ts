@@ -1,7 +1,6 @@
 import { type ActionFunctionArgs, redirect } from 'react-router'
 import { z } from 'zod'
 
-import { userIs } from '~/lib/db/auth.server'
 import type { Category, SubCategory, Tag } from '~/lib/db/schema'
 import {
     createCategory,
@@ -13,6 +12,7 @@ import {
 } from '~/lib/db/taxonomy.server'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
+import { validateAdminSession } from '~/routes/papa/auth/utils'
 
 const intentSchema = z.enum(['category', 'subcategory', 'tag'])
 export type Intents = z.infer<typeof intentSchema>
@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         throw new Response('Method not allowd', { status: 405 })
     }
 
-    await userIs(request, ['ADMIN'])
+    await validateAdminSession(request)
 
     const formData = await request.formData()
     const intent = formData.get('intent')

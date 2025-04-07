@@ -4,7 +4,7 @@ import { openai } from '@ai-sdk/openai'
 import type { CoreMessage, CoreTool, StreamTextResult } from 'ai'
 import { streamText } from 'ai'
 import { type ActionFunctionArgs } from 'react-router'
-import { userIs } from '~/lib/db/auth.server'
+import { validateAdminSession } from '~/routes/papa/auth/utils'
 
 export const googleModels = [
     'gemini-1.5-flash-latest',
@@ -36,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
         throw new Response('Method not allowed', { status: 405 })
     }
 
-    const { user: admin } = await userIs(request, ['ADMIN'])
+    await validateAdminSession(request)
 
     try {
         const {

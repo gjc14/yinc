@@ -1,21 +1,22 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
-import {
-    type ClientLoaderFunctionArgs,
-    useLoaderData,
-    useNavigate,
-} from 'react-router'
 import { generateHTML } from '@tiptap/html'
 import { common, createLowlight } from 'lowlight'
 import { ArrowLeft } from 'lucide-react'
 import { useEffect } from 'react'
+import {
+    type ClientLoaderFunctionArgs,
+    type LoaderFunctionArgs,
+    type MetaFunction,
+    useLoaderData,
+    useNavigate,
+} from 'react-router'
 
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
-import { userIs } from '~/lib/db/auth.server'
 import { getPostBySlug } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
+import { validateAdminSession } from '~/routes/papa/auth/utils'
 import { FeaturedImage } from './featured-image'
 import { hilightInnerHTML } from './highlight-inner-html'
 import { PostFooter } from './post-footer'
@@ -41,7 +42,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const preview = searchParams.get('preview')
 
     if (preview) {
-        await userIs(request, ['ADMIN'])
+        await validateAdminSession(request)
     }
 
     try {

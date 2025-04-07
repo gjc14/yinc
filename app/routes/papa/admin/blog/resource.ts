@@ -1,12 +1,12 @@
-import { type ActionFunctionArgs } from 'react-router'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+import { type ActionFunctionArgs } from 'react-router'
 import { z } from 'zod'
 
-import { userIs } from '~/lib/db/auth.server'
 import { createPost, deletePost, updatePost } from '~/lib/db/post.server'
 import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
+import { validateAdminSession } from '../../auth/utils'
 
 /**
  * createInsertSchema(postsTable) is used for create and update
@@ -25,7 +25,7 @@ const seoInsertUpdateSchema = z.object({
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-    await userIs(request, ['ADMIN'])
+    await validateAdminSession(request)
 
     const jsonData = await request.json()
 

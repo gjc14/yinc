@@ -97,32 +97,28 @@ Run this in `/` shell.
 mv .env.sample .env
 ```
 
-1. `SUPER_EMAIL`: Your super admin email.
-2. `DATABASE_URL`: We are using PostgreSQL.
-3. (optional) In `/app/constants/env.ts` set `TURNSTILE_SITE_KEY`: This key is
+1. `DATABASE_URL`: We are using PostgreSQL.
+2. (optional) In `/app/constants/env.ts` set `TURNSTILE_SITE_KEY`: This key is
    used to
    [get Turnstile token](https://developers.cloudflare.com/turnstile/get-started/)
    in client, if you use
    [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) as
    captcha, so should be exposed in the frontend with _VITE_\_ prefix.
-4. (optional) `TURNSTILE_SECRET_KEY`: Used to
+3. (optional) `TURNSTILE_SECRET_KEY`: Used to
    [verify Turnstile token](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
    get in the frontend in the backend
-5. `AUTH_SECRET`: Use
+4. `AUTH_SECRET`: Use
    `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"` to
    generate a random secret with node.
-6. `AUTH_EMAIL`: The email address sending authentication emails.
-7. `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
+5. `AUTH_EMAIL`: The email address sending authentication emails.
+6. `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
    mode, probably `http://localhost:5173`. In production environment, please use
    where your app is. E.g. `https://papa.delicioso`.
-8. `APP_NAME`: What you call your app.
-9. `COOKIE_SECRET`: Used to make your cookies secure. Run
-   `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` to
-   get one
-10. `RESEND_API_KEY`: Send emails via Resend.
-11. (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
-    `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
-12. `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`,
+7. `APP_NAME`: What you call your app.
+8. `RESEND_API_KEY`: Send emails via Resend.
+9. (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
+   `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
+10. `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`,
     `OBJECT_STORAGE_ACCOUNT_ID`: Where you save your objects, accept S3
     compatible services. Using in route `/admin/api/object-storage`
 
