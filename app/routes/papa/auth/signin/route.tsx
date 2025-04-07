@@ -28,7 +28,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     const token = await getToken(existingUser.id, existingUser.email)
-    await sendMagicLink(token, existingUser.email, new URL(request.url).origin)
+    await sendMagicLink(token, existingUser.email, new URL(request.url))
 
     return redirect('/admin/magic')
 }

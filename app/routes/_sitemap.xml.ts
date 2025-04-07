@@ -1,6 +1,7 @@
 /**
  * @see https://developers.google.com/search/docs/advanced/sitemaps/build-sitemap
  */
+import type { LoaderFunctionArgs } from 'react-router'
 import { getPosts } from '~/lib/db/post.server'
 import { siteRoutes } from './web/components/footer'
 
@@ -23,20 +24,30 @@ export const toXmlSitemap = (pages: { url: string; lastmod: Date }[]) => {
       </urlset>`
 }
 
-export const loader = async () => {
-    const BASE_URL = `https://${process.env.BASE_URL}`
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    // TODO: Add cache control
+    // TODO: Add routes from routes.ts
+    const url = new URL(request.url)
 
     const { posts } = await getPosts({
         status: 'PUBLISHED',
     })
 
     const sitemap = toXmlSitemap([
+        {
+            url: `${url.origin}`,
+            lastmod: new Date(),
+        },
         ...siteRoutes.map(to => ({
-            url: `${BASE_URL}${to}`,
+            url: `${url.origin}${to}`,
             lastmod: new Date(),
         })),
+        {
+            url: `${url.origin}/blog`,
+            lastmod: new Date(),
+        },
         ...posts.map(post => ({
-            url: `${BASE_URL}/blog/${post.slug}`,
+            url: `${url.origin}/blog/${post.slug}`,
             lastmod: post.updatedAt,
         })),
     ])

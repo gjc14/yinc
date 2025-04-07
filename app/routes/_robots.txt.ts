@@ -2,7 +2,10 @@
  * @see https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt?hl=zh-tw
  */
 
-export const loader = () => {
+import type { LoaderFunctionArgs } from 'react-router'
+
+export const loader = ({ request }: LoaderFunctionArgs) => {
+    const url = new URL(request.url)
     const robotText = `
         User-agent: Googlebot
         Disallow: /nogooglebot/
@@ -10,7 +13,7 @@ export const loader = () => {
         User-agent: *
         Allow: /
 
-        Sitemap: https://${process.env.BASE_URL}/sitemap.xml`
+        Sitemap: ${url.origin}/sitemap.xml`
         .replace(/^[ \t]+(?=\S)/gm, '')
         .trim()
 

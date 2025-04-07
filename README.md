@@ -108,18 +108,21 @@ mv .env.sample .env
 4. (optional) `TURNSTILE_SECRET_KEY`: Used to
    [verify Turnstile token](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
    get in the frontend in the backend
-5. `AED_SECRET`: Used to encrypt your magic link for authentication flow. Run
-   `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` to
-   get one.
-6. `COOKIE_SECRET`: Used to make your cookies secure. Run
+5. `AUTH_SECRET`: Use
+   `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"` to
+   generate a random secret with node.
+6. `AUTH_EMAIL`: The email address sending authentication emails.
+7. `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
+   mode, probably `http://localhost:5173`. In production environment, please use
+   where your app is. E.g. `https://papa.delicioso`.
+8. `APP_NAME`: What you call your app.
+9. `COOKIE_SECRET`: Used to make your cookies secure. Run
    `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` to
    get one
-7. `RESEND_API_KEY`: Send emails via Resend.
-8. `BASE_URL`: This is the domain where you're hosting your PapaCMS. e.g.
-   `BASE_URL=papacms.com`
-9. (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
-   `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
-10. `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`,
+10. `RESEND_API_KEY`: Send emails via Resend.
+11. (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
+    `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
+12. `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`,
     `OBJECT_STORAGE_ACCOUNT_ID`: Where you save your objects, accept S3
     compatible services. Using in route `/admin/api/object-storage`
 

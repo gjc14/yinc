@@ -40,14 +40,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                 const { user } = await createUser(email, 'ADMIN', 'INACTIVE')
 
                 const token = await getToken(user.id, user.email)
-                await sendMagicLink(
-                    token,
-                    user.email,
-                    new URL(request.url).origin,
-                    {
-                        searchParams: { role: user.role },
-                    }
-                )
+                await sendMagicLink(token, user.email, new URL(request.url), {
+                    searchParams: { role: user.role },
+                })
 
                 return Response.json({
                     msg: `A verification email has sent to ${email}`,

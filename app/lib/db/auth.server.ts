@@ -14,14 +14,17 @@ if (!COOKIE_SECRET) {
     COOKIE_SECRET = 'default-cookie-s3cr3t'
 }
 
-export const authCookie = createCookie(`auth-${process.env.BASE_URL}`, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    path: '/', // Available everywhere on the site
-    sameSite: 'lax',
-    secrets: [COOKIE_SECRET],
-    maxAge: 60 * 60 * 24 * 14, // 14 days
-})
+export const authCookie = createCookie(
+    `auth-${process.env.APP_NAME ?? 'papa'}`,
+    {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/', // Available everywhere on the site
+        sameSite: 'lax',
+        secrets: [COOKIE_SECRET],
+        maxAge: 60 * 60 * 24 * 14, // 14 days
+    }
+)
 
 interface MagicLinkPayload {
     id: number
@@ -33,7 +36,7 @@ export const getToken = async (id: number, email: string) => {
     const exp = Date.now() + 1000 * 60 * 10 // 10 minutes
     const encryptedData = AES.encrypt(
         JSON.stringify({ id, email, exp } as MagicLinkPayload),
-        process.env.AES_SECRET ?? ''
+        process.env.COOKIE_SECRET ?? ''
     ).toString()
     const base64Token = Base64.stringify(Utf8.parse(encryptedData))
     return base64Token
@@ -42,12 +45,12 @@ export const getToken = async (id: number, email: string) => {
 export const sendMagicLink = async (
     token: string,
     email: string,
-    origin: string,
+    url: URL,
     options?: {
         searchParams?: Record<string, string>
     }
 ): Promise<CreateEmailResponseSuccess | null> => {
-    const magicLink = `${origin}/admin/magic?token=${token}${
+    const magicLink = `${url.origin}/admin/magic?token=${token}${
         options?.searchParams
             ? '&' + new URLSearchParams(options?.searchParams).toString()
             : ''
@@ -55,13 +58,13 @@ export const sendMagicLink = async (
 
     const resend = new Resend(process.env.RESEND_API_KEY)
     let from
-    if (!process.env.BASE_URL) {
+    if (!process.env.AUTH_EMAIL) {
         console.warn(
-            'BASE_URL is not set, using default email Acme <onboarding@resend.dev>, you could only send to your account'
+            'AUTH_EMAIL is not set, using default email Acme <onboarding@resend.dev>, you could only send to your account'
         )
         from = 'Acme <onboarding@resend.dev>'
     } else {
-        from = `Papa <email@${process.env.BASE_URL}>`
+        from = `${process.env.APP_NAME} w/PAPA <${process.env.AUTH_EMAIL}>`
     }
 
     const { data, error } = await resend.emails.send({
@@ -91,7 +94,7 @@ export const verifyMagicLink = async (
         const encryptedData = Utf8.stringify(Base64.parse(token))
         const decryptedData = AES.decrypt(
             encryptedData,
-            process.env.AES_SECRET ?? ''
+            process.env.COOKIE_SECRET ?? ''
         ).toString(Utf8)
         const data = JSON.parse(decryptedData) as MagicLinkPayload
         if (data.exp < Date.now()) throw new TokenExpiredError('Token expired')
