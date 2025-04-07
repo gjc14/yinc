@@ -1,6 +1,9 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { db } from '~/lib/db/db.server' // your drizzle instance
+import { admin as adminPlugin } from 'better-auth/plugins'
+
+import { db } from '~/lib/db/db.server'
+import { ac, admin, user } from './permissions'
 
 const appName = process.env.APP_NAME ?? 'PAPA'
 const baseURL = process.env.VITE_BASE_URL ?? 'http://localhost:5173'
@@ -14,4 +17,13 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: false,
     },
+    plugins: [
+        adminPlugin({
+            ac,
+            roles: {
+                admin,
+                user,
+            },
+        }),
+    ],
 })
