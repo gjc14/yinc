@@ -23,6 +23,9 @@ export default [
         // Adding web plugins
     ]),
 
+    // Auth
+    route('/api/auth/*', './routes/auth.ts'),
+
     // PAPA layout
     layout('./routes/papa/layout.tsx', [
         // PAPA assets resource route
