@@ -1,6 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Loader2, PlusCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
 
 import { Badge } from '~/components/ui/badge'
@@ -38,6 +38,8 @@ export const loader = async () => {
 export default function AdminAdminUsers() {
     const fetcher = useFetcher()
     const { users: allUsers } = useLoaderData<typeof loader>()
+    const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+
     const users = allUsers.filter(user => user.role === 'admin')
 
     const isSubmitting = fetcher.state === 'submitting'
@@ -105,7 +107,20 @@ export default function AdminAdminUsers() {
                     </Dialog>
                 </AdminActions>
             </AdminHeader>
-            <DataTable columns={columns} data={users} hideColumnFilter>
+            <DataTable
+                columns={columns}
+                data={users.map(u => ({
+                    ...u,
+                    setRowsDeleting,
+                }))}
+                rowGroupStyle={[
+                    {
+                        rowIds: rowsDeleting,
+                        className: 'opacity-50 pointer-events-none',
+                    },
+                ]}
+                hideColumnFilter
+            >
                 {table => (
                     <Input
                         placeholder="Filter email..."
@@ -129,7 +144,11 @@ export default function AdminAdminUsers() {
 
 type UsersLoaderType = Awaited<ReturnType<typeof loader>>['users'][number]
 
-export const columns: ColumnDef<UsersLoaderType>[] = [
+export const columns: ColumnDef<
+    UsersLoaderType & {
+        setRowsDeleting: React.Dispatch<React.SetStateAction<Set<string>>>
+    }
+>[] = [
     {
         accessorKey: 'image',
         header: 'Avatar',
@@ -194,8 +213,26 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
         cell: ({ row }) => {
             const fetcher = useFetcher()
             const [open, setOpen] = useState(false)
+
+            const rowId = row.id
             const id = row.original.id
             const userEmail = row.original.email
+
+            useEffect(() => {
+                if (fetcher.state !== 'idle') {
+                    row.original.setRowsDeleting(prev => {
+                        const newSet = new Set(prev)
+                        newSet.add(rowId)
+                        return newSet
+                    })
+                } else {
+                    row.original.setRowsDeleting(prev => {
+                        const newSet = new Set(prev)
+                        newSet.delete(rowId)
+                        return newSet
+                    })
+                }
+            }, [fetcher.state])
 
             return (
                 <>

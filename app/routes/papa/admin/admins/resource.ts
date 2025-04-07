@@ -36,8 +36,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         }
     }
 
-    console.log('userData', userData)
-
     switch (request.method) {
         case 'POST':
             try {
