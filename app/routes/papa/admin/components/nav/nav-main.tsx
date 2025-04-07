@@ -71,7 +71,7 @@ export function NavMain({ items }: { items: PapaAdminMenuItem[] }) {
                                 {item.sub?.length ? (
                                     <>
                                         <CollapsibleTrigger asChild>
-                                            <SidebarMenuAction className="data-[state=open]:rotate-90">
+                                            <SidebarMenuAction className="data-[state=open]:rotate-90 cursor-pointer">
                                                 <ChevronRight />
                                                 <span className="sr-only">
                                                     Toggle
