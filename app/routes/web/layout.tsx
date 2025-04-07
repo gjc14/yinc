@@ -1,35 +1,15 @@
-import { type LoaderFunctionArgs } from 'react-router'
-import {
-    isRouteErrorResponse,
-    Link,
-    Outlet,
-    useLoaderData,
-    useRouteError,
-} from 'react-router'
 import { Settings } from 'lucide-react'
+import { isRouteErrorResponse, Link, Outlet, useRouteError } from 'react-router'
 
 import { Button } from '~/components/ui/button'
-import { authCookie } from '~/lib/db/auth.server'
+import { authClient } from '~/lib/auth/auth-client'
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-    // TODO: efficiently check if user could access to /admin page
-    const cookieString = request.headers.get('Cookie')
-    if (!cookieString) return { user: null }
-
-    const cookie = await authCookie.parse(cookieString)
-    if (cookie) {
-        return { user: cookie }
-    } else {
-        return { user: null }
-    }
-}
-
-export default function WebFront() {
-    const { user } = useLoaderData<typeof loader>()
+export default function Web() {
+    const { data } = authClient.useSession()
 
     return (
         <>
-            {user && (
+            {data?.user.role === 'admin' && (
                 <Link to={'/admin'}>
                     <Button
                         variant="ghost"
