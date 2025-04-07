@@ -17,6 +17,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '~/components/ui/sidebar'
+import { auth } from '~/lib/auth/auth.server'
 import { userIs } from '~/lib/db/auth.server'
 import { generateBreadcrumbs } from '~/lib/utils'
 import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
@@ -27,6 +28,12 @@ export const meta: MetaFunction = () => {
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const session = await auth.api.getSession(request)
+
+    if (!session) {
+        throw redirect('/admin/signin')
+    }
+
     const { user: admin } = await userIs(request, ['ADMIN'])
 
     const cookieHeader = request.headers.get('Cookie')

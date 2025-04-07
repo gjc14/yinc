@@ -1,7 +1,16 @@
+import { redirect, type LoaderFunctionArgs } from 'react-router'
+
 import { MainWrapper } from '~/components/wrappers'
+import { auth } from '~/lib/auth/auth.server'
 import { SignInForm } from './signin-form'
 
-// TODO: Add server side session check
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const session = await auth.api.getSession(request)
+
+    if (session) {
+        return redirect('/admin')
+    }
+}
 
 export default function AdminAuth() {
     return (
