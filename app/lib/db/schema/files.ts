@@ -3,10 +3,11 @@ import {
     integer,
     pgTable,
     serial,
+    text,
     timestamp,
     varchar,
 } from 'drizzle-orm/pg-core'
-import { usersTable } from './users-old'
+import { user } from './auth'
 
 export type File = InferSelectModel<typeof filesTable>
 
@@ -22,14 +23,14 @@ export const filesTable = pgTable('files', {
     description: varchar('description', { length: 255 }),
     type: varchar('type', { length: 100 }).notNull(),
     size: integer('size').notNull(),
-    userId: integer('user_id').references(() => usersTable.id, {
+    userId: text('user_id').references(() => user.id, {
         onDelete: 'set null',
     }),
 })
 
 export const filesRelations = relations(filesTable, ({ one }) => ({
-    user: one(usersTable, {
+    user: one(user, {
         fields: [filesTable.userId],
-        references: [usersTable.id],
+        references: [user.id],
     }),
 }))
