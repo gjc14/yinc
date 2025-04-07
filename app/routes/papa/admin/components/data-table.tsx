@@ -225,7 +225,11 @@ export function DataTable<TData, TValue>({
                     ) : (
                         <TableRow>
                             <TableCell
-                                colSpan={columns.length}
+                                colSpan={
+                                    selectable
+                                        ? columns.length + 1
+                                        : columns.length
+                                }
                                 className="h-24 text-center"
                             >
                                 No results.
@@ -299,7 +303,7 @@ export const AdminDataTableMoreMenu = ({
     deleteTarget,
     onDelete,
 }: {
-    id: number
+    id: number | string
     children?: React.ReactNode
     hideDelete?: boolean
     deleteTarget?: string
