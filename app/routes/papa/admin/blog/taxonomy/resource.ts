@@ -1,8 +1,8 @@
-import { ActionFunctionArgs, redirect } from 'react-router'
+import { type ActionFunctionArgs, redirect } from 'react-router'
 import { z } from 'zod'
 
 import { userIs } from '~/lib/db/auth.server'
-import { Category, SubCategory, Tag } from '~/lib/db/schema'
+import type { Category, SubCategory, Tag } from '~/lib/db/schema'
 import {
     createCategory,
     createSubcategory,
@@ -11,7 +11,7 @@ import {
     deleteSubcategory,
     deleteTag,
 } from '~/lib/db/taxonomy.server'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 const intentSchema = z.enum(['category', 'subcategory', 'tag'])

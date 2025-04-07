@@ -15,11 +15,11 @@ import {
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { PostWithRelations } from '~/lib/db/post.server'
-import { PostStatus, User } from '~/lib/db/schema'
-import { ConventionalActionResponse } from '~/lib/utils'
+import type { PostWithRelations } from '~/lib/db/post.server'
+import { PostStatus, type User } from '~/lib/db/schema'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
-import { PostContent, PostContentHandle } from '../components/post-content'
+import { PostContent, type PostContentHandle } from '../components/post-content'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import {
     AdminActions,

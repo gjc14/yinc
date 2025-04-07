@@ -1,8 +1,8 @@
 import { ListObjectsV2Command } from '@aws-sdk/client-s3'
-import { LoaderFunctionArgs } from 'react-router'
+import { type LoaderFunctionArgs } from 'react-router'
 
 import { db, S3 } from '~/lib/db/db.server'
-import { FileMeta } from '../api/object-storage/schema'
+import { type FileMeta } from '../api/object-storage/schema'
 import { userIs } from '~/lib/db/auth.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

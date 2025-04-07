@@ -1,11 +1,10 @@
-import { ReactNode } from 'react'
 import { cn } from '~/lib/utils'
 
 const AdminSectionWrapper = ({
     children,
     className,
 }: {
-    children?: ReactNode
+    children?: React.ReactNode
     className?: string
 }) => {
     return (
@@ -24,7 +23,7 @@ const AdminHeader = ({
     children,
     className,
 }: {
-    children?: ReactNode
+    children?: React.ReactNode
     className?: string
 }) => {
     return (
@@ -52,7 +51,7 @@ const AdminTitle = ({
     titleClassName?: string
     description?: string
     descriptionClassName?: string
-    children?: ReactNode
+    children?: React.ReactNode
 }) => {
     return (
         <div className={cn('space-y-2', className)}>
@@ -76,7 +75,7 @@ const AdminActions = ({
     children,
     className,
 }: {
-    children?: ReactNode
+    children?: React.ReactNode
     className?: string
 }) => {
     return (

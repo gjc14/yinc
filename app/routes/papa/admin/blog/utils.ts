@@ -1,6 +1,7 @@
 import { generateText } from '@tiptap/react'
+
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
-import { PostWithRelations } from '~/lib/db/post.server'
+import type { PostWithRelations } from '~/lib/db/post.server'
 
 const areValuesDiff = (v1: any, v2: any) => {
     if (

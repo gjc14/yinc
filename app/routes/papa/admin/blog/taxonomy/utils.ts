@@ -1,7 +1,7 @@
 import { useFetchers } from 'react-router'
 
-import { SubCategory } from '~/lib/db/schema'
-import { CategoryType, TagType } from './type'
+import type { SubCategory } from '~/lib/db/schema'
+import type { CategoryType, TagType } from './type'
 
 type pendingItem = ReturnType<typeof useFetchers>[number] & {
     formData: FormData

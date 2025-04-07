@@ -1,6 +1,6 @@
-import { asc, desc, eq, gt, InferInsertModel, lt } from 'drizzle-orm'
+import { asc, desc, eq, gt, type InferInsertModel, lt } from 'drizzle-orm'
 
-import { User, UserRole, usersTable, UserStatus } from '~/lib/db/schema'
+import { type User, UserRole, usersTable, UserStatus } from '~/lib/db/schema'
 import { db } from './db.server'
 
 /**

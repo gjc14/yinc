@@ -34,7 +34,7 @@ import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { cn } from '~/lib/utils'
-import { FileMeta } from '~/routes/papa/admin/api/object-storage/schema'
+import { type FileMeta } from '~/routes/papa/admin/api/object-storage/schema'
 
 export type FileCardProps = {
     file: FileMeta

@@ -5,14 +5,8 @@ import { eq } from 'drizzle-orm'
 
 import { db } from '~/lib/db/db.server'
 import { generateSlug } from '../utils/seo'
-import {
-    categoriesTable,
-    Category,
-    subCategoriesTable,
-    SubCategory,
-    Tag,
-    tagsTable,
-} from './schema'
+import type { Category, SubCategory, Tag } from './schema'
+import { categoriesTable, subCategoriesTable, tagsTable } from './schema'
 
 /**
  * Tag and Category functions

@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from 'react-router'
+import { type LoaderFunctionArgs } from 'react-router'
 import { useLoaderData } from 'react-router'
 
 // Usage: papacms.com/assets/my-file-key?visibility=public

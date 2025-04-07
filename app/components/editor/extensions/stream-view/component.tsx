@@ -1,4 +1,4 @@
-import { NodeViewProps, NodeViewWrapper } from '@tiptap/react'
+import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react'
 import { useCompletion } from 'ai/react'
 import { Loader, RotateCcw, StopCircle } from 'lucide-react'
 import { useEffect } from 'react'

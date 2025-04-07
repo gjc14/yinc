@@ -19,7 +19,7 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '~/components/ui/sidebar'
-import { type PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
+import type { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
 
 export function NavMain({ items }: { items: PapaAdminMenuItem[] }) {
     const location = useLocation()

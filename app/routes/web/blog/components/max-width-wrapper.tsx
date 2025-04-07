@@ -1,12 +1,10 @@
-import { ReactNode } from 'react'
-
 import { cn } from '~/lib/utils'
 
 export const SectionWrapper = ({
     children,
     className,
 }: {
-    children: ReactNode
+    children: React.ReactNode
     className?: string
 }) => {
     return (

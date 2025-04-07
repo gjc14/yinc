@@ -1,11 +1,13 @@
-import { LoaderFunctionArgs, MetaFunction, redirect } from 'react-router'
+import { memo, useMemo } from 'react'
 import {
+    type LoaderFunctionArgs,
+    type MetaFunction,
     Outlet,
+    redirect,
     useLoaderData,
     useLocation,
     useOutletContext,
 } from 'react-router'
-import { memo, useMemo } from 'react'
 
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
 import { Separator } from '~/components/ui/separator'

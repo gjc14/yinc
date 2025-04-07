@@ -24,7 +24,7 @@ import {
     DialogTrigger,
 } from '~/components/ui/dialog'
 import { cn } from '~/lib/utils'
-import {
+import type {
     FileMeta,
     FileMetaWithFile,
 } from '~/routes/papa/admin/api/object-storage/schema'

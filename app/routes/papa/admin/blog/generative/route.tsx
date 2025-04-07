@@ -23,10 +23,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '~/components/ui/tooltip'
-import { User } from '~/lib/db/schema'
+import type { User } from '~/lib/db/schema'
 import {
-    Provider,
-    Providers,
+    type Provider,
+    type Providers,
     providers,
 } from '~/routes/papa/admin/api/ai-chat/route'
 import {

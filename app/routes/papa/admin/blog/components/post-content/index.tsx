@@ -7,7 +7,9 @@ import {
     useState,
 } from 'react'
 
-import DefaultTipTap, { EditorRef } from '~/components/editor/default-tiptap'
+import DefaultTipTap, {
+    type EditorRef,
+} from '~/components/editor/default-tiptap'
 import { FullScreenLoading } from '~/components/loading'
 import {
     AlertDialog,
@@ -22,9 +24,9 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
-import { PostWithRelations } from '~/lib/db/post.server'
-import { Category, Tag } from '~/lib/db/schema'
-import { ConventionalActionResponse } from '~/lib/utils'
+import type { PostWithRelations } from '~/lib/db/post.server'
+import type { Category, Tag } from '~/lib/db/schema'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
 import { areDifferentPosts } from '../../utils'
 import { DangerZone } from './danger-zone'

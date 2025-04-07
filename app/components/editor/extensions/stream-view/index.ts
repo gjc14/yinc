@@ -1,8 +1,8 @@
-import { Command, mergeAttributes, Node } from '@tiptap/core'
+import { type Command, mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import MarkdownIt from 'markdown-it'
 
-import { Provider } from '~/routes/papa/admin/api/ai-chat/route'
+import { type Provider } from '~/routes/papa/admin/api/ai-chat/route'
 import Component from './component'
 
 interface StreamViewProps {

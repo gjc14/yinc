@@ -2,7 +2,7 @@
  * Where will match all routes that are not matched by other routes.
  * Best place to put a 404 page.
  */
-import { data, MetaFunction } from 'react-router'
+import { data, type MetaFunction } from 'react-router'
 import { Link } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { MainWrapper } from '~/components/wrappers'

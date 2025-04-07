@@ -1,6 +1,6 @@
 import { useRevalidator } from 'react-router'
 import { createContext, useContext } from 'react'
-import { Theme } from '~/hooks/use-cookie-theme'
+import { type Theme } from '~/hooks/use-cookie-theme'
 
 type ThemeProviderState = {
     theme: Theme

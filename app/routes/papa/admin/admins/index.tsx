@@ -1,5 +1,5 @@
 import { useFetcher, useLoaderData } from 'react-router'
-import { ColumnDef } from '@tanstack/react-table'
+import { type ColumnDef } from '@tanstack/react-table'
 import { Loader2, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 

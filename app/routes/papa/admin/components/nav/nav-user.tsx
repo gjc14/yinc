@@ -1,16 +1,16 @@
-import { Form, Link, useNavigation } from 'react-router'
 import {
     BadgeCheck,
     Bell,
     ChevronRight,
     CreditCard,
     LogOut,
-    LucideIcon,
+    type LucideIcon,
     Moon,
     Shield,
     Sparkles,
     Sun,
 } from 'lucide-react'
+import { Form, Link, useNavigation } from 'react-router'
 
 import { FullScreenLoading } from '~/components/loading'
 import { ThemeDropDownMenu } from '~/components/theme-toggle'

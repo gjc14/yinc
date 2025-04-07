@@ -1,11 +1,11 @@
-import { ActionFunctionArgs } from 'react-router'
+import { type ActionFunctionArgs } from 'react-router'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
 import { userIs } from '~/lib/db/auth.server'
 import { createPost, deletePost, updatePost } from '~/lib/db/post.server'
 import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 /**

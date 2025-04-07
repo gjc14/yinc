@@ -1,7 +1,7 @@
 import pkg from 'pg'
 import { z } from 'zod'
 
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 
 const { DatabaseError } = pkg
 

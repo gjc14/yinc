@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, MetaFunction } from 'react-router'
-import { ClientLoaderFunctionArgs, useLoaderData } from 'react-router'
+import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
+import { type ClientLoaderFunctionArgs, useLoaderData } from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'

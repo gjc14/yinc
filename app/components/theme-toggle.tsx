@@ -1,7 +1,7 @@
 import { setCustomTheme, useTheme } from '~/hooks/theme-provider'
 
 import { Moon, Sun, SunMoon } from 'lucide-react'
-import { forwardRef, ReactNode } from 'react'
+import { forwardRef } from 'react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -87,7 +87,7 @@ export const ThemeDropDownMenu = ({
     asChild = false,
     className,
 }: {
-    children: ReactNode
+    children: React.ReactNode
     asChild?: boolean
     className?: string
 }) => {

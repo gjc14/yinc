@@ -1,20 +1,16 @@
 import { asc, desc, eq, gt, inArray, like, lt, SQL } from 'drizzle-orm'
 
-import { db, TransactionType } from '~/lib/db/db.server'
+import { db, type TransactionType } from '~/lib/db/db.server'
 import {
     categoriesTable,
-    Category,
-    Post,
     postsTable,
     PostStatus,
     postsToCategories,
     postsToTags,
-    Seo,
     seosTable,
-    Tag,
     tagsTable,
-    User,
 } from '~/lib/db/schema'
+import type { Category, Post, Seo, Tag, User } from '~/lib/db/schema'
 
 export type PostWithRelations = Post & {
     seo: Seo

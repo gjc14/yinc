@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 const examplePage = `
-import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import type { LoaderFunctionArgs MetaFunction } from 'react-router'
 import { Outlet } from 'react-router'
 
 export const meta: MetaFunction<typeof loader> = () => {
@@ -30,7 +30,7 @@ export default function ExamplePluginPage() {
 `
 
 const examplePageSub = `
-import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { LoaderFunctionArgs, type MetaFunction } from 'react-router'
 
 export const meta: MetaFunction<typeof loader> = () => {
     return [

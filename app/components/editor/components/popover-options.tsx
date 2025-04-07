@@ -1,6 +1,6 @@
 import { Editor } from '@tiptap/react'
 import { ChevronDown } from 'lucide-react'
-import { EditOptionProps } from '~/components/editor/edit-options'
+import { type EditOptionProps } from '~/components/editor/edit-options'
 import { Button } from '~/components/ui/button'
 import {
     Popover,

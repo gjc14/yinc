@@ -1,15 +1,15 @@
 import { useRouteLoaderData } from 'react-router'
-import { loader as rootLoader } from '~/root'
+import type { loader } from '~/root'
 
 export type Theme = 'light' | 'dark'
 
 export const useHints = () => {
-    const data = useRouteLoaderData<typeof rootLoader>('root')
+    const data = useRouteLoaderData<typeof loader>('root')
     return data?.requestInfo.hints
 }
 
 export const useCustomTheme = (): Theme | undefined => {
-    const data = useRouteLoaderData<typeof rootLoader>('root')
+    const data = useRouteLoaderData<typeof loader>('root')
     return data?.requestInfo.customTheme
 }
 

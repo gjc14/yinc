@@ -1,8 +1,8 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
-import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
 import {
-    ClientLoaderFunctionArgs,
+    type ClientLoaderFunctionArgs,
     useLoaderData,
     useNavigate,
 } from 'react-router'

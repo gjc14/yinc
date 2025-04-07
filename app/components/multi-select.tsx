@@ -13,7 +13,7 @@ import {
     CommandItem,
     CommandList,
     GetCommandState,
-    GetCommandStateRef,
+    type GetCommandStateRef,
 } from '~/components/ui/command'
 
 type Option = Record<'value' | 'label', string>

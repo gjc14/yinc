@@ -5,8 +5,8 @@
 
 import { MultiSelect } from '~/components/multi-select'
 import { Label } from '~/components/ui/label'
-import { PostWithRelations } from '~/lib/db/post.server'
-import { Category, Tag } from '~/lib/db/schema'
+import type { PostWithRelations } from '~/lib/db/post.server'
+import type { Category, Tag } from '~/lib/db/schema'
 import { generateNewCategory } from '~/routes/papa/admin/blog/taxonomy/components/category'
 import { generateNewTag } from '~/routes/papa/admin/blog/taxonomy/components/tag'
 

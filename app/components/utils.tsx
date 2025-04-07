@@ -1,5 +1,5 @@
-import { IconProps } from '@radix-ui/react-icons/dist/types'
-import { LucideIcon, LucideProps } from 'lucide-react'
+import { type IconProps } from '@radix-ui/react-icons/dist/types'
+import type { LucideIcon, LucideProps } from 'lucide-react'
 import { forwardRef } from 'react'
 
 export const convertRadixToLucideIcon = (

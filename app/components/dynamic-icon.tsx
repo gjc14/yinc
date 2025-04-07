@@ -1,4 +1,4 @@
-import { Loader, LucideProps } from 'lucide-react'
+import { Loader, type LucideProps } from 'lucide-react'
 import dynamicIconImports from 'lucide-react/dynamicIconImports'
 import { lazy, Suspense, useMemo } from 'react'
 import { cn } from '~/lib/utils'

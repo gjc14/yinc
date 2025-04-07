@@ -1,10 +1,10 @@
-import { ActionFunctionArgs, redirect } from 'react-router'
+import { type ActionFunctionArgs, redirect } from 'react-router'
 import { z } from 'zod'
 
 import { TurnstileSiteVerify } from '~/components/captchas/turnstile'
 import { createUser } from '~/lib/db/user.server'
 import { UserRole, UserStatus } from '~/lib/db/schema'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 
 const captchaSchema = z.enum(['turnstile', 'recaptcha', 'hcaptcha'])
 

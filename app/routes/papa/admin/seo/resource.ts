@@ -1,9 +1,9 @@
-import { ActionFunctionArgs } from 'react-router'
+import { type ActionFunctionArgs } from 'react-router'
 import { z } from 'zod'
 
 import { userIs } from '~/lib/db/auth.server'
 import { createSEO, deleteSEO, updateSEO } from '~/lib/db/seo.server'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 export const SeoCreateSchmea = z.object({

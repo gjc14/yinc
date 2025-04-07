@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, redirect } from 'react-router'
+import { type LoaderFunctionArgs, redirect } from 'react-router'
 
 import { MainWrapper } from '~/components/wrappers'
 import { authCookie, verifyMagicLink } from '~/lib/db/auth.server'

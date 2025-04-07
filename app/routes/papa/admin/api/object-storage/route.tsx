@@ -1,11 +1,11 @@
-import { ActionFunctionArgs } from 'react-router'
+import { type ActionFunctionArgs } from 'react-router'
 import { eq } from 'drizzle-orm'
 
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { userIs } from '~/lib/db/auth.server'
 import { db, S3 } from '~/lib/db/db.server'
 import { filesTable } from '~/lib/db/schema'
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { PresignRequestSchema, PresignResponseSchema } from './schema'
 
 // Presign url for uploading assets, and delete function

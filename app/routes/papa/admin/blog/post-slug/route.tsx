@@ -14,8 +14,8 @@ import {
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { PostWithRelations } from '~/lib/db/post.server'
-import { ConventionalActionResponse } from '~/lib/utils'
+import type { PostWithRelations } from '~/lib/db/post.server'
+import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import {
@@ -24,7 +24,7 @@ import {
     AdminSectionWrapper,
     AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-import { PostContent, PostContentHandle } from '../components/post-content'
+import { PostContent, type PostContentHandle } from '../components/post-content'
 
 export default function AdminPost() {
     const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()

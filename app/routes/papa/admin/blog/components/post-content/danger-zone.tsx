@@ -4,7 +4,7 @@
 
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
-import { PostWithRelations } from '~/lib/db/post.server'
+import type { PostWithRelations } from '~/lib/db/post.server'
 
 export const DangerZone = ({
     postState,

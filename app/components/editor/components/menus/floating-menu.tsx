@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import React from 'react'
 
-import { Button, ButtonProps } from '~/components/ui/button'
+import { Button, type ButtonProps } from '~/components/ui/button'
 
 export const DefaultFloatingMenu = ({ editor }: { editor: Editor }) => {
     return (

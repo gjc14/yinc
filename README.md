@@ -170,9 +170,9 @@ return { err: 'Something went wrong 🚨' } satisfies ConventionalActionResponse
 ```
 
 ```ts
-import { ActionFunctionArgs } from 'react-router'
+import { type ActionFunctionArgs } from 'react-router'
 
-import { ConventionalActionResponse } from '~/lib/utils'
+import { type ConventionalActionResponse } from '~/lib/utils'
 
 type ReturnData = {
     name: string
@@ -211,7 +211,7 @@ Reference:
 [Tanstack Table Columns Definitions Guide](https://tanstack.com/table/latest/docs/guide/column-defs)
 
 ```tsx
-import { ColumnDef } from '@tanstack/react-table'
+import { type ColumnDef } from '@tanstack/react-table'
 
 import { DataTable } from '~/routes/papa/admin/components/data-table'
 

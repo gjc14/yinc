@@ -7,7 +7,7 @@ import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { generateSlug } from '~/lib/utils/seo'
 import { actionRoute } from '..'
-import { TagType } from '../type'
+import type { TagType } from '../type'
 
 // Tag Component
 const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {

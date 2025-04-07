@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
 
-import { TooltipProps, TooltipWrapper } from './tooltip-wrapper'
+import { type TooltipProps, TooltipWrapper } from './tooltip-wrapper'
 
 interface ToggleButtonProps
     extends TooltipProps,

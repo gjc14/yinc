@@ -1,27 +1,22 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
-import {
+import type {
     ColumnDef,
     ColumnFiltersState,
+    SortingState,
+    Table as TableType,
+    VisibilityState,
+} from '@tanstack/react-table'
+import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    SortingState,
-    Table as TableType,
     useReactTable,
-    VisibilityState,
 } from '@tanstack/react-table'
-import { EyeOff } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '~/components/ui/button'
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
 import {
     Table,
     TableBody,

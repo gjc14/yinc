@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 
-import { SubCategory } from '~/lib/db/schema'
+import type { SubCategory } from '~/lib/db/schema'
 import {
     AdminActions,
     AdminHeader,
@@ -10,7 +10,7 @@ import {
 import { useAdminBlogContext } from '../layout'
 import { CategoriesSection, SubcategoriesSection } from './components/category'
 import { TagsSection } from './components/tag'
-import { CategoryType, TagType } from './type'
+import type { CategoryType, TagType } from './type'
 import {
     usePendingCategories,
     usePendingSubCategories,

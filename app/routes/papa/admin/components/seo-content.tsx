@@ -1,6 +1,7 @@
-import { Form, useFetcher } from 'react-router'
 import { Loader2, Save } from 'lucide-react'
 import { useEffect } from 'react'
+import { Form, useFetcher } from 'react-router'
+
 import { Button } from '~/components/ui/button'
 import {
     Dialog,
@@ -14,7 +15,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { isConventionalSuccess } from '~/lib/utils'
-import { SeoLoaderType } from '~/routes/papa/admin/seo'
+import { type SeoLoaderType } from '~/routes/papa/admin/seo'
 
 export const SeoContent = ({
     seo,

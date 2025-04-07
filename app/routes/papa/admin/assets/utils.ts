@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import { isConventionalError } from '~/lib/utils'
 import {
-    FileMetaWithFile,
-    PresignRequest,
+    type FileMetaWithFile,
+    type PresignRequest,
     PresignResponseSchema,
 } from '~/routes/papa/admin/api/object-storage/schema'
 

@@ -5,7 +5,7 @@ const examplePage = `
 /**
  * Navigate to '/plugin-example' to see this route in action
  */
-import { data, LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { data, type LoaderFunctionArgs, type MetaFunction } from 'react-router'
 import { useLoaderData } from 'react-router'
 
 import { getSEO } from '~/lib/db/seo.server'

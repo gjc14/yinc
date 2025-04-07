@@ -2,10 +2,10 @@ import { createCookie, redirect } from 'react-router'
 import AES from 'crypto-js/aes'
 import Base64 from 'crypto-js/enc-base64'
 import Utf8 from 'crypto-js/enc-utf8'
-import { CreateEmailResponseSuccess, Resend } from 'resend'
+import { type CreateEmailResponseSuccess, Resend } from 'resend'
 
 import MagicLinkEmail from '~/components/email/magic-link'
-import { User } from './schema'
+import { type User } from './schema'
 import { getUserById } from './user.server'
 
 let COOKIE_SECRET = process.env.COOKIE_SECRET

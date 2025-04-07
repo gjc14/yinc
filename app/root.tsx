@@ -1,10 +1,11 @@
 import './tailwind.css'
 
+import { useEffect, useRef } from 'react'
 import {
     data,
     isRouteErrorResponse,
     Links,
-    LoaderFunctionArgs,
+    type LoaderFunctionArgs,
     Meta,
     Outlet,
     Scripts,
@@ -14,12 +15,10 @@ import {
     useRevalidator,
     useRouteError,
 } from 'react-router'
-import { useEffect, useRef } from 'react'
 import { toast, Toaster } from 'sonner'
 
 import { GlobalLoading } from './components/global-loading'
 import {
-    customThemeCookieName,
     getCustomTheme,
     parsedCustomTheme,
     ThemeProvider,

@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
 import { useLoaderData } from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'

@@ -1,8 +1,9 @@
 import { anthropic } from '@ai-sdk/anthropic'
 import { google } from '@ai-sdk/google'
 import { openai } from '@ai-sdk/openai'
-import { ActionFunctionArgs } from 'react-router'
-import { CoreMessage, CoreTool, streamText, StreamTextResult } from 'ai'
+import type { CoreMessage, CoreTool, StreamTextResult } from 'ai'
+import { streamText } from 'ai'
+import { type ActionFunctionArgs } from 'react-router'
 import { userIs } from '~/lib/db/auth.server'
 
 export const googleModels = [

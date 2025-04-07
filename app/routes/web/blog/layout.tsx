@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
 import { Outlet } from 'react-router'
 
 import { MainWrapper } from '~/components/wrappers'

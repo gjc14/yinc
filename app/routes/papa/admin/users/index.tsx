@@ -1,5 +1,5 @@
 import { useFetcher, useLoaderData } from 'react-router'
-import { ColumnDef } from '@tanstack/react-table'
+import { type ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'

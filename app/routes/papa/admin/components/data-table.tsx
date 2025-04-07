@@ -1,20 +1,22 @@
-import { useFetcher } from 'react-router'
-import {
+import type {
     ColumnDef,
     ColumnFiltersState,
+    RowSelectionState,
+    SortingState,
+    Table as TableType,
+    VisibilityState,
+} from '@tanstack/react-table'
+import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    RowSelectionState,
-    SortingState,
-    Table as TableType,
     useReactTable,
-    VisibilityState,
 } from '@tanstack/react-table'
 import { EyeOff, Loader2, MoreHorizontal } from 'lucide-react'
-import { ReactNode, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useFetcher } from 'react-router'
 
 import {
     AlertDialog,
@@ -298,7 +300,7 @@ export const AdminDataTableMoreMenu = ({
     onDelete,
 }: {
     id: number
-    children?: ReactNode
+    children?: React.ReactNode
     hideDelete?: boolean
     deleteTarget?: string
     onDelete?: () => void

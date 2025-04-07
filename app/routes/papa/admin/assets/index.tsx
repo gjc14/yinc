@@ -1,4 +1,4 @@
-import { ActionFunctionArgs } from 'react-router'
+import { type ActionFunctionArgs } from 'react-router'
 import { useLoaderData, useSubmit } from 'react-router'
 import { useEffect, useState } from 'react'
 
@@ -11,7 +11,7 @@ import {
     SelectValue,
 } from '~/components/ui/select'
 import { db } from '~/lib/db/db.server'
-import { capitalize, ConventionalActionResponse } from '~/lib/utils'
+import { capitalize, type ConventionalActionResponse } from '~/lib/utils'
 import {
     AdminActions,
     AdminHeader,

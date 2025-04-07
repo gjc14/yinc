@@ -7,7 +7,7 @@ export const generateSlug = (name: string) => {
         .replace(/-+/g, '-')
 }
 
-import { Seo } from '~/lib/db/schema'
+import type { Seo } from '~/lib/db/schema'
 
 export const createMeta = (seo: Seo, url: URL) => {
     const metaTags = []

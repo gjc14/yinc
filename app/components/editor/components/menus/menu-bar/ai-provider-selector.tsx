@@ -16,7 +16,7 @@ import {
     PopoverTrigger,
 } from '~/components/ui/popover'
 import { cn } from '~/lib/utils'
-import { Provider, providers } from '~/routes/papa/admin/api/ai-chat/route'
+import { type Provider, providers } from '~/routes/papa/admin/api/ai-chat/route'
 
 export const AIProviderSelector = ({
     className,

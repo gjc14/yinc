@@ -1,6 +1,9 @@
 import { Outlet, useOutletContext } from 'react-router'
 
-import { AnimatedNav, RouteButton } from '~/components/animated-horizontal-nav'
+import {
+    AnimatedNav,
+    type RouteButton,
+} from '~/components/animated-horizontal-nav'
 import {
     AdminHeader,
     AdminSectionWrapper,
