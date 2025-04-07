@@ -3,7 +3,7 @@ import { type ActionFunctionArgs } from 'react-router'
 import { createUpdateSchema } from 'drizzle-zod'
 import { getToken, sendMagicLink, userIs } from '~/lib/db/auth.server'
 import { usersTable } from '~/lib/db/schema'
-import { createUser, deleteUser, updateUser } from '~/lib/db/user.server'
+import { createUser, deleteUser, updateUser } from '~/lib/db/user-old.server'
 import { type ConventionalActionResponse, isValidEmail } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 

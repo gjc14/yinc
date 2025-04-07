@@ -3,7 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { getUsers } from '~/lib/db/user.server'
+import { getUsers } from '~/lib/db/user-old.server'
 import {
     AdminHeader,
     AdminSectionWrapper,

@@ -6,7 +6,7 @@ import { type CreateEmailResponseSuccess, Resend } from 'resend'
 
 import MagicLinkEmail from '~/components/email/magic-link'
 import { type User } from './schema'
-import { getUserById } from './user.server'
+import { getUserById } from './user-old.server'
 
 let COOKIE_SECRET = process.env.COOKIE_SECRET
 if (!COOKIE_SECRET) {

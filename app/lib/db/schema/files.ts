@@ -6,7 +6,7 @@ import {
     timestamp,
     varchar,
 } from 'drizzle-orm/pg-core'
-import { usersTable } from './users'
+import { usersTable } from './users-old'
 
 export type File = InferSelectModel<typeof filesTable>
 

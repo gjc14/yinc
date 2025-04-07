@@ -15,7 +15,7 @@ import {
 } from '~/components/ui/dialog'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { getUsers } from '~/lib/db/user.server'
+import { getUsers } from '~/lib/db/user-old.server'
 import {
     AdminActions,
     AdminHeader,
