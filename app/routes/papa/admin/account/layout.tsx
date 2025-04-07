@@ -1,4 +1,4 @@
-import { Outlet, useOutletContext } from '@remix-run/react'
+import { Outlet, useOutletContext } from 'react-router'
 
 import { AnimatedNav, RouteButton } from '~/components/animated-horizontal-nav'
 import {

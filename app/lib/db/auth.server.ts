@@ -1,4 +1,4 @@
-import { createCookie, redirect } from '@remix-run/node'
+import { createCookie, redirect } from 'react-router'
 import AES from 'crypto-js/aes'
 import Base64 from 'crypto-js/enc-base64'
 import Utf8 from 'crypto-js/enc-utf8'

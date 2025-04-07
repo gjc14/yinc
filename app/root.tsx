@@ -1,9 +1,10 @@
 import './tailwind.css'
 
-import { data, LoaderFunctionArgs } from '@remix-run/node'
 import {
+    data,
     isRouteErrorResponse,
     Links,
+    LoaderFunctionArgs,
     Meta,
     Outlet,
     Scripts,
@@ -12,8 +13,7 @@ import {
     useLoaderData,
     useRevalidator,
     useRouteError,
-} from '@remix-run/react'
-import { parse } from 'cookie'
+} from 'react-router'
 import { useEffect, useRef } from 'react'
 import { toast, Toaster } from 'sonner'
 
@@ -21,6 +21,7 @@ import { GlobalLoading } from './components/global-loading'
 import {
     customThemeCookieName,
     getCustomTheme,
+    parsedCustomTheme,
     ThemeProvider,
     useTheme,
 } from './hooks/theme-provider'
@@ -180,9 +181,10 @@ export default function App() {
         subscribeToSchemeChange(theme => {
             // Do not set theme if custom theme is set
             const cookieHeader = document.cookie
-            const parsedCustomTheme =
-                cookieHeader && parse(cookieHeader)[customThemeCookieName]
-            if (parsedCustomTheme) return revalidate()
+
+            const customTheme = parsedCustomTheme(cookieHeader)
+
+            if (customTheme) return revalidate()
 
             // Set theme to system theme
             setTheme(theme)

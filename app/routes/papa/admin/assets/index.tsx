@@ -1,5 +1,5 @@
-import { ActionFunctionArgs } from '@remix-run/node'
-import { useLoaderData, useSubmit } from '@remix-run/react'
+import { ActionFunctionArgs } from 'react-router'
+import { useLoaderData, useSubmit } from 'react-router'
 import { useEffect, useState } from 'react'
 
 import { Label } from '~/components/ui/label'

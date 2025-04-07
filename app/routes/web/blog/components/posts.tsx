@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react'
+import { Link } from 'react-router'
 import { ColumnDef } from '@tanstack/react-table'
 import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'

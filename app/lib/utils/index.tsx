@@ -53,7 +53,7 @@ export const capitalize = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-import { NavLink } from '@remix-run/react'
+import { NavLink } from 'react-router'
 import { BreadcrumbItem, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 
 export const generateBreadcrumbs = (pathname: string) => {

@@ -1,4 +1,4 @@
-import { Link, useFetcher, useParams } from '@remix-run/react'
+import { Link, useFetcher, useParams } from 'react-router'
 import { ExternalLink, Loader2, Save, Trash } from 'lucide-react'
 import { useRef, useState } from 'react'
 

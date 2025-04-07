@@ -1,4 +1,4 @@
-import { Form, useFetcher } from '@remix-run/react'
+import { Form, useFetcher } from 'react-router'
 import { Loader2, Save } from 'lucide-react'
 import { useEffect } from 'react'
 import { Button } from '~/components/ui/button'

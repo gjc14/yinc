@@ -1,10 +1,10 @@
-import { LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction, redirect } from 'react-router'
 import {
     Outlet,
     useLoaderData,
     useLocation,
     useOutletContext,
-} from '@remix-run/react'
+} from 'react-router'
 import { memo, useMemo } from 'react'
 
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'

@@ -1,7 +1,7 @@
 import { anthropic } from '@ai-sdk/anthropic'
 import { google } from '@ai-sdk/google'
 import { openai } from '@ai-sdk/openai'
-import { type ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from 'react-router'
 import { CoreMessage, CoreTool, streamText, StreamTextResult } from 'ai'
 import { userIs } from '~/lib/db/auth.server'
 

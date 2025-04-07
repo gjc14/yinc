@@ -1,4 +1,4 @@
-import { useFetchers } from '@remix-run/react'
+import { useFetchers } from 'react-router'
 
 import { SubCategory } from '~/lib/db/schema'
 import { CategoryType, TagType } from './type'

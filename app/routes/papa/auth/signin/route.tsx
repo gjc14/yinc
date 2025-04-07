@@ -1,8 +1,4 @@
-import {
-    ActionFunctionArgs,
-    LoaderFunctionArgs,
-    redirect,
-} from '@remix-run/node'
+import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from 'react-router'
 
 import { MainWrapper } from '~/components/wrappers'
 import { authCookie, getToken, sendMagicLink } from '~/lib/db/auth.server'

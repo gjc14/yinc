@@ -1,11 +1,11 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
-import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction } from 'react-router'
 import {
     ClientLoaderFunctionArgs,
     useLoaderData,
     useNavigate,
-} from '@remix-run/react'
+} from 'react-router'
 import { generateHTML } from '@tiptap/html'
 import { common, createLowlight } from 'lowlight'
 import { ArrowLeft } from 'lucide-react'

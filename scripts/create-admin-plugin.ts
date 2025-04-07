@@ -2,8 +2,8 @@ import { mkdir, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 const examplePage = `
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { Outlet } from '@remix-run/react'
+import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { Outlet } from 'react-router'
 
 export const meta: MetaFunction<typeof loader> = () => {
     return [
@@ -30,7 +30,7 @@ export default function ExamplePluginPage() {
 `
 
 const examplePageSub = `
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction } from 'react-router'
 
 export const meta: MetaFunction<typeof loader> = () => {
     return [

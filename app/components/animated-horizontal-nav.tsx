@@ -1,4 +1,4 @@
-import { NavLink } from '@remix-run/react'
+import { NavLink } from 'react-router'
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '~/components/ui/button'

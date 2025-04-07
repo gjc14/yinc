@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { LoaderFunctionArgs } from 'react-router'
+import { useLoaderData } from 'react-router'
 
 // Usage: papacms.com/assets/my-file-key?visibility=public
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

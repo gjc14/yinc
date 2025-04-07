@@ -1,4 +1,4 @@
-import { ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from 'react-router'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 

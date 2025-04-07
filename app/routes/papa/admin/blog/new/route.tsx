@@ -1,4 +1,4 @@
-import { Link, useFetcher, useNavigate, useNavigation } from '@remix-run/react'
+import { Link, useFetcher, useNavigate, useNavigation } from 'react-router'
 import { Loader2, PlusCircle, Trash } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FullScreenLoading } from '~/components/loading'

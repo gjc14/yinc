@@ -1,11 +1,11 @@
-import { LoaderFunctionArgs } from '@remix-run/node'
+import { LoaderFunctionArgs } from 'react-router'
 import {
     isRouteErrorResponse,
     Link,
     Outlet,
     useLoaderData,
     useRouteError,
-} from '@remix-run/react'
+} from 'react-router'
 import { Settings } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'

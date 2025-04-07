@@ -1,4 +1,4 @@
-import { redirect } from '@remix-run/node'
+import { redirect } from 'react-router'
 import { authCookie } from '~/lib/db/auth.server'
 
 export const action = async () => {

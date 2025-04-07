@@ -1,4 +1,4 @@
-import { ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from 'react-router'
 import { eq } from 'drizzle-orm'
 
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'

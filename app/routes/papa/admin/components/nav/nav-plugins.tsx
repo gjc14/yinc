@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from '@remix-run/react'
+import { NavLink, useLocation } from 'react-router'
 import { ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 

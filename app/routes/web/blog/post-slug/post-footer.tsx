@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
-import { useNavigate } from '@remix-run/react'
+import { useNavigate } from 'react-router'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'

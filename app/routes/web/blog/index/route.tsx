@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
-import { ClientLoaderFunctionArgs, useLoaderData } from '@remix-run/react'
+import { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { ClientLoaderFunctionArgs, useLoaderData } from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'

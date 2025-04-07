@@ -170,7 +170,7 @@ return { err: 'Something went wrong 🚨' } satisfies ConventionalActionResponse
 ```
 
 ```ts
-import { ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from 'react-router'
 
 import { ConventionalActionResponse } from '~/lib/utils'
 

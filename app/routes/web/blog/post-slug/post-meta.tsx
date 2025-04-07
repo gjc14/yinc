@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react'
+import { Link } from 'react-router'
 import { LibraryBig } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'

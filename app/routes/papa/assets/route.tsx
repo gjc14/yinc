@@ -1,7 +1,7 @@
 /**
  * Proxy requests to the presigned URL of the asset
  */
-import { LoaderFunctionArgs, redirect } from '@remix-run/node'
+import { LoaderFunctionArgs, redirect } from 'react-router'
 import { getFileUrl } from '~/lib/db/asset.server'
 import { userIs } from '~/lib/db/auth.server'
 

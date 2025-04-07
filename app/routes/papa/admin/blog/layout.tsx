@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
+import { Outlet, useLoaderData, useOutletContext } from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'

@@ -1,5 +1,5 @@
 import { ListObjectsV2Command } from '@aws-sdk/client-s3'
-import { LoaderFunctionArgs } from '@remix-run/node'
+import { LoaderFunctionArgs } from 'react-router'
 
 import { db, S3 } from '~/lib/db/db.server'
 import { FileMeta } from '../api/object-storage/schema'

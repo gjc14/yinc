@@ -1,9 +1,4 @@
-import {
-    isRouteErrorResponse,
-    Link,
-    Outlet,
-    useRouteError,
-} from '@remix-run/react'
+import { isRouteErrorResponse, Link, Outlet, useRouteError } from 'react-router'
 import { Undo2 } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 

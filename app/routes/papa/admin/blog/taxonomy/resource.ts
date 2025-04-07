@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, redirect } from '@remix-run/node'
+import { ActionFunctionArgs, redirect } from 'react-router'
 import { z } from 'zod'
 
 import { userIs } from '~/lib/db/auth.server'

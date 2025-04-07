@@ -1,4 +1,4 @@
-import { ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from 'react-router'
 
 import { createUpdateSchema } from 'drizzle-zod'
 import { userIs } from '~/lib/db/auth.server'

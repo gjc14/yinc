@@ -1,4 +1,4 @@
-import { useRevalidator } from '@remix-run/react'
+import { useRevalidator } from 'react-router'
 import { createContext, useContext } from 'react'
 import { Theme } from '~/hooks/use-cookie-theme'
 
@@ -68,16 +68,25 @@ export const useTheme = () => {
 /**
  * Get custom theme from cookie
  */
-import { parse } from 'cookie'
 export const customThemeCookieName = 'custom-prefers-color-scheme'
 
-export const getCustomTheme = (request: Request): Theme | undefined => {
-    const cookieHeader = request.headers.get('Cookie')
-    const parsed = cookieHeader && parse(cookieHeader)[customThemeCookieName]
+export const parsedCustomTheme = (cookieHeader: string) => {
+    const parsed = cookieHeader
+        .split(';')
+        .map(cookie => cookie.trim())
+        .find(cookie => cookie.startsWith(`${customThemeCookieName}=`))
+        ?.split('=')[1]
 
     if (parsed === 'light' || parsed === 'dark') return parsed
 
     return undefined
+}
+
+export const getCustomTheme = (request: Request): Theme | undefined => {
+    const cookieHeader = request.headers.get('Cookie')
+
+    if (!cookieHeader) return undefined
+    return parsedCustomTheme(cookieHeader)
 }
 
 /**
