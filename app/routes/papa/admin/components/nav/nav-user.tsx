@@ -10,7 +10,9 @@ import {
     Sparkles,
     Sun,
 } from 'lucide-react'
-import { Form, Link, useNavigation } from 'react-router'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { toast } from 'sonner'
 
 import { FullScreenLoading } from '~/components/loading'
 import { ThemeDropDownMenu } from '~/components/theme-toggle'
@@ -30,6 +32,7 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from '~/components/ui/sidebar'
+import { authClient } from '~/lib/auth/auth-client'
 
 interface NavUserProps {
     user: {
@@ -41,9 +44,27 @@ interface NavUserProps {
 
 export const NavUser = ({ user }: NavUserProps) => {
     const { isMobile } = useSidebar()
-    const navigation = useNavigation()
+    const navigate = useNavigate()
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const isSubmitting = navigation.formAction === '/admin/signout'
+    const handleSignOut = async () => {
+        await authClient.signOut({
+            fetchOptions: {
+                onRequest: () => {
+                    setIsSubmitting(true)
+                },
+                onSuccess: () => {
+                    toast.success('Sign out successfully!')
+                    navigate('/')
+                },
+                onError: ctx => {
+                    console.error(ctx.error)
+                    toast.error('Error signing out: ' + ctx.error.message)
+                    setIsSubmitting(false)
+                },
+            },
+        })
+    }
 
     return (
         <SidebarMenu>
@@ -137,17 +158,18 @@ export const NavUser = ({ user }: NavUserProps) => {
                             </ThemeDropDownMenu>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <Form action="/admin/signout" method="POST">
-                            <DropdownMenuItem className="group" asChild>
-                                <button className="w-full flex items-center gap-2">
-                                    <LogOut
-                                        size={16}
-                                        className="transition-transform group-hover:translate-x-0.5"
-                                    />
-                                    <p className="text-sm">Sign Out</p>
-                                </button>
-                            </DropdownMenuItem>
-                        </Form>
+                        <DropdownMenuItem className="group" asChild>
+                            <button
+                                className="w-full flex items-center gap-2"
+                                onClick={handleSignOut}
+                            >
+                                <LogOut
+                                    size={16}
+                                    className="transition-transform group-hover:translate-x-0.5"
+                                />
+                                <p className="text-sm">Sign Out</p>
+                            </button>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

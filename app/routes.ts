@@ -34,7 +34,6 @@ export default [
 
         // Auth
         route('/admin/signin', './routes/papa/auth/signin.tsx'),
-        route('/admin/signout', './routes/papa/auth/signout.tsx'),
 
         // Admin route
         ...prefix('/admin', [
