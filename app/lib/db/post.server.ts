@@ -1,6 +1,7 @@
 import { asc, desc, eq, gt, inArray, like, lt, SQL } from 'drizzle-orm'
 
 import { db, type TransactionType } from '~/lib/db/db.server'
+import type { Category, Post, Seo, Tag, user } from '~/lib/db/schema'
 import {
     categoriesTable,
     postsTable,
@@ -10,7 +11,8 @@ import {
     seosTable,
     tagsTable,
 } from '~/lib/db/schema'
-import type { Category, Post, Seo, Tag, User } from '~/lib/db/schema'
+
+type User = typeof user.$inferSelect
 
 export type PostWithRelations = Post & {
     seo: Seo
@@ -370,7 +372,7 @@ export const createPost = async (
             .returning()
 
         const author = authorId
-            ? (await tx.query.usersTable.findFirst({
+            ? (await tx.query.user.findFirst({
                   where: (users, { eq }) => eq(users.id, authorId),
               })) ?? null
             : null
@@ -442,7 +444,7 @@ export const updatePost = async (
             .returning()
 
         const author = authorId
-            ? (await tx.query.usersTable.findFirst({
+            ? (await tx.query.user.findFirst({
                   where: (users, { eq }) => eq(users.id, authorId),
               })) ?? null
             : null

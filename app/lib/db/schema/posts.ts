@@ -10,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import { seosTable } from './seos'
 import { postsToCategories, postsToTags } from './taxonomies'
-import { usersTable } from './users'
+import { user } from './auth'
 
 export type Post = InferSelectModel<typeof postsTable>
 
@@ -28,15 +28,15 @@ export const postsTable = pgTable('posts', {
     featuredImage: varchar('featured_image'),
     status: varchar('status', { length: 50 }).notNull(),
 
-    authorId: integer('author_id').references(() => usersTable.id, {
+    authorId: text('author_id').references(() => user.id, {
         onDelete: 'set null',
     }),
 })
 
 export const postsRelations = relations(postsTable, ({ one, many }) => ({
-    author: one(usersTable, {
+    author: one(user, {
         fields: [postsTable.authorId],
-        references: [usersTable.id],
+        references: [user.id],
     }),
     seo: one(seosTable, {
         fields: [postsTable.id],

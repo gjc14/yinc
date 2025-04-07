@@ -19,22 +19,19 @@ function checkDatabaseUrl(): boolean {
     return true
 }
 
+import { emailInstance } from '~/lib/utils/email'
+
 function checkResendApiKey(): boolean {
-    const resendApiKey = process.env.RESEND_API_KEY
-    if (!resendApiKey) {
+    if (!emailInstance) {
         console.warn(
-            '\n⚠️ RESEND_API_KEY 未設定。請設定此項以啟用管理員帳戶。(RESEND_API_KEY is not set. Please set this to enable admin account.)'
+            '\n⚠️ Email 設定尚未完成，您必須提供 AUTH_EMAIL 以及 RESEND_API_KEY 環境變數以啟用 Email 功能 (Email setup is not complete, you must provide AUTH_EMAIL and RESEND_API_KEY environment variables to enable email functionality)'
         )
         console.warn(
-            '您可以從 https://resend.com 獲取 API 金鑰。(You can get the API key from https://resend.com.)'
+            '\n您可以從 https://resend.com 獲取 API 金鑰。(You can get the API key from https://resend.com.)'
         )
-        console.warn(
-            '設定方法: 在專案根目錄的 .env 檔案中加入 RESEND_API_KEY=您的API金鑰 (How to set: Add RESEND_API_KEY=your-api-key to the .env file in the root directory of the project.)'
-        )
-        return false
     }
 
-    console.log('✅ RESEND_API_KEY 已設定 (RESEND_API_KEY is set)')
+    console.log('✅ Email 設定正確 (Email is set correctly)')
     return true
 }
 
