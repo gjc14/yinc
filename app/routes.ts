@@ -33,9 +33,8 @@ export default [
         route('assets/error', './routes/papa/assets/error.tsx'),
 
         // Auth
-        route('/admin/signin', './routes/papa/auth/signin/route.tsx'),
-        route('/admin/signout', './routes/papa/auth/signout/route.tsx'),
-        route('/admin/magic', './routes/papa/auth/magic/route.tsx'),
+        route('/admin/signin', './routes/papa/auth/signin.tsx'),
+        route('/admin/signout', './routes/papa/auth/signout.tsx'),
 
         // Admin route
         ...prefix('/admin', [
