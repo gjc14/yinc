@@ -1,6 +1,8 @@
-import { Form, useFetcher } from 'react-router'
 import { Loader2, Save } from 'lucide-react'
+import { useFetcher } from 'react-router'
+
 import { Button } from '~/components/ui/button'
+import { Checkbox } from '~/components/ui/checkbox'
 import {
     Dialog,
     DialogContent,
@@ -18,7 +20,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '~/components/ui/select'
-import { type User, UserRole, UserStatus } from '~/lib/db/schema'
+import { user } from '~/lib/db/schema'
+
+type User = typeof user.$inferSelect
 
 export const UserContent = ({
     user,
@@ -48,12 +52,20 @@ export const UserContent = ({
                         {user.updatedAt.toLocaleString('zh-TW')}
                     </DialogDescription>
                 </DialogHeader>
-                <Form
+                <fetcher.Form
                     id="user-content"
                     className="grid gap-4 py-4"
                     onSubmit={e => {
                         e.preventDefault()
-                        fetcher.submit(new FormData(e.currentTarget), {
+                        const formData = new FormData(e.currentTarget)
+
+                        const checkboxFields = ['emailVerified', 'banned']
+                        checkboxFields.forEach(field => {
+                            const isChecked = formData.get(field) === 'on'
+                            formData.set(field, isChecked.toString())
+                        })
+
+                        fetcher.submit(formData, {
                             method,
                             action,
                         })
@@ -81,14 +93,26 @@ export const UserContent = ({
                             name="name"
                             defaultValue={user.name ?? undefined}
                             className="col-span-3"
-                            placeholder="what's your name?"
+                            placeholder="Your name"
+                        />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="image" className="text-right">
+                            Image
+                        </Label>
+                        <Input
+                            id="image"
+                            name="image"
+                            defaultValue={user.image ?? undefined}
+                            className="col-span-3"
+                            placeholder="e.g. https://placecats.com/300/200"
                         />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="role" className="text-right">
                             Role
                         </Label>
-                        <Select name="role" defaultValue={user.role}>
+                        <Select name="role" defaultValue={user.role ?? 'user'}>
                             <SelectTrigger className="col-span-3">
                                 <SelectValue
                                     id="role"
@@ -96,7 +120,7 @@ export const UserContent = ({
                                 />
                             </SelectTrigger>
                             <SelectContent>
-                                {Object.values(UserRole).map(role => (
+                                {['user', 'admin'].map(role => (
                                     <SelectItem key={role} value={role}>
                                         {role}
                                     </SelectItem>
@@ -105,28 +129,53 @@ export const UserContent = ({
                         </Select>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="status" className="text-right">
-                            Status
+                        <Label
+                            htmlFor="emailVerified"
+                            className="text-right col-span-1"
+                        >
+                            Verified
                         </Label>
-                        <Select name="status" defaultValue={user.status}>
-                            <SelectTrigger className="col-span-3">
-                                <SelectValue
-                                    id="status"
-                                    placeholder="what's your status?"
-                                />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(UserStatus).map(status => (
-                                    <SelectItem key={status} value={status}>
-                                        {status}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Checkbox
+                            id="emailVerified"
+                            name="emailVerified"
+                            defaultChecked={user.emailVerified}
+                            className="col-span-3 ml-2"
+                        />
                     </div>
-                </Form>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label
+                            htmlFor="banned"
+                            className="text-right col-span-1"
+                        >
+                            Banned
+                        </Label>
+                        <Checkbox
+                            id="banned"
+                            name="banned"
+                            defaultChecked={user.banned ?? false}
+                            className="col-span-3 ml-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="banReason" className="text-right">
+                            Ban reason
+                        </Label>
+                        <Input
+                            id="banReason"
+                            name="banReason"
+                            defaultValue={user.banReason ?? undefined}
+                            className="col-span-3"
+                            placeholder="Why the user is banned?"
+                        />
+                    </div>
+                    {/* TODO: Ban Expires */}
+                </fetcher.Form>
                 <DialogFooter>
-                    <Button form="user-content" type="submit">
+                    <Button
+                        form="user-content"
+                        type="submit"
+                        disabled={isSubmitting}
+                    >
                         {isSubmitting ? (
                             <Loader2 size={16} className="animate-spin" />
                         ) : (

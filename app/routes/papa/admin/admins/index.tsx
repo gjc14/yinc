@@ -1,21 +1,24 @@
-import { useFetcher, useLoaderData } from 'react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Loader2, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
+import { useFetcher, useLoaderData } from 'react-router'
 
+import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
     Dialog,
     DialogClose,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from '~/components/ui/dialog'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { getUsers } from '~/lib/db/user-old.server'
+import { Label } from '~/components/ui/label'
+import { getUsers } from '~/lib/db/user.server'
 import {
     AdminActions,
     AdminHeader,
@@ -35,7 +38,7 @@ export const loader = async () => {
 export default function AdminAdminUsers() {
     const fetcher = useFetcher()
     const { users: allUsers } = useLoaderData<typeof loader>()
-    const users = allUsers.filter(user => user.role === 'ADMIN')
+    const users = allUsers.filter(user => user.role === 'admin')
 
     const isSubmitting = fetcher.state === 'submitting'
 
@@ -46,7 +49,7 @@ export default function AdminAdminUsers() {
                 <AdminActions>
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button size={'sm'}>
+                            <Button size={'sm'} disabled={isSubmitting}>
                                 {isSubmitting ? (
                                     <Loader2
                                         size={16}
@@ -67,19 +70,37 @@ export default function AdminAdminUsers() {
                                 </DialogDescription>
                             </DialogHeader>
                             <fetcher.Form
-                                className="flex gap-1.5"
+                                id="invite-admin"
+                                className="flex flex-col gap-1.5 md:flex-row items-baseline"
                                 method="POST"
                                 action="/admin/admins/resource"
                             >
-                                <Input
-                                    placeholder="Email"
-                                    type="email"
-                                    name="email"
-                                />
-                                <DialogClose asChild>
-                                    <Button type="submit">Invite</Button>
-                                </DialogClose>
+                                <div className="w-full">
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input
+                                        id="email"
+                                        placeholder="Email"
+                                        type="email"
+                                        name="email"
+                                    />
+                                </div>
+                                <div className="w-full">
+                                    <Label htmlFor="name">Name</Label>
+                                    <Input
+                                        id="name"
+                                        placeholder="Little prince"
+                                        type="name"
+                                        name="name"
+                                    />
+                                </div>
                             </fetcher.Form>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button form="invite-admin" type="submit">
+                                        Invite
+                                    </Button>
+                                </DialogClose>
+                            </DialogFooter>
                         </DialogContent>
                     </Dialog>
                 </AdminActions>
@@ -110,6 +131,19 @@ type UsersLoaderType = Awaited<ReturnType<typeof loader>>['users'][number]
 
 export const columns: ColumnDef<UsersLoaderType>[] = [
     {
+        accessorKey: 'image',
+        header: 'Avatar',
+        cell: ({ row }) => {
+            return (
+                <img
+                    src={row.original.image || '/placeholders/avatar.png'}
+                    alt={row.original.name}
+                    className="w-8 h-8 rounded-full"
+                />
+            )
+        },
+    },
+    {
         accessorKey: 'email',
         header: 'Email',
     },
@@ -122,8 +156,32 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
         header: 'Role',
     },
     {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: 'emailVerified',
+        header: 'Verified',
+        cell: ({ row }) => {
+            return (
+                <Badge
+                    variant={
+                        row.original.emailVerified ? 'secondary' : 'destructive'
+                    }
+                >
+                    {row.original.emailVerified ? 'Yes' : 'No'}
+                </Badge>
+            )
+        },
+    },
+    {
+        accessorKey: 'banned',
+        header: 'Banned',
+        cell: ({ row }) => {
+            return (
+                <Badge
+                    variant={row.original.banned ? 'destructive' : 'secondary'}
+                >
+                    {row.original.banned ? 'Yes' : 'No'}
+                </Badge>
+            )
+        },
     },
     {
         accessorKey: 'updatedAt',

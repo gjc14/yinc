@@ -1,9 +1,11 @@
-import { useFetcher, useLoaderData } from 'react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
+import { useFetcher, useLoaderData } from 'react-router'
+
+import { Badge } from '~/components/ui/badge'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { getUsers } from '~/lib/db/user-old.server'
+import { getUsers } from '~/lib/db/user.server'
 import {
     AdminHeader,
     AdminSectionWrapper,
@@ -53,6 +55,19 @@ type UsersLoaderType = Awaited<ReturnType<typeof loader>>['users'][number]
 
 export const columns: ColumnDef<UsersLoaderType>[] = [
     {
+        accessorKey: 'image',
+        header: 'Avatar',
+        cell: ({ row }) => {
+            return (
+                <img
+                    src={row.original.image || '/placeholders/avatar.png'}
+                    alt={row.original.name}
+                    className="w-8 h-8 rounded-full"
+                />
+            )
+        },
+    },
+    {
         accessorKey: 'email',
         header: 'Email',
     },
@@ -65,8 +80,32 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
         header: 'Role',
     },
     {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: 'emailVerified',
+        header: 'Verified',
+        cell: ({ row }) => {
+            return (
+                <Badge
+                    variant={
+                        row.original.emailVerified ? 'secondary' : 'destructive'
+                    }
+                >
+                    {row.original.emailVerified ? 'Yes' : 'No'}
+                </Badge>
+            )
+        },
+    },
+    {
+        accessorKey: 'banned',
+        header: 'Banned',
+        cell: ({ row }) => {
+            return (
+                <Badge
+                    variant={row.original.banned ? 'destructive' : 'secondary'}
+                >
+                    {row.original.banned ? 'Yes' : 'No'}
+                </Badge>
+            )
+        },
     },
     {
         accessorKey: 'updatedAt',
@@ -92,8 +131,7 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
                                 { id },
                                 {
                                     method: 'DELETE',
-                                    action: `/admin/users/admins/${id}/delete`,
-                                    encType: 'application/json',
+                                    action: `/admin/users/resource`,
                                 }
                             )
                         }}
@@ -104,7 +142,7 @@ export const columns: ColumnDef<UsersLoaderType>[] = [
                     </AdminDataTableMoreMenu>
                     <UserContent
                         method="PUT"
-                        action={`/admin/users`}
+                        action={`/admin/users/resource`}
                         user={{
                             ...row.original,
                             updatedAt: new Date(row.original.updatedAt),
