@@ -21,7 +21,7 @@ export const FullScreenLoading = ({
     return (
         <div
             className={cn(
-                `z-[9999] ${
+                `z-9999 ${
                     contained ? 'absolute' : 'fixed'
                 } inset-0 flex justify-center items-center backdrop-blur-md`,
                 className

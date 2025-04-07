@@ -20,7 +20,7 @@ const Icon = ({ name, className, ...props }: IconProps) => {
         () => (
             <Loader
                 className={cn(
-                    'bg-gradient-to-t from-inherit size-3.5 animate-spin-slow',
+                    'bg-linear-to-t from-inherit size-3.5 animate-spin-slow',
                     className
                 )}
                 {...props}

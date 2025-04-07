@@ -94,7 +94,7 @@ export const FileCard = ({
                 <File />
             )}
             {deleteAlert && (
-                <div className="absolute w-full h-full flex flex-col justify-center items-center backdrop-blur-sm gap-1.5 pt-3">
+                <div className="absolute w-full h-full flex flex-col justify-center items-center backdrop-blur-xs gap-1.5 pt-3">
                     <Button
                         variant={'destructive'}
                         size={'sm'}
@@ -209,7 +209,7 @@ export const FileCard = ({
                             </Label>
                             <p
                                 id="id"
-                                className="shadow-sm flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
+                                className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
                                 onClick={() => {
                                     navigator.clipboard.writeText(
                                         String(file.id)
@@ -226,7 +226,7 @@ export const FileCard = ({
                             </Label>
                             <p
                                 id="url"
-                                className="shadow-sm flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
+                                className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
                                 onClick={() => {
                                     navigator.clipboard.writeText(file.url)
                                     toast.success('Copied to clipboard')

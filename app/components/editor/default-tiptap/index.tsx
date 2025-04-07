@@ -56,7 +56,7 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
         },
         editorProps: {
             attributes: {
-                class: 'prose tracking-wide leading-loose dark:prose-invert py-5 mx-1 focus:outline-none',
+                class: 'prose tracking-wide leading-loose dark:prose-invert py-5 mx-1 focus:outline-hidden',
             },
         },
     })

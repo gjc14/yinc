@@ -19,13 +19,13 @@ const SeparatorWithText = ({
             className={cn('flex items-center', seperatorClassName)}
             style={{ paddingTop: paddingY, paddingBottom: paddingY }}
         >
-            <hr className="flex-grow border-current" />
+            <hr className="grow border-current" />
             <span
                 className={cn('px-3 text-xs text-muted-foreground', className)}
             >
                 {children}
             </span>
-            <hr className="flex-grow border-current" />
+            <hr className="grow border-current" />
         </div>
     )
 }

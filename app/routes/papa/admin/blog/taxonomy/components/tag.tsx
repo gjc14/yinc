@@ -71,7 +71,7 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
     }
 
     return (
-        <div className="border rounded-lg p-4 shadow-sm col-span-1 sm:col-span-2 lg:col-span-1">
+        <div className="border rounded-lg p-4 shadow-xs col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">標籤</h2>
             </div>

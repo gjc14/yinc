@@ -93,7 +93,7 @@ export const TimeSelector = ({
             {clock && (
                 <input
                     type="text"
-                    className="w-[3ch] text-center text-sm rounded-none border-0 bg-transparent focus-visible:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-0"
+                    className="w-[3ch] text-center text-sm rounded-none border-0 bg-transparent focus-visible:bg-accent transition-colors focus-visible:outline-hidden focus-visible:ring-0"
                     readOnly
                     value={clock}
                     onKeyDown={e => handleKeyDown(e, '12-hours')}
@@ -101,7 +101,7 @@ export const TimeSelector = ({
             )}
             <input
                 type="text"
-                className="w-[2ch] text-center text-sm rounded-none border-0 bg-transparent focus-visible:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-0"
+                className="w-[2ch] text-center text-sm rounded-none border-0 bg-transparent focus-visible:bg-accent transition-colors focus-visible:outline-hidden focus-visible:ring-0"
                 value={hours}
                 onChange={e => handleHourChange(e)}
                 onKeyDown={e => handleKeyDown(e, 'hours')}
@@ -109,7 +109,7 @@ export const TimeSelector = ({
             <span className="h-fit text-sm mb-0.5">:</span>
             <input
                 type="text"
-                className="w-[2ch] text-center text-sm rounded-none border-0 bg-transparent focus-visible:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-0"
+                className="w-[2ch] text-center text-sm rounded-none border-0 bg-transparent focus-visible:bg-accent transition-colors focus-visible:outline-hidden focus-visible:ring-0"
                 value={minutes}
                 onChange={e => handleMinuteChange(e)}
                 onKeyDown={e => handleKeyDown(e, 'minutes')}

@@ -34,7 +34,7 @@ export function GlobalLoading() {
             <div
                 ref={ref}
                 className={cx(
-                    'h-full bg-gradient-to-r from-indigo-800 to-sky-500 dark:from-indigo-600 dark:to-sky-200 transition-all duration-500 ease-in-out',
+                    'h-full bg-linear-to-r from-indigo-800 to-sky-500 dark:from-indigo-600 dark:to-sky-200 transition-all duration-500 ease-in-out',
                     navigation.state === 'idle' &&
                         (animating
                             ? 'w-full'

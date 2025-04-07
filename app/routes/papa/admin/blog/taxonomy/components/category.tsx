@@ -147,7 +147,7 @@ export const CategoriesSection = ({
     }
 
     return (
-        <div className="border rounded-lg p-4 shadow-sm">
+        <div className="border rounded-lg p-4 shadow-xs">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">類別</h2>
             </div>
@@ -226,7 +226,7 @@ export const SubcategoriesSection = ({
     }
 
     return (
-        <div className="border rounded-lg p-4 shadow-sm">
+        <div className="border rounded-lg p-4 shadow-xs">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">
                     {category ? `${category?.name} 的子類別` : '子類別'}

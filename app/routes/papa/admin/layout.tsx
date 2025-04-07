@@ -81,7 +81,7 @@ export default function Admin() {
                 user={memoizedUser}
                 pluginRoutes={memoizedPluginRoutes}
             />
-            <SidebarInset className="h-[calc(100svh-theme(spacing.4))] overflow-x-hidden">
+            <SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
                 <header className="flex my-3 shrink-0 items-center gap-2">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />

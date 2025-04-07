@@ -9,7 +9,7 @@ export const Hero = () => {
             <div className="w-full h-full border border-border rounded-xl grid grid-cols-1 md:grid-cols-2">
                 <motion.div
                     {...fade()}
-                    className="flex items-center justify-center aspect-[5/3] md:aspect-auto"
+                    className="flex items-center justify-center aspect-5/3 md:aspect-auto"
                 >
                     <svg
                         className="w-28 h-28"

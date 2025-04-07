@@ -323,7 +323,7 @@ const FileGridMain = ({
                                         key={key}
                                         className="flex items-center px-5 py-3.5 border rounded-md bg-muted"
                                     >
-                                        <div className="flex-grow max-w-[calc(100%-2rem)] gap-0.5">
+                                        <div className="grow max-w-[calc(100%-2rem)] gap-0.5">
                                             {/* File name */}
                                             <div
                                                 className="flex items-center justify-start px-0.5 gap-0"
@@ -332,7 +332,7 @@ const FileGridMain = ({
                                                 <span className="text-sm font-medium truncate mr-1">
                                                     {file?.name.split('.')[0]}
                                                 </span>
-                                                <span className="text-sm font-medium flex-shrink-0">
+                                                <span className="text-sm font-medium shrink-0">
                                                     .{file?.name.split('.')[1]}
                                                 </span>
                                             </div>
@@ -345,7 +345,7 @@ const FileGridMain = ({
                                             )}
                                         </div>
 
-                                        <div className="ml-3 mr-1 flex flex-shrink-0 items-center">
+                                        <div className="ml-3 mr-1 flex shrink-0 items-center">
                                             {status === 'completed' ? (
                                                 <Button
                                                     variant="outline"

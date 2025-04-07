@@ -4,7 +4,7 @@ import { ThemeToggle } from '~/components/theme-toggle'
 
 export const Nav = () => {
     return (
-        <nav className="fixed z-10 w-max flex top-8 left-[50%] -translate-x-[50%] items-center gap-6 rounded-lg border-[1px] border-muted-foreground py-2 px-3.5 text-sm text-muted-foreground bg-primary-foreground/50 backdrop-blur-sm shadow-lg">
+        <nav className="fixed z-10 w-max flex top-8 left-[50%] -translate-x-[50%] items-center gap-6 rounded-lg border-[1px] border-muted-foreground py-2 px-3.5 text-sm text-muted-foreground bg-primary-foreground/50 backdrop-blur-xs shadow-lg">
             <NavLink
                 to="/"
                 className="flex items-center gap-2"

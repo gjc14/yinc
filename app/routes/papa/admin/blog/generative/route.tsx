@@ -118,7 +118,7 @@ export default function AdminGenerativeAI() {
             </AdminHeader>
             <Separator />
 
-            <ScrollArea className="flex-grow h-screen" ref={scrollAreaRef}>
+            <ScrollArea className="grow h-screen" ref={scrollAreaRef}>
                 <div className="max-w-3xl mx-auto space-y-12 px-3 sm:px-5">
                     {messages.length !== 0 ? (
                         messages.map(message => {
@@ -146,10 +146,10 @@ export default function AdminGenerativeAI() {
                         })
                     ) : (
                         <div className="grow px-2 mt-8 md:px-6">
-                            <h3 className="w-fit text-5xl font-medium leading-normal bg-gradient-to-r from-sky-500 via-violet-500 to-fuchsia-700 dark:from-sky-200 dark:via-violet-400 dark:to-fuchsia-500 to-70% bg-clip-text text-transparent">
+                            <h3 className="w-fit text-5xl font-medium leading-normal bg-linear-to-r from-sky-500 via-violet-500 to-fuchsia-700 dark:from-sky-200 dark:via-violet-400 dark:to-fuchsia-500 to-70% bg-clip-text text-transparent">
                                 Good day with Papa!
                             </h3>
-                            <h3 className="w-fit text-3xl font-medium leading-normal bg-gradient-to-r from-yellow-500 via-amber-600 to-orange-600 dark:from-yellow-50 dark:via-amber-100 dark:to-orange-200 bg-clip-text text-transparent">
+                            <h3 className="w-fit text-3xl font-medium leading-normal bg-linear-to-r from-yellow-500 via-amber-600 to-orange-600 dark:from-yellow-50 dark:via-amber-100 dark:to-orange-200 bg-clip-text text-transparent">
                                 Get your idea now with AI
                             </h3>
                         </div>
