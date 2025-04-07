@@ -1,15 +1,17 @@
 import { type ActionFunctionArgs } from 'react-router'
 
 import { createUpdateSchema } from 'drizzle-zod'
-import { getToken, sendMagicLink, userIs } from '~/lib/db/auth.server'
-import { usersTable } from '~/lib/db/schema'
-import { createUser, deleteUser, updateUser } from '~/lib/db/user-old.server'
-import { type ConventionalActionResponse, isValidEmail } from '~/lib/utils'
+import { auth } from '~/lib/auth/auth.server'
+import { user } from '~/lib/db/schema'
+import { deleteUser, updateUser } from '~/lib/db/user.server'
+import { isValidEmail, type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
+import { validateAdminSession } from '../../auth/utils'
 
-const userUpdateSchema = createUpdateSchema(usersTable).required().omit({
+const userUpdateSchema = createUpdateSchema(user).required().omit({
     createdAt: true,
     updatedAt: true,
+    banExpires: true,
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -19,33 +21,49 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         } satisfies ConventionalActionResponse)
     }
 
-    await userIs(request, ['ADMIN'])
+    const adminSession = await validateAdminSession(request)
 
     const formData = await request.formData()
-    const userData = Object.fromEntries(formData)
+    const rawData = Object.fromEntries(formData)
+
+    const userData: Record<string, string | boolean | File> = {}
+
+    for (const [key, value] of Object.entries(rawData)) {
+        if (['emailVerified', 'banned'].includes(key)) {
+            userData[key] = value === 'true'
+        } else {
+            userData[key] = value
+        }
+    }
+
+    console.log('userData', userData)
 
     switch (request.method) {
         case 'POST':
             try {
                 const email = userData.email
+                const name = userData.name
 
                 if (
                     !email ||
                     typeof email !== 'string' ||
-                    !isValidEmail(email)
+                    !isValidEmail(email) ||
+                    typeof name !== 'string'
                 ) {
                     throw new Error('Invalid email')
                 }
 
-                const { user } = await createUser(email, 'ADMIN', 'INACTIVE')
-
-                const token = await getToken(user.id, user.email)
-                await sendMagicLink(token, user.email, new URL(request.url), {
-                    searchParams: { role: user.role },
+                const { user } = await auth.api.createUser({
+                    body: {
+                        email,
+                        name,
+                        password: '',
+                        role: 'admin',
+                    },
                 })
 
                 return Response.json({
-                    msg: `A verification email has sent to ${email}`,
+                    msg: `Admin ${user.email} has created successfully`,
                 } satisfies ConventionalActionResponse)
             } catch (error) {
                 return handleError(error, request)
@@ -57,9 +75,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                     id: user.id,
                     data: {
                         email: user.email,
+                        emailVerified: user.emailVerified,
                         name: user.name,
+                        image: user.image,
                         role: user.role,
-                        status: user.status,
+                        banReason: user.banReason,
+                        banned: user.banned,
                     },
                 })
 
@@ -73,12 +94,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             }
         case 'DELETE':
             const userId = userData.id
-            if (Number.isNaN(Number(userId))) {
+            if (typeof userId !== 'string') {
                 throw new Error('Invalid argument')
             }
 
             try {
-                const { user } = await deleteUser(Number(userId))
+                const { user } = await deleteUser(userId)
                 return Response.json({
                     msg: `${user.email} deleted successfully`,
                 } satisfies ConventionalActionResponse)
