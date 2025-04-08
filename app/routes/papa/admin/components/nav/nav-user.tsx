@@ -11,11 +11,9 @@ import {
 	Sparkles,
 	Sun,
 } from 'lucide-react'
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
-import { FullScreenLoading } from '~/components/loading'
 import { ThemeDropDownMenu } from '~/components/theme-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import {
@@ -42,14 +40,11 @@ interface NavUserProps {
 export const NavUser = ({ user }: NavUserProps) => {
 	const { isMobile } = useSidebar()
 	const navigate = useNavigate()
-	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const handleSignOut = async () => {
 		await authClient.signOut({
 			fetchOptions: {
-				onRequest: () => {
-					setIsSubmitting(true)
-				},
+				onRequest: () => {},
 				onSuccess: () => {
 					toast.success('Sign out successfully!')
 					navigate('/')
@@ -57,7 +52,6 @@ export const NavUser = ({ user }: NavUserProps) => {
 				onError: ctx => {
 					console.error(ctx.error)
 					toast.error('Error signing out: ' + ctx.error.message)
-					setIsSubmitting(false)
 				},
 			},
 		})
@@ -65,7 +59,6 @@ export const NavUser = ({ user }: NavUserProps) => {
 
 	return (
 		<SidebarMenu>
-			{isSubmitting && <FullScreenLoading />}
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
