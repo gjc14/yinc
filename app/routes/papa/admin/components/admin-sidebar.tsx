@@ -1,6 +1,7 @@
 import { Building, Command, LifeBuoy, Send } from 'lucide-react'
 import * as React from 'react'
 
+import type { UserWithRole } from 'better-auth/plugins'
 import {
 	Sidebar,
 	SidebarContent,
@@ -74,11 +75,7 @@ const SecondaryNavItems: NavSecondaryItem[] = [
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
 	pluginRoutes: PapaAdminMenuItem[]
-	user: {
-		name: string
-		email: string
-		avatar: string
-	}
+	user: UserWithRole
 }
 
 export function AdminSidebar({

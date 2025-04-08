@@ -72,11 +72,12 @@ export default function Admin() {
 
 	const memoizedUser = useMemo(
 		() => ({
+			...admin,
 			name: admin.name ?? 'Papa Fritas',
-			email: admin.email,
-			avatar: admin.image ?? '/placeholders/avatar.png',
+			image: admin.image ?? '/placeholders/avatar.png',
+			role: admin.role ?? 'admin',
 		}),
-		[admin.name, admin.email, admin.image]
+		[admin]
 	)
 
 	const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])
