@@ -1,4 +1,4 @@
-import './tailwind.css'
+import './app.css'
 
 import { useEffect, useRef } from 'react'
 import {
