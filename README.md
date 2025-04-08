@@ -7,55 +7,39 @@
 ## Tech Stack
 
 - **Framework**: [React Router v7](https://reactrouter.com/home/)
-- **Database**: [MongoDB](https://www.mongodb.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
+- **Storage**:
+  [Cloudflare R2](https://www.cloudflare.com/zh-tw/developer-platform/products/r2/)
 - **Style**: [tailwindcss](https://tailwindcss.com/)
 - **UI LIbrary**: [shadcn/ui](https://ui.shadcn.com/)
 - **Email SDK**: [Resend](https://resend.com/)
+- **Authentication**: [Better Auth](https://www.better-auth.com/)
+- **Text Editor**: [Tiptap](https://tiptap.dev/)
 
-## Why use PapaCMS?
-
-1. Totally free and completely without branding logos.
-2. You own the codebase and fully customizable.
-3. Modulized, take what you want and build with _Typescript_, _HTML_,
-   _TSX_/_JSX_, and _tailwindcss_.
-4. Optimized for performance, start with **score 100**, tested by
-   [PageSpeed](https://pagespeed.web.dev/).
-5. Authenticate with **Email Magic Link**.
+<!-- prettier-ignore -->
+> [!NOTE]
+> Optimized for performance, start with **score 100**, tested by [PageSpeed](https://pagespeed.web.dev/).
 
 ---
 
-## Required documents
-
-1. environment variable file `.env` in the root directory (`/`)
-
 ## Before you start
 
-You should:
-
-1. Have a useful IDE. (e.g.
+1. Prepare an useful IDE. (e.g.
    [Visual Studio Code](https://code.visualstudio.com/))
-2. Have a [MongoDB Atlas](https://www.mongodb.com/docs/atlas/) (MongoDB's cloud
-   service) account or your own MongoDB Database to host your database. With
-   MongoDB Atlas, an account could have multiple projects, and every project has
-   up to [1 free 512MB M0 cluster](https://www.mongodb.com/pricing), which equal
-   to more than 17,000
-   [What is PapaCMS (30kB)](https://papacms.com/blog/what-is-papa) post.
+2. Get a PostgreSQL database, either host locally or use
+   [Neon](https://neon.tech/), which provides 0.5G storage for up to 10
+   projects. 512MB is capable of more than 17,000 of
+   [What is PapaCMS (30kB)](https://papacms.vercel.app/blog/what-is-papa) post.
 3. Have a [Resend](https://resend.com/) account to send email. Every Resend
-   account has a [free 3,000 emails / mo quota](https://resend.com/pricing).
+   account has a [free 3,000 emails/mo quota](https://resend.com/pricing).
 4. Setup an object storage either in
-   [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/)
+   [Cloudflare R2 (10GB free tier)](https://www.cloudflare.com/developer-platform/products/r2/)
    or [AWS S3](https://aws.amazon.com/s3/).
-
-<!-- prettier-ignore -->
-> [!INFO]
-> You should allow all IPs, or all posible IPs, to connect to your MongoDB Atlas project when deploy, because deploying services on the market often run their server on various IPs. Go to your project in MongoDB Atlas **Network Access > Actions > EDIT > Allow access from anywhere**.
-
 5. Have either
    [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/),
    [reCAPTCHA v3](https://www.google.com/recaptcha/about/) (coming soon) or
-   [hCaptcha](https://www.hcaptcha.com/) (coming soon) to secure your subscribe
-   form.
+   [hCaptcha](https://www.hcaptcha.com/) (coming soon) to secure your form.
 6. Chose where to deploy your PapaCMS application.
 
 ### Set up [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/)
@@ -63,10 +47,9 @@ You should:
 1. Navigate to `Cloudflare dashboard > R2 Object Storage`
 2. `API > Manage API Tokens`: Click **Create API Token** button, and set
    Permissions to Admin Read & Write and TTL to Forever
-3. Click **Create bucket** button, name it _papa_ (buckets are default to
+3. Click **Create bucket** button, name it `papa` (buckets are default to
    private)
-4. In **papa** bucket, navigate to `Settings > Edit CORS policy`, set as
-   following
+4. In `papa` bucket, navigate to `Settings > Edit CORS policy`, set as following
 
 ```json
 [
@@ -82,21 +65,26 @@ You should:
 
 Coming soon
 
+---
+
 ## Usage
 
-### 1. Copy and configure the required environment variables
-
-If you haven't creat a .env file:
-
-Run this in `/` shell.
+### 1. Clone and configure the required environment variables
 
 ```sh
-mv .env.sample .env
+# Clone the repo
+git clone https://github.com/gjc14/papa.git
+
+# Navigate to project and copy .env.sample
+cd papa && mv .env.sample .env
 ```
 
+<!-- prettier-ignore -->
+> [!WARNING]
+> VITE will expose any environment variable with _VITE_\_ prefix, please use it carefully.
+
 1. `DATABASE_URL`: We are using PostgreSQL.
-2. (optional) In `/app/constants/env.ts` set `TURNSTILE_SITE_KEY`: This key is
-   used to
+2. (optional) Set `TURNSTILE_SITE_KEY`: This key is used to
    [get Turnstile token](https://developers.cloudflare.com/turnstile/get-started/)
    in client, if you use
    [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) as
@@ -119,38 +107,28 @@ mv .env.sample .env
     `OBJECT_STORAGE_ACCOUNT_ID`: Where you save your objects, accept S3
     compatible services. Using in route `/admin/api/object-storage`
 
-<!-- prettier-ignore -->
-> [!WARNING]
-> VITE will expose any environment variable with _VITE_\_ prefix, please use it carefully.
-
-### 2. Install and push database schema, then start
+### 2. Install and push database schema
 
 ```sh
-npm i && npx run db:push
+npm install
 ```
 
-### 3. Start in dev mode
+### 3. Initialize the project
 
-> For first time ever, you should set super admin email address in `.env` file,
-> and make sure your email server has set (fill in your `RESEND_API_KEY`). Then
-> run `npm run check-admin && npm run dev`, it will send a verification email to
-> you. After verify, papa will create an ADMIN role user and you will see
-> `role : "ADMIN"` in the database **User** table.
+This command will start the project by adding an admin with default posts.
 
-Run this in `/` shell to start in dev mode, press `q` to exit application, `r`
-to restart.
+You will be asked for **Email** and your **Name**. Enter them in the teminal.
 
 ```sh
-npm run check-admin && npm run dev
+npm run init
 ```
 
-If you sure have already created admin:
+🎉 Now your project should be running on
+[http://localhost:5173](http://localhost:5173). Go to
+[http://localhost:5173/admin](http://localhost:5173/admin), sign in to see the
+admin panel.
 
-```sh
-npm run dev
-```
-
-4. Sign in at route `/admin`
+---
 
 # Documents
 
@@ -158,7 +136,7 @@ npm run dev
 
 ### Conventional Return
 
-Refer to: [Definitions in lib/utils](./app/lib/utils.tsx)
+Refer to: [Definitions in lib/utils](./app/lib/utils/index.tsx)
 
 ```ts
 return { msg: 'Action success 🎉' } satisfies ConventionalActionResponse
@@ -197,8 +175,6 @@ useEffect(() => {
 }, [fetcher])
 ```
 
-## Global Components
-
 ## Admin Components
 
 ### Data Table
@@ -214,19 +190,19 @@ import { DataTable } from '~/routes/papa/admin/components/data-table'
 type TagType = {
     name: string
     id: string
-    postIDs: string[]
+    postIds: string[]
 }
 
 const tags: TagType[] = [
     {
         name: 'Travel',
         id: 'unique-id-1',
-        postIDs: ['post-1', 'post-2', 'post-3'],
+        postIds: ['post-1', 'post-2', 'post-3'],
     },
     {
         name: 'Education',
         id: 'unique-id-2',
-        postIDs: ['post-4', 'post-5', 'post-6'],
+        postIds: ['post-4', 'post-5', 'post-6'],
     },
 ]
 
@@ -237,11 +213,11 @@ const tagColumns: ColumnDef<TagType>[] = [
         header: 'Name',
     },
     {
-        accessorKey: 'postIDs',
+        accessorKey: 'postIds',
         header: 'Posts',
         cell: ({ row }) => {
             // `row.original` gives you tags data you pass into <DataTable>
-            return row.original.postIDs.length
+            return row.original.postIds.length
         },
     },
     {
@@ -265,4 +241,43 @@ const tagColumns: ColumnDef<TagType>[] = [
 
 // Usage
 <DataTable columns={tagColumns} data={tags} />
+```
+
+### Data Table with customized conditional row style
+
+```tsx
+export function MyComponent() {
+	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+
+	return (
+		<DataTable
+			columns={columns}
+			// Pass in rowsDeleting set state into table
+			data={users.map(u => ({
+				...u,
+				setRowsDeleting,
+			}))}
+			// Configure style if row id matches rowsDeleting
+			rowGroupStyle={[
+				{
+					rowIds: rowsDeleting,
+					className: 'opacity-50 pointer-events-none',
+				},
+			]}
+			hideColumnFilter
+		>
+			{/* DataTable passes a table ref for you to use table api */}
+			{table => (
+				<Input
+					placeholder="Filter email..."
+					value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+					onChange={event =>
+						table.getColumn('email')?.setFilterValue(event.target.value)
+					}
+					className="max-w-sm"
+				/>
+			)}
+		</DataTable>
+	)
+}
 ```
