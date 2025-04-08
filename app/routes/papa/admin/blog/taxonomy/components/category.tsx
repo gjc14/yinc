@@ -28,6 +28,7 @@ const CategoryComponent = ({
             className={`flex justify-between items-center p-3 rounded-md bg-muted transition-colors ${
                 isDeleting ? 'opacity-50' : ''
             }
+            ${cat._isPending ? 'cursor-not-allowed' : 'cursor-pointer'}
             ${
                 selectedCategoryId === cat.id
                     ? 'bg-primary text-primary-foreground'
@@ -123,7 +124,7 @@ export const CategoriesSection = ({
     selectedCategoryId,
     setSelectedCategoryId,
 }: {
-    categories: CategoryType[]
+    categories: (CategoryType & { _isPending?: true })[]
     selectedCategoryId: number | null
     setSelectedCategoryId: (id: number) => void
 }) => {
@@ -178,7 +179,10 @@ export const CategoriesSection = ({
                             cat={category}
                             key={category.id}
                             selectedCategoryId={selectedCategoryId}
-                            onClick={() => handleCategorySelect(category.id)}
+                            onClick={() =>
+                                !category._isPending &&
+                                handleCategorySelect(category.id)
+                            }
                         />
                     ))}
                 </div>
