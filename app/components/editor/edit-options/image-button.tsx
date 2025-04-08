@@ -87,7 +87,7 @@ export const ImageButton = ({ editor }: { editor: Editor }) => {
 									}
 								}}
 							>
-								Insert Youtube
+								Insert Image
 							</Button>
 						</PopoverClose>
 					</footer>
