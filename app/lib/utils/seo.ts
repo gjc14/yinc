@@ -1,77 +1,77 @@
 export const generateSlug = (name: string) => {
-    return name
-        .replace(/^\s+|\s+$/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9 -]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+	return name
+		.replace(/^\s+|\s+$/g, '')
+		.toLowerCase()
+		.replace(/[^a-z0-9 -]/g, '')
+		.replace(/\s+/g, '-')
+		.replace(/-+/g, '-')
 }
 
 import type { Seo } from '~/lib/db/schema'
 
 export const createMeta = (seo: Seo, url: URL) => {
-    const metaTags = []
+	const metaTags = []
 
-    // Title
-    if (seo.metaTitle) {
-        metaTags.push({ title: seo.metaTitle })
-    }
+	// Title
+	if (seo.metaTitle) {
+		metaTags.push({ title: seo.metaTitle })
+	}
 
-    // Description
-    if (seo.metaDescription) {
-        metaTags.push({ name: 'description', content: seo.metaDescription })
-    }
+	// Description
+	if (seo.metaDescription) {
+		metaTags.push({ name: 'description', content: seo.metaDescription })
+	}
 
-    // Keywords
-    if (seo.keywords) {
-        metaTags.push({ name: 'keywords', content: seo.keywords })
-    }
+	// Keywords
+	if (seo.keywords) {
+		metaTags.push({ name: 'keywords', content: seo.keywords })
+	}
 
-    // Open Graph tags
-    if (seo.metaTitle) {
-        metaTags.push({ property: 'og:title', content: seo.metaTitle })
-    }
+	// Open Graph tags
+	if (seo.metaTitle) {
+		metaTags.push({ property: 'og:title', content: seo.metaTitle })
+	}
 
-    if (seo.metaDescription) {
-        metaTags.push({
-            property: 'og:description',
-            content: seo.metaDescription,
-        })
-    }
+	if (seo.metaDescription) {
+		metaTags.push({
+			property: 'og:description',
+			content: seo.metaDescription,
+		})
+	}
 
-    // Open Graph Image
-    if (seo.ogImage) {
-        metaTags.push({ property: 'og:image', content: seo.ogImage })
-    }
+	// Open Graph Image
+	if (seo.ogImage) {
+		metaTags.push({ property: 'og:image', content: seo.ogImage })
+	}
 
-    // Other Open Graph tags
-    metaTags.push({ property: 'og:type', content: 'website' })
+	// Other Open Graph tags
+	metaTags.push({ property: 'og:type', content: 'website' })
 
-    // Current URL
-    metaTags.push({
-        property: 'og:url',
-        content: url.href,
-    })
+	// Current URL
+	metaTags.push({
+		property: 'og:url',
+		content: url.href,
+	})
 
-    // Twitter Card
-    metaTags.push({ name: 'twitter:card', content: 'summary_large_image' })
+	// Twitter Card
+	metaTags.push({ name: 'twitter:card', content: 'summary_large_image' })
 
-    if (seo.metaTitle) {
-        metaTags.push({ name: 'twitter:title', content: seo.metaTitle })
-    }
+	if (seo.metaTitle) {
+		metaTags.push({ name: 'twitter:title', content: seo.metaTitle })
+	}
 
-    if (seo.metaDescription) {
-        metaTags.push({
-            name: 'twitter:description',
-            content: seo.metaDescription,
-        })
-    }
+	if (seo.metaDescription) {
+		metaTags.push({
+			name: 'twitter:description',
+			content: seo.metaDescription,
+		})
+	}
 
-    if (seo.ogImage) {
-        metaTags.push({ name: 'twitter:image', content: seo.ogImage })
-    }
+	if (seo.ogImage) {
+		metaTags.push({ name: 'twitter:image', content: seo.ogImage })
+	}
 
-    return { metaTags, seo }
+	return { metaTags, seo }
 }
 
 /**
@@ -82,89 +82,89 @@ export const createMeta = (seo: Seo, url: URL) => {
  * @example generateSeoDescription(myParagraph)
  */
 export function generateSeoDescription(
-    paragraph: string,
-    options: {
-        maxLength?: number
-        keywordEmphasis?: boolean
-        detectLanguage?: boolean
-    } = {}
+	paragraph: string,
+	options: {
+		maxLength?: number
+		keywordEmphasis?: boolean
+		detectLanguage?: boolean
+	} = {}
 ): string {
-    // Set default options
-    const defaultOptions = {
-        maxLength: 160,
-        keywordEmphasis: true,
-        detectLanguage: true,
-    }
-    const settings = { ...defaultOptions, ...options }
+	// Set default options
+	const defaultOptions = {
+		maxLength: 160,
+		keywordEmphasis: true,
+		detectLanguage: true,
+	}
+	const settings = { ...defaultOptions, ...options }
 
-    // Detect language and adjust the maxLength accordingly
-    if (settings.detectLanguage) {
-        const hasCJK =
-            /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/.test(
-                paragraph
-            )
-        if (hasCJK) {
-            settings.maxLength = Math.min(settings.maxLength, 100) // Limit CJK languages to 100 characters
-        }
-    }
+	// Detect language and adjust the maxLength accordingly
+	if (settings.detectLanguage) {
+		const hasCJK =
+			/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/.test(
+				paragraph
+			)
+		if (hasCJK) {
+			settings.maxLength = Math.min(settings.maxLength, 100) // Limit CJK languages to 100 characters
+		}
+	}
 
-    // Remove any HTML or markdown tags
-    const cleanText = paragraph.replace(/<[^>]*>|\*\*([^*]*)\*\*/g, '$1')
+	// Remove any HTML or markdown tags
+	const cleanText = paragraph.replace(/<[^>]*>|\*\*([^*]*)\*\*/g, '$1')
 
-    // Split the paragraph into sentences.
-    // Consider multiple punctuation marks, especially for CJK languages.
-    const sentences = cleanText
-        .replace(/([.!?。！？…\n])\s*/g, '$1|')
-        .split('|')
-        .filter(s => s.trim().length > 0)
+	// Split the paragraph into sentences.
+	// Consider multiple punctuation marks, especially for CJK languages.
+	const sentences = cleanText
+		.replace(/([.!?。！？…\n])\s*/g, '$1|')
+		.split('|')
+		.filter(s => s.trim().length > 0)
 
-    // Construct the description by adding sentences until near the maxLength limit.
-    let description = ''
-    let i = 0
-    while (
-        i < sentences.length &&
-        description.length + sentences[i].length < settings.maxLength - 3
-    ) {
-        description += sentences[i] + ' '
-        i++
-    }
+	// Construct the description by adding sentences until near the maxLength limit.
+	let description = ''
+	let i = 0
+	while (
+		i < sentences.length &&
+		description.length + sentences[i].length < settings.maxLength - 3
+	) {
+		description += sentences[i] + ' '
+		i++
+	}
 
-    // Trim the description and ensure it doesn't cut off mid-word.
-    if (description.length > settings.maxLength) {
-        description = description.substring(0, settings.maxLength - 3)
+	// Trim the description and ensure it doesn't cut off mid-word.
+	if (description.length > settings.maxLength) {
+		description = description.substring(0, settings.maxLength - 3)
 
-        // Find the last space to avoid cutting a word in half.
-        // For CJK languages, this might not always be necessary, but it's useful for mixed texts.
-        const lastSpace = description.lastIndexOf(' ')
-        if (lastSpace > settings.maxLength * 0.7) {
-            description = description.substring(0, lastSpace)
-        }
+		// Find the last space to avoid cutting a word in half.
+		// For CJK languages, this might not always be necessary, but it's useful for mixed texts.
+		const lastSpace = description.lastIndexOf(' ')
+		if (lastSpace > settings.maxLength * 0.7) {
+			description = description.substring(0, lastSpace)
+		}
 
-        description += '...'
-    }
+		description += '...'
+	}
 
-    // Clean up extra spaces and trim the description.
-    description = description.replace(/\s+/g, ' ').trim()
+	// Clean up extra spaces and trim the description.
+	description = description.replace(/\s+/g, ' ').trim()
 
-    // Extract potential keywords (nouns, named entities, etc.)
-    const keywords = extractKeywords(cleanText)
+	// Extract potential keywords (nouns, named entities, etc.)
+	const keywords = extractKeywords(cleanText)
 
-    // Optionally emphasize keywords in the description.
-    if (settings.keywordEmphasis && keywords.length > 0) {
-        keywords.forEach(keyword => {
-            // Check if the keyword exists in the description (case-insensitive)
-            if (description.toLowerCase().includes(keyword.toLowerCase())) {
-                // Use word boundary regex to ensure we're not matching a substring of a larger word.
-                const regex = new RegExp(`\\b${escapeRegExp(keyword)}\\b`, 'gi')
-                // Here, you could wrap the keyword with a tag for emphasis, e.g.:
-                // description = description.replace(regex, `<strong>${keyword}</strong>`);
-                // For now, we'll simply reassign the keyword (this line can be modified as needed).
-                description = description.replace(regex, keyword)
-            }
-        })
-    }
+	// Optionally emphasize keywords in the description.
+	if (settings.keywordEmphasis && keywords.length > 0) {
+		keywords.forEach(keyword => {
+			// Check if the keyword exists in the description (case-insensitive)
+			if (description.toLowerCase().includes(keyword.toLowerCase())) {
+				// Use word boundary regex to ensure we're not matching a substring of a larger word.
+				const regex = new RegExp(`\\b${escapeRegExp(keyword)}\\b`, 'gi')
+				// Here, you could wrap the keyword with a tag for emphasis, e.g.:
+				// description = description.replace(regex, `<strong>${keyword}</strong>`);
+				// For now, we'll simply reassign the keyword (this line can be modified as needed).
+				description = description.replace(regex, keyword)
+			}
+		})
+	}
 
-    return description
+	return description
 }
 
 /**
@@ -173,67 +173,65 @@ export function generateSeoDescription(
  * @returns An array of potential keywords.
  */
 export function extractKeywords(text: string): string[] {
-    // Detect if the text contains CJK characters.
-    const hasCJK =
-        /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/.test(
-            text
-        )
+	// Detect if the text contains CJK characters.
+	const hasCJK =
+		/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/.test(
+			text
+		)
 
-    let words: string[] = []
+	let words: string[] = []
 
-    if (hasCJK) {
-        // Simple segmentation for CJK languages.
-        // In production, consider using a professional NLP library.
-        const segmented = text
-            .replace(/[，。！？；：""''（）【】「」『』〈〉《》、]/g, ' ')
-            .split(/\s+/)
-            .filter(word => word.length >= 2)
-        words = segmented
-    } else {
-        // Tokenization for Western languages.
-        const smallWords = new Set([
-            'a',
-            'an',
-            'the',
-            'and',
-            'or',
-            'but',
-            'in',
-            'on',
-            'at',
-            'to',
-            'for',
-            'with',
-            'by',
-            'of',
-        ])
-        words = text
-            .split(/\s+/)
-            .map(word => word.replace(/[,.()[\]{}:;'"]/g, ''))
-            .filter(
-                word => word.length > 2 && !smallWords.has(word.toLowerCase())
-            )
-    }
+	if (hasCJK) {
+		// Simple segmentation for CJK languages.
+		// In production, consider using a professional NLP library.
+		const segmented = text
+			.replace(/[，。！？；：""''（）【】「」『』〈〉《》、]/g, ' ')
+			.split(/\s+/)
+			.filter(word => word.length >= 2)
+		words = segmented
+	} else {
+		// Tokenization for Western languages.
+		const smallWords = new Set([
+			'a',
+			'an',
+			'the',
+			'and',
+			'or',
+			'but',
+			'in',
+			'on',
+			'at',
+			'to',
+			'for',
+			'with',
+			'by',
+			'of',
+		])
+		words = text
+			.split(/\s+/)
+			.map(word => word.replace(/[,.()[\]{}:;'"]/g, ''))
+			.filter(word => word.length > 2 && !smallWords.has(word.toLowerCase()))
+	}
 
-    // Calculate word frequency.
-    const wordCount: Record<string, number> = {}
-    words.forEach(word => {
-        const lower = word.toLowerCase()
-        wordCount[lower] = (wordCount[lower] || 0) + 1
-    })
+	// Calculate word frequency.
+	const wordCount: Record<string, number> = {}
+	words.forEach(word => {
+		const lower = word.toLowerCase()
+		wordCount[lower] = (wordCount[lower] || 0) + 1
+	})
 
-    // Get frequent words (appearing more than once).
-    const frequentWords = Object.keys(wordCount)
-        .filter(word => wordCount[word] > 1)
-        .sort((a, b) => wordCount[b] - wordCount[a])
+	// Get frequent words (appearing more than once).
+	const frequentWords = Object.keys(wordCount)
+		.filter(word => wordCount[word] > 1)
+		.sort((a, b) => wordCount[b] - wordCount[a])
 
-    // If no frequent words, return the longest few words.
-    if (frequentWords.length === 0) {
-        return words.sort((a, b) => b.length - a.length).slice(0, 5)
-    }
+	// If no frequent words, return the longest few words.
+	if (frequentWords.length === 0) {
+		return words.sort((a, b) => b.length - a.length).slice(0, 5)
+	}
 
-    // Return the top 5 keywords.
-    return frequentWords.slice(0, 5)
+	// Return the top 5 keywords.
+	return frequentWords.slice(0, 5)
 }
 
 /**
@@ -242,7 +240,7 @@ export function extractKeywords(text: string): string[] {
  * @returns The escaped string.
  */
 function escapeRegExp(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 /**

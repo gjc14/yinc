@@ -80,49 +80,49 @@ export default config
 `
 
 const filePathExample = join(
-    process.cwd(),
-    'app/routes/plugins/example.plugin/_papa.admin.example/route.tsx'
+	process.cwd(),
+	'app/routes/plugins/example.plugin/_papa.admin.example/route.tsx'
 )
 
 const filePathExampleSub = join(
-    process.cwd(),
-    'app/routes/plugins/example.plugin/_papa.admin.example.sub/route.tsx'
+	process.cwd(),
+	'app/routes/plugins/example.plugin/_papa.admin.example.sub/route.tsx'
 )
 
 const filePathExampleAdminConfig = join(
-    process.cwd(),
-    'app/routes/plugins/example.plugin/papa.config.ts'
+	process.cwd(),
+	'app/routes/plugins/example.plugin/papa.config.ts'
 )
 
 try {
-    await mkdir(
-        join(
-            process.cwd(),
-            'app/routes/plugins/example.plugin/_papa.admin.example'
-        ),
-        { recursive: true }
-    )
-    await mkdir(
-        join(
-            process.cwd(),
-            'app/routes/plugins/example.plugin/_papa.admin.example.sub'
-        ),
-        { recursive: true }
-    )
+	await mkdir(
+		join(
+			process.cwd(),
+			'app/routes/plugins/example.plugin/_papa.admin.example'
+		),
+		{ recursive: true }
+	)
+	await mkdir(
+		join(
+			process.cwd(),
+			'app/routes/plugins/example.plugin/_papa.admin.example.sub'
+		),
+		{ recursive: true }
+	)
 
-    await writeFile(filePathExample, examplePage.trim())
-    await writeFile(filePathExampleSub, examplePageSub.trim())
-    await writeFile(filePathExampleAdminConfig, exampleAdminPapaConfig.trim())
-    console.log(
-        `Example admin pages and config created successfully in routes folder ${
-            filePathExample.split('app/routes')[1]
-        }, ${filePathExampleSub.split('app/routes')[1]} and ${
-            filePathExampleAdminConfig.split('app/routes')[1]
-        }
+	await writeFile(filePathExample, examplePage.trim())
+	await writeFile(filePathExampleSub, examplePageSub.trim())
+	await writeFile(filePathExampleAdminConfig, exampleAdminPapaConfig.trim())
+	console.log(
+		`Example admin pages and config created successfully in routes folder ${
+			filePathExample.split('app/routes')[1]
+		}, ${filePathExampleSub.split('app/routes')[1]} and ${
+			filePathExampleAdminConfig.split('app/routes')[1]
+		}
         
         Navigate to '/admin/example' and '/admin/example/sub' to see in action
         `.replace(/^ {8}/gm, '')
-    )
+	)
 } catch (err) {
-    console.error('Error creating example admin files:', err)
+	console.error('Error creating example admin files:', err)
 }

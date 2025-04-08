@@ -9,100 +9,98 @@ import { handleError } from '~/lib/utils/server'
 import { validateAdminSession } from '../../auth/utils'
 
 const userUpdateSchema = createUpdateSchema(user).required().omit({
-    createdAt: true,
-    updatedAt: true,
-    banExpires: true,
+	createdAt: true,
+	updatedAt: true,
+	banExpires: true,
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-    if (!['POST', 'PUT', 'DELETE'].includes(request.method)) {
-        return Response.json({
-            err: 'Method not allowed',
-        } satisfies ConventionalActionResponse)
-    }
+	if (!['POST', 'PUT', 'DELETE'].includes(request.method)) {
+		return Response.json({
+			err: 'Method not allowed',
+		} satisfies ConventionalActionResponse)
+	}
 
-    const adminSession = await validateAdminSession(request)
+	const adminSession = await validateAdminSession(request)
 
-    const formData = await request.formData()
-    const rawData = Object.fromEntries(formData)
+	const formData = await request.formData()
+	const rawData = Object.fromEntries(formData)
 
-    const userData: Record<string, string | boolean | File> = {}
+	const userData: Record<string, string | boolean | File> = {}
 
-    for (const [key, value] of Object.entries(rawData)) {
-        if (['emailVerified', 'banned'].includes(key)) {
-            userData[key] = value === 'true'
-        } else {
-            userData[key] = value
-        }
-    }
+	for (const [key, value] of Object.entries(rawData)) {
+		if (['emailVerified', 'banned'].includes(key)) {
+			userData[key] = value === 'true'
+		} else {
+			userData[key] = value
+		}
+	}
 
-    switch (request.method) {
-        case 'POST':
-            try {
-                const email = userData.email
-                const name = userData.name
+	switch (request.method) {
+		case 'POST':
+			try {
+				const email = userData.email
+				const name = userData.name
 
-                if (
-                    !email ||
-                    typeof email !== 'string' ||
-                    !isValidEmail(email) ||
-                    typeof name !== 'string'
-                ) {
-                    throw new Error('Invalid email')
-                }
+				if (
+					!email ||
+					typeof email !== 'string' ||
+					!isValidEmail(email) ||
+					typeof name !== 'string'
+				) {
+					throw new Error('Invalid email')
+				}
 
-                const { user } = await auth.api.createUser({
-                    body: {
-                        email,
-                        name,
-                        password: '',
-                        role: 'user',
-                    },
-                })
+				const { user } = await auth.api.createUser({
+					body: {
+						email,
+						name,
+						password: '',
+						role: 'user',
+					},
+				})
 
-                return Response.json({
-                    msg: `User ${user.email} has created successfully`,
-                } satisfies ConventionalActionResponse)
-            } catch (error) {
-                return handleError(error, request)
-            }
-        case 'PUT':
-            try {
-                const user = userUpdateSchema.parse(userData)
-                const { user: userUpdated } = await updateUser({
-                    id: user.id,
-                    data: {
-                        email: user.email,
-                        emailVerified: user.emailVerified,
-                        name: user.name,
-                        image: user.image,
-                        role: user.role,
-                        banReason: user.banReason,
-                        banned: user.banned,
-                    },
-                })
+				return Response.json({
+					msg: `User ${user.email} has created successfully`,
+				} satisfies ConventionalActionResponse)
+			} catch (error) {
+				return handleError(error, request)
+			}
+		case 'PUT':
+			try {
+				const user = userUpdateSchema.parse(userData)
+				const { user: userUpdated } = await updateUser({
+					id: user.id,
+					data: {
+						email: user.email,
+						emailVerified: user.emailVerified,
+						name: user.name,
+						image: user.image,
+						role: user.role,
+						banReason: user.banReason,
+						banned: user.banned,
+					},
+				})
 
-                return Response.json({
-                    msg:
-                        'Success update ' +
-                        (userUpdated.name || userUpdated.email),
-                } satisfies ConventionalActionResponse)
-            } catch (error) {
-                return handleError(error, request)
-            }
-        case 'DELETE':
-            const userId = userData.id
-            if (typeof userId !== 'string') {
-                throw new Error('Invalid argument')
-            }
+				return Response.json({
+					msg: 'Success update ' + (userUpdated.name || userUpdated.email),
+				} satisfies ConventionalActionResponse)
+			} catch (error) {
+				return handleError(error, request)
+			}
+		case 'DELETE':
+			const userId = userData.id
+			if (typeof userId !== 'string') {
+				throw new Error('Invalid argument')
+			}
 
-            try {
-                const { user } = await deleteUser(userId)
-                return Response.json({
-                    msg: `${user.email} deleted successfully`,
-                } satisfies ConventionalActionResponse)
-            } catch (error) {
-                return handleError(error, request)
-            }
-    }
+			try {
+				const { user } = await deleteUser(userId)
+				return Response.json({
+					msg: `${user.email} deleted successfully`,
+				} satisfies ConventionalActionResponse)
+			} catch (error) {
+				return handleError(error, request)
+			}
+	}
 }

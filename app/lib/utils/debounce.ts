@@ -10,32 +10,32 @@ import React from 'react'
  * @returns A debounced version of the original function
  */
 export function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number,
-    immediate: boolean = false
+	func: T,
+	wait: number,
+	immediate: boolean = false
 ): (...args: Parameters<T>) => void {
-    let timeout: ReturnType<typeof setTimeout> | null = null
+	let timeout: ReturnType<typeof setTimeout> | null = null
 
-    return function (this: any, ...args: Parameters<T>): void {
-        const context = this
+	return function (this: any, ...args: Parameters<T>): void {
+		const context = this
 
-        const later = function () {
-            timeout = null
-            if (!immediate) func.apply(context, args)
-        }
+		const later = function () {
+			timeout = null
+			if (!immediate) func.apply(context, args)
+		}
 
-        const callNow = immediate && !timeout
+		const callNow = immediate && !timeout
 
-        if (timeout) {
-            clearTimeout(timeout)
-        }
+		if (timeout) {
+			clearTimeout(timeout)
+		}
 
-        timeout = setTimeout(later, wait)
+		timeout = setTimeout(later, wait)
 
-        if (callNow) {
-            func.apply(context, args)
-        }
-    }
+		if (callNow) {
+			func.apply(context, args)
+		}
+	}
 }
 
 /**
@@ -47,44 +47,44 @@ export function debounce<T extends (...args: any[]) => any>(
  * @returns An object with the debounced function and a cancel method
  */
 export function debounceCancellable<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number,
-    immediate: boolean = false
+	func: T,
+	wait: number,
+	immediate: boolean = false
 ): {
-    debounced: (...args: Parameters<T>) => void
-    cancel: () => void
+	debounced: (...args: Parameters<T>) => void
+	cancel: () => void
 } {
-    let timeout: ReturnType<typeof setTimeout> | null = null
+	let timeout: ReturnType<typeof setTimeout> | null = null
 
-    function debounced(this: any, ...args: Parameters<T>): void {
-        const context = this
+	function debounced(this: any, ...args: Parameters<T>): void {
+		const context = this
 
-        const later = function () {
-            timeout = null
-            if (!immediate) func.apply(context, args)
-        }
+		const later = function () {
+			timeout = null
+			if (!immediate) func.apply(context, args)
+		}
 
-        const callNow = immediate && !timeout
+		const callNow = immediate && !timeout
 
-        if (timeout) {
-            clearTimeout(timeout)
-        }
+		if (timeout) {
+			clearTimeout(timeout)
+		}
 
-        timeout = setTimeout(later, wait)
+		timeout = setTimeout(later, wait)
 
-        if (callNow) {
-            func.apply(context, args)
-        }
-    }
+		if (callNow) {
+			func.apply(context, args)
+		}
+	}
 
-    function cancel(): void {
-        if (timeout) {
-            clearTimeout(timeout)
-            timeout = null
-        }
-    }
+	function cancel(): void {
+		if (timeout) {
+			clearTimeout(timeout)
+			timeout = null
+		}
+	}
 
-    return { debounced, cancel }
+	return { debounced, cancel }
 }
 
 /**
@@ -96,37 +96,37 @@ export function debounceCancellable<T extends (...args: any[]) => any>(
  * @returns A debounced version of the callback
  */
 export function useDebounce<T extends (...args: any[]) => any>(
-    callback: T,
-    delay: number,
-    deps: React.DependencyList = []
+	callback: T,
+	delay: number,
+	deps: React.DependencyList = []
 ): (...args: Parameters<T>) => void {
-    const callbackRef = React.useRef<{
-        callback: T
-        timer: ReturnType<typeof setTimeout> | null
-    }>({
-        callback,
-        timer: null,
-    })
+	const callbackRef = React.useRef<{
+		callback: T
+		timer: ReturnType<typeof setTimeout> | null
+	}>({
+		callback,
+		timer: null,
+	})
 
-    React.useEffect(() => {
-        callbackRef.current.callback = callback
-    }, [callback])
+	React.useEffect(() => {
+		callbackRef.current.callback = callback
+	}, [callback])
 
-    React.useEffect(() => {
-        return () => {
-            if (callbackRef.current.timer) {
-                clearTimeout(callbackRef.current.timer)
-            }
-        }
-    }, [])
+	React.useEffect(() => {
+		return () => {
+			if (callbackRef.current.timer) {
+				clearTimeout(callbackRef.current.timer)
+			}
+		}
+	}, [])
 
-    return React.useCallback((...args: Parameters<T>) => {
-        if (callbackRef.current.timer) {
-            clearTimeout(callbackRef.current.timer)
-        }
+	return React.useCallback((...args: Parameters<T>) => {
+		if (callbackRef.current.timer) {
+			clearTimeout(callbackRef.current.timer)
+		}
 
-        callbackRef.current.timer = setTimeout(() => {
-            callbackRef.current.callback(...args)
-        }, delay)
-    }, deps)
+		callbackRef.current.timer = setTimeout(() => {
+			callbackRef.current.callback(...args)
+		}, delay)
+	}, deps)
 }

@@ -5,17 +5,17 @@ import { auth } from '~/lib/auth/auth.server'
 import { SignInForm } from './signin-form'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const session = await auth.api.getSession(request)
+	const session = await auth.api.getSession(request)
 
-    if (session) {
-        return redirect('/admin')
-    }
+	if (session) {
+		return redirect('/admin')
+	}
 }
 
 export default function AdminAuth() {
-    return (
-        <MainWrapper className="justify-center">
-            <SignInForm />
-        </MainWrapper>
-    )
+	return (
+		<MainWrapper className="justify-center">
+			<SignInForm />
+		</MainWrapper>
+	)
 }

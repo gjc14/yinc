@@ -12,107 +12,107 @@ import { categoriesTable, subCategoriesTable, tagsTable } from './schema'
  * Tag and Category functions
  */
 export const createCategory = async ({
-    name,
-    description = '',
+	name,
+	description = '',
 }: {
-    name: string
-    description?: string
+	name: string
+	description?: string
 }): Promise<{ category: Category }> => {
-    const [category] = await db
-        .insert(categoriesTable)
-        .values({ name, slug: generateSlug(name), description })
-        .returning()
-    return { category }
+	const [category] = await db
+		.insert(categoriesTable)
+		.values({ name, slug: generateSlug(name), description })
+		.returning()
+	return { category }
 }
 
 export const getCategories = async (): Promise<{
-    categories: (Category & { subCategories: SubCategory[] })[]
+	categories: (Category & { subCategories: SubCategory[] })[]
 }> => {
-    const categories = await db.query.categoriesTable.findMany({
-        with: { subCategories: true },
-        orderBy: (table, { asc }) => {
-            return asc(table.id)
-        },
-    })
-    return { categories }
+	const categories = await db.query.categoriesTable.findMany({
+		with: { subCategories: true },
+		orderBy: (table, { asc }) => {
+			return asc(table.id)
+		},
+	})
+	return { categories }
 }
 
 export const deleteCategory = async (
-    id: number
+	id: number
 ): Promise<{ category: Category }> => {
-    const [category] = await db
-        .delete(categoriesTable)
-        .where(eq(categoriesTable.id, id))
-        .returning()
-    return { category }
+	const [category] = await db
+		.delete(categoriesTable)
+		.where(eq(categoriesTable.id, id))
+		.returning()
+	return { category }
 }
 
 // Subcategory functions
 export const createSubcategory = async ({
-    categoryId,
-    name,
-    description = '',
+	categoryId,
+	name,
+	description = '',
 }: {
-    categoryId: number
-    name: string
-    description?: string
+	categoryId: number
+	name: string
+	description?: string
 }): Promise<{ subcategory: SubCategory }> => {
-    const [subcategory] = await db
-        .insert(subCategoriesTable)
-        .values({ name, categoryId, slug: generateSlug(name), description })
-        .returning()
-    return { subcategory }
+	const [subcategory] = await db
+		.insert(subCategoriesTable)
+		.values({ name, categoryId, slug: generateSlug(name), description })
+		.returning()
+	return { subcategory }
 }
 
 export const getSubcategories = async (): Promise<{
-    subcategories: SubCategory[]
+	subcategories: SubCategory[]
 }> => {
-    const subcategories = await db.query.subCategoriesTable.findMany({
-        orderBy: (table, { asc }) => {
-            return asc(table.id)
-        },
-    })
-    return { subcategories }
+	const subcategories = await db.query.subCategoriesTable.findMany({
+		orderBy: (table, { asc }) => {
+			return asc(table.id)
+		},
+	})
+	return { subcategories }
 }
 
 export const deleteSubcategory = async (
-    id: number
+	id: number
 ): Promise<{ subcategory: SubCategory }> => {
-    const [subcategory] = await db
-        .delete(subCategoriesTable)
-        .where(eq(subCategoriesTable.id, id))
-        .returning()
-    return { subcategory }
+	const [subcategory] = await db
+		.delete(subCategoriesTable)
+		.where(eq(subCategoriesTable.id, id))
+		.returning()
+	return { subcategory }
 }
 
 // Tag functions
 export const createTag = async ({
-    name,
-    description = '',
+	name,
+	description = '',
 }: {
-    name: string
-    description?: string
+	name: string
+	description?: string
 }): Promise<{ tag: Tag }> => {
-    const [tag] = await db
-        .insert(tagsTable)
-        .values({ name, slug: generateSlug(name), description })
-        .returning()
-    return { tag }
+	const [tag] = await db
+		.insert(tagsTable)
+		.values({ name, slug: generateSlug(name), description })
+		.returning()
+	return { tag }
 }
 
 export const getTags = async (): Promise<{ tags: Tag[] }> => {
-    const tags = await db.query.tagsTable.findMany({
-        orderBy: (table, { asc }) => {
-            return asc(table.id)
-        },
-    })
-    return { tags }
+	const tags = await db.query.tagsTable.findMany({
+		orderBy: (table, { asc }) => {
+			return asc(table.id)
+		},
+	})
+	return { tags }
 }
 
 export const deleteTag = async (id: number): Promise<{ tag: Tag }> => {
-    const [tag] = await db
-        .delete(tagsTable)
-        .where(eq(tagsTable.id, id))
-        .returning()
-    return { tag }
+	const [tag] = await db
+		.delete(tagsTable)
+		.where(eq(tagsTable.id, id))
+		.returning()
+	return { tag }
 }

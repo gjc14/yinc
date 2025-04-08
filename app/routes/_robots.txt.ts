@@ -5,8 +5,8 @@
 import type { LoaderFunctionArgs } from 'react-router'
 
 export const loader = ({ request }: LoaderFunctionArgs) => {
-    const url = new URL(request.url)
-    const robotText = `
+	const url = new URL(request.url)
+	const robotText = `
         User-agent: Googlebot
         Disallow: /nogooglebot/
 
@@ -14,13 +14,13 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
         Allow: /
 
         Sitemap: ${url.origin}/sitemap.xml`
-        .replace(/^[ \t]+(?=\S)/gm, '')
-        .trim()
+		.replace(/^[ \t]+(?=\S)/gm, '')
+		.trim()
 
-    return new Response(robotText, {
-        status: 200,
-        headers: {
-            'Content-Type': 'text/plain',
-        },
-    })
+	return new Response(robotText, {
+		status: 200,
+		headers: {
+			'Content-Type': 'text/plain',
+		},
+	})
 }

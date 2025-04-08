@@ -3,12 +3,12 @@ import type { LucideIcon, LucideProps } from 'lucide-react'
 import { forwardRef } from 'react'
 
 export const convertRadixToLucideIcon = (
-    IconComponent: React.ForwardRefExoticComponent<
-        IconProps & React.RefAttributes<SVGSVGElement>
-    >
+	IconComponent: React.ForwardRefExoticComponent<
+		IconProps & React.RefAttributes<SVGSVGElement>
+	>
 ): LucideIcon => {
-    return forwardRef<SVGSVGElement, LucideProps>((props, ref) => {
-        const { children, ...restProps } = props
-        return <IconComponent {...restProps} ref={ref} />
-    })
+	return forwardRef<SVGSVGElement, LucideProps>((props, ref) => {
+		const { children, ...restProps } = props
+		return <IconComponent {...restProps} ref={ref} />
+	})
 }

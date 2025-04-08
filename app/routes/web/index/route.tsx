@@ -9,51 +9,51 @@ import { Nav } from '../components/nav'
 import { Hero } from './hero'
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
-    if (!data || !data.meta) {
-        return []
-    }
+	if (!data || !data.meta) {
+		return []
+	}
 
-    return data.meta.metaTags
+	return data.meta.metaTags
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const { seo } = await getSEO(new URL(request.url).pathname)
-    const meta = seo ? createMeta(seo, new URL(request.url)) : null
+	const { seo } = await getSEO(new URL(request.url).pathname)
+	const meta = seo ? createMeta(seo, new URL(request.url)) : null
 
-    try {
-        return { meta }
-    } catch (error) {
-        console.error(error)
-        return { meta }
-    }
+	try {
+		return { meta }
+	} catch (error) {
+		console.error(error)
+		return { meta }
+	}
 }
 
 let cache: Awaited<ReturnType<typeof loader>>
 export const clientLoader = async ({
-    serverLoader,
+	serverLoader,
 }: ClientLoaderFunctionArgs) => {
-    if (cache) {
-        return cache
-    }
+	if (cache) {
+		return cache
+	}
 
-    cache = await serverLoader()
-    return cache
+	cache = await serverLoader()
+	return cache
 }
 
 clientLoader.hydrate = true
 
 export default function Index() {
-    const { meta } = useLoaderData<typeof loader>()
+	const { meta } = useLoaderData<typeof loader>()
 
-    return (
-        <>
-            <Nav />
+	return (
+		<>
+			<Nav />
 
-            <MainWrapper>
-                <h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
-                <Hero />
-                <Footer />
-            </MainWrapper>
-        </>
-    )
+			<MainWrapper>
+				<h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
+				<Hero />
+				<Footer />
+			</MainWrapper>
+		</>
+	)
 }

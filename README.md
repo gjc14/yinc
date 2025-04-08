@@ -6,12 +6,12 @@
 
 ## Tech Stack
 
--   **Framework**: [React Router v7](https://reactrouter.com/home/)
--   **Database**: [MongoDB](https://www.mongodb.com/)
--   **ORM**: [Drizzle](https://orm.drizzle.team/)
--   **Style**: [tailwindcss](https://tailwindcss.com/)
--   **UI LIbrary**: [shadcn/ui](https://ui.shadcn.com/)
--   **Email SDK**: [Resend](https://resend.com/)
+- **Framework**: [React Router v7](https://reactrouter.com/home/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
+- **ORM**: [Drizzle](https://orm.drizzle.team/)
+- **Style**: [tailwindcss](https://tailwindcss.com/)
+- **UI LIbrary**: [shadcn/ui](https://ui.shadcn.com/)
+- **Email SDK**: [Resend](https://resend.com/)
 
 ## Why use PapaCMS?
 
@@ -70,14 +70,11 @@ You should:
 
 ```json
 [
-    {
-        "AllowedOrigins": [
-            "http://localhost:5173",
-            "https://your-own-domain.com"
-        ],
-        "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
-        "AllowedHeaders": ["*"]
-    }
+	{
+		"AllowedOrigins": ["http://localhost:5173", "https://your-own-domain.com"],
+		"AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
+		"AllowedHeaders": ["*"]
+	}
 ]
 ```
 
@@ -174,29 +171,29 @@ import { type ActionFunctionArgs } from 'react-router'
 import { type ConventionalActionResponse } from '~/lib/utils'
 
 type ReturnData = {
-    name: string
+	name: string
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-    if (a) {
-        return Response.json({
-            msg: `Welcome to PAPA!`,
-            data: { name: newName },
-        } satisfies ConventionalActionResponse<ReturnData>)
-    } else {
-        return Response.json({
-            err: 'Method not allowed',
-        } satisfies ConventionalActionResponse)
-    }
+	if (a) {
+		return Response.json({
+			msg: `Welcome to PAPA!`,
+			data: { name: newName },
+		} satisfies ConventionalActionResponse<ReturnData>)
+	} else {
+		return Response.json({
+			err: 'Method not allowed',
+		} satisfies ConventionalActionResponse)
+	}
 }
 
 // If you use fetcher, you could benefit from the generic return data
 const fetcher = useFetcher<ReturnType>()
 
 useEffect(() => {
-    if (fetcher.status === 'loading' && fetcher.data.data) {
-        const returnedData = fetcher.data.data // Typed ReturnType
-    }
+	if (fetcher.status === 'loading' && fetcher.data.data) {
+		const returnedData = fetcher.data.data // Typed ReturnType
+	}
 }, [fetcher])
 ```
 

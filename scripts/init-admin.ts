@@ -9,227 +9,221 @@ import { isValidEmail } from '~/lib/utils'
 import * as schema from '../app/lib/db/schema'
 
 const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+	input: process.stdin,
+	output: process.stdout,
 })
 
 const askEmail = (): Promise<string> => {
-    return new Promise(resolve => {
-        rl.question(
-            '\n請輸入管理員電子郵件地址 (Please enter Admin Email) (按下 ^+C 以關閉) (Press ^+C to exit): ',
-            email => {
-                if (!isValidEmail(email)) {
-                    console.error(
-                        '❌ 無效的電子郵件格式，請重新輸入。(Invalid email, try again.)'
-                    )
-                    return resolve(askEmail())
-                }
-                resolve(email)
-            }
-        )
-    })
+	return new Promise(resolve => {
+		rl.question(
+			'\n請輸入管理員電子郵件地址 (Please enter Admin Email) (按下 ^+C 以關閉) (Press ^+C to exit): ',
+			email => {
+				if (!isValidEmail(email)) {
+					console.error(
+						'❌ 無效的電子郵件格式，請重新輸入。(Invalid email, try again.)'
+					)
+					return resolve(askEmail())
+				}
+				resolve(email)
+			}
+		)
+	})
 }
 
 const askName = (): Promise<string> => {
-    return new Promise(resolve => {
-        rl.question(
-            '\n設定您的名字 (Please enter your name) (按下 ^+C 以關閉) (Press ^+C to exit): ',
-            name => resolve(name)
-        )
-    })
+	return new Promise(resolve => {
+		rl.question(
+			'\n設定您的名字 (Please enter your name) (按下 ^+C 以關閉) (Press ^+C to exit): ',
+			name => resolve(name)
+		)
+	})
 }
 
 async function checkAndCreateAdmin() {
-    const db = drizzle(process.env.DATABASE_URL!, { schema })
+	const db = drizzle(process.env.DATABASE_URL!, { schema })
 
-    try {
-        // Check if admin exists
-        const admin = await db.query.user.findMany({
-            where: (t, { eq }) => eq(t.role, 'admin'),
-            orderBy: (t, { asc }) => asc(t.createdAt),
-        })
+	try {
+		// Check if admin exists
+		const admin = await db.query.user.findMany({
+			where: (t, { eq }) => eq(t.role, 'admin'),
+			orderBy: (t, { asc }) => asc(t.createdAt),
+		})
 
-        if (admin.length === 0) {
-            const email = await askEmail()
-            const name = await askName()
+		if (admin.length === 0) {
+			const email = await askEmail()
+			const name = await askName()
 
-            // Create admin
-            console.log(
-                '\n管理員不存在，正在建立... (Admin does not exist. Creating...)'
-            )
-            const { user } = await auth.api.createUser({
-                body: {
-                    email: email,
-                    password: '',
-                    name: name,
-                    role: 'admin',
-                },
-            })
-            await db
-                .update(schema.user)
-                .set({
-                    emailVerified: true,
-                })
-                .where(eq(schema.user.id, user.id))
+			// Create admin
+			console.log(
+				'\n管理員不存在，正在建立... (Admin does not exist. Creating...)'
+			)
+			const { user } = await auth.api.createUser({
+				body: {
+					email: email,
+					password: '',
+					name: name,
+					role: 'admin',
+				},
+			})
+			await db
+				.update(schema.user)
+				.set({
+					emailVerified: true,
+				})
+				.where(eq(schema.user.id, user.id))
 
-            console.log(
-                `管理員已建立！請使用 ${user.email} 登入。 (Admin created! Sign in with ${user.email})`
-            )
+			console.log(
+				`管理員已建立！請使用 ${user.email} 登入。 (Admin created! Sign in with ${user.email})`
+			)
 
-            console.log('正在建立預設資料 (Inserting default data)...')
-            await db.transaction(async tx => {
-                await insertDefaultData(tx, user.id)
-            })
-            console.log('預設資料已建立 (Default data created)')
+			console.log('正在建立預設資料 (Inserting default data)...')
+			await db.transaction(async tx => {
+				await insertDefaultData(tx, user.id)
+			})
+			console.log('預設資料已建立 (Default data created)')
 
-            console.warn(
-                `\n* * * \n初始化完成！(Initialization complete)\n* * *\n`
-            )
-        } else {
-            console.log(`管理員已存在。Admin already exists.\n`)
-        }
-    } catch (error) {
-        console.error(
-            '檢查/建立管理員使用者時發生錯誤 (Error checking/creating admin):',
-            error
-        )
-        process.exit(1)
-    } finally {
-        console.log('\n* * *\n歡迎使用 Papa 🥔✨\nWelcome to Papa 🥔✨\n* * *')
-        process.exit(0)
-    }
+			console.warn(`\n* * * \n初始化完成！(Initialization complete)\n* * *\n`)
+		} else {
+			console.log(`管理員已存在。Admin already exists.\n`)
+		}
+	} catch (error) {
+		console.error(
+			'檢查/建立管理員使用者時發生錯誤 (Error checking/creating admin):',
+			error
+		)
+		process.exit(1)
+	} finally {
+		console.log('\n* * *\n歡迎使用 Papa 🥔✨\nWelcome to Papa 🥔✨\n* * *')
+		process.exit(0)
+	}
 }
 
 const insertDefaultData = async (tx: TransactionType, adminId: string) => {
-    await tx.insert(schema.seosTable).values(defaultSEOs)
+	await tx.insert(schema.seosTable).values(defaultSEOs)
 
-    const [postCreated] = await tx
-        .insert(schema.postsTable)
-        .values({
-            authorId: adminId,
-            title: defaultPost.title,
-            content: defaultPost.content,
-            slug: defaultPost.slug,
-            excerpt: defaultPost.excerpt,
-            status: defaultPost.status,
-            featuredImage: defaultPost.featuredImage,
-        })
-        .returning()
-    console.log('\n預設文章已建立 (Default post created):', postCreated.title)
+	const [postCreated] = await tx
+		.insert(schema.postsTable)
+		.values({
+			authorId: adminId,
+			title: defaultPost.title,
+			content: defaultPost.content,
+			slug: defaultPost.slug,
+			excerpt: defaultPost.excerpt,
+			status: defaultPost.status,
+			featuredImage: defaultPost.featuredImage,
+		})
+		.returning()
+	console.log('\n預設文章已建立 (Default post created):', postCreated.title)
 
-    await tx.insert(schema.seosTable).values({
-        metaTitle: defaultPost.title,
-        metaDescription: defaultPost.excerpt,
-        autoGenerated: true,
-        postId: postCreated.id,
-        route: '/blog/' + postCreated.slug,
-    })
-    console.log(
-        '\n預設文章 SEO 已建立 (Default post SEO created):',
-        defaultPost.title
-    )
+	await tx.insert(schema.seosTable).values({
+		metaTitle: defaultPost.title,
+		metaDescription: defaultPost.excerpt,
+		autoGenerated: true,
+		postId: postCreated.id,
+		route: '/blog/' + postCreated.slug,
+	})
+	console.log(
+		'\n預設文章 SEO 已建立 (Default post SEO created):',
+		defaultPost.title
+	)
 
-    const tags = await tx
-        .insert(schema.tagsTable)
-        .values(defaultTags)
-        .returning()
-    console.log(
-        '\n預設標籤已建立 (Default tags created):',
-        defaultTags.map(tag => ({
-            name: tag.name,
-        }))
-    )
+	const tags = await tx.insert(schema.tagsTable).values(defaultTags).returning()
+	console.log(
+		'\n預設標籤已建立 (Default tags created):',
+		defaultTags.map(tag => ({
+			name: tag.name,
+		}))
+	)
 
-    const categories = await tx
-        .insert(schema.categoriesTable)
-        .values(defaultCategories)
-        .returning()
-    console.log(
-        '\n預設分類已建立 (Default categories created):',
-        defaultCategories.map(category => ({
-            name: category.name,
-        }))
-    )
+	const categories = await tx
+		.insert(schema.categoriesTable)
+		.values(defaultCategories)
+		.returning()
+	console.log(
+		'\n預設分類已建立 (Default categories created):',
+		defaultCategories.map(category => ({
+			name: category.name,
+		}))
+	)
 
-    await tx.insert(schema.postsToTags).values(
-        tags.map(tag => ({
-            postId: postCreated.id,
-            tagId: tag.id,
-        }))
-    )
+	await tx.insert(schema.postsToTags).values(
+		tags.map(tag => ({
+			postId: postCreated.id,
+			tagId: tag.id,
+		}))
+	)
 
-    await tx.insert(schema.postsToCategories).values(
-        categories.map(category => ({
-            postId: postCreated.id,
-            categoryId: category.id,
-        }))
-    )
-    console.log(
-        '\n預設文章與標籤、分類關聯已建立 (Default post to tags and categories created)'
-    )
+	await tx.insert(schema.postsToCategories).values(
+		categories.map(category => ({
+			postId: postCreated.id,
+			categoryId: category.id,
+		}))
+	)
+	console.log(
+		'\n預設文章與標籤、分類關聯已建立 (Default post to tags and categories created)'
+	)
 }
 
 const defaultSEOs = [
-    {
-        autoGenerated: true,
-        route: '/',
-        metaTitle: 'Papa - First and only online CMS ⛰️',
-        metaDescription:
-            `Papa is a simple and thorough platform for modern web app.
+	{
+		autoGenerated: true,
+		route: '/',
+		metaTitle: 'Papa - First and only online CMS ⛰️',
+		metaDescription: `Papa is a simple and thorough platform for modern web app.
             We built a MIT CMS for your personal website,
             and an enterprise No-Code modern DBMS that transforms into what you expect internal collaborative tools will be.
         `.replace(/\s+/g, ' '),
-    },
-    {
-        autoGenerated: true,
-        route: '/blog',
-        metaTitle: 'Blog - Where you see my sounds 🎵',
-        metaDescription: 'This is where I share my thoughts and insights.',
-    },
-    {
-        autoGenerated: true,
-        route: '/admin',
-        metaTitle: 'Papa Admin Panel',
-    },
+	},
+	{
+		autoGenerated: true,
+		route: '/blog',
+		metaTitle: 'Blog - Where you see my sounds 🎵',
+		metaDescription: 'This is where I share my thoughts and insights.',
+	},
+	{
+		autoGenerated: true,
+		route: '/admin',
+		metaTitle: 'Papa Admin Panel',
+	},
 ]
 const defaultPost = {
-    slug: 'what-is-papa',
-    title: 'What is PapaCMS',
-    content:
-        '{"type":"doc","content":[{"type":"blockquote","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"PapaCMS integrates all the best modern website kits for you! Providing all the best and economic tools, you never need to investigate yourself."}]}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","marks":[{"type":"highlight","attrs":{"color":null}}],"text":"Best"},{"type":"text","text":" and "},{"type":"text","marks":[{"type":"italic"}],"text":"styled"},{"type":"text","text":" "},{"type":"text","marks":[{"type":"bold"}],"text":"RICH TEXT EDITOR"},{"type":"text","text":" out of the box using "},{"type":"text","marks":[{"type":"underline"}],"text":"Tiptap"},{"type":"text","text":"."}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Go to "},{"type":"text","marks":[{"type":"link","attrs":{"href":"https://papacms.vercel.app","target":"_blank","rel":"noopener noreferrer nofollow","class":null}}],"text":"PapaCMS"}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Fully responsive"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Dark mode support"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Intuitive text editor"}]}]}]},{"type":"youtube","attrs":{"src":"https://www.youtube.com/watch?v=MgsdDfdGdHc","start":0,"width":640,"height":480}},{"type":"heading","attrs":{"textAlign":"left","level":2},"content":[{"type":"text","text":"Header2"}]},{"type":"heading","attrs":{"textAlign":"left","level":3},"content":[{"type":"text","text":"Header3"}]},{"type":"heading","attrs":{"textAlign":"left","level":4},"content":[{"type":"text","text":"Header4"}]},{"type":"heading","attrs":{"textAlign":"left","level":5},"content":[{"type":"text","text":"Header5"}]},{"type":"blockquote","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"⚠️ H1 is reserved for title"}]}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Wooo and this is "},{"type":"text","marks":[{"type":"bold"}],"text":"text"},{"type":"text","text":", and "},{"type":"text","marks":[{"type":"code"}],"text":"inline code"}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"All text "},{"type":"text","marks":[{"type":"bold"},{"type":"italic"},{"type":"strike"},{"type":"underline"},{"type":"highlight","attrs":{"color":null}}],"text":"styles"},{"type":"text","text":" you need, even "},{"type":"text","marks":[{"type":"superscript"}],"text":" Super "},{"type":"text","marks":[{"type":"subscript"}],"text":"Sub "},{"type":"text","text":"or "},{"type":"text","marks":[{"type":"superscript"},{"type":"subscript"}],"text":"Both."},{"type":"text","text":" "},{"type":"text","marks":[{"type":"bold"}],"text":"😇"}]},{"type":"codeBlock","attrs":{"language":"ts"},"content":[{"type":"text","text":"// Also highlight included!\\nconst Papa = (papa: string) => {\\n  alert(`${PapaCMS} is free and open source under MIT license!`)\\n}\\n\\n// What\'s more!"}]},{"type":"heading","attrs":{"textAlign":"left","level":2},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"Markdown \\\\`supported\\\\` "}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"Markdown "},{"type":"text","marks":[{"type":"code"}],"text":"supported"}]},{"type":"heading","attrs":{"textAlign":"left","level":3}},{"type":"horizontalRule"},{"type":"codeBlock","attrs":{"language":null},"content":[{"type":"text","text":"// Golang comment hello world!\\nfunc main() {\\n\\tfmt.Println(\\"Hello, 世界\\") \\n\\tfmt.Println(\\"Hello, せかい\\") \\n\\tfmt.Println(\\"Hola, mundo\\") \\n}"}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Press "},{"type":"text","marks":[{"type":"code"}],"text":"Command + Enter"},{"type":"text","text":" to leave Code block"}]},{"type":"horizontalRule"},{"type":"heading","attrs":{"textAlign":"left","level":2},"content":[{"type":"text","text":"Try now!"}]},{"type":"orderedList","attrs":{"start":1,"type":null},"content":[{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Clone the repo"}]},{"type":"codeBlock","attrs":{"language":"sh"},"content":[{"type":"text","text":"# shell\\ngit clone https://github.com/gjc14/papa.git"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Set up environments"}]},{"type":"codeBlock","attrs":{"language":"sh"},"content":[{"type":"text","text":"# shell\\nmv .env.sample .env"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Initialize the app"}]},{"type":"codeBlock","attrs":{"language":"sh"},"content":[{"type":"text","text":"# shell\\nnpm run init"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"After the process, you could open "},{"type":"text","marks":[{"type":"link","attrs":{"href":"http://localhost:5173","target":"_blank","rel":"noopener noreferrer nofollow","class":null}}],"text":"localhost:5173"},{"type":"text","text":" to see your PAPA!"}]}]}]}]}',
-    excerpt:
-        "PapaCMS is a better place than wordpress to build a modern website with full control. What's better? It's open souce!",
-    featuredImage:
-        'https://images.unsplash.com/photo-1552993873-0dd1110e025f?q=80&w=2765&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    status: 'PUBLISHED',
+	slug: 'what-is-papa',
+	title: 'What is PapaCMS',
+	content:
+		'{"type":"doc","content":[{"type":"blockquote","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"PapaCMS integrates all the best modern website kits for you! Providing all the best and economic tools, you never need to investigate yourself."}]}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","marks":[{"type":"highlight","attrs":{"color":null}}],"text":"Best"},{"type":"text","text":" and "},{"type":"text","marks":[{"type":"italic"}],"text":"styled"},{"type":"text","text":" "},{"type":"text","marks":[{"type":"bold"}],"text":"RICH TEXT EDITOR"},{"type":"text","text":" out of the box using "},{"type":"text","marks":[{"type":"underline"}],"text":"Tiptap"},{"type":"text","text":"."}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Go to "},{"type":"text","marks":[{"type":"link","attrs":{"href":"https://papacms.vercel.app","target":"_blank","rel":"noopener noreferrer nofollow","class":null}}],"text":"PapaCMS"}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Fully responsive"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Dark mode support"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Intuitive text editor"}]}]}]},{"type":"youtube","attrs":{"src":"https://www.youtube.com/watch?v=MgsdDfdGdHc","start":0,"width":640,"height":480}},{"type":"heading","attrs":{"textAlign":"left","level":2},"content":[{"type":"text","text":"Header2"}]},{"type":"heading","attrs":{"textAlign":"left","level":3},"content":[{"type":"text","text":"Header3"}]},{"type":"heading","attrs":{"textAlign":"left","level":4},"content":[{"type":"text","text":"Header4"}]},{"type":"heading","attrs":{"textAlign":"left","level":5},"content":[{"type":"text","text":"Header5"}]},{"type":"blockquote","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"⚠️ H1 is reserved for title"}]}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Wooo and this is "},{"type":"text","marks":[{"type":"bold"}],"text":"text"},{"type":"text","text":", and "},{"type":"text","marks":[{"type":"code"}],"text":"inline code"}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"All text "},{"type":"text","marks":[{"type":"bold"},{"type":"italic"},{"type":"strike"},{"type":"underline"},{"type":"highlight","attrs":{"color":null}}],"text":"styles"},{"type":"text","text":" you need, even "},{"type":"text","marks":[{"type":"superscript"}],"text":" Super "},{"type":"text","marks":[{"type":"subscript"}],"text":"Sub "},{"type":"text","text":"or "},{"type":"text","marks":[{"type":"superscript"},{"type":"subscript"}],"text":"Both."},{"type":"text","text":" "},{"type":"text","marks":[{"type":"bold"}],"text":"😇"}]},{"type":"codeBlock","attrs":{"language":"ts"},"content":[{"type":"text","text":"// Also highlight included!\\nconst Papa = (papa: string) => {\\n  alert(`${PapaCMS} is free and open source under MIT license!`)\\n}\\n\\n// What\'s more!"}]},{"type":"heading","attrs":{"textAlign":"left","level":2},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"Markdown \\\\`supported\\\\` "}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"Markdown "},{"type":"text","marks":[{"type":"code"}],"text":"supported"}]},{"type":"heading","attrs":{"textAlign":"left","level":3}},{"type":"horizontalRule"},{"type":"codeBlock","attrs":{"language":null},"content":[{"type":"text","text":"// Golang comment hello world!\\nfunc main() {\\n\\tfmt.Println(\\"Hello, 世界\\") \\n\\tfmt.Println(\\"Hello, せかい\\") \\n\\tfmt.Println(\\"Hola, mundo\\") \\n}"}]},{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Press "},{"type":"text","marks":[{"type":"code"}],"text":"Command + Enter"},{"type":"text","text":" to leave Code block"}]},{"type":"horizontalRule"},{"type":"heading","attrs":{"textAlign":"left","level":2},"content":[{"type":"text","text":"Try now!"}]},{"type":"orderedList","attrs":{"start":1,"type":null},"content":[{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Clone the repo"}]},{"type":"codeBlock","attrs":{"language":"sh"},"content":[{"type":"text","text":"# shell\\ngit clone https://github.com/gjc14/papa.git"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Set up environments"}]},{"type":"codeBlock","attrs":{"language":"sh"},"content":[{"type":"text","text":"# shell\\nmv .env.sample .env"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"Initialize the app"}]},{"type":"codeBlock","attrs":{"language":"sh"},"content":[{"type":"text","text":"# shell\\nnpm run init"}]}]},{"type":"listItem","content":[{"type":"paragraph","attrs":{"textAlign":"left"},"content":[{"type":"text","text":"After the process, you could open "},{"type":"text","marks":[{"type":"link","attrs":{"href":"http://localhost:5173","target":"_blank","rel":"noopener noreferrer nofollow","class":null}}],"text":"localhost:5173"},{"type":"text","text":" to see your PAPA!"}]}]}]}]}',
+	excerpt:
+		"PapaCMS is a better place than wordpress to build a modern website with full control. What's better? It's open souce!",
+	featuredImage:
+		'https://images.unsplash.com/photo-1552993873-0dd1110e025f?q=80&w=2765&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+	status: 'PUBLISHED',
 }
 const defaultTags = [
-    {
-        name: 'Papa',
-        slug: 'papa',
-    },
-    {
-        name: 'Open Source',
-        slug: 'open-source',
-    },
+	{
+		name: 'Papa',
+		slug: 'papa',
+	},
+	{
+		name: 'Open Source',
+		slug: 'open-source',
+	},
 ]
 const defaultCategories = [
-    {
-        name: 'CMS',
-        slug: 'cms',
-    },
-    {
-        name: 'ERP',
-        slug: 'erp',
-    },
-    {
-        name: 'SEO',
-        slug: 'seo',
-    },
-    {
-        name: 'CWM',
-        slug: 'cwm',
-    },
+	{
+		name: 'CMS',
+		slug: 'cms',
+	},
+	{
+		name: 'ERP',
+		slug: 'erp',
+	},
+	{
+		name: 'SEO',
+		slug: 'seo',
+	},
+	{
+		name: 'CWM',
+		slug: 'cwm',
+	},
 ]
 
 await checkAndCreateAdmin()

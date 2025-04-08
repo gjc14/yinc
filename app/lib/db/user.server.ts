@@ -12,94 +12,94 @@ type User = typeof userTable.$inferSelect
  * @param direction direction of the pagination
  */
 export const getUsers = async (
-    cursor: string = '',
-    pageSize: number = 10,
-    direction: 'next' | 'previous' = 'next'
+	cursor: string = '',
+	pageSize: number = 10,
+	direction: 'next' | 'previous' = 'next'
 ): Promise<{
-    users: User[]
-    nextCursor: string | null
-    prevCursor: string | null
+	users: User[]
+	nextCursor: string | null
+	prevCursor: string | null
 }> => {
-    const buildQuery = () => {
-        const baseQuery = db
-            .select()
-            .from(userTable)
-            .limit(pageSize + 1) // Get one more to check if there is more data
+	const buildQuery = () => {
+		const baseQuery = db
+			.select()
+			.from(userTable)
+			.limit(pageSize + 1) // Get one more to check if there is more data
 
-        if (cursor) {
-            if (direction === 'next') {
-                return baseQuery
-                    .where(lt(userTable.id, cursor))
-                    .orderBy(desc(userTable.id))
-            } else {
-                return baseQuery
-                    .where(gt(userTable.id, cursor))
-                    .orderBy(asc(userTable.id))
-            }
-        } else {
-            // Start from the beginning
-            return baseQuery.orderBy(desc(userTable.id))
-        }
-    }
+		if (cursor) {
+			if (direction === 'next') {
+				return baseQuery
+					.where(lt(userTable.id, cursor))
+					.orderBy(desc(userTable.id))
+			} else {
+				return baseQuery
+					.where(gt(userTable.id, cursor))
+					.orderBy(asc(userTable.id))
+			}
+		} else {
+			// Start from the beginning
+			return baseQuery.orderBy(desc(userTable.id))
+		}
+	}
 
-    const users = await buildQuery()
+	const users = await buildQuery()
 
-    const hasMore = users.length > pageSize
-    if (hasMore) {
-        // Remove the extra post added in .limit
-        users.pop()
-    }
+	const hasMore = users.length > pageSize
+	if (hasMore) {
+		// Remove the extra post added in .limit
+		users.pop()
+	}
 
-    if (direction === 'previous') {
-        users.reverse()
-    }
+	if (direction === 'previous') {
+		users.reverse()
+	}
 
-    // Calculate next and previous cursors
-    const nextCursor = users.length > 0 ? users[users.length - 1].id : null
-    const prevCursor = users.length > 0 ? users[0].id : null
+	// Calculate next and previous cursors
+	const nextCursor = users.length > 0 ? users[users.length - 1].id : null
+	const prevCursor = users.length > 0 ? users[0].id : null
 
-    return {
-        users,
-        nextCursor: hasMore ? nextCursor : null,
-        prevCursor: cursor ? prevCursor : null,
-    }
+	return {
+		users,
+		nextCursor: hasMore ? nextCursor : null,
+		prevCursor: cursor ? prevCursor : null,
+	}
 }
 
 export const getUser = async (
-    email: string
+	email: string
 ): Promise<{ user: User | null }> => {
-    const [user] = await db
-        .select()
-        .from(userTable)
-        .where(eq(userTable.email, email))
-    return { user }
+	const [user] = await db
+		.select()
+		.from(userTable)
+		.where(eq(userTable.email, email))
+	return { user }
 }
 
 export const getUserById = async (
-    id: string
+	id: string
 ): Promise<{ user: User | null }> => {
-    const [user] = await db.select().from(userTable).where(eq(userTable.id, id))
-    return { user }
+	const [user] = await db.select().from(userTable).where(eq(userTable.id, id))
+	return { user }
 }
 
 export const updateUser = async (props: {
-    id: string
-    data: Partial<
-        Omit<typeof userTable.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
-    >
+	id: string
+	data: Partial<
+		Omit<typeof userTable.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
+	>
 }): Promise<{ user: User }> => {
-    const [user] = await db
-        .update(userTable)
-        .set(props.data)
-        .where(eq(userTable.id, props.id))
-        .returning()
-    return { user }
+	const [user] = await db
+		.update(userTable)
+		.set(props.data)
+		.where(eq(userTable.id, props.id))
+		.returning()
+	return { user }
 }
 
 export const deleteUser = async (id: string): Promise<{ user: User }> => {
-    const [user] = await db
-        .delete(userTable)
-        .where(eq(userTable.id, id))
-        .returning()
-    return { user }
+	const [user] = await db
+		.delete(userTable)
+		.where(eq(userTable.id, id))
+		.returning()
+	return { user }
 }

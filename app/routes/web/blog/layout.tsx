@@ -9,29 +9,29 @@ import { Nav } from '../components/nav'
 import { CTA } from './components/cta'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-    if (!data || !data.meta) {
-        return []
-    }
+	if (!data || !data.meta) {
+		return []
+	}
 
-    return data.meta.metaTags
+	return data.meta.metaTags
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const { seo } = await getSEO(new URL(request.url).pathname)
-    const meta = seo ? createMeta(seo, new URL(request.url)) : null
+	const { seo } = await getSEO(new URL(request.url).pathname)
+	const meta = seo ? createMeta(seo, new URL(request.url)) : null
 
-    return { meta }
+	return { meta }
 }
 
 export default function Blog() {
-    return (
-        <>
-            <Nav />
-            <MainWrapper>
-                <Outlet />
-                <CTA />
-                <Footer />
-            </MainWrapper>
-        </>
-    )
+	return (
+		<>
+			<Nav />
+			<MainWrapper>
+				<Outlet />
+				<CTA />
+				<Footer />
+			</MainWrapper>
+		</>
+	)
 }
