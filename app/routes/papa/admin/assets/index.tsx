@@ -1,6 +1,5 @@
-import { type ActionFunctionArgs } from 'react-router'
-import { useLoaderData, useSubmit } from 'react-router'
 import { useEffect, useState } from 'react'
+import { useLoaderData, useSubmit, type ActionFunctionArgs } from 'react-router'
 
 import { Label } from '~/components/ui/label'
 import {
@@ -75,7 +74,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 import { and, eq } from 'drizzle-orm'
 import { CloudAlert } from 'lucide-react'
 import { filesTable } from '~/lib/db/schema'
-import { loader } from './resource'
+import type { loader } from './resource'
 export { loader } from './resource'
 
 export default function AdminAsset() {
