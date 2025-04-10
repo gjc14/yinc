@@ -54,9 +54,27 @@ interface DataTableProps<TData, TValue> {
 	data: TData[]
 	children?: (table: TableType<TData>) => React.ReactNode
 	hideColumnFilter?: boolean
+	/**
+	 * Default true, if false, will automatically hide select info on the bottom left.
+	 */
 	selectable?: boolean
 	rowSelection?: RowSelectionState
 	setRowSelection?: React.Dispatch<React.SetStateAction<RowSelectionState>>
+	/**
+	 * Rows will render with the className if the rowId is in the rowIds set.
+	 * This is useful for grouping rows together and applying a style to them.
+	 * Or showing/hiding rows based on a condition.
+	 *
+	 * @example
+	 * // The following will render pending ui for all rows with the id in the rowsDeleting set.
+	 * const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+	 * const rowGroupStyle = [
+	 *   {
+	 *     className: 'opacity-50',
+	 *     rowIds: rowsDeleting,
+	 *   },
+	 * ]
+	 */
 	rowGroupStyle?: RowGroupStyle[]
 }
 
