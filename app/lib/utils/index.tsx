@@ -1,5 +1,9 @@
+import { NavLink } from 'react-router'
+
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+
+import { BreadcrumbItem, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
@@ -33,7 +37,7 @@ export type ConventionalError<T = unknown> = {
 }
 
 export const isConventionalSuccess = (
-	fetcherData: unknown
+	fetcherData: unknown,
 ): fetcherData is ConventionalSuccess => {
 	if (typeof fetcherData !== 'object' || fetcherData === null) return false
 	if (!('msg' in fetcherData)) return false
@@ -42,7 +46,7 @@ export const isConventionalSuccess = (
 }
 
 export const isConventionalError = (
-	fetcherData: unknown
+	fetcherData: unknown,
 ): fetcherData is ConventionalError => {
 	if (typeof fetcherData !== 'object' || fetcherData === null) return false
 	if (!('err' in fetcherData) || !fetcherData.err) return false
@@ -52,9 +56,6 @@ export const isConventionalError = (
 export const capitalize = (string: string) => {
 	return string.charAt(0).toUpperCase() + string.slice(1)
 }
-
-import { NavLink } from 'react-router'
-import { BreadcrumbItem, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 
 export const generateBreadcrumbs = (pathname: string) => {
 	const paths = pathname.split('/').filter(Boolean)
@@ -71,14 +72,14 @@ export const generateBreadcrumbs = (pathname: string) => {
 				>
 					{capitalize(path)}
 				</NavLink>
-			</BreadcrumbItem>
+			</BreadcrumbItem>,
 		)
 		if (index < paths.length - 1) {
 			acc.push(
 				<BreadcrumbSeparator
 					key={`separator-${index}`}
 					className="hidden md:block size-3"
-				/>
+				/>,
 			)
 		}
 		return acc

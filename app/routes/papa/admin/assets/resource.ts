@@ -1,7 +1,9 @@
-import { ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { type LoaderFunctionArgs } from 'react-router'
 
+import { ListObjectsV2Command } from '@aws-sdk/client-s3'
+
 import { db, S3 } from '~/lib/db/db.server'
+
 import { validateAdminSession } from '../../auth/utils'
 import { type FileMeta } from '../api/object-storage/schema'
 
@@ -31,7 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 				eTag: ETag,
 				storageClass: StorageClass,
 			}
-		})
+		}),
 	)
 
 	const filteredFiles = files.filter(file => file !== null)

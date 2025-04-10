@@ -10,7 +10,6 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Loading } from '~/components/loading'
-import { TurnstileWidget } from '~/components/captchas/turnstile'
 
 export const CTA = ({
 	subscribeRoute = '/blog/subscribe',

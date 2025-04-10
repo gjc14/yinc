@@ -1,12 +1,14 @@
-import { eq } from 'drizzle-orm'
 import { type ActionFunctionArgs } from 'react-router'
+
+import { eq } from 'drizzle-orm'
 
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { db, S3 } from '~/lib/db/db.server'
 import { filesTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
-import { PresignRequestSchema, PresignResponseSchema } from './schema'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
+
+import { PresignRequestSchema, PresignResponseSchema } from './schema'
 
 // Presign url for uploading assets, and delete function
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -73,7 +75,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					key: file.key,
 					presignedUrl,
 				}
-			})
+			}),
 		)
 
 		// Store file metadata in DB
@@ -88,7 +90,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						userId: adminSession.user.id,
 						type: file.type,
 						size: file.size,
-					}))
+					})),
 				)
 				.returning()
 		})
@@ -96,7 +98,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		const validatedResponse = PresignResponseSchema.parse({
 			urls: presignedUrls.map(url => {
 				const objectInDatabase = objectsInDatabase.find(
-					object => object.key === url.key
+					object => object.key === url.key,
 				)
 				if (!objectInDatabase) throw new Error('Object not found')
 				return {

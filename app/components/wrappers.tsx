@@ -15,7 +15,7 @@ export const MainWrapper = ({
 		<main
 			className={cn(
 				'w-full h-full min-h-screen flex flex-col items-center',
-				className
+				className,
 			)}
 		>
 			{children}

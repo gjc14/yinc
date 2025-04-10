@@ -1,6 +1,7 @@
-import { Link, useFetcher, useParams } from 'react-router'
-import { ExternalLink, Loader2, Save, Trash } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Link, useFetcher, useParams } from 'react-router'
+
+import { ExternalLink, Loader2, Save, Trash } from 'lucide-react'
 
 import {
 	AlertDialog,
@@ -24,6 +25,7 @@ import {
 	AdminSectionWrapper,
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
+
 import { PostContent, type PostContentHandle } from '../components/post-content'
 
 export default function AdminPost() {
@@ -115,12 +117,12 @@ export default function AdminPost() {
 
 							const date = new Date()
 							const now = `${date.getFullYear()}/${String(
-								date.getMonth() + 1
+								date.getMonth() + 1,
 							).padStart(2, '0')}/${String(date.getDate()).padStart(
 								2,
-								'0'
+								'0',
 							)}@${String(date.getHours()).padStart(2, '0')}:${String(
-								date.getMinutes()
+								date.getMinutes(),
 							).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
 							// Remove date fields and set default values
 							const postReady = {

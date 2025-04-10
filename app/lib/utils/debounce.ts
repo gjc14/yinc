@@ -12,7 +12,7 @@ import React from 'react'
 export function debounce<T extends (...args: any[]) => any>(
 	func: T,
 	wait: number,
-	immediate: boolean = false
+	immediate: boolean = false,
 ): (...args: Parameters<T>) => void {
 	let timeout: ReturnType<typeof setTimeout> | null = null
 
@@ -49,7 +49,7 @@ export function debounce<T extends (...args: any[]) => any>(
 export function debounceCancellable<T extends (...args: any[]) => any>(
 	func: T,
 	wait: number,
-	immediate: boolean = false
+	immediate: boolean = false,
 ): {
 	debounced: (...args: Parameters<T>) => void
 	cancel: () => void
@@ -98,7 +98,7 @@ export function debounceCancellable<T extends (...args: any[]) => any>(
 export function useDebounce<T extends (...args: any[]) => any>(
 	callback: T,
 	delay: number,
-	deps: React.DependencyList = []
+	deps: React.DependencyList = [],
 ): (...args: Parameters<T>) => void {
 	const callbackRef = React.useRef<{
 		callback: T

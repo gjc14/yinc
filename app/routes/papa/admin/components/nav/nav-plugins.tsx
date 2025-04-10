@@ -1,8 +1,8 @@
-import { NavLink, useLocation } from 'react-router'
-import { ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router'
 
-import Icon from '~/components/dynamic-icon'
+import { ChevronRight } from 'lucide-react'
+
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -19,6 +19,7 @@ import {
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
 } from '~/components/ui/sidebar'
+import Icon from '~/components/dynamic-icon'
 import type { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
 
 export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
@@ -29,7 +30,7 @@ export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
 		return (
 			currentPath.endsWith(item.url) ||
 			item.sub?.some(subItem =>
-				currentPath.endsWith(`${item.url}${subItem.url}`)
+				currentPath.endsWith(`${item.url}${subItem.url}`),
 			)
 		)
 	}

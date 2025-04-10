@@ -1,9 +1,15 @@
+/**
+ * Get all plugin folder which match *.plugin in directory /app/routes/plugins as flat route.
+ */
+import * as fs from 'fs'
+import * as path from 'path'
+
 import {
-	type RouteConfig,
 	index,
 	layout,
 	prefix,
 	route,
+	type RouteConfig,
 } from '@react-router/dev/routes'
 
 export default [
@@ -46,7 +52,7 @@ export default [
 					route('/ai/chat', './routes/papa/admin/api/ai-chat/route.tsx'),
 					route(
 						'/object-storage',
-						'./routes/papa/admin/api/object-storage/route.tsx'
+						'./routes/papa/admin/api/object-storage/route.tsx',
 					),
 				]),
 				// Assets
@@ -61,11 +67,11 @@ export default [
 						route('/billing', './routes/papa/admin/account/billing/route.tsx'),
 						route(
 							'/notification',
-							'./routes/papa/admin/account/notification/route.tsx'
+							'./routes/papa/admin/account/notification/route.tsx',
 						),
 						route(
 							'/security',
-							'./routes/papa/admin/account/security/route.tsx'
+							'./routes/papa/admin/account/security/route.tsx',
 						),
 					]),
 				]),
@@ -75,7 +81,7 @@ export default [
 						index('./routes/papa/admin/blog/index/route.tsx'),
 						route(
 							'/generative',
-							'./routes/papa/admin/blog/generative/route.tsx'
+							'./routes/papa/admin/blog/generative/route.tsx',
 						),
 						route('/new', './routes/papa/admin/blog/new/route.tsx'),
 						route('/:postSlug', './routes/papa/admin/blog/post-slug/route.tsx'),
@@ -84,7 +90,7 @@ export default [
 							index('./routes/papa/admin/blog/taxonomy/index.tsx'),
 							route(
 								'/resource',
-								'./routes/papa/admin/blog/taxonomy/resource.ts'
+								'./routes/papa/admin/blog/taxonomy/resource.ts',
 							),
 						]),
 					]),
@@ -96,11 +102,11 @@ export default [
 						route('/billing', './routes/papa/admin/company/billing/route.tsx'),
 						route(
 							'/notification',
-							'./routes/papa/admin/company/notification/route.tsx'
+							'./routes/papa/admin/company/notification/route.tsx',
 						),
 						route(
 							'/security',
-							'./routes/papa/admin/company/security/route.tsx'
+							'./routes/papa/admin/company/security/route.tsx',
 						),
 					]),
 				]),
@@ -127,12 +133,6 @@ export default [
 	route('/robots.txt', './routes/_robots.txt.ts'),
 	route('/sitemap.xml', './routes/_sitemap.xml.ts'),
 ] satisfies RouteConfig
-
-/**
- * Get all plugin folder which match *.plugin in directory /app/routes/plugins as flat route.
- */
-import * as fs from 'fs'
-import * as path from 'path'
 
 const pluginsDir = path.join(__dirname, 'routes', 'plugins')
 

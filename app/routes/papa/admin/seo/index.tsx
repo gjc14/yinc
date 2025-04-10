@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
+
 import { type ColumnDef } from '@tanstack/react-table'
 import { PlusCircle } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
@@ -159,7 +160,7 @@ export const columns: ColumnDef<
 								{
 									method: 'DELETE',
 									action: `/admin/seo/resource`,
-								}
+								},
 							)
 						}}
 					>

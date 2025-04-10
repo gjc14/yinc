@@ -6,6 +6,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin as adminPlugin, magicLink } from 'better-auth/plugins'
 
 import { db } from '~/lib/db/db.server'
+
 import { emailInstance } from '../utils/email'
 import { ac, admin, user } from './permissions'
 import { sendMagicLink } from './utils'
@@ -43,7 +44,7 @@ export const auth = betterAuth({
 						},
 						disableSignUp: true,
 					}),
-			  ]
+				]
 			: []),
 	],
 	advanced: {

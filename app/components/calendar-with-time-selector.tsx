@@ -31,7 +31,7 @@ export const TimeSelector = ({
 
 	const handleKeyDown = (
 		e: React.KeyboardEvent<HTMLInputElement>,
-		target: 'hours' | 'minutes' | '12-hours'
+		target: 'hours' | 'minutes' | '12-hours',
 	) => {
 		if (e.key === 'ArrowLeft') {
 			return
@@ -87,7 +87,7 @@ export const TimeSelector = ({
 		<div
 			className={cn(
 				'relative w-full h-9 flex items-center px-2 py-0.5 space-x-0.5 border border-input rounded-lg overflow-hidden',
-				className
+				className,
 			)}
 		>
 			{clock && (
@@ -140,7 +140,7 @@ export const CalendarWithTime = ({
 						`w-[280px] justify-start text-left font-normal ${
 							!date ? 'text-muted-foreground' : ''
 						}`,
-						className
+						className,
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />

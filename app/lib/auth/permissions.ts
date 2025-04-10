@@ -3,8 +3,8 @@
  */
 import { createAccessControl } from 'better-auth/plugins/access'
 import {
-	defaultStatements,
 	adminAc,
+	defaultStatements,
 	userAc,
 } from 'better-auth/plugins/admin/access'
 
@@ -28,4 +28,4 @@ const admin = ac.newRole({
 	post: ['create', 'update', 'delete'],
 })
 
-export { ac, user, admin }
+export { ac, admin, user }

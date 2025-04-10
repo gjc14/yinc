@@ -6,7 +6,7 @@ import { clientHint as colorSchemeHint } from './color-schema'
 import { getHintUtils } from './index'
 
 const hintsUtils = getHintUtils(
-	{ theme: colorSchemeHint }
+	{ theme: colorSchemeHint },
 	// add other hints here
 )
 

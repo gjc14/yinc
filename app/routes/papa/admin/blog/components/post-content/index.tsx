@@ -1,4 +1,3 @@
-import { useFetcher, useNavigate } from 'react-router'
 import {
 	forwardRef,
 	useEffect,
@@ -6,11 +5,8 @@ import {
 	useRef,
 	useState,
 } from 'react'
+import { useFetcher, useNavigate } from 'react-router'
 
-import DefaultTipTap, {
-	type EditorRef,
-} from '~/components/editor/default-tiptap'
-import { FullScreenLoading } from '~/components/loading'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -24,10 +20,15 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
+import DefaultTipTap, {
+	type EditorRef,
+} from '~/components/editor/default-tiptap'
+import { FullScreenLoading } from '~/components/loading'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
+
 import { areDifferentPosts } from '../../utils'
 import { DangerZone } from './danger-zone'
 import { PostMetaPart } from './post-meta-part'
@@ -72,7 +73,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 		const recoverLocalStorageContent = () => {
 			if (!window) return
 			const postContentLocal = JSON.parse(
-				window.localStorage.getItem(postLocalStorageKey) || '{}'
+				window.localStorage.getItem(postLocalStorageKey) || '{}',
 			)
 			setPostState(postContentLocal)
 			editorRef.current?.updateContent(postContentLocal.content)
@@ -88,7 +89,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 				}))
 			},
 			500,
-			[]
+			[],
 		)
 
 		const debouncedLocalStorageUpdate = useDebounce(
@@ -97,7 +98,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 				window.localStorage.setItem(postLocalStorageKey, JSON.stringify(post))
 			},
 			500,
-			[]
+			[],
 		)
 
 		const isDeleting = fetcher.state !== 'idle'
@@ -111,7 +112,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 					method: 'DELETE',
 					action: '/admin/blog/resource',
 					encType: 'application/json',
-				}
+				},
 			)
 		}
 
@@ -311,5 +312,5 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 				</section>
 			</div>
 		)
-	}
+	},
 )

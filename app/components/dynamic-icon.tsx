@@ -1,6 +1,8 @@
-import { Loader, type LucideProps } from 'lucide-react'
 import dynamicIconImports from 'lucide-react/dynamicIconImports'
 import { lazy, Suspense, useMemo } from 'react'
+
+import { Loader, type LucideProps } from 'lucide-react'
+
 import { cn } from '~/lib/utils'
 
 interface IconProps extends Omit<LucideProps, 'ref'> {
@@ -21,12 +23,12 @@ const Icon = ({ name, className, ...props }: IconProps) => {
 			<Loader
 				className={cn(
 					'bg-linear-to-t from-inherit size-3.5 animate-spin-slow',
-					className
+					className,
 				)}
 				{...props}
 			/>
 		),
-		[className, props]
+		[className, props],
 	)
 
 	return (

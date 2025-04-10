@@ -1,8 +1,8 @@
-import { PopoverClose } from '@radix-ui/react-popover'
-import { Editor } from '@tiptap/react'
 import { useRef } from 'react'
 
-import Youtube from '~/components/editor/components/asset/youtube'
+import { PopoverClose } from '@radix-ui/react-popover'
+import { Editor } from '@tiptap/react'
+
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -11,6 +11,8 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '~/components/ui/popover'
+import Youtube from '~/components/editor/components/asset/youtube'
+
 import { ToggleButton } from '../components/toggle-button'
 
 export const YoutubeButton = ({ editor }: { editor: Editor }) => {

@@ -7,6 +7,7 @@ import {
 	AdminSectionWrapper,
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
+
 import { useAdminBlogContext } from '../layout'
 import { CategoriesSection, SubcategoriesSection } from './components/category'
 import { TagsSection } from './components/tag'
@@ -28,7 +29,7 @@ export default function AdminTaxonomy() {
 	} = useAdminBlogContext()
 
 	const pendingTags: (TagType & { _isPending: true })[] = usePendingTags().map(
-		p => ({ ...p, _isPending: true })
+		p => ({ ...p, _isPending: true }),
 	)
 	const pendingCategories: (CategoryType & { _isPending: true })[] =
 		usePendingCategories().map(p => ({ ...p, _isPending: true }))
@@ -36,7 +37,7 @@ export default function AdminTaxonomy() {
 		usePendingSubCategories().map(p => ({ ...p, _isPending: true }))
 
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-		null
+		null,
 	)
 
 	const tags: (TagType & { _isPending?: true })[] = useMemo(
@@ -45,50 +46,50 @@ export default function AdminTaxonomy() {
 				return {
 					...tag,
 					posts: postsLoader.filter(post =>
-						post.tags.map(t => t.id).includes(tag.id)
+						post.tags.map(t => t.id).includes(tag.id),
 					),
 				}
 			}),
 			...pendingTags.filter(
-				pendingTag => !tagsLoader.some(tag => tag.slug === pendingTag.slug)
+				pendingTag => !tagsLoader.some(tag => tag.slug === pendingTag.slug),
 			),
 		],
-		[tagsLoader, postsLoader, pendingTags]
+		[tagsLoader, postsLoader, pendingTags],
 	)
 
 	const categories: (CategoryType & { _isPending?: true })[] = useMemo(
 		() => [
 			...categoriesLoader.map(category => {
 				const thisPendingSub = pendingSubCategories.filter(
-					pendingSubCategory => pendingSubCategory.categoryId === category.id
+					pendingSubCategory => pendingSubCategory.categoryId === category.id,
 				)
 				return {
 					...category,
 					subCategories: [
 						...category.subCategories,
 						...thisPendingSub.filter(
-							p => !category.subCategories.some(sub => sub.slug === p.slug)
+							p => !category.subCategories.some(sub => sub.slug === p.slug),
 						),
 					],
 					posts: postsLoader.filter(post =>
-						post.categories.map(c => c.id).includes(category.id)
+						post.categories.map(c => c.id).includes(category.id),
 					),
 				}
 			}),
 			...pendingCategories.filter(
 				pendingCategory =>
 					!categoriesLoader.some(
-						category => category.slug === pendingCategory.slug
-					)
+						category => category.slug === pendingCategory.slug,
+					),
 			),
 		],
-		[categoriesLoader, postsLoader, pendingSubCategories, pendingCategories]
+		[categoriesLoader, postsLoader, pendingSubCategories, pendingCategories],
 	)
 
 	const selectedCategory = useMemo(
 		() =>
 			categories.find(category => category.id === selectedCategoryId) ?? null,
-		[categories, selectedCategoryId]
+		[categories, selectedCategoryId],
 	)
 
 	return (

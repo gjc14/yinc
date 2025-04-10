@@ -15,7 +15,7 @@ const areValuesDiff = (v1: any, v2: any) => {
 
 export const areDifferentPosts = (
 	firstPost: PostWithRelations,
-	secondPost: PostWithRelations
+	secondPost: PostWithRelations,
 ) => {
 	const difference: string[] = []
 
@@ -45,7 +45,7 @@ export const areDifferentPosts = (
 		if (
 			areValuesDiff(
 				JSON.stringify(firstPost[prop]),
-				JSON.stringify(secondPost[prop])
+				JSON.stringify(secondPost[prop]),
 			)
 		) {
 			difference.push(prop)

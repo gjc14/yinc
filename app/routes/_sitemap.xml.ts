@@ -2,7 +2,9 @@
  * @see https://developers.google.com/search/docs/advanced/sitemaps/build-sitemap
  */
 import type { LoaderFunctionArgs } from 'react-router'
+
 import { getPosts } from '~/lib/db/post.server'
+
 import { siteRoutes } from './web/components/footer'
 
 export const toXmlSitemap = (pages: { url: string; lastmod: Date }[]) => {
@@ -12,7 +14,7 @@ export const toXmlSitemap = (pages: { url: string; lastmod: Date }[]) => {
 			page =>
 				`<url><loc>${page.url}</loc><lastmod>${page.lastmod
 					.toISOString()
-					.replace(/\.\d{3}Z$/, '+00:00')}</lastmod></url>`
+					.replace(/\.\d{3}Z$/, '+00:00')}</lastmod></url>`,
 		)
 		.join('\n')
 

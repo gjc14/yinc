@@ -1,3 +1,5 @@
+import { Link, useNavigate } from 'react-router'
+
 import type { UserWithRole } from 'better-auth/plugins'
 import {
 	BadgeCheck,
@@ -5,16 +7,14 @@ import {
 	ChevronRight,
 	CreditCard,
 	LogOut,
-	type LucideIcon,
 	Moon,
 	Shield,
 	Sparkles,
 	Sun,
+	type LucideIcon,
 } from 'lucide-react'
-import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
-import { ThemeDropDownMenu } from '~/components/theme-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import {
 	DropdownMenu,
@@ -31,6 +31,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
+import { ThemeDropDownMenu } from '~/components/theme-toggle'
 import { authClient } from '~/lib/auth/auth-client'
 
 interface NavUserProps {

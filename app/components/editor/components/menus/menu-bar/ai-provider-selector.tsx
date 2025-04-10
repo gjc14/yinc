@@ -1,5 +1,6 @@
-import { Check, ChevronsUpDown } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+
+import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -16,7 +17,7 @@ import {
 	PopoverTrigger,
 } from '~/components/ui/popover'
 import { cn } from '~/lib/utils'
-import { type Provider, providers } from '~/routes/papa/admin/api/ai-chat/route'
+import { providers, type Provider } from '~/routes/papa/admin/api/ai-chat/route'
 
 export const AIProviderSelector = ({
 	className,
@@ -66,7 +67,7 @@ export const AIProviderSelector = ({
 									<Check
 										className={cn(
 											'mr-2 h-4 w-4',
-											value === provider ? 'opacity-100' : 'opacity-0'
+											value === provider ? 'opacity-100' : 'opacity-0',
 										)}
 									/>
 									{provider}

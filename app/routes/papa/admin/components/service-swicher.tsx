@@ -1,6 +1,7 @@
-import { Link, useLocation } from 'react-router'
-import { ChevronsUpDown } from 'lucide-react'
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router'
+
+import { ChevronsUpDown } from 'lucide-react'
 
 import {
 	DropdownMenu,
@@ -32,7 +33,7 @@ export function ServiceSwicher({ services }: ServiceSwicherProps) {
 	})
 	const { isMobile } = useSidebar()
 	const [activeService, setActiveService] = useState(
-		currentActiveService || services[0]
+		currentActiveService || services[0],
 	)
 
 	return (

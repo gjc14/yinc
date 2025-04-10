@@ -1,7 +1,8 @@
-import { type ColumnDef } from '@tanstack/react-table'
-import { Loader2, PlusCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
+
+import { type ColumnDef } from '@tanstack/react-table'
+import { Loader2, PlusCircle } from 'lucide-react'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -231,7 +232,7 @@ export const columns: ColumnDef<
 								{
 									method: 'DELETE',
 									action: `/admin/admins/resource`,
-								}
+								},
 							)
 						}}
 					>

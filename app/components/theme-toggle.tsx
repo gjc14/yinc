@@ -1,14 +1,16 @@
-import { setCustomTheme, useTheme } from '~/hooks/theme-provider'
+import { forwardRef } from 'react'
 
 import { Moon, Sun, SunMoon } from 'lucide-react'
-import { forwardRef } from 'react'
+
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import { setCustomTheme, useTheme } from '~/hooks/theme-provider'
 import { cn } from '~/lib/utils'
+
 import { Button } from './ui/button'
 
 type ThemeToggleProps = {
@@ -78,7 +80,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
 				</DropdownMenuContent>
 			</DropdownMenu>
 		)
-	}
+	},
 )
 
 // DropdownMenu

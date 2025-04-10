@@ -1,9 +1,10 @@
 /**
  * @see https://github.com/mxkaske/mxkaske.dev/blob/main/components/craft/fancy-multi-select.tsx
  */
+import * as React from 'react'
+
 import { Command as CommandPrimitive } from 'cmdk'
 import { X } from 'lucide-react'
-import * as React from 'react'
 
 import { Badge } from '~/components/ui/badge'
 import {
@@ -52,7 +53,7 @@ export const MultiSelect = ({
 	const getCommandStateRef = React.useRef<GetCommandStateRef>(null)
 	const [open, setOpen] = React.useState(false)
 	const [internalSelected, setInternalSelected] = React.useState<Option[]>(
-		defaultSelected ?? []
+		defaultSelected ?? [],
 	)
 	const [inputValue, setInputValue] = React.useState('')
 	const [isComposing, setIsComposing] = React.useState(false)
@@ -76,7 +77,7 @@ export const MultiSelect = ({
 			}
 			onSelectedChange?.(newSelected)
 		},
-		[isControlled, onSelectedChange]
+		[isControlled, onSelectedChange],
 	)
 
 	const handleUnselect = React.useCallback(
@@ -89,7 +90,7 @@ export const MultiSelect = ({
 				updateSelected(newSelected)
 			}, 0)
 		},
-		[selected, onUnSelect, updateSelected]
+		[selected, onUnSelect, updateSelected],
 	)
 
 	const handleKeyDown = React.useCallback(
@@ -119,12 +120,12 @@ export const MultiSelect = ({
 				}
 			}
 		},
-		[isComposing, onEnterNewValue, selected, handleUnselect, updateSelected]
+		[isComposing, onEnterNewValue, selected, handleUnselect, updateSelected],
 	)
 
 	const selectables = options.filter(option => {
 		return !selected.some(
-			selectedOption => selectedOption.value === option.value
+			selectedOption => selectedOption.value === option.value,
 		)
 	})
 

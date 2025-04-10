@@ -1,22 +1,24 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
-import { generateHTML } from '@tiptap/html'
-import { common, createLowlight } from 'lowlight'
-import { ArrowLeft } from 'lucide-react'
 import { useEffect } from 'react'
 import {
+	useLoaderData,
+	useNavigate,
 	type ClientLoaderFunctionArgs,
 	type LoaderFunctionArgs,
 	type MetaFunction,
-	useLoaderData,
-	useNavigate,
 } from 'react-router'
+
+import { generateHTML } from '@tiptap/html'
+import { common, createLowlight } from 'lowlight'
+import { ArrowLeft } from 'lucide-react'
 
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
 import { getPostBySlug } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
+
 import { FeaturedImage } from './featured-image'
 import { hilightInnerHTML } from './highlight-inner-html'
 import { PostFooter } from './post-footer'
@@ -53,7 +55,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		post.content = post.content
 			? generateHTML(JSON.parse(post.content), [
 					...ExtensionKit({ openOnClick: true }),
-			  ])
+				])
 			: '<p>This is an empty post</p>'
 		return { post, prevPost, nextPost, meta }
 	} catch (error) {

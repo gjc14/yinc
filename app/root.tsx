@@ -5,7 +5,6 @@ import {
 	data,
 	isRouteErrorResponse,
 	Links,
-	type LoaderFunctionArgs,
 	Meta,
 	Outlet,
 	Scripts,
@@ -14,7 +13,9 @@ import {
 	useLoaderData,
 	useRevalidator,
 	useRouteError,
+	type LoaderFunctionArgs,
 } from 'react-router'
+
 import { toast, Toaster } from 'sonner'
 
 import { GlobalLoading } from './components/global-loading'
@@ -84,7 +85,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			headers: {
 				'Set-Cookie': await commitFlashSession(flashSession),
 			},
-		}
+		},
 	)
 }
 
@@ -105,8 +106,8 @@ export default function App() {
 
 			const cleanedKeys = new Map(
 				Array.from(toastKeysRef.current.entries()).filter(
-					([, timestamp]) => currentTimestamp - timestamp < expiry
-				)
+					([, timestamp]) => currentTimestamp - timestamp < expiry,
+				),
 			)
 
 			// Convention: actions return Response.json({ msg, data? } | { err, data?}) refer to README.md or ./app/libs/utils.tsx
@@ -127,10 +128,10 @@ export default function App() {
 			})
 
 			const successResponses = actionResponses.filter(
-				fetcher => fetcher.data.msg && !cleanedKeys.has(fetcher.key)
+				fetcher => fetcher.data.msg && !cleanedKeys.has(fetcher.key),
 			)
 			const errorResponses = actionResponses.filter(
-				fetcher => fetcher.data.err && !cleanedKeys.has(fetcher.key)
+				fetcher => fetcher.data.err && !cleanedKeys.has(fetcher.key),
 			)
 
 			successResponses.forEach(fetcher => {

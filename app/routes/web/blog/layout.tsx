@@ -1,9 +1,13 @@
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
-import { Outlet } from 'react-router'
+import {
+	Outlet,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+} from 'react-router'
 
 import { MainWrapper } from '~/components/wrappers'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
+
 import { Footer } from '../components/footer'
 import { Nav } from '../components/nav'
 import { CTA } from './components/cta'

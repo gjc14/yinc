@@ -4,7 +4,6 @@
  */
 import { toast } from 'sonner'
 
-import { type EditorRef } from '~/components/editor/default-tiptap'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -16,6 +15,7 @@ import {
 	SelectValue,
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
+import { type EditorRef } from '~/components/editor/default-tiptap'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus } from '~/lib/db/schema'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'

@@ -1,9 +1,11 @@
 import { Link } from 'react-router'
+
 import { LibraryBig } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
+
 import type { PostLoaderType } from './route'
 
 export function PostMeta({ post }: { post: PostLoaderType['post'] }) {

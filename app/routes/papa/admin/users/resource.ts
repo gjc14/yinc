@@ -1,11 +1,13 @@
 import { type ActionFunctionArgs } from 'react-router'
 
 import { createUpdateSchema } from 'drizzle-zod'
+
 import { auth } from '~/lib/auth/auth.server'
 import { user } from '~/lib/db/schema'
 import { deleteUser, updateUser } from '~/lib/db/user.server'
 import { isValidEmail, type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
+
 import { validateAdminSession } from '../../auth/utils'
 
 const userUpdateSchema = createUpdateSchema(user).required().omit({

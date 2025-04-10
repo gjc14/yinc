@@ -1,6 +1,5 @@
-import { type InferSelectModel, relations } from 'drizzle-orm'
+import { relations, type InferSelectModel } from 'drizzle-orm'
 import {
-	integer,
 	pgEnum,
 	pgTable,
 	serial,
@@ -8,9 +7,10 @@ import {
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core'
+
+import { user } from './auth'
 import { seosTable } from './seos'
 import { postsToCategories, postsToTags } from './taxonomies'
-import { user } from './auth'
 
 export type Post = InferSelectModel<typeof postsTable>
 

@@ -1,5 +1,7 @@
-import { Command, Option, ArrowBigUp as Shift } from 'lucide-react'
 import React from 'react'
+
+import { Command, Option, ArrowBigUp as Shift } from 'lucide-react'
+
 import {
 	Tooltip,
 	TooltipContent,

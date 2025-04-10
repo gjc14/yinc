@@ -1,4 +1,5 @@
 import { Loader2 } from 'lucide-react'
+
 import { cn } from '~/lib/utils'
 
 export const Loading = ({
@@ -24,7 +25,7 @@ export const FullScreenLoading = ({
 				`z-9999 ${
 					contained ? 'absolute' : 'fixed'
 				} inset-0 flex justify-center items-center backdrop-blur-md`,
-				className
+				className,
 			)}
 		>
 			<SymmetrySpinner />
@@ -44,7 +45,7 @@ export const SymmetrySpinner = ({
 			className={cn(
 				'w-16 h-16 z-50 border-4 border-y-primary border-x-transparent rounded-full animate-spin ease-in-out',
 				white && 'border-y-primary-foreground',
-				className
+				className,
 			)}
 		></div>
 	)

@@ -1,6 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion'
 import * as React from 'react'
 import { useState } from 'react'
+
+import { AnimatePresence, motion } from 'framer-motion'
+
 import { cn } from '~/lib/utils'
 
 export const RevealContentOnClick = ({

@@ -1,4 +1,4 @@
-import { type InferSelectModel, relations } from 'drizzle-orm'
+import { relations, type InferSelectModel } from 'drizzle-orm'
 import {
 	integer,
 	pgTable,
@@ -7,6 +7,7 @@ import {
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core'
+
 import { user } from './auth'
 
 export type File = InferSelectModel<typeof filesTable>

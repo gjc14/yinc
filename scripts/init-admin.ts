@@ -1,11 +1,14 @@
 import 'dotenv/config'
+
+import * as readline from 'readline'
+
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import * as readline from 'readline'
 
 import { auth } from '~/lib/auth/auth.server'
 import type { TransactionType } from '~/lib/db/db.server'
 import { isValidEmail } from '~/lib/utils'
+
 import * as schema from '../app/lib/db/schema'
 
 const rl = readline.createInterface({
@@ -20,12 +23,12 @@ const askEmail = (): Promise<string> => {
 			email => {
 				if (!isValidEmail(email)) {
 					console.error(
-						'❌ 無效的電子郵件格式，請重新輸入。(Invalid email, try again.)'
+						'❌ 無效的電子郵件格式，請重新輸入。(Invalid email, try again.)',
 					)
 					return resolve(askEmail())
 				}
 				resolve(email)
-			}
+			},
 		)
 	})
 }
@@ -34,7 +37,7 @@ const askName = (): Promise<string> => {
 	return new Promise(resolve => {
 		rl.question(
 			'\n設定您的名字 (Please enter your name) (按下 ^+C 以關閉) (Press ^+C to exit): ',
-			name => resolve(name)
+			name => resolve(name),
 		)
 	})
 }
@@ -55,7 +58,7 @@ async function checkAndCreateAdmin() {
 
 			// Create admin
 			console.log(
-				'\n管理員不存在，正在建立... (Admin does not exist. Creating...)'
+				'\n管理員不存在，正在建立... (Admin does not exist. Creating...)',
 			)
 			const { user } = await auth.api.createUser({
 				body: {
@@ -73,7 +76,7 @@ async function checkAndCreateAdmin() {
 				.where(eq(schema.user.id, user.id))
 
 			console.log(
-				`管理員已建立！請使用 ${user.email} 登入。 (Admin created! Sign in with ${user.email})`
+				`管理員已建立！請使用 ${user.email} 登入。 (Admin created! Sign in with ${user.email})`,
 			)
 
 			console.log('正在建立預設資料 (Inserting default data)...')
@@ -89,7 +92,7 @@ async function checkAndCreateAdmin() {
 	} catch (error) {
 		console.error(
 			'檢查/建立管理員使用者時發生錯誤 (Error checking/creating admin):',
-			error
+			error,
 		)
 		process.exit(1)
 	} finally {
@@ -124,7 +127,7 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 	})
 	console.log(
 		'\n預設文章 SEO 已建立 (Default post SEO created):',
-		defaultPost.title
+		defaultPost.title,
 	)
 
 	const tags = await tx.insert(schema.tagsTable).values(defaultTags).returning()
@@ -132,7 +135,7 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 		'\n預設標籤已建立 (Default tags created):',
 		defaultTags.map(tag => ({
 			name: tag.name,
-		}))
+		})),
 	)
 
 	const categories = await tx
@@ -143,24 +146,24 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 		'\n預設分類已建立 (Default categories created):',
 		defaultCategories.map(category => ({
 			name: category.name,
-		}))
+		})),
 	)
 
 	await tx.insert(schema.postsToTags).values(
 		tags.map(tag => ({
 			postId: postCreated.id,
 			tagId: tag.id,
-		}))
+		})),
 	)
 
 	await tx.insert(schema.postsToCategories).values(
 		categories.map(category => ({
 			postId: postCreated.id,
 			categoryId: category.id,
-		}))
+		})),
 	)
 	console.log(
-		'\n預設文章與標籤、分類關聯已建立 (Default post to tags and categories created)'
+		'\n預設文章與標籤、分類關聯已建立 (Default post to tags and categories created)',
 	)
 }
 

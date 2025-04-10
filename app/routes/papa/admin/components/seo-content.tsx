@@ -1,6 +1,7 @@
-import { Loader2, Save } from 'lucide-react'
 import { useEffect } from 'react'
 import { Form, useFetcher } from 'react-router'
+
+import { Loader2, Save } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -50,7 +51,7 @@ export const SeoContent = ({
 						You could edit in route or post as well.{' '}
 						{seo &&
 							`Last updated on ${new Date(seo.updatedAt).toLocaleString(
-								'zh-TW'
+								'zh-TW',
 							)}`}
 					</DialogDescription>
 				</DialogHeader>

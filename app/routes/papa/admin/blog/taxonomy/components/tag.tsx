@@ -1,11 +1,13 @@
-import { Form, useFetcher, useSubmit } from 'react-router'
-import { CircleX, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
+import { Form, useFetcher, useSubmit } from 'react-router'
+
+import { CircleX, PlusCircle } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { generateSlug } from '~/lib/utils/seo'
+
 import { actionRoute } from '..'
 import type { TagType } from '../type'
 
@@ -36,7 +38,7 @@ const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {
 						{
 							method: 'DELETE',
 							action: actionRoute,
-						}
+						},
 					)
 				}}
 			/>
@@ -65,7 +67,7 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 
 		submit(
 			{ ...newTag, intent: 'tag' },
-			{ method: 'POST', action: actionRoute, navigate: false }
+			{ method: 'POST', action: actionRoute, navigate: false },
 		)
 		setNewTagName('')
 	}

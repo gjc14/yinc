@@ -1,4 +1,4 @@
-import { type InferSelectModel, relations } from 'drizzle-orm'
+import { relations, type InferSelectModel } from 'drizzle-orm'
 import {
 	integer,
 	pgTable,
@@ -7,6 +7,7 @@ import {
 	uniqueIndex,
 	varchar,
 } from 'drizzle-orm/pg-core'
+
 import { postsTable } from './posts'
 
 export type Tag = InferSelectModel<typeof tagsTable>
@@ -49,7 +50,7 @@ export const subCategoriesTable = pgTable(
 			.notNull()
 			.references(() => categoriesTable.id, { onDelete: 'cascade' }),
 	},
-	table => [uniqueIndex('sub_category_idx').on(table.name, table.categoryId)]
+	table => [uniqueIndex('sub_category_idx').on(table.name, table.categoryId)],
 )
 
 export const subCategoriesRelations = relations(
@@ -59,7 +60,7 @@ export const subCategoriesRelations = relations(
 			fields: [subCategoriesTable.categoryId],
 			references: [categoriesTable.id],
 		}),
-	})
+	}),
 )
 
 // Associative tables
@@ -81,7 +82,7 @@ export const postsToTags = pgTable(
 	table => [
 		primaryKey({ columns: [table.postId, table.tagId] }), // Composite primary key
 		uniqueIndex('tag_idx').on(table.postId, table.tagId), // Unique constraint to prevent duplicates
-	]
+	],
 )
 
 export const postsToTagsRelations = relations(postsToTags, ({ one }) => ({
@@ -112,7 +113,7 @@ export const postsToCategories = pgTable(
 	table => [
 		primaryKey({ columns: [table.postId, table.categoryId] }), // Composite primary key
 		uniqueIndex('category_idx').on(table.postId, table.categoryId), // Unique constraint
-	]
+	],
 )
 
 export const postsToCategoriesRelations = relations(
@@ -126,5 +127,5 @@ export const postsToCategoriesRelations = relations(
 			fields: [postsToCategories.categoryId],
 			references: [categoriesTable.id],
 		}),
-	})
+	}),
 )

@@ -1,3 +1,5 @@
+import { forwardRef, useRef, useState } from 'react'
+
 import {
 	AudioWaveform,
 	Expand,
@@ -6,7 +8,6 @@ import {
 	Film,
 	Trash2,
 } from 'lucide-react'
-import { forwardRef, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import {
@@ -80,7 +81,7 @@ export const FileCard = ({
 		<div
 			className={cn(
 				'group relative flex flex-col items-center justify-center border rounded-lg aspect-square overflow-hidden',
-				className
+				className,
 			)}
 			onClick={e => e.stopPropagation()}
 		>
@@ -117,7 +118,7 @@ export const FileCard = ({
 				className={cn(
 					`hidden ${deleteAlert ? '' : 'group-hover:flex'}`,
 					'absolute bottom-3 left-[50%] translate-x-[-50%] bg-primary-foreground',
-					'border rounded-lg items-center justify-center px-1 py-0.5 gap-1'
+					'border rounded-lg items-center justify-center px-1 py-0.5 gap-1',
 				)}
 			>
 				<ToolBarButton
@@ -237,13 +238,13 @@ export const FileCard = ({
 								// When user uploads a file, new file type FileMetaWithFile will include a { ...others, file: File }, in which file.size will be saved to { size: number }
 								1024 * 1024 * 1024
 									? `${Math.round(
-											(file.size || file.file.size) / 1024 / 1024 / 1024
-									  )} GB`
+											(file.size || file.file.size) / 1024 / 1024 / 1024,
+										)} GB`
 									: (file.size || file.file.size) > 1024 * 1024
-									? `${Math.round(
-											(file.size || file.file.size) / 1024 / 1024
-									  )} MB`
-									: `${Math.round((file.size || file.file.size) / 1024)} KB`}
+										? `${Math.round(
+												(file.size || file.file.size) / 1024 / 1024,
+											)} MB`
+										: `${Math.round((file.size || file.file.size) / 1024)} KB`}
 							</p>
 							<p className="text-sm">
 								<strong>Last Modified:</strong>{' '}
@@ -299,7 +300,7 @@ const ToolBarButton = forwardRef<
 			type={type || 'button'}
 			className={cn(
 				'inline-flex items-center justify-center gap-2 whitespace-nowrap p-1 size-6 cursor-pointer transition-colors rounded-full hover:bg-accent',
-				className
+				className,
 			)}
 			{...props}
 		/>

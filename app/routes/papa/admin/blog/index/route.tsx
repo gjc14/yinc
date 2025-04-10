@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Link, useFetcher } from 'react-router'
+
 import { type ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, PlusCircle } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
@@ -16,6 +17,7 @@ import {
 	AdminDataTableMoreMenu,
 	DataTable,
 } from '~/routes/papa/admin/components/data-table'
+
 import { useAdminBlogContext } from '../layout'
 
 export default function AdminPost() {
@@ -26,17 +28,17 @@ export default function AdminPost() {
 				...tag,
 				posts: posts.filter(post => post.tags.map(t => t.id).includes(tag.id)),
 			}
-		})
+		}),
 	)
 	const [categoriesState, setCategoriesState] = useState(
 		categories.map(category => {
 			return {
 				...category,
 				posts: posts.filter(post =>
-					post.categories.map(c => c.id).includes(category.id)
+					post.categories.map(c => c.id).includes(category.id),
 				),
 			}
-		})
+		}),
 	)
 	const [rowSelection, setRowSelection] = useState({})
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
@@ -169,7 +171,7 @@ export const columns: ColumnDef<
 								method: 'DELETE',
 								action: `/admin/blog/resource`,
 								encType: 'application/json',
-							}
+							},
 						)
 					}}
 				>

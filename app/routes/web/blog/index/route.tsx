@@ -1,9 +1,14 @@
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
-import { type ClientLoaderFunctionArgs, useLoaderData } from 'react-router'
+import {
+	useLoaderData,
+	type ClientLoaderFunctionArgs,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+} from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
+
 import { SectionWrapper } from '../components/max-width-wrapper'
 import { PostCollection } from '../components/posts'
 

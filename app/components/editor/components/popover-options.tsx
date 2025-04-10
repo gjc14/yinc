@@ -1,6 +1,6 @@
 import { Editor } from '@tiptap/react'
 import { ChevronDown } from 'lucide-react'
-import { type EditOptionProps } from '~/components/editor/edit-options'
+
 import { Button } from '~/components/ui/button'
 import {
 	Popover,
@@ -8,6 +8,7 @@ import {
 	PopoverTrigger,
 } from '~/components/ui/popover'
 import { Separator } from '~/components/ui/separator'
+import { type EditOptionProps } from '~/components/editor/edit-options'
 
 type OptionTypes = EditOptionProps | { label: string }
 

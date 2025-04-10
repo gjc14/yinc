@@ -1,4 +1,11 @@
 /**
+ * Define the type for Plugin Config
+ */
+import dynamicIconImports from 'lucide-react/dynamicIconImports'
+
+import { z } from 'zod'
+
+/**
  * Read all the plugin configs from the `app/routes/plugins/*.plugin/papa.config.ts`
  */
 export const getPluginConfigs = async (): Promise<PapaConfig[]> => {
@@ -6,7 +13,7 @@ export const getPluginConfigs = async (): Promise<PapaConfig[]> => {
 		'/app/routes/plugins/*.plugin/papa.config.ts',
 		{
 			import: 'default',
-		}
+		},
 	)
 
 	const configs = []
@@ -34,12 +41,6 @@ export const getPluginConfigs = async (): Promise<PapaConfig[]> => {
 
 	return configs
 }
-
-/**
- * Define the type for Plugin Config
- */
-import dynamicIconImports from 'lucide-react/dynamicIconImports'
-import { z } from 'zod'
 
 const iconOptions = Object.keys(dynamicIconImports) as Array<
 	keyof typeof dynamicIconImports
@@ -77,10 +78,10 @@ const PapaConfigSchema = z.object({
 							 * Relative path to the customized `parent` route, start without `/`
 							 */
 							url: z.string(),
-						})
+						}),
 					)
 					.optional(),
-			})
+			}),
 		)
 		.optional(),
 	dependencies: z.array(z.string()).optional(),

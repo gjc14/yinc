@@ -1,6 +1,7 @@
 import { asc, desc, eq, gt, lt } from 'drizzle-orm'
 
 import { user as userTable } from '~/lib/db/schema'
+
 import { db } from './db.server'
 
 type User = typeof userTable.$inferSelect
@@ -14,7 +15,7 @@ type User = typeof userTable.$inferSelect
 export const getUsers = async (
 	cursor: string = '',
 	pageSize: number = 10,
-	direction: 'next' | 'previous' = 'next'
+	direction: 'next' | 'previous' = 'next',
 ): Promise<{
 	users: User[]
 	nextCursor: string | null
@@ -66,7 +67,7 @@ export const getUsers = async (
 }
 
 export const getUser = async (
-	email: string
+	email: string,
 ): Promise<{ user: User | null }> => {
 	const [user] = await db
 		.select()
@@ -76,7 +77,7 @@ export const getUser = async (
 }
 
 export const getUserById = async (
-	id: string
+	id: string,
 ): Promise<{ user: User | null }> => {
 	const [user] = await db.select().from(userTable).where(eq(userTable.id, id))
 	return { user }

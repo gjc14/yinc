@@ -5,5 +5,19 @@
 	"printWidth": 80,
 	"proseWrap": "always",
 	"tabWidth": 2,
-	"useTabs": true
+	"useTabs": true,
+	"plugins": ["@ianvs/prettier-plugin-sort-imports"],
+	"importOrder": [
+		"^(react(-.*)?$)|(react/(.*)$)|^(react$)",
+		"",
+		"<THIRD_PARTY_MODULES>",
+		"",
+		"^~/components/ui/(.*)$",
+		"^~/components/(.*)$",
+		"^~/hooks/(.*)$",
+		"^~/lib/(.*)$",
+		"^~/routes/(.*)$",
+		"",
+		"^[.]"
+	]
 }

@@ -347,6 +347,6 @@ export {
 	editParagraphOptions,
 }
 
-export * from './link-unlink-buttons'
 export * from './image-button'
+export * from './link-unlink-buttons'
 export * from './youtube-button'

@@ -1,3 +1,6 @@
+import { useCallback, useState } from 'react'
+import { useFetcher } from 'react-router'
+
 import type {
 	ColumnDef,
 	ColumnFiltersState,
@@ -15,8 +18,6 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 import { EyeOff, Loader2, MoreHorizontal } from 'lucide-react'
-import { useCallback, useState } from 'react'
-import { useFetcher } from 'react-router'
 
 import {
 	AlertDialog,
@@ -140,7 +141,7 @@ export function DataTable<TData, TValue>({
 
 			return styleGroups.length > 0 ? styleGroups : ''
 		},
-		[rowGroupStyle]
+		[rowGroupStyle],
 	)
 
 	return (
@@ -191,8 +192,8 @@ export function DataTable<TData, TValue>({
 											? null
 											: flexRender(
 													header.column.columnDef.header,
-													header.getContext()
-											  )}
+													header.getContext(),
+												)}
 									</TableHead>
 								)
 							})}
@@ -215,7 +216,7 @@ export function DataTable<TData, TValue>({
 										<TableCell key={cell.id}>
 											{flexRender(
 												cell.column.columnDef.cell,
-												cell.getContext()
+												cell.getContext(),
 											)}
 										</TableCell>
 									))}

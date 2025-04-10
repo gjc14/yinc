@@ -1,5 +1,8 @@
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
-import { useLoaderData } from 'react-router'
+import {
+	useLoaderData,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+} from 'react-router'
 
 import { UnderConstruction } from '~/components/under-construction'
 import { getSEO } from '~/lib/db/seo.server'

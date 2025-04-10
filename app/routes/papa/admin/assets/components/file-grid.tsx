@@ -1,3 +1,6 @@
+import { useCallback, useEffect, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+
 import {
 	Check,
 	ChevronsUpDown,
@@ -5,8 +8,6 @@ import {
 	CupSoda,
 	X,
 } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
 
 import AnimatedCircularProgressBar from '~/components/ui/animated-circular-progress-bar'
 import { Button } from '~/components/ui/button'
@@ -28,6 +29,7 @@ import type {
 	FileMeta,
 	FileMetaWithFile,
 } from '~/routes/papa/admin/api/object-storage/schema'
+
 import {
 	deleteFileFetch,
 	fetchPresignedPutUrls,
@@ -141,8 +143,8 @@ const FileGridMain = ({
 									...file,
 									id: presignedFile.id,
 									updatedAt: presignedFile.updatedAt,
-							  }
-							: file
+								}
+							: file,
 					)
 					return newFiles
 				})
@@ -192,7 +194,7 @@ const FileGridMain = ({
 	// Handle files when status is completed
 	useEffect(() => {
 		const uploadCompleteXML = Object.values(uploadProgress).filter(
-			upload => upload.status === 'completed'
+			upload => upload.status === 'completed',
 		)
 		const newFileUploaded = uploadCompleteXML
 			// Match XML completed, without file in fileUploaded state
@@ -224,17 +226,17 @@ const FileGridMain = ({
 
 	// When file progress display was clicked to hide
 	const [hiddenProgressCards, setHiddenProgressCards] = useState<Set<string>>(
-		new Set()
+		new Set(),
 	)
 	const visibleUploadProgress = Object.values(uploadProgress).filter(
-		({ key }) => !hiddenProgressCards.has(key)
+		({ key }) => !hiddenProgressCards.has(key),
 	)
 
 	return (
 		<div
 			className={cn(
 				'relative h-auto grow p-3 border-4 border-dashed rounded-xl',
-				isDragActive ? 'border-4 border-sky-600 dark:border-sky-600' : ''
+				isDragActive ? 'border-4 border-sky-600 dark:border-sky-600' : '',
 			)}
 			{...getRootProps()}
 		>
@@ -242,7 +244,7 @@ const FileGridMain = ({
 			<div
 				className={cn(
 					'z-10 absolute h-full w-full inset-0 flex justify-center items-center bg-muted rounded-lg',
-					isDragActive ? '' : 'hidden'
+					isDragActive ? '' : 'hidden',
 				)}
 			>
 				<CloudUploadIcon className="w-12 h-12 text-primary" />
@@ -256,7 +258,7 @@ const FileGridMain = ({
 							: 'grid-cols-[repeat(auto-fit,minmax(100px,1fr))]',
 						dialogTrigger
 							? 'sm:grid-cols-3 md:grid-cols-4'
-							: 'sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7'
+							: 'sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7',
 					)}
 				>
 					{fileState.map((file, index) => {

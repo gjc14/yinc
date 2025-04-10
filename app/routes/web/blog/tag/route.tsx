@@ -1,9 +1,13 @@
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
-import { useLoaderData } from 'react-router'
+import {
+	useLoaderData,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+} from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
+
 import { SectionWrapper } from '../components/max-width-wrapper'
 import { PostCollection } from '../components/posts'
 
@@ -48,7 +52,7 @@ export default function Tag() {
 						posts.length !== 0
 							? `Listing ${posts.length} ${
 									posts.length === 1 ? 'post' : 'posts'
-							  } in ${tagNames?.join(', ') ?? 'a tag filter'}`
+								} in ${tagNames?.join(', ') ?? 'a tag filter'}`
 							: 'No posts found'
 					}`}
 					posts={posts.map(post => {

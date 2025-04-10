@@ -1,9 +1,14 @@
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router'
-import { type ClientLoaderFunctionArgs, useLoaderData } from 'react-router'
+import {
+	useLoaderData,
+	type ClientLoaderFunctionArgs,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+} from 'react-router'
 
 import { MainWrapper } from '~/components/wrappers'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
+
 import { Footer } from '../components/footer'
 import { Nav } from '../components/nav'
 import { Hero } from './hero'

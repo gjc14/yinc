@@ -1,4 +1,5 @@
-import { type ActionFunctionArgs, redirect } from 'react-router'
+import { redirect, type ActionFunctionArgs } from 'react-router'
+
 import { z } from 'zod'
 
 import type { Category, SubCategory, Tag } from '~/lib/db/schema'
@@ -76,7 +77,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						options: {
 							preventAlert: true,
 						},
-					} satisfies ConventionalActionResponse<Category & { originalId: number }>)
+					} satisfies ConventionalActionResponse<
+						Category & { originalId: number }
+					>)
 				} else if (request.method === 'DELETE') {
 					const { id } = deleteSchema.parse(formObject)
 					const { category } = await deleteCategory(id)
@@ -116,7 +119,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						options: {
 							preventAlert: true,
 						},
-					} satisfies ConventionalActionResponse<SubCategory & { originalId: number }>)
+					} satisfies ConventionalActionResponse<
+						SubCategory & { originalId: number }
+					>)
 				} else if (request.method === 'DELETE') {
 					const { id } = deleteSchema.parse(formObject)
 					const { subcategory } = await deleteSubcategory(id)

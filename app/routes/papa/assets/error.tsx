@@ -1,5 +1,4 @@
-import { type LoaderFunctionArgs } from 'react-router'
-import { useLoaderData } from 'react-router'
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
 
 // Usage: papacms.com/assets/my-file-key?visibility=public
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

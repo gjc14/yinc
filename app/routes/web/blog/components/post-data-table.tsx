@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 import type {
 	ColumnDef,
@@ -14,7 +16,6 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
-import { useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -109,8 +110,8 @@ export function DataTable<TData, TValue>({
 											? null
 											: flexRender(
 													header.column.columnDef.header,
-													header.getContext()
-											  )}
+													header.getContext(),
+												)}
 									</TableHead>
 								)
 							})}

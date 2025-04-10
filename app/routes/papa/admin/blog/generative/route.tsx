@@ -1,7 +1,8 @@
-import { useChat } from 'ai/react'
-import { CheckCheck, Copy, SendHorizonal, Sparkles } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+
+import { useChat } from 'ai/react'
+import { CheckCheck, Copy, SendHorizonal, Sparkles } from 'lucide-react'
 import remarkGfm from 'remark-gfm'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -24,9 +25,9 @@ import {
 	TooltipTrigger,
 } from '~/components/ui/tooltip'
 import {
+	providers,
 	type Provider,
 	type Providers,
-	providers,
 } from '~/routes/papa/admin/api/ai-chat/route'
 import {
 	AdminActions,
@@ -35,6 +36,7 @@ import {
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
 import { useAdminContext } from '~/routes/papa/admin/layout'
+
 import { LoaderHR } from './components/loader'
 
 export default function AdminGenerativeAI() {
@@ -64,7 +66,7 @@ export default function AdminGenerativeAI() {
 	const scrollToBottom = () => {
 		// Find the actual scrollable viewport (it's a div with data-radix-scroll-area-viewport)
 		const viewport = scrollAreaRef.current?.querySelector(
-			'[data-radix-scroll-area-viewport]'
+			'[data-radix-scroll-area-viewport]',
 		)
 		if (viewport) {
 			try {

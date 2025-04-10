@@ -1,5 +1,6 @@
-import { Settings } from 'lucide-react'
 import { isRouteErrorResponse, Link, Outlet, useRouteError } from 'react-router'
+
+import { Settings } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { authClient } from '~/lib/auth/auth-client'

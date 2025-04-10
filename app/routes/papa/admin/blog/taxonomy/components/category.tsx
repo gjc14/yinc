@@ -1,12 +1,14 @@
-import { Form, useFetcher, useSubmit } from 'react-router'
-import { CircleX, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
+import { Form, useFetcher, useSubmit } from 'react-router'
+
+import { CircleX, PlusCircle } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import type { SubCategory } from '~/lib/db/schema'
 import { generateSlug } from '~/lib/utils/seo'
+
 import { actionRoute } from '..'
 import type { CategoryType } from '../type'
 
@@ -60,7 +62,7 @@ const CategoryComponent = ({
 						{
 							method: 'DELETE',
 							action: actionRoute,
-						}
+						},
 					)
 				}}
 			/>
@@ -99,7 +101,7 @@ const SubCategoryComponent = ({
 						{
 							method: 'DELETE',
 							action: actionRoute,
-						}
+						},
 					)
 				}}
 			/>
@@ -138,7 +140,7 @@ export const CategoriesSection = ({
 
 		submit(
 			{ ...newCategory, intent: 'category' },
-			{ method: 'POST', action: actionRoute, navigate: false }
+			{ method: 'POST', action: actionRoute, navigate: false },
 		)
 		setNewCategoryName('')
 	}
@@ -192,7 +194,7 @@ export const CategoriesSection = ({
 
 export const generateNewSubCategory = (
 	newSubcategoryName: string,
-	categoryId: number
+	categoryId: number,
 ) => {
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
@@ -218,12 +220,12 @@ export const SubcategoriesSection = ({
 
 		const newSubcategory = generateNewSubCategory(
 			newSubcategoryName,
-			category.id
+			category.id,
 		)
 
 		submit(
 			{ ...newSubcategory, intent: 'subcategory' },
-			{ method: 'POST', action: actionRoute, navigate: false }
+			{ method: 'POST', action: actionRoute, navigate: false },
 		)
 		setNewSubcategoryName('')
 	}

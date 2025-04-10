@@ -1,6 +1,8 @@
-import { NavLink } from 'react-router'
-import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import { NavLink } from 'react-router'
+
+import { motion } from 'framer-motion'
+
 import { Button } from '~/components/ui/button'
 
 export interface RouteButton {
@@ -23,7 +25,7 @@ export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
 	useEffect(() => {
 		if (hoveredTab !== null && navRef.current) {
 			const buttonElement = navRef.current.querySelector(
-				`[data-index="${hoveredTab}"]`
+				`[data-index="${hoveredTab}"]`,
 			) as HTMLElement
 			if (buttonElement) {
 				const navBounds = navRef.current.getBoundingClientRect()
@@ -41,7 +43,7 @@ export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
 	const updateActiveTabPosition = (index: number) => {
 		if (navRef.current) {
 			const buttonElement = navRef.current.querySelector(
-				`[data-index="${index}"]`
+				`[data-index="${index}"]`,
 			) as HTMLElement
 			if (buttonElement) {
 				const navBounds = navRef.current.getBoundingClientRect()

@@ -1,4 +1,5 @@
 import { redirect, type ActionFunctionArgs } from 'react-router'
+
 import { z } from 'zod'
 
 import { TurnstileSiteVerify } from '~/components/captchas/turnstile'
@@ -39,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 			const passed = await TurnstileSiteVerify(
 				zTurnstileResult.data,
-				process.env.TURNSTILE_SECRET_KEY ?? ''
+				process.env.TURNSTILE_SECRET_KEY ?? '',
 			)
 			if (!passed) {
 				return Response.json({

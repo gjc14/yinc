@@ -1,14 +1,16 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 import './styles.scss'
 
-import { Editor, EditorContent, useEditor } from '@tiptap/react'
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
+
+// import { DefaultFloatingMenu } from '../components/menus/floating-menu'
+import { GitHubLogoIcon } from '@radix-ui/react-icons'
+import { Editor, EditorContent, useEditor } from '@tiptap/react'
 
 import { cn } from '~/lib/utils'
 import { type ChatAPICustomBody } from '~/routes/papa/admin/api/ai-chat/route'
+
 import { DefaultBubbleMenu } from '../components/menus/bubble-menu'
-// import { DefaultFloatingMenu } from '../components/menus/floating-menu'
-import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import { MenuBar } from '../components/menus/menu-bar'
 import ExtensionKit from '../extensions/extension-kit'
 
@@ -72,14 +74,14 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 				return editor?.getText() || ''
 			},
 		}),
-		[editor]
+		[editor],
 	)
 
 	////////////////////////
 	///        AI        ///
 	////////////////////////
 	const [aiProvider, setAiProvider] = useState<ChatAPICustomBody['provider']>(
-		'gemini-1.5-flash-latest'
+		'gemini-1.5-flash-latest',
 	)
 
 	const onComplete = useCallback(
@@ -119,14 +121,14 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 				})
 			}
 		},
-		[editor]
+		[editor],
 	)
 
 	return (
 		<div
 			className={cn(
 				'relative max-w-prose grow flex flex-col gap-3',
-				props.className
+				props.className,
 			)}
 		>
 			{/* Editor part */}

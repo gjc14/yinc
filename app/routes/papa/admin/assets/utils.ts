@@ -2,9 +2,9 @@ import { useState } from 'react'
 
 import { isConventionalError } from '~/lib/utils'
 import {
+	PresignResponseSchema,
 	type FileMetaWithFile,
 	type PresignRequest,
-	PresignResponseSchema,
 } from '~/routes/papa/admin/api/object-storage/schema'
 
 /**
@@ -16,7 +16,7 @@ import {
  */
 export const generateStorageKey = (
 	file: { type: string; name: string },
-	access: 'private' | 'public'
+	access: 'private' | 'public',
 ) => {
 	const fileType = file.type.split('/')[0]
 	const timestamp = Date.now()
@@ -42,7 +42,7 @@ const objectStorageAPI = '/admin/api/object-storage'
  * @returns files with presigned PUT URLs from storage, and id, updatedAt from database
  */
 export const fetchPresignedPutUrls = async (
-	files: FileMetaWithFile[]
+	files: FileMetaWithFile[],
 ): Promise<
 	(FileMetaWithFile & {
 		id: number
@@ -142,7 +142,7 @@ export const useFileUpload = () => {
 	const [uploadProgress, setUploadProgress] = useState<UploadState>({})
 
 	const uploadSingleFile = async (
-		file: FileMetaWithFile & { presignedUrl: string }
+		file: FileMetaWithFile & { presignedUrl: string },
 	) => {
 		return new Promise<void>((resolve, reject) => {
 			const xhr = new XMLHttpRequest()
@@ -219,14 +219,14 @@ export const useFileUpload = () => {
 
 	const uploadSingleFileWithRetry = async (
 		file: FileMetaWithFile & { presignedUrl: string },
-		retries = 3
+		retries = 3,
 	): Promise<void> => {
 		try {
 			await uploadSingleFile(file)
 		} catch (error) {
 			if (retries > 0) {
 				console.log(
-					`Retrying upload for ${file.name}, attempts left: ${retries}`
+					`Retrying upload for ${file.name}, attempts left: ${retries}`,
 				)
 				return uploadSingleFileWithRetry(file, retries - 1)
 			} else {
@@ -237,7 +237,7 @@ export const useFileUpload = () => {
 	}
 
 	const uploadToPresignedUrl = async (
-		files: (FileMetaWithFile & { presignedUrl: string })[]
+		files: (FileMetaWithFile & { presignedUrl: string })[],
 	) => {
 		// Initialize progress state for all files
 		setUploadProgress(prev => {
@@ -250,7 +250,7 @@ export const useFileUpload = () => {
 						status: 'pending' as const,
 					},
 				}),
-				{}
+				{},
 			)
 			return { ...prev, ...initial }
 		})

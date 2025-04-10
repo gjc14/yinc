@@ -1,7 +1,7 @@
-import { Link, useFetcher, useNavigate, useNavigation } from 'react-router'
-import { Loader2, PlusCircle, Trash } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { FullScreenLoading } from '~/components/loading'
+import { Link, useFetcher, useNavigate, useNavigation } from 'react-router'
+
+import { Loader2, PlusCircle, Trash } from 'lucide-react'
 
 import {
 	AlertDialog,
@@ -15,11 +15,11 @@ import {
 	AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
+import { FullScreenLoading } from '~/components/loading'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, type User } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
-import { PostContent, type PostContentHandle } from '../components/post-content'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import {
 	AdminActions,
@@ -27,6 +27,8 @@ import {
 	AdminSectionWrapper,
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
+
+import { PostContent, type PostContentHandle } from '../components/post-content'
 
 export default function AdminNewPost() {
 	const fetcher = useFetcher<ConventionalActionResponse<{ slug: string }>>()
@@ -102,12 +104,12 @@ export default function AdminNewPost() {
 
 							const date = new Date()
 							const now = `${date.getFullYear()}/${String(
-								date.getMonth() + 1
+								date.getMonth() + 1,
 							).padStart(2, '0')}/${String(date.getDate()).padStart(
 								2,
-								'0'
+								'0',
 							)}@${String(date.getHours()).padStart(2, '0')}:${String(
-								date.getMinutes()
+								date.getMinutes(),
 							).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
 							// Remove date fields and set default values
 							const postReady = {

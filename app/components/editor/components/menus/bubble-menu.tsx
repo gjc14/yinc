@@ -1,6 +1,7 @@
 import { BubbleMenu, Editor } from '@tiptap/react'
 import { AlignLeft, MoreVertical, Pilcrow, WandSparkles } from 'lucide-react'
 
+import { Separator } from '~/components/ui/separator'
 import {
 	editAlignOptions,
 	editHistoryOptions,
@@ -12,7 +13,7 @@ import {
 	LinkUnlinkButtons,
 	YoutubeButton,
 } from '~/components/editor/edit-options'
-import { Separator } from '~/components/ui/separator'
+
 import { PopoverMenuOptions } from '../popover-options'
 import { ToggleButton } from '../toggle-button'
 
@@ -28,20 +29,20 @@ export const DefaultBubbleMenu = ({
 		...editListOptions,
 	].find(option => option.isActive?.(editor))
 	const activeAlignOption = editAlignOptions.find(option =>
-		option.isActive?.(editor)
+		option.isActive?.(editor),
 	)
 
 	const MarkOptions = editMarkOptions.filter(
 		option =>
 			option.tooltip !== 'Remove Formatting' &&
 			option.tooltip !== 'Superscript' &&
-			option.tooltip !== 'Subscript'
+			option.tooltip !== 'Subscript',
 	)
 	const OtherMarkOptions = editMarkOptions.filter(
 		option =>
 			option.tooltip === 'Remove Formatting' ||
 			option.tooltip === 'Superscript' ||
-			option.tooltip === 'Subscript'
+			option.tooltip === 'Subscript',
 	)
 
 	return (

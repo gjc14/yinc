@@ -50,7 +50,7 @@ export const TurnstileWidget = () => {
 
 export const TurnstileSiteVerify = async (
 	turnstileResponse: string,
-	TURNSTILE_SECRET_KEY: string
+	TURNSTILE_SECRET_KEY: string,
 ): Promise<boolean> => {
 	const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 	const data = new URLSearchParams()

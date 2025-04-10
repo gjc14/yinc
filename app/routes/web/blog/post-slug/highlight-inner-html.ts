@@ -8,7 +8,7 @@ import highlight from 'highlight.js'
 
 function parseNodes(
 	nodes: any[],
-	className: string[] = []
+	className: string[] = [],
 ): { text: string; classes: string[] }[] {
 	return nodes
 		.map(node => {
@@ -36,15 +36,15 @@ function isFunction(param: Function) {
 export function hilightInnerHTML(
 	block: Element,
 	lowlight: any,
-	languages: string[] = []
+	languages: string[] = [],
 ) {
 	if (
 		!['highlight', 'highlightAuto', 'listLanguages'].every(api =>
-			isFunction(lowlight[api])
+			isFunction(lowlight[api]),
 		)
 	) {
 		throw Error(
-			'You should provide an instance of lowlight to use the code-block-lowlight extension'
+			'You should provide an instance of lowlight to use the code-block-lowlight extension',
 		)
 	}
 

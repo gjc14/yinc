@@ -1,9 +1,11 @@
-import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router'
+
+import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
+
 import type { PostLoaderType } from './route'
 
 export const PostFooter = ({

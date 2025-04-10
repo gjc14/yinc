@@ -13,7 +13,7 @@ const { DatabaseError } = pkg
 export const handleError = (
 	error: unknown,
 	request: Request,
-	{ errorMessage }: { errorMessage?: string } = {}
+	{ errorMessage }: { errorMessage?: string } = {},
 ) => {
 	if (error instanceof z.ZodError) {
 		console.error(error.message)

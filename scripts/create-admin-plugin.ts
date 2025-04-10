@@ -81,33 +81,33 @@ export default config
 
 const filePathExample = join(
 	process.cwd(),
-	'app/routes/plugins/example.plugin/_papa.admin.example/route.tsx'
+	'app/routes/plugins/example.plugin/_papa.admin.example/route.tsx',
 )
 
 const filePathExampleSub = join(
 	process.cwd(),
-	'app/routes/plugins/example.plugin/_papa.admin.example.sub/route.tsx'
+	'app/routes/plugins/example.plugin/_papa.admin.example.sub/route.tsx',
 )
 
 const filePathExampleAdminConfig = join(
 	process.cwd(),
-	'app/routes/plugins/example.plugin/papa.config.ts'
+	'app/routes/plugins/example.plugin/papa.config.ts',
 )
 
 try {
 	await mkdir(
 		join(
 			process.cwd(),
-			'app/routes/plugins/example.plugin/_papa.admin.example'
+			'app/routes/plugins/example.plugin/_papa.admin.example',
 		),
-		{ recursive: true }
+		{ recursive: true },
 	)
 	await mkdir(
 		join(
 			process.cwd(),
-			'app/routes/plugins/example.plugin/_papa.admin.example.sub'
+			'app/routes/plugins/example.plugin/_papa.admin.example.sub',
 		),
-		{ recursive: true }
+		{ recursive: true },
 	)
 
 	await writeFile(filePathExample, examplePage.trim())
@@ -121,7 +121,7 @@ try {
 		}
         
         Navigate to '/admin/example' and '/admin/example/sub' to see in action
-        `.replace(/^ {8}/gm, '')
+        `.replace(/^ {8}/gm, ''),
 	)
 } catch (err) {
 	console.error('Error creating example admin files:', err)

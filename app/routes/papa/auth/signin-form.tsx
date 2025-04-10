@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Form } from 'react-router'
 
-import { Loading } from '~/components/loading'
 import { Button } from '~/components/ui/button'
 import {
 	Card,
@@ -13,6 +12,7 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Loading } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
 
 export const SignInForm = () => {
@@ -48,7 +48,7 @@ export const SignInForm = () => {
 					console.error(ctx.error)
 					alert('Error sending magic link: ' + ctx.error.message)
 				},
-			}
+			},
 		)
 	}
 

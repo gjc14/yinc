@@ -4,6 +4,7 @@
 import { eq } from 'drizzle-orm'
 
 import { db } from '~/lib/db/db.server'
+
 import { generateSlug } from '../utils/seo'
 import type { Category, SubCategory, Tag } from './schema'
 import { categoriesTable, subCategoriesTable, tagsTable } from './schema'
@@ -38,7 +39,7 @@ export const getCategories = async (): Promise<{
 }
 
 export const deleteCategory = async (
-	id: number
+	id: number,
 ): Promise<{ category: Category }> => {
 	const [category] = await db
 		.delete(categoriesTable)
@@ -76,7 +77,7 @@ export const getSubcategories = async (): Promise<{
 }
 
 export const deleteSubcategory = async (
-	id: number
+	id: number,
 ): Promise<{ subcategory: SubCategory }> => {
 	const [subcategory] = await db
 		.delete(subCategoriesTable)

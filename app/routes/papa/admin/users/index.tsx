@@ -1,6 +1,7 @@
-import { type ColumnDef } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
+
+import { type ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '~/components/ui/badge'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
@@ -158,7 +159,7 @@ export const columns: ColumnDef<
 								{
 									method: 'DELETE',
 									action: `/admin/users/resource`,
-								}
+								},
 							)
 						}}
 					>

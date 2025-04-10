@@ -30,7 +30,7 @@ export const getPosts = async (
 		categoriesFilter?: string[]
 		tagsFilter?: string[]
 		titleQuery?: string
-	} = {}
+	} = {},
 ): Promise<{
 	posts: PostWithRelations[]
 	nextCursor: number | null
@@ -55,9 +55,8 @@ export const getPosts = async (
 	let tags: Tag[] | undefined = undefined
 
 	if (categoriesFilter && categoriesFilter.length > 0) {
-		const { categoriessWithPostIds, postIds } = await getPostIdsByCategorySlugs(
-			categoriesFilter
-		)
+		const { categoriessWithPostIds, postIds } =
+			await getPostIdsByCategorySlugs(categoriesFilter)
 		categories = categoriessWithPostIds
 		filteredPostIds = [...postIds]
 	}
@@ -93,7 +92,7 @@ export const getPosts = async (
 			and(
 				...baseConditions,
 				...cursorCondition,
-				...(filteredPostIds ? [inArray(posts.id, filteredPostIds)] : [])
+				...(filteredPostIds ? [inArray(posts.id, filteredPostIds)] : []),
 			),
 		with: {
 			author: true,
@@ -121,7 +120,7 @@ export const getPosts = async (
 			...post,
 			tags: post.postsToTags.map(association => association.tag),
 			categories: post.postsToCategories.map(
-				association => association.category
+				association => association.category,
 			),
 		}
 	})
@@ -149,7 +148,7 @@ export const getPosts = async (
 }
 
 export const getPostIdsByTagSlugs = async (
-	tagSlugs: string[]
+	tagSlugs: string[],
 ): Promise<{ tagsWithPostIds: typeof tagsWithPostIds; postIds: number[] }> => {
 	const tagsWithPostIds = await db.query.tagsTable.findMany({
 		where: (tags, { inArray }) => inArray(tags.slug, tagSlugs),
@@ -162,13 +161,13 @@ export const getPostIdsByTagSlugs = async (
 		},
 	})
 	const filteredPostIds = tagsWithPostIds.flatMap(t =>
-		t.postsToTags.flatMap(t => t.postId)
+		t.postsToTags.flatMap(t => t.postId),
 	)
 	return { tagsWithPostIds, postIds: filteredPostIds }
 }
 
 export const getPostIdsByCategorySlugs = async (
-	categorySlugs: string[]
+	categorySlugs: string[],
 ): Promise<{
 	categoriessWithPostIds: typeof catsWithPostIds
 	postIds: number[]
@@ -184,13 +183,13 @@ export const getPostIdsByCategorySlugs = async (
 		},
 	})
 	const filteredPostIds = catsWithPostIds.flatMap(t =>
-		t.postsToCategories.flatMap(t => t.postId)
+		t.postsToCategories.flatMap(t => t.postId),
 	)
 	return { categoriessWithPostIds: catsWithPostIds, postIds: filteredPostIds }
 }
 
 export const getPost = async (
-	id: number
+	id: number,
 ): Promise<{ post: PostWithRelations | null }> => {
 	const postRaw = await db.query.postsTable.findFirst({
 		where: (t, { eq }) => eq(t.id, id),
@@ -215,9 +214,9 @@ export const getPost = async (
 				...postRaw,
 				tags: postRaw.postsToTags.map(association => association.tag),
 				categories: postRaw.postsToCategories.map(
-					association => association.category
+					association => association.category,
 				),
-		  }
+			}
 		: null
 
 	return { post }
@@ -225,7 +224,7 @@ export const getPost = async (
 
 export const getPostBySlug = async (
 	slug: string,
-	status: PostStatus = 'PUBLISHED'
+	status: PostStatus = 'PUBLISHED',
 ): Promise<{
 	post: PostWithRelations | null
 	prevPost: PostWithRelations | null
@@ -258,7 +257,7 @@ export const getPostBySlug = async (
 		...postRaw,
 		tags: postRaw.postsToTags.map(association => association.tag),
 		categories: postRaw.postsToCategories.map(
-			association => association.category
+			association => association.category,
 		),
 	}
 
@@ -307,9 +306,9 @@ export const getPostBySlug = async (
 				...prevPostRaw,
 				tags: prevPostRaw.postsToTags.map(association => association.tag),
 				categories: prevPostRaw.postsToCategories.map(
-					association => association.category
+					association => association.category,
 				),
-		  }
+			}
 		: null
 
 	const nextPost = nextPostRaw
@@ -317,9 +316,9 @@ export const getPostBySlug = async (
 				...nextPostRaw,
 				tags: nextPostRaw.postsToTags.map(association => association.tag),
 				categories: nextPostRaw.postsToCategories.map(
-					association => association.category
+					association => association.category,
 				),
-		  }
+			}
 		: null
 
 	return {
@@ -340,7 +339,7 @@ type CreatePostProps = Omit<
 }
 
 export const createPost = async (
-	props: CreatePostProps
+	props: CreatePostProps,
 ): Promise<{ post: PostWithRelations }> => {
 	const {
 		authorId,
@@ -370,9 +369,9 @@ export const createPost = async (
 			.returning()
 
 		const author = authorId
-			? (await tx.query.user.findFirst({
+			? ((await tx.query.user.findFirst({
 					where: (users, { eq }) => eq(users.id, authorId),
-			  })) ?? null
+				})) ?? null)
 			: null
 
 		const [seoCreated] = await tx
@@ -390,7 +389,7 @@ export const createPost = async (
 		const categoriesRelated = await processTaxonomyCategories(
 			tx,
 			categories,
-			postCreated.id
+			postCreated.id,
 		)
 
 		return {
@@ -410,7 +409,7 @@ interface UpdatePostProps extends CreatePostProps {
 }
 
 export const updatePost = async (
-	props: UpdatePostProps
+	props: UpdatePostProps,
 ): Promise<{ post: PostWithRelations }> => {
 	const {
 		id,
@@ -442,9 +441,9 @@ export const updatePost = async (
 			.returning()
 
 		const author = authorId
-			? (await tx.query.user.findFirst({
+			? ((await tx.query.user.findFirst({
 					where: (users, { eq }) => eq(users.id, authorId),
-			  })) ?? null
+				})) ?? null)
 			: null
 
 		const [seoUpdated] = await tx
@@ -461,7 +460,7 @@ export const updatePost = async (
 		const categoriesRelated = await processTaxonomyCategories(
 			tx,
 			categories,
-			id
+			id,
 		)
 
 		return {
@@ -487,7 +486,7 @@ export const deletePost = async (id: number): Promise<{ post: Post }> => {
 export const processTaxonomyTags = async (
 	tx: TransactionType,
 	tags: Tag[],
-	postId: number
+	postId: number,
 ): Promise<Tag[]> => {
 	// New tags are negative IDs
 	const existingTags = tags.filter(tag => tag.id > 0)
@@ -502,7 +501,7 @@ export const processTaxonomyTags = async (
 
 	// Filter tags that with name already exist
 	const tagsToInsert = newTags.filter(
-		newTag => !existingNewTags.some(tag => tag.name === newTag.name)
+		newTag => !existingNewTags.some(tag => tag.name === newTag.name),
 	)
 
 	// Insert new tags
@@ -515,7 +514,7 @@ export const processTaxonomyTags = async (
 					name: tag.name,
 					slug: tag.slug,
 					description: tag.description,
-				}))
+				})),
 			)
 			.returning()
 	}
@@ -537,7 +536,7 @@ export const processTaxonomyTags = async (
 			allTagIds.map(tagId => ({
 				postId: postId,
 				tagId: tagId,
-			}))
+			})),
 		)
 
 		return await tx
@@ -552,7 +551,7 @@ export const processTaxonomyTags = async (
 export const processTaxonomyCategories = async (
 	tx: TransactionType,
 	categories: Category[],
-	postId: number
+	postId: number,
 ): Promise<Category[]> => {
 	// New categories are negative IDs
 	const existingCats = categories.filter(cat => cat.id > 0)
@@ -567,7 +566,7 @@ export const processTaxonomyCategories = async (
 
 	// Filter cats that with name already exist
 	const catsToInsert = newCategories.filter(
-		newCat => !existingNewCats.some(cat => cat.name === newCat.name)
+		newCat => !existingNewCats.some(cat => cat.name === newCat.name),
 	)
 
 	// Insert new cats
@@ -580,7 +579,7 @@ export const processTaxonomyCategories = async (
 					name: cat.name,
 					slug: cat.slug,
 					description: cat.description,
-				}))
+				})),
 			)
 			.returning()
 	}
@@ -600,7 +599,7 @@ export const processTaxonomyCategories = async (
 			allCatIds.map(categoryId => ({
 				postId: postId,
 				categoryId: categoryId,
-			}))
+			})),
 		)
 
 		return await tx

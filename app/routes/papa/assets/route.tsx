@@ -1,7 +1,8 @@
 /**
  * Proxy requests to the presigned URL of the asset
  */
-import { type LoaderFunctionArgs, redirect } from 'react-router'
+import { redirect, type LoaderFunctionArgs } from 'react-router'
+
 import { auth } from '~/lib/auth/auth.server'
 import { getFileUrl } from '~/lib/db/asset.server'
 
@@ -15,7 +16,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	if (!key || !visibility) {
 		console.log('Key or visibility not found', key, visibility)
 		return redirect(
-			'/assets/error' + '?status=400' + '&statusText=Invalid parameters'
+			'/assets/error' + '?status=400' + '&statusText=Invalid parameters',
 		)
 	}
 
@@ -26,7 +27,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 		if (!isAdmin)
 			return redirect(
-				'/assets/error' + '?status=404' + '&statusText=File not found'
+				'/assets/error' + '?status=404' + '&statusText=File not found',
 			)
 	}
 
@@ -36,7 +37,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		return redirect(
 			'/assets/error' +
 				'?status=500' +
-				'&statusText=Error when getting presigned URL'
+				'&statusText=Error when getting presigned URL',
 		)
 	}
 
@@ -47,7 +48,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		return redirect(
 			'/assets/error' +
 				`?status=${response.status}` +
-				`&statusText=${response.statusText}`
+				`&statusText=${response.statusText}`,
 		)
 	}
 

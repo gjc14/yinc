@@ -71,21 +71,21 @@ export default config
 
 const filePathExample = join(
 	process.cwd(),
-	'app/routes/plugins/example-web.plugin/_web.plugin-example/route.tsx'
+	'app/routes/plugins/example-web.plugin/_web.plugin-example/route.tsx',
 )
 
 const filePathExampleWebConfig = join(
 	process.cwd(),
-	'app/routes/plugins/example-web.plugin/papa.config.ts'
+	'app/routes/plugins/example-web.plugin/papa.config.ts',
 )
 
 try {
 	await mkdir(
 		join(
 			process.cwd(),
-			'app/routes/plugins/example-web.plugin/_web.plugin-example'
+			'app/routes/plugins/example-web.plugin/_web.plugin-example',
 		),
-		{ recursive: true }
+		{ recursive: true },
 	)
 
 	await writeFile(filePathExample, examplePage.trim())
@@ -96,7 +96,7 @@ try {
 		} and ${filePathExampleWebConfig.split('app/routes')[1]}
         
         Navigate to '/plugin-example' to see this route in action
-        `.replace(/^ {8}/gm, '')
+        `.replace(/^ {8}/gm, ''),
 	)
 } catch (err) {
 	console.error('Error creating example web files:', err)

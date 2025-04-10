@@ -1,7 +1,8 @@
-import { Building, Command, LifeBuoy, Send } from 'lucide-react'
 import * as React from 'react'
 
 import type { UserWithRole } from 'better-auth/plugins'
+import { Building, Command, LifeBuoy, Send } from 'lucide-react'
+
 import {
 	Sidebar,
 	SidebarContent,
@@ -16,6 +17,7 @@ import {
 } from '~/routes/papa/admin/components/nav/nav-secondary'
 import { NavUser } from '~/routes/papa/admin/components/nav/nav-user'
 import type { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
+
 import { ServiceSwicher, type ServiceSwicherProps } from './service-swicher'
 
 const services: ServiceSwicherProps['services'] = [

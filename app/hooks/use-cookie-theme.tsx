@@ -1,4 +1,5 @@
 import { useRouteLoaderData } from 'react-router'
+
 import type { loader } from '~/root'
 
 export type Theme = 'light' | 'dark'

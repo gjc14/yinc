@@ -1,15 +1,14 @@
 import { memo, useEffect, useMemo, useState } from 'react'
 import {
-	type LoaderFunctionArgs,
-	type MetaFunction,
 	Outlet,
 	redirect,
 	useLoaderData,
 	useLocation,
 	useOutletContext,
+	type LoaderFunctionArgs,
+	type MetaFunction,
 } from 'react-router'
 
-import { FullScreenLoading } from '~/components/loading'
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
 import { Separator } from '~/components/ui/separator'
 import {
@@ -18,10 +17,12 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from '~/components/ui/sidebar'
+import { FullScreenLoading } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
 import { generateBreadcrumbs } from '~/lib/utils'
 import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
 import { getPluginConfigs } from '~/routes/plugins/utils/get-plugin-configs.server'
+
 import { validateAdminSession } from '../auth/utils'
 
 export const meta: MetaFunction = () => {
@@ -33,7 +34,7 @@ const parseSidebarStatus = (cookieHeader: string) => {
 		cookieHeader.split(';').map(cookie => {
 			const [name, value] = cookie.trim().split('=')
 			return [name, decodeURIComponent(value)]
-		})
+		}),
 	)
 
 	return cookies[SIDEBAR_COOKIE_NAME]
@@ -81,7 +82,7 @@ export default function Admin() {
 			image: admin.image ?? '/placeholders/avatar.png',
 			role: admin.role ?? 'admin',
 		}),
-		[admin]
+		[admin],
 	)
 
 	const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])

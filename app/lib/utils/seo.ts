@@ -1,3 +1,5 @@
+import type { Seo } from '~/lib/db/schema'
+
 export const generateSlug = (name: string) => {
 	return name
 		.replace(/^\s+|\s+$/g, '')
@@ -6,8 +8,6 @@ export const generateSlug = (name: string) => {
 		.replace(/\s+/g, '-')
 		.replace(/-+/g, '-')
 }
-
-import type { Seo } from '~/lib/db/schema'
 
 export const createMeta = (seo: Seo, url: URL) => {
 	const metaTags = []
@@ -87,7 +87,7 @@ export function generateSeoDescription(
 		maxLength?: number
 		keywordEmphasis?: boolean
 		detectLanguage?: boolean
-	} = {}
+	} = {},
 ): string {
 	// Set default options
 	const defaultOptions = {
@@ -101,7 +101,7 @@ export function generateSeoDescription(
 	if (settings.detectLanguage) {
 		const hasCJK =
 			/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/.test(
-				paragraph
+				paragraph,
 			)
 		if (hasCJK) {
 			settings.maxLength = Math.min(settings.maxLength, 100) // Limit CJK languages to 100 characters
@@ -176,7 +176,7 @@ export function extractKeywords(text: string): string[] {
 	// Detect if the text contains CJK characters.
 	const hasCJK =
 		/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/.test(
-			text
+			text,
 		)
 
 	let words: string[] = []

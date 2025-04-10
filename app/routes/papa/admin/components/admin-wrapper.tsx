@@ -11,7 +11,7 @@ const AdminSectionWrapper = ({
 		<section
 			className={cn(
 				'relative grow flex flex-col p-2 w-full h-auto gap-5 overflow-auto md:px-5 md:py-3',
-				className
+				className,
 			)}
 		>
 			{children}
@@ -30,7 +30,7 @@ const AdminHeader = ({
 		<div
 			className={cn(
 				'flex justify-between items-center flex-wrap gap-3',
-				className
+				className,
 			)}
 		>
 			<>{children}</>

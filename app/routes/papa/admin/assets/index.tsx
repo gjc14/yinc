@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useLoaderData, useSubmit, type ActionFunctionArgs } from 'react-router'
 
+import { and, eq } from 'drizzle-orm'
+import { CloudAlert } from 'lucide-react'
+
 import { Label } from '~/components/ui/label'
 import {
 	Select,
@@ -10,6 +13,7 @@ import {
 	SelectValue,
 } from '~/components/ui/select'
 import { db } from '~/lib/db/db.server'
+import { filesTable } from '~/lib/db/schema'
 import { capitalize, type ConventionalActionResponse } from '~/lib/utils'
 import {
 	AdminActions,
@@ -17,8 +21,10 @@ import {
 	AdminSectionWrapper,
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
+
 import { FileMetaSchema } from '../api/object-storage/schema'
 import { FileGrid } from './components/file-grid'
+import type { loader } from './resource'
 
 const displayOptions = ['all', 'image', 'video', 'audio', 'file'] as const
 
@@ -55,8 +61,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			.where(
 				and(
 					eq(filesTable.id, newFileMetaData.id),
-					eq(filesTable.key, newFileMetaData.key)
-				)
+					eq(filesTable.key, newFileMetaData.key),
+				),
 			)
 			.returning()
 		return Response.json({
@@ -71,10 +77,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	}
 }
 
-import { and, eq } from 'drizzle-orm'
-import { CloudAlert } from 'lucide-react'
-import { filesTable } from '~/lib/db/schema'
-import type { loader } from './resource'
 export { loader } from './resource'
 
 export default function AdminAsset() {
@@ -131,15 +133,15 @@ export default function AdminAsset() {
 					onFileUpdate={fileMeta => {
 						setFilesState(
 							filesState.map(file =>
-								file.id === fileMeta.id ? fileMeta : file
-							)
+								file.id === fileMeta.id ? fileMeta : file,
+							),
 						)
 						submit(
 							{ newFileMeta: JSON.stringify(fileMeta) },
 							{
 								method: 'POST',
 								navigate: false,
-							}
+							},
 						)
 					}}
 				/>

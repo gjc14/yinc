@@ -1,7 +1,8 @@
+import { useCallback, useState } from 'react'
+
 import { PopoverClose } from '@radix-ui/react-popover'
 import { Editor } from '@tiptap/react'
 import { Link, Unlink } from 'lucide-react'
-import { useCallback, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -11,6 +12,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '~/components/ui/popover'
+
 import { ToggleButton } from '../components/toggle-button'
 
 export const LinkUnlinkButtons = ({ editor }: { editor: Editor }) => {

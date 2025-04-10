@@ -7,6 +7,7 @@ import {
 	PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+
 import { S3 } from '~/lib/db/db.server'
 
 export const getUploadUrl = async ({
@@ -35,7 +36,7 @@ export const getUploadUrl = async ({
 				ContentType: type,
 				ChecksumSHA256: checksum,
 			}),
-			{ expiresIn: 300 }
+			{ expiresIn: 300 },
 		)
 		return presignedUrl
 	} catch (error) {
@@ -72,6 +73,6 @@ export const deleteFile = async (key: string) => {
 		new DeleteObjectCommand({
 			Bucket: 'papa',
 			Key: key,
-		})
+		}),
 	)
 }

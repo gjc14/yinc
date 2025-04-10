@@ -1,8 +1,9 @@
-import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react'
-import { useCompletion } from 'ai/react'
-import { Loader, RotateCcw, StopCircle } from 'lucide-react'
 import { useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+
+import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
+import { useCompletion } from 'ai/react'
+import { Loader, RotateCcw, StopCircle } from 'lucide-react'
 import remarkGfm from 'remark-gfm'
 
 import { Button } from '~/components/ui/button'
