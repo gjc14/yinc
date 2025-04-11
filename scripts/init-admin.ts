@@ -2,8 +2,9 @@ import 'dotenv/config'
 
 import * as readline from 'readline'
 
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
+import { pgSchema } from 'drizzle-orm/pg-core'
 
 import { auth } from '~/lib/auth/auth.server'
 import type { TransactionType } from '~/lib/db/db.server'
@@ -82,6 +83,7 @@ async function checkAndCreateAdmin() {
 			console.log('正在建立預設資料 (Inserting default data)...')
 			await db.transaction(async tx => {
 				await insertDefaultData(tx, user.id)
+				tx.execute(sql`create schema if not exists ${pgSchema('default')}`)
 			})
 			console.log('預設資料已建立 (Default data created)')
 
