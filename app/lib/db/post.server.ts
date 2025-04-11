@@ -188,6 +188,23 @@ export const getPostIdsByCategorySlugs = async (
 	return { categoriessWithPostIds: catsWithPostIds, postIds: filteredPostIds }
 }
 
+export const getPostsByAuthor = async (
+	authorId: string,
+): Promise<{ posts: typeof posts }> => {
+	const posts = await db.query.postsTable.findMany({
+		where: (post, { eq }) => eq(post.authorId, authorId),
+		with: {
+			postsToTags: {
+				columns: {
+					postId: true,
+				},
+			},
+		},
+	})
+
+	return { posts }
+}
+
 export const getPost = async (
 	id: number,
 ): Promise<{ post: PostWithRelations | null }> => {
