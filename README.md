@@ -201,12 +201,30 @@ useEffect(() => {
 }, [fetcher])
 ```
 
+## Auth
+
+### Hierarchy
+
+```ts
+Organization
+├── (Team)
+└── └── Member
+```
+
+### Sign Up
+
+- For new admin user, they should always be invited/added by current admin.
+
+### Sign In
+
+- For safety concern, now only Magic Link method is available.
+
 ## Admin Components
 
 ### Data Table
 
-Reference:
-[Tanstack Table Columns Definitions Guide](https://tanstack.com/table/latest/docs/guide/column-defs)
+- Reference:
+  [Tanstack Table Columns Definitions Guide](https://tanstack.com/table/latest/docs/guide/column-defs)
 
 ```tsx
 import { type ColumnDef } from '@tanstack/react-table'
