@@ -1,9 +1,3 @@
-/**
- * Get all plugin folder which match *.plugin in directory /app/routes/plugins as flat route.
- */
-import * as fs from 'fs'
-import * as path from 'path'
-
 import {
 	index,
 	layout,
@@ -12,7 +6,9 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
-export default [
+// import { cv } from './plugins/cv/routes'
+
+const systemRoutes = [
 	layout('./routes/web/layout.tsx', [
 		index('./routes/web/index/route.tsx'),
 		...prefix('/blog', [
@@ -134,17 +130,5 @@ export default [
 	route('/sitemap.xml', './routes/_sitemap.xml.ts'),
 ] satisfies RouteConfig
 
-const pluginsDir = path.join(__dirname, 'routes', 'plugins')
-
-function getPluginRoutes(): string[] {
-	try {
-		const files = fs.readdirSync(pluginsDir)
-		return files
-			.filter(file => file.endsWith('.plugin'))
-			.map(file => path.join('routes', 'plugins', file))
-	} catch (error) {
-		console.error('Error reading plugins directory:', error)
-		return []
-	}
-}
-console.log(getPluginRoutes())
+export default [...systemRoutes]
+// export default [...systemRoutes, ...cv()]

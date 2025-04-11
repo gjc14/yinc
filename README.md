@@ -132,6 +132,32 @@ admin panel.
 
 # Documents
 
+## Routes
+
+To add customized routes in this project, just defines a `routes.ts` in the
+top-level of your plugin folder. Defines with
+[React Router Routes](https://reactrouter.com/start/framework/routing)
+
+```tsx
+// plugins/cv/routes.ts
+import {
+	index,
+	layout,
+	prefix,
+	type RouteConfig,
+} from '@react-router/dev/routes'
+
+const systemRoutes = [
+	...prefix('/cv', [
+		layout('./plugins/cv/layout.tsx', [index('./plugins/cv/index/route.tsx')]),
+	]),
+] satisfies RouteConfig
+
+export const cv = () => {
+	return systemRoutes
+}
+```
+
 ## Action
 
 ### Conventional Return
