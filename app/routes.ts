@@ -9,27 +9,26 @@ import {
 // import { cv } from './plugins/cv/routes'
 
 const systemRoutes = [
-	layout('./routes/web/layout.tsx', [
-		index('./routes/web/index/route.tsx'),
-		...prefix('/blog', [
-			layout('./routes/web/blog/layout.tsx', [
-				index('./routes/web/blog/index/route.tsx'),
-				route(':postSlug', './routes/web/blog/post-slug/route.tsx'),
-				route('/category', './routes/web/blog/category/route.tsx'),
-				route('/tag', './routes/web/blog/tag/route.tsx'),
-				route('/subscribe', './routes/web/blog/subscribe/route.tsx'),
+	layout('./routes/layout.tsx', [
+		layout('./routes/web/layout.tsx', [
+			index('./routes/web/index/route.tsx'),
+			...prefix('/blog', [
+				layout('./routes/web/blog/layout.tsx', [
+					index('./routes/web/blog/index/route.tsx'),
+					route(':postSlug', './routes/web/blog/post-slug/route.tsx'),
+					route('/category', './routes/web/blog/category/route.tsx'),
+					route('/tag', './routes/web/blog/tag/route.tsx'),
+					route('/subscribe', './routes/web/blog/subscribe/route.tsx'),
+				]),
 			]),
+			route('/*', './routes/web/$/route.tsx'),
+
+			// Adding web plugins
 		]),
-		route('/*', './routes/web/$/route.tsx'),
 
-		// Adding web plugins
-	]),
+		// Auth
+		route('/api/auth/*', './routes/auth.ts'),
 
-	// Auth
-	route('/api/auth/*', './routes/auth.ts'),
-
-	// PAPA layout
-	layout('./routes/papa/layout.tsx', [
 		// PAPA assets resource route
 		route('assets/:visibility', './routes/papa/assets/route.tsx'),
 		route('assets/error', './routes/papa/assets/error.tsx'),
