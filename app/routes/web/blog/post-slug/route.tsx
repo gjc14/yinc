@@ -12,14 +12,15 @@ import { generateHTML } from '@tiptap/html'
 import { common, createLowlight } from 'lowlight'
 
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
-import { getPostBySlug } from '~/lib/db/post.server'
+import { getPostBySlug, type PostWithRelations } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
 
+import { MainPost } from './components/main-post'
+import { PostFooter } from './components/post-footer'
+import { PostMeta } from './components/post-meta'
 import { hilightInnerHTML } from './highlight-inner-html'
-import { PostFooter } from './post-footer'
-import { PostMeta } from './post-meta'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (!data || !data.meta) {
@@ -97,15 +98,7 @@ export default function BlogPost() {
 
 	return (
 		<div className="w-full max-w-prose min-h-screen px-5 mt-32 text-pretty xl:px-0">
-			<div className="space-y-5">
-				<h1 className="text-3xl font-bold tracking-tight leading-normal md:text-4xl md:leading-tight">
-					{post.title}
-				</h1>
-
-				<PostMeta post={post} />
-			</div>
-
-			<article dangerouslySetInnerHTML={{ __html: post.content || '' }} />
+			<MainPost post={post} />
 
 			<PostFooter post={post} next={nextPost} prev={prevPost} />
 		</div>

@@ -6,7 +6,7 @@ import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 
-import type { PostLoaderType } from './route'
+import type { PostLoaderType } from '../route'
 
 export const PostFooter = ({
 	post,

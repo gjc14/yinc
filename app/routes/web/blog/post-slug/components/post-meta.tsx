@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 
-import type { PostLoaderType } from './route'
+import type { PostLoaderType } from '../route'
 
 export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 	return (
@@ -25,7 +25,7 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 					</Avatar>
 					<div className="flex flex-col">
 						<Button
-							className="w-fit flex items-center font-medium text-base px-0"
+							className="w-fit h-6 flex items-center font-medium text-base px-0"
 							variant={'link'}
 						>
 							{post.author?.name || post.author?.email}
