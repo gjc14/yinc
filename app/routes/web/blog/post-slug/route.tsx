@@ -3,7 +3,6 @@ import 'highlight.js/styles/base16/atelier-dune.min.css'
 import { useEffect } from 'react'
 import {
 	useLoaderData,
-	useNavigate,
 	type ClientLoaderFunctionArgs,
 	type LoaderFunctionArgs,
 	type MetaFunction,
@@ -11,7 +10,6 @@ import {
 
 import { generateHTML } from '@tiptap/html'
 import { common, createLowlight } from 'lowlight'
-import { ArrowLeft } from 'lucide-react'
 
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
 import { getPostBySlug } from '~/lib/db/post.server'
@@ -19,7 +17,6 @@ import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
 
-import { FeaturedImage } from './featured-image'
 import { hilightInnerHTML } from './highlight-inner-html'
 import { PostFooter } from './post-footer'
 import { PostMeta } from './post-meta'
@@ -88,7 +85,6 @@ export const clientLoader = async ({
 clientLoader.hydrate = true
 
 export default function BlogPost() {
-	const navigate = useNavigate()
 	const { post, prevPost, nextPost } = useLoaderData<typeof loader>()
 	const lowlight = createLowlight(common)
 	const languages = lowlight.listLanguages()
@@ -100,35 +96,18 @@ export default function BlogPost() {
 	}, [post])
 
 	return (
-		<div className="w-full max-w-prose min-h-screen px-5 text-pretty xl:px-0">
-			<ArrowLeft
-				size={20}
-				className="absolute mt-16 cursor-pointer"
-				onClick={() => navigate(-1)}
-			/>
-
-			<div className="pt-28 space-y-6">
+		<div className="w-full max-w-prose min-h-screen px-5 mt-32 text-pretty xl:px-0">
+			<div className="space-y-5">
 				<h1 className="text-3xl font-bold tracking-tight leading-normal md:text-4xl md:leading-tight">
 					{post.title}
 				</h1>
 
-				<FeaturedImage
-					src={post.featuredImage || 'https://placehold.co/600x400'}
-					alt={post.title + ' image'}
-					description={post.title + ' image'}
-				/>
-
 				<PostMeta post={post} />
 			</div>
 
-			<article
-				className="w-full mx-auto text-xl"
-				dangerouslySetInnerHTML={{ __html: post.content || '' }}
-			/>
+			<article dangerouslySetInnerHTML={{ __html: post.content || '' }} />
 
-			<div>
-				<PostFooter post={post} next={nextPost} prev={prevPost} />
-			</div>
+			<PostFooter post={post} next={nextPost} prev={prevPost} />
 		</div>
 	)
 }

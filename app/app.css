@@ -147,15 +147,16 @@ layer(base);
 /* tailwind typography */
 @layer components {
 	article {
-		@apply prose tracking-wide leading-loose dark:prose-invert;
+		@apply prose tracking-wide leading-loose prose-blockquote:-ml-3.5 prose-blockquote:pl-3 dark:prose-invert md:prose-blockquote:-ml-5 md:prose-blockquote:pl-5;
 	}
 
 	article p {
 		@apply font-serif-tw text-base md:text-lg;
 	}
 
-	/* Control margin top by article or its wrapper instead of prose */
-	article > *:first-child {
+	/* Remove margin top from prose */
+	article > *:first-child,
+	article > *:first-child * {
 		margin-top: 0;
 	}
 

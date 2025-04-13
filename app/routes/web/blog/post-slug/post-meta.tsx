@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { Fragment } from 'react/jsx-runtime'
 
 import { LibraryBig } from 'lucide-react'
 
@@ -10,12 +11,12 @@ import type { PostLoaderType } from './route'
 
 export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 	return (
-		<div className="w-full mx-auto py-6">
+		<div className="w-full mx-auto py-2">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<Avatar className="h-10 w-10">
 						<AvatarImage
-							src={post.author?.imageUri || '/placeholders/avatar.png'}
+							src={post.author?.image || '/placeholders/avatar.png'}
 							alt={post.author?.name || 'Author avatar'}
 						/>
 						<AvatarFallback>
@@ -50,7 +51,7 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 						<LibraryBig size={16} className="mr-2 shrink-0" />
 						<div className="mr-auto">
 							{post.categories.map((c, i) => (
-								<>
+								<Fragment key={i}>
 									<Link to={`/blog/category?q=${c.slug}`}>
 										<Button variant={'link'} className="h-fit p-0">
 											{c.name}
@@ -59,7 +60,7 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 									{i < post.categories.length - 1 && (
 										<span className="px-1.5">&</span>
 									)}
-								</>
+								</Fragment>
 							))}
 						</div>
 
