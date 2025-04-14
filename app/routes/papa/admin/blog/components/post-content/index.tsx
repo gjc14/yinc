@@ -43,6 +43,7 @@ interface PostContentProps {
 	tags: Tag[]
 	categories: Category[]
 	onDirtyChange: (isDirty: boolean) => void
+	onSave?: () => void
 }
 
 export interface PostContentHandle {
@@ -52,7 +53,7 @@ export interface PostContentHandle {
 // TODO: Add featured image; edit author; publish schedule
 // TODO: Editor upload image; link setting popup
 export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
-	({ post, tags, categories, onDirtyChange }, ref) => {
+	({ post, tags, categories, onDirtyChange, onSave }, ref) => {
 		const fetcher = useFetcher<ConventionalActionResponse>()
 		const navigate = useNavigate()
 
@@ -290,6 +291,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 								onBlur={() => {
 									contentWrapperRef.current?.classList.remove('border-primary')
 								}}
+								onSave={onSave}
 							/>
 						</div>
 					</div>

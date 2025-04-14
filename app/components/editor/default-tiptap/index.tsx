@@ -32,6 +32,7 @@ interface EditorProps {
 	}) => void
 	onFocus?: () => void
 	onBlur?: () => void
+	onSave?: () => void
 	className?: string
 	menuBarClassName?: string
 	editorContentClassName?: string
@@ -58,7 +59,7 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 		},
 		editorProps: {
 			attributes: {
-				class: 'prose-article focus:outline-hidden',
+				class: 'mt-6 prose-article focus:outline-hidden',
 			},
 		},
 	})
@@ -150,6 +151,14 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 				{/* {editor && <DefaultFloatingMenu editor={editor} />} */}
 				<EditorContent
 					onClick={() => editor?.commands.focus()}
+					onKeyDown={e => {
+						e.stopPropagation()
+
+						if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+							e.preventDefault()
+							props.onSave?.()
+						}
+					}}
 					editor={editor}
 					className={cn('grow cursor-text', props.editorContentClassName)}
 				/>

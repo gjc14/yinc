@@ -17,7 +17,7 @@ import {
 import { Button } from '~/components/ui/button'
 import { FullScreenLoading } from '~/components/loading'
 import type { PostWithRelations } from '~/lib/db/post.server'
-import { PostStatus, type User } from '~/lib/db/schema'
+import { PostStatus, user as userTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
@@ -40,7 +40,18 @@ export default function AdminNewPost() {
 	const postContentRef = useRef<PostContentHandle>(null)
 	const [isDirty, setIsDirty] = useState(false)
 
-	const post = useMemo(() => generateNewPost(admin), [admin])
+	const post = useMemo(
+		() =>
+			generateNewPost({
+				...admin,
+				image: admin.image || null,
+				role: admin.role || null,
+				banned: admin.banned || null,
+				banReason: admin.banReason || null,
+				banExpires: admin.banExpires || null,
+			}),
+		[admin],
+	)
 
 	const isSubmitting = fetcher.state === 'submitting'
 	const isNavigating = navigation.state === 'loading'
@@ -55,6 +66,44 @@ export default function AdminNewPost() {
 			}
 		}
 	}, [fetcher])
+
+	const handleCreate = () => {
+		const postState = postContentRef.current?.getPostState()
+		if (!postState) return
+
+		const date = new Date()
+		const now = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(
+			2,
+			'0',
+		)}/${String(date.getDate()).padStart(
+			2,
+			'0',
+		)}@${String(date.getHours()).padStart(2, '0')}:${String(
+			date.getMinutes(),
+		).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
+		// Remove date fields and set default values
+		const postReady = {
+			...postState,
+			title: postState.title || `Post-${now}`,
+			slug: postState.slug || generateSlug(postState.title || `Post-${now}`),
+			createdAt: undefined,
+			updatedAt: undefined,
+			seo: {
+				...postState.seo,
+				createdAt: undefined,
+				updatedAt: undefined,
+			},
+		}
+
+		fetcher.submit(JSON.stringify(postReady), {
+			method: 'POST', // Create
+			encType: 'application/json',
+			action: '/admin/blog/resource',
+		})
+
+		setIsDirty(false)
+		window.localStorage.removeItem(`dirty-post-${-1}`)
+	}
 
 	return (
 		<AdminSectionWrapper className={`${isNavigating ? 'overflow-hidden' : ''}`}>
@@ -98,44 +147,7 @@ export default function AdminNewPost() {
 						type="submit"
 						size={'sm'}
 						disabled={!isDirty}
-						onClick={() => {
-							const postState = postContentRef.current?.getPostState()
-							if (!postState) return
-
-							const date = new Date()
-							const now = `${date.getFullYear()}/${String(
-								date.getMonth() + 1,
-							).padStart(2, '0')}/${String(date.getDate()).padStart(
-								2,
-								'0',
-							)}@${String(date.getHours()).padStart(2, '0')}:${String(
-								date.getMinutes(),
-							).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-							// Remove date fields and set default values
-							const postReady = {
-								...postState,
-								title: postState.title || `Post-${now}`,
-								slug:
-									postState.slug ||
-									generateSlug(postState.title || `Post-${now}`),
-								createdAt: undefined,
-								updatedAt: undefined,
-								seo: {
-									...postState.seo,
-									createdAt: undefined,
-									updatedAt: undefined,
-								},
-							}
-
-							fetcher.submit(JSON.stringify(postReady), {
-								method: 'POST', // Create
-								encType: 'application/json',
-								action: '/admin/blog/resource',
-							})
-
-							setIsDirty(false)
-							window.localStorage.removeItem(`dirty-post-${-1}`)
-						}}
+						onClick={handleCreate}
 					>
 						{isSubmitting ? (
 							<Loader2 size={16} className="animate-spin" />
@@ -156,12 +168,15 @@ export default function AdminNewPost() {
 					return categoryWithoutSub
 				})}
 				onDirtyChange={isDirty => setIsDirty(isDirty)}
+				onSave={handleCreate}
 			/>
 		</AdminSectionWrapper>
 	)
 }
 
-const generateNewPost = (user: User): PostWithRelations => {
+const generateNewPost = (
+	user: typeof userTable.$inferSelect,
+): PostWithRelations => {
 	const now = new Date()
 	return {
 		id: -1,

@@ -45,6 +45,44 @@ export default function AdminPost() {
 		return <h2 className="grow flex items-center justify-center">Not found</h2>
 	}
 
+	const handleSave = () => {
+		const postState = postContentRef.current?.getPostState()
+		if (!postState || !isDirty || isSubmitting) return
+
+		const date = new Date()
+		const now = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(
+			2,
+			'0',
+		)}/${String(date.getDate()).padStart(
+			2,
+			'0',
+		)}@${String(date.getHours()).padStart(2, '0')}:${String(
+			date.getMinutes(),
+		).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
+		// Remove date fields and set default values
+		const postReady = {
+			...postState,
+			title: postState.title || `Post-${now}`,
+			slug: postState.slug || generateSlug(postState.title || `Post-${now}`),
+			createdAt: undefined,
+			updatedAt: undefined,
+			seo: {
+				...postState.seo,
+				createdAt: undefined,
+				updatedAt: undefined,
+			},
+		}
+
+		fetcher.submit(JSON.stringify(postReady), {
+			method: 'PUT', // Update
+			encType: 'application/json',
+			action: '/admin/blog/resource',
+		})
+
+		setIsDirty(false)
+		window.localStorage.removeItem(`dirty-post-${post.id}`)
+	}
+
 	return (
 		<AdminSectionWrapper>
 			<AdminHeader>
@@ -111,44 +149,7 @@ export default function AdminPost() {
 						type="submit"
 						size={'sm'}
 						disabled={!isDirty}
-						onClick={() => {
-							const postState = postContentRef.current?.getPostState()
-							if (!postState) return
-
-							const date = new Date()
-							const now = `${date.getFullYear()}/${String(
-								date.getMonth() + 1,
-							).padStart(2, '0')}/${String(date.getDate()).padStart(
-								2,
-								'0',
-							)}@${String(date.getHours()).padStart(2, '0')}:${String(
-								date.getMinutes(),
-							).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-							// Remove date fields and set default values
-							const postReady = {
-								...postState,
-								title: postState.title || `Post-${now}`,
-								slug:
-									postState.slug ||
-									generateSlug(postState.title || `Post-${now}`),
-								createdAt: undefined,
-								updatedAt: undefined,
-								seo: {
-									...postState.seo,
-									createdAt: undefined,
-									updatedAt: undefined,
-								},
-							}
-
-							fetcher.submit(JSON.stringify(postReady), {
-								method: 'PUT', // Update
-								encType: 'application/json',
-								action: '/admin/blog/resource',
-							})
-
-							setIsDirty(false)
-							window.localStorage.removeItem(`dirty-post-${post.id}`)
-						}}
+						onClick={handleSave}
 					>
 						{isSubmitting ? (
 							<Loader2 size={16} className="animate-spin" />
@@ -169,6 +170,7 @@ export default function AdminPost() {
 					return categoryWithoutSub
 				})}
 				onDirtyChange={isDirty => setIsDirty(isDirty)}
+				onSave={handleSave}
 			/>
 		</AdminSectionWrapper>
 	)
