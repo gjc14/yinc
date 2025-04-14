@@ -1,5 +1,7 @@
 import {
 	forwardRef,
+	memo,
+	useCallback,
 	useEffect,
 	useImperativeHandle,
 	useRef,
@@ -34,6 +36,7 @@ import { DangerZone } from './danger-zone'
 import { PostMetaPart } from './post-meta-part'
 import { SeoPart } from './seo-part'
 import { TaxonomyPart } from './taxonomy-part'
+import { convertStringDatesToDateObjects } from './utils'
 
 interface PostContentProps {
 	post: PostWithRelations
@@ -70,13 +73,24 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 			isDirtyPostInitialized.current = true
 		}
 
+		const memoDateConverter = useCallback((localDirtyPost: any) => {
+			return convertStringDatesToDateObjects(localDirtyPost)
+		}, [])
+
 		const recoverLocalStorageContent = () => {
 			if (!window) return
-			const postContentLocal = JSON.parse(
-				window.localStorage.getItem(postLocalStorageKey) || '{}',
-			)
-			setPostState(postContentLocal)
-			editorRef.current?.updateContent(postContentLocal.content)
+			const postContentString = window.localStorage.getItem(postLocalStorageKey)
+			if (!postContentString) return
+
+			const postContentLocal = JSON.parse(postContentString)
+
+			const postWithDates = memoDateConverter(postContentLocal)
+
+			setPostState(postWithDates)
+			// Ensure editor content is also updated if it exists in the stored object
+			if (postWithDates.content !== undefined) {
+				editorRef.current?.updateContent(postWithDates.content)
+			}
 
 			isDirtyPostInitialized.current = true
 		}
