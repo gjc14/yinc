@@ -35,17 +35,20 @@ export const MainPost = ({
 				<PostMeta post={post} />
 			</div>
 
-			<article
-				dangerouslySetInnerHTML={
-					editable
-						? undefined
-						: {
-								__html: post.content || '',
-							}
-				}
-			>
-				{editable ? children : null}
-			</article>
+			{editable ? (
+				children
+			) : (
+				<article
+					className="prose-article"
+					dangerouslySetInnerHTML={
+						editable
+							? undefined
+							: {
+									__html: post.content || '',
+								}
+					}
+				></article>
+			)}
 		</>
 	)
 }
