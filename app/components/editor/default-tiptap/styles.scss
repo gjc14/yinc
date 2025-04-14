@@ -1,17 +1,15 @@
 /* Basic editor styles */
 .tiptap {
-	// Code area
-	pre {
-		@apply border border-transparent bg-zinc-950 dark:bg-zinc-900 dark:border-border;
-	}
-
-	p code {
-		@apply bg-muted rounded-lg py-1 px-2;
-	}
-
 	p.is-empty::before {
-		@apply h-0 float-left text-muted-foreground/50 text-base pointer-events-none;
 		content: attr(data-placeholder);
+		position: absolute;
+		color: hsl(var(--muted-foreground));
+		font-size: var(--text-base);
+		float: left;
+		height: calc(var(--spacing) * 0);
+		opacity: 0.8;
+		pointer-events: none;
+		user-select: none;
 	}
 
 	/* Task list specific styles */
