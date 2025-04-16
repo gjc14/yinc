@@ -70,10 +70,8 @@ const MemoAdminSidebar = memo(AdminSidebar)
 export default function Admin() {
 	const adminLoaderData = useLoaderData<typeof loader>()
 	const { admin, pluginRoutes, sidebarStatus } = adminLoaderData
-	const location = useLocation()
 	const { isPending } = authClient.useSession()
 	const [isMounted, setIsMounted] = useState(false)
-	const breadcrumbPaths = generateBreadcrumbs(location.pathname)
 
 	const memoizedUser = useMemo(
 		() => ({
@@ -85,6 +83,7 @@ export default function Admin() {
 		[admin],
 	)
 
+	const MemoHeaderWithBreadcrumb = memo(HeaderWithBreadcrumb)
 	const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])
 
 	useEffect(() => {
@@ -99,19 +98,28 @@ export default function Admin() {
 			/>
 			<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
 				{isMounted && isPending && <FullScreenLoading />}
-				<header className="flex my-3 shrink-0 items-center gap-2">
-					<div className="flex items-center gap-2 px-4">
-						<SidebarTrigger className="-ml-1" />
-						<Separator orientation="vertical" className="mr-2 h-4" />
-						<Breadcrumb>
-							<BreadcrumbList>{breadcrumbPaths}</BreadcrumbList>
-						</Breadcrumb>
-					</div>
-				</header>
+				<MemoHeaderWithBreadcrumb />
 
 				<Outlet context={adminLoaderData} />
 			</SidebarInset>
 		</SidebarProvider>
+	)
+}
+
+const HeaderWithBreadcrumb = () => {
+	const location = useLocation()
+	const breadcrumbPaths = generateBreadcrumbs(location.pathname)
+
+	return (
+		<header className="flex my-3 shrink-0 items-center gap-2">
+			<div className="flex items-center gap-2 px-4">
+				<SidebarTrigger className="-ml-1" />
+				<Separator orientation="vertical" className="mr-2 h-4" />
+				<Breadcrumb>
+					<BreadcrumbList>{breadcrumbPaths}</BreadcrumbList>
+				</Breadcrumb>
+			</div>
+		</header>
 	)
 }
 
