@@ -46,10 +46,6 @@ const systemRoutes = [
 				// Admin API
 				...prefix('/api', [
 					route('/ai/chat', './routes/papa/admin/api/ai-chat/route.tsx'),
-					route(
-						'/object-storage',
-						'./routes/papa/admin/api/object-storage/route.tsx',
-					),
 				]),
 				// Assets
 				...prefix('/assets', [

@@ -1,11 +1,13 @@
 import { useState } from 'react'
 
+import type { FileMetadata } from '~/lib/db/schema'
 import { isConventionalError } from '~/lib/utils'
 import {
-	PresignResponseSchema,
-	type FileMetaWithFile,
+	presignUrlResponseSchema,
 	type PresignRequest,
-} from '~/routes/papa/admin/api/object-storage/schema'
+} from '~/routes/papa/admin/assets/schema'
+
+export type FileWithFileMetadata = FileMetadata & { file: File }
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types#see_also
@@ -53,67 +55,60 @@ async function generateChecksum(file: File): Promise<string> {
 	return hashHex
 }
 
-const objectStorageAPI = '/admin/api/object-storage'
+const api = '/admin/assets/resource'
 
 /**
  * Fetch the api to get presigned PUT URLs, and new metadata for the files
- * @param files
- * @returns files with presigned PUT URLs from storage, and id, updatedAt from database
+ * @param files - { File & { key: string }}[] - array of files with key
+ * @returns { FileWithFileMetadata & { presignedUrl: string }}[] - array of file and metadata with presigned URL
  */
 export const fetchPresignedPutUrls = async (
-	files: FileMetaWithFile[],
-): Promise<
-	(FileMetaWithFile & {
-		id: number
-		updatedAt: string
-		presignedUrl: string
-	})[]
-> => {
+	files: (File & { key: string })[],
+): Promise<(FileWithFileMetadata & { presignedUrl: string })[]> => {
 	try {
-		const fileDataPromise = files.map(async file => {
-			const fileChecksum = await generateChecksum(file.file)
-			const fileData: PresignRequest[number] = {
+		const fileMetadataPromise = files.map(async file => {
+			const fileChecksum = await generateChecksum(file)
+			const fileMetadata: PresignRequest[number] = {
 				key: file.key,
-				name: file.name,
-				type: file.file.type,
-				size: file.file.size,
+				type: file.type,
+				size: file.size,
 				checksum: fileChecksum,
-				description: file.description ?? '',
+				filename: file.name,
 			}
-			return fileData
+			return fileMetadata
 		})
 
-		const fileData: PresignRequest = await Promise.all(fileDataPromise)
+		const fileMetadata = await Promise.all(fileMetadataPromise)
 
-		const resPUTPresignedUrls = await fetch(objectStorageAPI, {
-			method: 'PUT',
-			body: JSON.stringify(fileData),
+		const postPresignedUrl = await fetch(api, {
+			method: 'POST',
+			body: JSON.stringify(fileMetadata),
 			headers: {
 				'Content-Type': 'application/json',
 			},
 		})
 
-		if (!resPUTPresignedUrls.ok) {
-			throw new Error(`HTTP error! status: ${resPUTPresignedUrls.status}`)
+		if (!postPresignedUrl.ok) {
+			throw new Error(`HTTP error! status: ${postPresignedUrl.status}`)
 		}
 
-		const responsePayload = await resPUTPresignedUrls.json()
+		const responsePayload = await postPresignedUrl.json()
 
 		if (isConventionalError(responsePayload)) {
 			throw new Error(responsePayload.err)
 		}
 
-		const validatedData = PresignResponseSchema.parse(responsePayload.data)
+		const presignedUrls = presignUrlResponseSchema.parse(responsePayload.data)
 
 		// Update files with presigned URLs, and new id, updatedAt
 		const updatedFiles = files.map(file => {
-			const presignData = validatedData.urls.find(url => url.key === file.key)
-			if (!presignData) throw new Error('Presign data not found')
+			const matched = presignedUrls.find(url => url.metadata.key === file.key)
+			if (!matched) throw new Error('Presign data not found')
+			const { metadata, presignedUrl } = matched
 			return {
-				...file,
-				id: presignData.id,
-				updatedAt: presignData.updatedAt,
-				presignedUrl: presignData.presignedUrl,
+				file: file,
+				...metadata,
+				presignedUrl: presignedUrl,
 			}
 		})
 		return updatedFiles
@@ -129,7 +124,7 @@ export const fetchPresignedPutUrls = async (
  */
 export const deleteFileFetch = async (key: string) => {
 	try {
-		const res = await fetch(objectStorageAPI, {
+		const res = await fetch(api, {
 			method: 'DELETE',
 			body: JSON.stringify({ key }),
 			headers: {
@@ -161,7 +156,7 @@ export const useFileUpload = () => {
 	const [uploadProgress, setUploadProgress] = useState<UploadState>({})
 
 	const uploadSingleFile = async (
-		file: FileMetaWithFile & { presignedUrl: string },
+		file: FileWithFileMetadata & { presignedUrl: string },
 	) => {
 		return new Promise<void>((resolve, reject) => {
 			const xhr = new XMLHttpRequest()
@@ -237,7 +232,7 @@ export const useFileUpload = () => {
 	}
 
 	const uploadSingleFileWithRetry = async (
-		file: FileMetaWithFile & { presignedUrl: string },
+		file: FileWithFileMetadata & { presignedUrl: string },
 		retries = 3,
 	): Promise<void> => {
 		try {
@@ -256,7 +251,7 @@ export const useFileUpload = () => {
 	}
 
 	const uploadToPresignedUrl = async (
-		files: (FileMetaWithFile & { presignedUrl: string })[],
+		files: (FileWithFileMetadata & { presignedUrl: string })[],
 	) => {
 		// Initialize progress state for all files
 		setUploadProgress(prev => {

@@ -27,6 +27,8 @@ export const filesTable = pgTable(
 		size: integer('size').notNull(),
 		name: varchar('name', { length: 255 }).notNull(),
 		description: varchar('description', { length: 255 }),
+		star: integer('star').default(0),
+		garbage: integer('garbage').default(0),
 
 		ownerId: text('owner_id').references(() => user.id, {
 			onDelete: 'set null',

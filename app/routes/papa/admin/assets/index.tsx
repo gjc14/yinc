@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useLoaderData, useSubmit, type ActionFunctionArgs } from 'react-router'
+import { useLoaderData, useSubmit } from 'react-router'
 
-import { and, eq } from 'drizzle-orm'
 import { CloudAlert } from 'lucide-react'
 
 import { Label } from '~/components/ui/label'
@@ -12,9 +11,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '~/components/ui/select'
-import { db } from '~/lib/db/db.server'
-import { filesTable } from '~/lib/db/schema'
-import { capitalize, type ConventionalActionResponse } from '~/lib/utils'
+import { capitalize } from '~/lib/utils'
 import {
 	AdminActions,
 	AdminHeader,
@@ -22,61 +19,11 @@ import {
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
 
-import { FileMetaSchema } from '../api/object-storage/schema'
 import { FileGrid } from './components/file-grid'
 import type { loader } from './resource'
 import { MIMETypes } from './utils'
 
 const displayOptions = ['all', 'file', ...MIMETypes]
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-	if (request.method !== 'POST') {
-		return new Response('Method Not Allowed', { status: 405 })
-	}
-
-	const formData = await request.formData()
-	const newFileMetaString = formData.get('newFileMeta')
-
-	if (!newFileMetaString || typeof newFileMetaString !== 'string') {
-		return new Response('Invalid file metadata', { status: 400 })
-	}
-
-	const {
-		success,
-		data: newFileMetaData,
-		error,
-	} = FileMetaSchema.safeParse(JSON.parse(newFileMetaString))
-	if (!success) {
-		return Response.json({
-			err: 'Invalid file metadata',
-		} satisfies ConventionalActionResponse)
-	}
-
-	try {
-		const [newFile] = await db
-			.update(filesTable)
-			.set({
-				name: newFileMetaData.name,
-				description: newFileMetaData.description,
-			})
-			.where(
-				and(
-					eq(filesTable.id, newFileMetaData.id),
-					eq(filesTable.key, newFileMetaData.key),
-				),
-			)
-			.returning()
-		return Response.json({
-			msg: 'File updated',
-			data: newFileMetaData,
-		} satisfies ConventionalActionResponse)
-	} catch (error) {
-		console.log('Error updating file', error)
-		return Response.json({
-			err: 'Failed to update file',
-		} satisfies ConventionalActionResponse)
-	}
-}
 
 export { loader } from './resource'
 
