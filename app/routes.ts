@@ -31,7 +31,7 @@ const systemRoutes = [
 		route('/api/auth/*', './routes/auth.ts'),
 
 		// PAPA assets resource route
-		route('assets/:visibility', './routes/papa/assets/route.tsx'),
+		route('assets/:assetId', './routes/papa/assets/route.tsx'),
 		route('assets/error', './routes/papa/assets/error.tsx'),
 
 		// Auth

@@ -3,55 +3,35 @@
  */
 import { redirect, type LoaderFunctionArgs } from 'react-router'
 
-import { auth } from '~/lib/auth/auth.server'
-import { getFileUrl } from '~/lib/db/asset.server'
+import { db } from '~/lib/db/db.server'
 
-// Usage: papacms.com/assets/my-file-key?visibility=public
+import { validateAdminSession } from '../auth/utils'
+import { presignedUrlRes } from './helpers'
+
+// Usage: papa.com/assets/{assetId}
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-	const { searchParams } = new URL(request.url)
+	const assetId = params.assetId
 
-	const visibility = params.visibility
-	const key = searchParams.get('key')
-
-	if (!key || !visibility) {
-		console.log('Key or visibility not found', key, visibility)
+	if (!assetId) {
+		console.log(`Asset ${assetId} not found`)
 		return redirect(
 			'/assets/error' + '?status=400' + '&statusText=Invalid parameters',
 		)
 	}
 
-	if (visibility !== 'public') {
-		// TODO: provide allowed roles
-		const session = await auth.api.getSession(request)
-		const isAdmin = session?.user.role === 'admin'
+	const metadata = await db.query.filesTable.findFirst({
+		where: (t, { eq, and }) => and(eq(t.id, assetId)),
+	})
 
-		if (!isAdmin)
-			return redirect(
-				'/assets/error' + '?status=404' + '&statusText=File not found',
-			)
+	if (!metadata) throw new Response('Not Found', { status: 404 })
+
+	if (!metadata.public) {
+		// check ACL (access control) here
+		const session = await validateAdminSession(request)
+		if (metadata.ownerId !== session.user.id) {
+			throw new Response('Unauthorized', { status: 403 })
+		}
 	}
 
-	const presignedUrl = await getFileUrl(key)
-
-	if (!presignedUrl) {
-		return redirect(
-			'/assets/error' +
-				'?status=500' +
-				'&statusText=Error when getting presigned URL',
-		)
-	}
-
-	const response = await fetch(presignedUrl)
-	if (response.status !== 200) {
-		console.error(response.status, response.statusText)
-
-		return redirect(
-			'/assets/error' +
-				`?status=${response.status}` +
-				`&statusText=${response.statusText}`,
-		)
-	}
-
-	// Proxy the request to the presigned URL
-	return response
+	return presignedUrlRes(metadata.key)
 }
