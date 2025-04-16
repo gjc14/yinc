@@ -1,3 +1,6 @@
+import { generateHTML } from '@tiptap/html'
+
+import ExtensionKit from '~/components/editor/extensions/extension-kit'
 import type { PostWithRelations } from '~/lib/db/post.server'
 
 import { PostMeta } from './post-meta'
@@ -44,7 +47,11 @@ export const MainPost = ({
 						editable
 							? undefined
 							: {
-									__html: post.content || '',
+									__html: post.content
+										? generateHTML(JSON.parse(post.content), [
+												...ExtensionKit({ openOnClick: true }),
+											])
+										: '<p>This is an empty post</p>',
 								}
 					}
 				></article>

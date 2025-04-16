@@ -1,11 +1,13 @@
 import { Link } from 'react-router'
 import { Fragment } from 'react/jsx-runtime'
 
+import { generateHTML } from '@tiptap/html'
 import { LibraryBig } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
+import ExtensionKit from '~/components/editor/extensions/extension-kit'
 
 import type { PostLoaderType } from '../route'
 
@@ -35,7 +37,11 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 							<span className="px-1">·</span>
 							<span>
 								{post.content
-									? `${Math.ceil(post.content.length / 250)} min read`
+									? `${Math.ceil(
+											generateHTML(JSON.parse(post.content), [
+												...ExtensionKit({ openOnClick: true }),
+											]).length / 250,
+										)} min read`
 									: '0 min read'}
 							</span>
 						</div>

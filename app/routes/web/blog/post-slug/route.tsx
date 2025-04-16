@@ -8,18 +8,15 @@ import {
 	type MetaFunction,
 } from 'react-router'
 
-import { generateHTML } from '@tiptap/html'
 import { common, createLowlight } from 'lowlight'
 
-import ExtensionKit from '~/components/editor/extensions/extension-kit'
-import { getPostBySlug, type PostWithRelations } from '~/lib/db/post.server'
+import { getPostBySlug } from '~/lib/db/post.server'
 import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
 
 import { MainPost } from './components/main-post'
 import { PostFooter } from './components/post-footer'
-import { PostMeta } from './components/post-meta'
 import { hilightInnerHTML } from './highlight-inner-html'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -50,11 +47,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		if (!post || (!preview && post.status !== 'PUBLISHED')) {
 			throw new Response('Post not found', { status: 404 })
 		}
-		post.content = post.content
-			? generateHTML(JSON.parse(post.content), [
-					...ExtensionKit({ openOnClick: true }),
-				])
-			: '<p>This is an empty post</p>'
 		return { post, prevPost, nextPost, meta }
 	} catch (error) {
 		console.error(error)
