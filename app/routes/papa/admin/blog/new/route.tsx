@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useFetcher, useNavigate, useNavigation } from 'react-router'
+import { useFetcher, useNavigate, useNavigation } from 'react-router'
 
-import { Loader2, PlusCircle, Trash } from 'lucide-react'
+import { Loader2, Menu, PlusCircle, Trash } from 'lucide-react'
 
 import {
 	AlertDialog,
@@ -21,12 +21,7 @@ import { PostStatus, user as userTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
-import {
-	AdminActions,
-	AdminHeader,
-	AdminSectionWrapper,
-	AdminTitle,
-} from '~/routes/papa/admin/components/admin-wrapper'
+import { AdminSectionWrapper } from '~/routes/papa/admin/components/admin-wrapper'
 
 import { PostContent, type PostContentHandle } from '../components/post-content'
 
@@ -69,7 +64,7 @@ export default function AdminNewPost() {
 
 	const handleCreate = () => {
 		const postState = postContentRef.current?.getPostState()
-		if (!postState) return
+		if (!postState || !isDirty || isSubmitting) return
 
 		const date = new Date()
 		const now = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(
@@ -105,59 +100,63 @@ export default function AdminNewPost() {
 		window.localStorage.removeItem(`dirty-post-${-1}`)
 	}
 
-	return (
-		<AdminSectionWrapper className={`${isNavigating ? 'overflow-hidden' : ''}`}>
-			{isNavigating && <FullScreenLoading contained />}
-			<AdminHeader>
-				<AdminTitle title="New Post"></AdminTitle>
-				<AdminActions>
-					<AlertDialog>
-						{isDirty && (
-							<AlertDialogTrigger asChild>
-								<Button size={'sm'} variant={'destructive'}>
-									<Trash height={16} width={16} />
-									<p className="text-xs">Discard</p>
-								</Button>
-							</AlertDialogTrigger>
-						)}
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Discard Post</AlertDialogTitle>
-								<AlertDialogDescription>
-									Are you sure you want to discard this post?
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter>
-								<AlertDialogCancel>Cancel</AlertDialogCancel>
-								<Link to="/admin/blog">
-									<AlertDialogAction
-										onClick={() => {
-											window.localStorage.removeItem(`dirty-post-${-1}`)
-										}}
-										className="w-full"
-									>
-										Discard
-									</AlertDialogAction>
-								</Link>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
+	const handleDiscard = () => {
+		postContentRef.current?.resetPost()
+	}
 
-					<Button
-						type="submit"
-						size={'sm'}
-						disabled={!isDirty}
-						onClick={handleCreate}
-					>
-						{isSubmitting ? (
-							<Loader2 size={16} className="animate-spin" />
-						) : (
-							<PlusCircle size={16} />
-						)}
-						<p className="text-xs">{isSubmitting ? 'Creating...' : 'Create'}</p>
-					</Button>
-				</AdminActions>
-			</AdminHeader>
+	return (
+		<AdminSectionWrapper
+			className={`items-center pt-16 md:pt-12 ${isNavigating ? 'overflow-hidden' : ''}`}
+		>
+			{isNavigating && <FullScreenLoading contained />}
+
+			<div className="z-10 fixed top-16 right-6 flex items-center gap-2">
+				{/* Discard */}
+				<AlertDialog>
+					{isDirty && (
+						<AlertDialogTrigger asChild>
+							<Button size={'sm'} variant={'destructive'}>
+								<Trash height={16} width={16} />
+								<p className="text-xs">Discard</p>
+							</Button>
+						</AlertDialogTrigger>
+					)}
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>Discard Post</AlertDialogTitle>
+							<AlertDialogDescription>
+								Are you sure you want to discard this post?
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>Cancel</AlertDialogCancel>
+							<AlertDialogAction onClick={handleDiscard}>
+								Discard
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+
+				{/* Create */}
+				<Button
+					type="submit"
+					size={'sm'}
+					disabled={!isDirty}
+					onClick={handleCreate}
+				>
+					{isSubmitting ? (
+						<Loader2 size={16} className="animate-spin" />
+					) : (
+						<PlusCircle size={16} />
+					)}
+					<p className="text-xs">{isSubmitting ? 'Creating...' : 'Create'}</p>
+				</Button>
+
+				{/* Open settings */}
+				<Button className="rounded-full" size={'icon'} variant={'outline'}>
+					<Menu />
+				</Button>
+			</div>
 
 			<PostContent
 				ref={postContentRef}

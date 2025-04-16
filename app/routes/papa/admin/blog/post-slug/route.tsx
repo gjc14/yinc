@@ -149,6 +149,9 @@ export default function AdminPost() {
 					)}
 					<p className="text-xs">Save</p>
 				</Button>
+
+				{/* Open settings */}
+
 				<Button className="rounded-full" size={'icon'} variant={'outline'}>
 					<Menu />
 				</Button>
