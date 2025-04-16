@@ -117,7 +117,7 @@ export const ImageButton = ({ editor }: { editor: Editor }) => {
 						</div>
 					)}
 
-					<SeparatorWithText>Or</SeparatorWithText>
+					<SeparatorWithText text="or" />
 
 					<div className="grid gap-2">
 						<div className="grid grid-cols-3 items-center gap-1">

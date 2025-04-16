@@ -4,25 +4,24 @@ import { cn } from '~/lib/utils'
  * Input your text as children. To change separator color, use { color: 'your-color' }.
  */
 const SeparatorWithText = ({
-	children,
 	className,
-	seperatorClassName,
 	paddingY = '12px',
+	text,
 }: {
-	children: React.ReactNode
 	className?: string
-	seperatorClassName?: string
 	paddingY?: string
+	text: string
 }) => {
 	return (
 		<div
-			className={cn('flex items-center', seperatorClassName)}
+			className={cn(
+				'flex items-center text-muted-foreground text-xs',
+				className,
+			)}
 			style={{ paddingTop: paddingY, paddingBottom: paddingY }}
 		>
 			<hr className="grow border-current" />
-			<span className={cn('px-3 text-xs text-muted-foreground', className)}>
-				{children}
-			</span>
+			<span className={'px-3'}>{text}</span>
 			<hr className="grow border-current" />
 		</div>
 	)
