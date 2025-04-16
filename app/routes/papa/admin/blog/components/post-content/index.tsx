@@ -1,6 +1,5 @@
 import {
 	forwardRef,
-	memo,
 	useCallback,
 	useEffect,
 	useImperativeHandle,
@@ -19,8 +18,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
 import DefaultTipTap, {
 	type EditorRef,
@@ -30,6 +27,7 @@ import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
+import { MainPost } from '~/routes/web/blog/post-slug/components/main-post'
 
 import { areDifferentPosts } from '../../utils'
 import { DangerZone } from './danger-zone'
@@ -58,7 +56,6 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 		const navigate = useNavigate()
 
 		const editorRef = useRef<EditorRef | null>(null)
-		const contentWrapperRef = useRef<HTMLDivElement>(null)
 		const isDirtyPostInitialized = useRef(false)
 
 		const [openAlert, setOpenAlert] = useState(false) // AlertDialog
@@ -195,10 +192,11 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 
 		return (
 			<div
-				className={`w-full flex flex-wrap justify-center gap-5 ${
+				className={`w-full max-w-prose px-5 text-pretty xl:px-0 ${
 					isDeleting ? ' overflow-hidden' : ''
 				}`}
 			>
+				{/* TODO: Loading does not cover overflow */}
 				{isDeleting && <FullScreenLoading contained />}
 				<AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
 					<AlertDialogContent>
@@ -250,83 +248,88 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 					</AlertDialogContent>
 				</AlertDialog>
 
-				<section
-					className={`w-full max-w-[calc(65ch+1.5rem)] flex flex-col gap-5 shrink-0`}
-				>
-					<div>
-						<Label htmlFor="title">Title</Label>
-						<Input
-							id="title"
-							name="title"
-							type="text"
-							placeholder="What is your post title?"
-							value={postState.title}
-							onChange={e => {
-								setPostState(prev => {
-									const newPost = {
-										...prev,
-										title: e.target.value,
-									}
-									return newPost
-								})
+				<div className="flex flex-col">
+					<MainPost
+						post={postState}
+						editable
+						onTitleChange={v => {
+							setPostState(prev => {
+								const newPost = {
+									...prev,
+									title: v,
+								}
+								return newPost
+							})
+						}}
+					>
+						<DefaultTipTap
+							ref={editorRef}
+							content={postState.content || undefined}
+							onUpdate={({ toJSON }) => {
+								debouncedContentUpdate(toJSON())
 							}}
+							onSave={onSave}
 						/>
-					</div>
+					</MainPost>
+				</div>
 
-					<div>
-						<Label htmlFor="content">Content</Label>
-						<div
-							ref={contentWrapperRef}
-							className="p-3 border border-border rounded-md"
-						>
-							<DefaultTipTap
-								ref={editorRef}
-								content={postState.content || undefined}
-								onUpdate={({ toJSON }) => {
-									debouncedContentUpdate(toJSON())
-								}}
-								onFocus={() => {
-									contentWrapperRef.current?.classList.add('border-primary')
-								}}
-								onBlur={() => {
-									contentWrapperRef.current?.classList.remove('border-primary')
-								}}
-								onSave={onSave}
-							/>
-						</div>
-					</div>
-				</section>
-
-				<section className="w-min max-w-[calc(65ch+1.5rem)] grow flex flex-col gap-5 mb-12">
-					<PostMetaPart
-						postState={postState}
-						setPostState={setPostState}
-						editorRef={editorRef}
-					/>
-
-					<Separator />
-
-					<TaxonomyPart
-						postState={postState}
-						setPostState={setPostState}
-						tags={tags}
-						categories={categories}
-					/>
-
-					<Separator />
-
-					<SeoPart
-						postState={postState}
-						setPostState={setPostState}
-						editorRef={editorRef}
-					/>
-
-					<DangerZone
-						postState={postState}
-						onDeleteRequest={() => setOpenAlert(true)}
-					/>
-				</section>
+				<PostSettings
+					postState={postState}
+					setPostState={setPostState}
+					tags={tags}
+					categories={categories}
+					editorRef={editorRef}
+					setOpenAlert={setOpenAlert}
+				/>
 			</div>
 		)
 	},
 )
+
+export const PostSettings = ({
+	postState,
+	setPostState,
+	tags,
+	categories,
+	editorRef,
+	setOpenAlert,
+}: {
+	postState: PostWithRelations
+	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
+	tags: Tag[]
+	categories: Category[]
+	editorRef: React.RefObject<EditorRef>
+	setOpenAlert: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+	return (
+		<section className="w-full grow flex flex-col gap-5 my-12">
+			<PostMetaPart
+				postState={postState}
+				setPostState={setPostState}
+				editorRef={editorRef}
+			/>
+
+			<Separator />
+
+			<TaxonomyPart
+				postState={postState}
+				setPostState={setPostState}
+				tags={tags}
+				categories={categories}
+			/>
+
+			<Separator />
+
+			<SeoPart
+				postState={postState}
+				setPostState={setPostState}
+				editorRef={editorRef}
+			/>
+
+			<DangerZone
+				postState={postState}
+				onDeleteRequest={() => setOpenAlert(true)}
+			/>
+		</section>
+	)
+}
