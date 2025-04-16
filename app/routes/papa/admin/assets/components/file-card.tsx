@@ -7,6 +7,7 @@ import {
 	ExternalLink,
 	File,
 	Film,
+	Loader2,
 	Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -65,21 +66,31 @@ export const FileCard = ({
 
 	const fileGeneralType = file.type.split('/')[0]
 	const url = `/assets/${file.id}`
+	const isSubmitting = fetcher.state === 'submitting'
 
 	const handleSelect = () => {
 		onSelect?.(file)
 	}
 
 	const handleUpdate = () => {
-		onUpdate?.({
+		if (isSubmitting) return
+
+		const fileMetadataUpdated = {
 			...file,
-			name: nameRef.current?.value || file.name,
-			description: descRef.current?.value || file.description,
+			name: nameRef.current?.value ?? file.name,
+			description: descRef.current?.value ?? file.description,
+		}
+
+		onUpdate?.(fileMetadataUpdated)
+		fetcher.submit(JSON.stringify(fileMetadataUpdated), {
+			action: '/admin/assets/resource',
+			method: 'PUT',
+			encType: 'application/json',
 		})
-		setOpen(false)
 	}
 
 	const handleDelete = () => {
+		if (isSubmitting) return
 		fetcher.submit(JSON.stringify({ key: file.key }), {
 			action: assetResourceRoute,
 			method: 'DELETE',
@@ -263,11 +274,17 @@ export const FileCard = ({
 							</p>
 						</div>
 
-						{
-							<Button className="w-full" onClick={handleUpdate}>
-								Save
-							</Button>
-						}
+						<Button
+							className="w-full"
+							disabled={isSubmitting && fetcher.formMethod === 'PUT'}
+							onClick={handleUpdate}
+						>
+							{isSubmitting && fetcher.formMethod === 'PUT' ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								'Save'
+							)}
+						</Button>
 						<Separator className="my-3" />
 
 						<AlertDialog>

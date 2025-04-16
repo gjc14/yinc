@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLoaderData, useSubmit } from 'react-router'
+import { useLoaderData } from 'react-router'
 
 import { CloudAlert } from 'lucide-react'
 
@@ -28,7 +28,6 @@ const displayOptions = ['all', 'file', ...MIMETypes]
 export { loader } from './resource'
 
 export default function AdminAsset() {
-	const submit = useSubmit()
 	const { hasObjectStorage, files, origin } = useLoaderData<typeof loader>()
 	const [filesState, setFilesState] = useState(files)
 	const [display, setDisplay] = useState<(typeof displayOptions)[number]>('all')
@@ -83,13 +82,6 @@ export default function AdminAsset() {
 							filesState.map(file =>
 								file.id === fileMeta.id ? fileMeta : file,
 							),
-						)
-						submit(
-							{ newFileMeta: JSON.stringify(fileMeta) },
-							{
-								method: 'POST',
-								navigate: false,
-							},
 						)
 					}}
 					origin={origin}

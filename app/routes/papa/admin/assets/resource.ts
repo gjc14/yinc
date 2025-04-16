@@ -2,6 +2,7 @@ import { type ActionFunctionArgs, type LoaderFunctionArgs } from 'react-router'
 
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
+import { z } from 'zod'
 
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { db, S3 } from '~/lib/db/db.server'
@@ -13,9 +14,14 @@ import { handleError } from '~/lib/utils/server'
 import { validateAdminSession } from '../../auth/utils'
 import { presignUrlRequestSchema, type PresignResponse } from './schema'
 
-const fileMetadataInsertUpdateSchema = createInsertSchema(filesTable).required({
-	id: true,
-})
+const fileMetadataInsertUpdateSchema = createInsertSchema(filesTable)
+	.required({
+		id: true,
+	})
+	.extend({
+		createdAt: z.coerce.date(),
+		updatedAt: z.coerce.date(),
+	})
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (!S3) {
