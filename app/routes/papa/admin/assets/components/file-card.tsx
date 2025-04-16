@@ -42,6 +42,7 @@ import { assetResourceRoute } from '../utils'
 
 export type FileCardProps = {
 	file: FileMetadata
+	origin: string
 	className?: string
 	onSelect?: (file: FileMetadata) => void
 	onUpdate?: (file: FileMetadata) => void
@@ -50,6 +51,7 @@ export type FileCardProps = {
 
 export const FileCard = ({
 	file,
+	origin,
 	className,
 	onSelect,
 	onUpdate,
@@ -60,8 +62,9 @@ export const FileCard = ({
 	const descRef = useRef<HTMLTextAreaElement>(null)
 	const [open, setOpen] = useState(false)
 	const [deleteAlert, setDeleteAlert] = useState(false)
+
 	const fileGeneralType = file.type.split('/')[0]
-	const url = '/placeholders/avatar.png'
+	const url = `/assets/${file.id}`
 
 	const handleSelect = () => {
 		onSelect?.(file)
@@ -217,11 +220,11 @@ export const FileCard = ({
 								id="url"
 								className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
 								onClick={() => {
-									navigator.clipboard.writeText(url)
+									navigator.clipboard.writeText(origin + url)
 									toast.success('Copied to clipboard')
 								}}
 							>
-								{url}
+								{origin + url}
 							</p>
 						</div>
 

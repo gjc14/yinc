@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useFetcher } from 'react-router'
 
@@ -39,6 +39,7 @@ import { FileCard } from './file-card'
 
 export interface FileGridProps {
 	files: FileMetadata[]
+	origin: string
 	onFileSelect?: (file: FileMetadata) => void
 	onFileUpdate?: (fileMeta: FileMetadata) => void
 	onFileDeleted?: (file: FileMetadata) => void
@@ -77,6 +78,7 @@ export const FileGrid = (props: FileGridProps) => {
 // TODO: Fix: the old, deleted file will show when new file is uploaded
 const FileGridMain = ({
 	files,
+	origin,
 	onFileSelect,
 	onFileUpdate,
 	onFileDeleted,
@@ -220,6 +222,7 @@ const FileGridMain = ({
 							<FileCard
 								key={index}
 								file={file}
+								origin={origin}
 								onSelect={onFileSelect}
 								onUpdate={handleFileUpdate}
 								onDeleted={handleFileDelete}

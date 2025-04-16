@@ -29,7 +29,7 @@ export { loader } from './resource'
 
 export default function AdminAsset() {
 	const submit = useSubmit()
-	const { hasObjectStorage, files } = useLoaderData<typeof loader>()
+	const { hasObjectStorage, files, origin } = useLoaderData<typeof loader>()
 	const [filesState, setFilesState] = useState(files)
 	const [display, setDisplay] = useState<(typeof displayOptions)[number]>('all')
 
@@ -92,6 +92,7 @@ export default function AdminAsset() {
 							},
 						)
 					}}
+					origin={origin}
 				/>
 			) : (
 				<div className="border rounded-xl w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3">

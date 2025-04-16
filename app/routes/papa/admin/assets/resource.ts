@@ -1,6 +1,5 @@
 import { type ActionFunctionArgs, type LoaderFunctionArgs } from 'react-router'
 
-import { ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
 
@@ -155,41 +154,32 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 /**
- * TODO: Fetch only user's. Fetch object storage api to list files, this returns all files in the bucket
+ * Returns all file metadata belongs to user
  */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	await validateAdminSession(request)
+	const adminSession = await validateAdminSession(request)
 
-	if (!S3) return { hasObjectStorage: false, files: [] as FileMetadata[] }
+	if (!S3)
+		return {
+			hasObjectStorage: false,
+			files: [] as FileMetadata[],
+			origin: request.url,
+		}
 
-	const url = new URL(request.url)
+	const fileMetadata = await db.query.filesTable.findMany({
+		where: (t, { eq }) => eq(t.ownerId, adminSession.user.id),
+	})
 
-	const objects = await S3.send(new ListObjectsV2Command({ Bucket: 'papa' }))
-	if (!objects || !objects.Contents)
-		return { hasObjectStorage: true, files: [] as FileMetadata[] }
-
-	const { Contents } = objects
-
-	const files = await Promise.all(
-		Contents.map(async ({ Key, ETag, StorageClass }) => {
-			if (!Key) return null
-			const fileMetadata = await db.query.filesTable.findFirst({
-				where: (t, { eq }) => eq(t.key, Key),
-			})
-			if (!fileMetadata) return null
-			return {
-				...fileMetadata,
-				url: url.origin + `/assets/private?key=${Key}`,
-				eTag: ETag,
-				storageClass: StorageClass,
-			}
-		}),
-	)
-
-	const filteredFiles = files.filter(file => file !== null)
+	if (!fileMetadata)
+		return {
+			hasObjectStorage: true,
+			files: [] as FileMetadata[],
+			origin: request.url,
+		}
 
 	return {
 		hasObjectStorage: true,
-		files: filteredFiles,
+		files: fileMetadata,
+		origin: new URL(request.url).origin,
 	}
 }
