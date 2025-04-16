@@ -25,8 +25,9 @@ import {
 import { FileMetaSchema } from '../api/object-storage/schema'
 import { FileGrid } from './components/file-grid'
 import type { loader } from './resource'
+import { MIMETypes } from './utils'
 
-const displayOptions = ['all', 'image', 'video', 'audio', 'file'] as const
+const displayOptions = ['all', 'file', ...MIMETypes]
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method !== 'POST') {
@@ -83,13 +84,13 @@ export default function AdminAsset() {
 	const submit = useSubmit()
 	const { hasObjectStorage, files } = useLoaderData<typeof loader>()
 	const [filesState, setFilesState] = useState(files)
-	const [display, setDisplay] = useState('all')
+	const [display, setDisplay] = useState<(typeof displayOptions)[number]>('all')
 
 	const filesDisplayed = filesState.filter(file => {
 		if (display === 'all') return true
 		if (display === 'file') {
 			const fileGeneralType = file.type.split('/')[0]
-			return !['image', 'video', 'audio'].includes(fileGeneralType)
+			return ['application', 'model', 'font', 'text'].includes(fileGeneralType)
 		}
 		const fileGeneralType = file.type.split('/')[0]
 		return fileGeneralType === display

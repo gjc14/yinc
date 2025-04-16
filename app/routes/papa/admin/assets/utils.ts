@@ -8,6 +8,25 @@ import {
 } from '~/routes/papa/admin/api/object-storage/schema'
 
 /**
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types#see_also
+ */
+export const MIMETypes = [
+	'image',
+	'video',
+	'audio',
+	'application',
+	'model',
+	'font',
+	'text',
+] as const
+
+export const isMIMEType = (
+	type: string,
+): type is (typeof MIMETypes)[number] => {
+	return MIMETypes.some(mimeType => type.startsWith(mimeType))
+}
+
+/**
  * Generate a role and type based storage key for the file, for example:
  * asset/private/image/papa@1234567890-ABCD-ddd0bbb-88ee-1234-8abc-c098765b1b1b
  * @param file pass in file type and file name
