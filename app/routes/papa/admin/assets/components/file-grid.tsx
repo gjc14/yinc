@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { useFetcher } from 'react-router'
 
 import {
 	Check,
@@ -24,14 +25,12 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '~/components/ui/dialog'
+import { authClient } from '~/lib/auth/auth-client'
+import type { FileMetadata } from '~/lib/db/schema'
 import { cn } from '~/lib/utils'
-import type {
-	FileMeta,
-	FileMetaWithFile,
-} from '~/routes/papa/admin/api/object-storage/schema'
 
+import type { FileUploading, UploadState } from '../utils'
 import {
-	deleteFileFetch,
 	fetchPresignedPutUrls,
 	generateStorageKey,
 	useFileUpload,
@@ -39,10 +38,10 @@ import {
 import { FileCard } from './file-card'
 
 export interface FileGridProps {
-	files: FileMeta[]
-	onFileSelect?: (file: FileMeta) => void
-	onFileUpdate?: (fileMeta: FileMeta) => void
-	onFileDelete?: (file: FileMeta) => void
+	files: FileMetadata[]
+	onFileSelect?: (file: FileMetadata) => void
+	onFileUpdate?: (fileMeta: FileMetadata) => void
+	onFileDeleted?: (file: FileMetadata) => void
 	dialogTrigger?: React.ReactNode
 	uploadMode?: 'single' | 'multiple'
 	onUpload?: (files: File[]) => void
@@ -80,11 +79,13 @@ const FileGridMain = ({
 	files,
 	onFileSelect,
 	onFileUpdate,
-	onFileDelete,
+	onFileDeleted,
 	uploadMode,
 	onUpload,
 	dialogTrigger,
 }: FileGridProps) => {
+	const fetcher = useFetcher()
+	const { data: userSession } = authClient.useSession()
 	///////////////////////////////////////////
 	///        Drag, Drop and Upload        ///
 	///////////////////////////////////////////
@@ -107,64 +108,57 @@ const FileGridMain = ({
 		return types
 	}, [acceptedTypes])
 
-	// 1. Add file to fileUploading state and upload to storage by uploadToPresignedUrl via XML
-	// 2. uploadProgress state track file upload progress via XML
-	// 3. With useEffect, check uploadProgress, extract fileUploading that completed
-	// 4. Add to fileUploaded state and update file url with presignedUrl
-	const [fileUploading, setFileUploading] = useState<FileMeta[]>([])
-	const { uploadProgress, uploadToPresignedUrl } = useFileUpload()
-	const [fileUploaded, setFileUploaded] = useState<Set<string>>(new Set())
+	// 1. Generate key for file
+	// 2. uploadToPresignedUrl via XML and track uploadProgress
+	// 3. Save file to fileUploaded once completed
+	const { uploadProgress, setUploadProgress, uploadToPresignedUrl } =
+		useFileUpload()
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		accept: getAcceptedFileTypes(),
 		onDrop: async acceptedFiles => {
-			const newFiles: FileMetaWithFile[] = acceptedFiles.map(file => ({
-				file,
-				id: Math.random() * 0.1,
-				key: generateStorageKey(file, 'private'),
-				url: URL.createObjectURL(file),
-				type: file.type,
-				name: file.name,
-				description: '',
-			}))
-			setFileUploading(prev => [...prev, ...newFiles])
-			uploadFiles(newFiles)
+			if (!userSession) return
+
+			try {
+				const newFiles: FileUploading[] = acceptedFiles.map(file => ({
+					file,
+					key: generateStorageKey(file, userSession.user.id),
+				}))
+
+				// Initialize progress state for all files (showing pending status)
+				const initialProgress = newFiles.reduce(
+					(acc, { file, key }) => ({
+						...acc,
+						[key]: {
+							file: file,
+							progress: 0,
+							status: 'pending' as const,
+						},
+					}),
+					{} as UploadState,
+				)
+
+				// Update the progress state with all pending files
+				setUploadProgress(prev => ({ ...prev, ...initialProgress }))
+
+				// Now fetch presigned URLs (files will show as "pending" during this time), then upload
+				const presignedFiles = await fetchPresignedPutUrls(newFiles)
+				await uploadToPresignedUrl(presignedFiles)
+
+				setFileState(prev => {
+					return [...prev, ...presignedFiles]
+				})
+			} catch (error) {
+				console.error('Error uploading files', error)
+			}
 		},
 	})
-
-	const uploadFiles = async (newFiles: FileMetaWithFile[]) => {
-		try {
-			// Return key and presignedUrl; id, updatedAt from database created
-			const presignedFiles = await fetchPresignedPutUrls(newFiles)
-			presignedFiles.forEach(presignedFile => {
-				setFileUploading(prev => {
-					const newFiles = prev.map(file =>
-						file.key === presignedFile.key
-							? {
-									...file,
-									id: presignedFile.id,
-									updatedAt: presignedFile.updatedAt,
-								}
-							: file,
-					)
-					return newFiles
-				})
-			})
-			await uploadToPresignedUrl(presignedFiles)
-		} catch (error) {
-			console.error('Error uploading files', error)
-		}
-	}
 
 	/////////////////////////
 	///   File handling   ///
 	/////////////////////////
 	const [fileState, setFileState] = useState<FileGridProps['files']>(files)
 
-	useEffect(() => {
-		setFileState(files)
-	}, [files])
-
-	const handleFileUpdate = (fileMeta: FileMeta) => {
+	const handleFileUpdate = (fileMeta: FileMetadata) => {
 		// Handle object storage connection
 		setFileState(prev => {
 			return prev.map(file => {
@@ -177,59 +171,19 @@ const FileGridMain = ({
 		onFileUpdate?.(fileMeta)
 	}
 
-	const handleFileDelete = (file: FileMeta) => {
+	const handleFileDelete = (file: FileMetadata) => {
 		setFileState(prev => {
 			return prev.filter(prevFile => prevFile.id !== file.id)
 		})
-
-		try {
-			deleteFileFetch(file.key)
-		} catch (error) {
-			console.error('Error deleting file', error)
-		}
-
-		onFileDelete?.(file)
+		onFileDeleted?.(file)
 	}
-
-	// Handle files when status is completed
-	useEffect(() => {
-		const uploadCompleteXML = Object.values(uploadProgress).filter(
-			upload => upload.status === 'completed',
-		)
-		const newFileUploaded = uploadCompleteXML
-			// Match XML completed, without file in fileUploaded state
-			.map(uploaded => {
-				return fileUploading.find(file => {
-					return file.key === uploaded.key && !fileUploaded.has(uploaded.key)
-				})
-			})
-			// Save to fileUploaded state and update file url with presignedUrl
-			.map(file => {
-				if (!file) return null
-				setFileUploaded(prev => {
-					const newSet = new Set(prev)
-					newSet.add(file.key)
-					return newSet
-				})
-				const updatedFileUrl = `/assets/private?key=${file.key}`
-				return {
-					...file,
-					url: window.location.origin + updatedFileUrl,
-				}
-			})
-			.filter(file => !!file)
-
-		setFileState(prev => {
-			return [...prev, ...newFileUploaded]
-		})
-	}, [uploadProgress])
 
 	// When file progress display was clicked to hide
 	const [hiddenProgressCards, setHiddenProgressCards] = useState<Set<string>>(
 		new Set(),
 	)
-	const visibleUploadProgress = Object.values(uploadProgress).filter(
-		({ key }) => !hiddenProgressCards.has(key),
+	const visibleUploadProgress = Object.entries(uploadProgress).filter(
+		([key]) => !hiddenProgressCards.has(key),
 	)
 
 	return (
@@ -268,7 +222,7 @@ const FileGridMain = ({
 								file={file}
 								onSelect={onFileSelect}
 								onUpdate={handleFileUpdate}
-								onDelete={handleFileDelete}
+								onDeleted={handleFileDelete}
 							/>
 						)
 					})}
@@ -286,6 +240,7 @@ const FileGridMain = ({
 				<Collapsible
 					className="absolute right-3 bottom-3 w-[350px] space-y-2"
 					defaultOpen
+					onClick={e => e.stopPropagation()}
 				>
 					{/* Upload progress card */}
 					<CollapsibleTrigger asChild>
@@ -304,9 +259,8 @@ const FileGridMain = ({
 						</Button>
 					</CollapsibleTrigger>
 					<CollapsibleContent className="space-y-2">
-						{visibleUploadProgress.map(({ key, progress, status, error }) => {
-							const file = fileUploading.find(f => f.key === key)
-							if (!file) return null
+						{visibleUploadProgress.map(([key, upload]) => {
+							const { file, progress, status, error } = upload
 
 							return (
 								<div
@@ -320,10 +274,10 @@ const FileGridMain = ({
 											title={`${file}`}
 										>
 											<span className="text-sm font-medium truncate mr-1">
-												{file?.name.split('.')[0]}
+												{file.name.split('.')[0]}
 											</span>
 											<span className="text-sm font-medium shrink-0">
-												.{file?.name.split('.')[1]}
+												.{file.name.split('.')[1]}
 											</span>
 										</div>
 

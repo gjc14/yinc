@@ -1,4 +1,5 @@
 import { forwardRef, useRef, useState } from 'react'
+import { useFetcher } from 'react-router'
 
 import {
 	AudioWaveform,
@@ -34,15 +35,17 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
+import type { FileMetadata } from '~/lib/db/schema'
 import { cn } from '~/lib/utils'
-import { type FileMeta } from '~/routes/papa/admin/api/object-storage/schema'
+
+import { assetResourceRoute } from '../utils'
 
 export type FileCardProps = {
-	file: FileMeta
+	file: FileMetadata
 	className?: string
-	onSelect?: (file: FileMeta) => void
-	onUpdate?: (file: FileMeta) => void
-	onDelete?: (file: FileMeta) => void
+	onSelect?: (file: FileMetadata) => void
+	onUpdate?: (file: FileMetadata) => void
+	onDeleted?: (file: FileMetadata) => void
 }
 
 export const FileCard = ({
@@ -50,13 +53,15 @@ export const FileCard = ({
 	className,
 	onSelect,
 	onUpdate,
-	onDelete,
+	onDeleted,
 }: FileCardProps) => {
+	const fetcher = useFetcher()
 	const nameRef = useRef<HTMLInputElement>(null)
 	const descRef = useRef<HTMLTextAreaElement>(null)
 	const [open, setOpen] = useState(false)
 	const [deleteAlert, setDeleteAlert] = useState(false)
 	const fileGeneralType = file.type.split('/')[0]
+	const url = '/placeholders/avatar.png'
 
 	const handleSelect = () => {
 		onSelect?.(file)
@@ -72,7 +77,12 @@ export const FileCard = ({
 	}
 
 	const handleDelete = () => {
-		onDelete?.(file)
+		fetcher.submit(JSON.stringify({ key: file.key }), {
+			action: assetResourceRoute,
+			method: 'DELETE',
+			encType: 'application/json',
+		})
+		onDeleted?.(file)
 		setDeleteAlert(false)
 		setOpen(false)
 	}
@@ -86,7 +96,7 @@ export const FileCard = ({
 			onClick={e => e.stopPropagation()}
 		>
 			{fileGeneralType === 'image' ? (
-				<img src={file.url} alt={file.name} className="" />
+				<img src={url} alt={file.name} className="" />
 			) : fileGeneralType === 'video' ? (
 				<Film />
 			) : fileGeneralType === 'audio' ? (
@@ -99,13 +109,13 @@ export const FileCard = ({
 					<Button
 						variant={'destructive'}
 						size={'sm'}
-						className="h-7 px-1.5 text-[10px]"
+						className="min-h-6 text-[10px] cursor-pointer"
 						onClick={handleDelete}
 					>
-						Delete permanently
+						Delete
 					</Button>
 					<button
-						className="text-[10px] underline-offset-2 hover:underline"
+						className="text-[10px] underline-offset-2 hover:underline cursor-pointer"
 						onClick={() => setDeleteAlert(false)}
 					>
 						Cancel
@@ -155,7 +165,7 @@ export const FileCard = ({
 								defaultValue={file.name}
 								className="grow"
 							/>
-							<a href={file.url} target="_blank" rel="noopener noreferrer">
+							<a href={url} target="_blank" rel="noopener noreferrer">
 								<Button variant={'ghost'}>
 									<ExternalLink className="w-5 h-5" />
 								</Button>
@@ -163,14 +173,14 @@ export const FileCard = ({
 						</DialogTitle>
 						<DialogDescription className="min-h-36 flex flex-col justify-center items-center gap-2 border rounded-lg overflow-hidden">
 							{fileGeneralType === 'image' ? (
-								<img className="max-h-[50vh]" src={file.url} alt={file.name} />
+								<img className="max-h-[50vh]" src={url} alt={file.name} />
 							) : fileGeneralType === 'video' ? (
-								<video src={file.url} controls className="w-full">
+								<video src={url} controls className="w-full">
 									Your browser does not support the
 									<code>video</code> element.
 								</video>
 							) : fileGeneralType === 'audio' ? (
-								<audio src={file.url} controls className="w-full">
+								<audio src={url} controls className="w-full">
 									Your browser does not support the
 									<code>audio</code> element.
 								</audio>
@@ -207,11 +217,11 @@ export const FileCard = ({
 								id="url"
 								className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
 								onClick={() => {
-									navigator.clipboard.writeText(file.url)
+									navigator.clipboard.writeText(url)
 									toast.success('Copied to clipboard')
 								}}
 							>
-								{file.url}
+								{url}
 							</p>
 						</div>
 
@@ -233,18 +243,16 @@ export const FileCard = ({
 							</p>
 							<p className="text-sm">
 								<strong>File Size:</strong>{' '}
-								{(file.size || file.file.size) >
+								{file.size >
 								// file.size is available when it is fetched from the server
-								// When user uploads a file, new file type FileMetaWithFile will include a { ...others, file: File }, in which file.size will be saved to { size: number }
+								// When user uploads a file, new file type FileWithFileMetadata will include a { ...others, file: File }, in which file.size will be saved to { size: number }
 								1024 * 1024 * 1024
 									? `${Math.round(
-											(file.size || file.file.size) / 1024 / 1024 / 1024,
+											(file.size || file.size) / 1024 / 1024 / 1024,
 										)} GB`
-									: (file.size || file.file.size) > 1024 * 1024
-										? `${Math.round(
-												(file.size || file.file.size) / 1024 / 1024,
-											)} MB`
-										: `${Math.round((file.size || file.file.size) / 1024)} KB`}
+									: (file.size || file.size) > 1024 * 1024
+										? `${Math.round((file.size || file.size) / 1024 / 1024)} MB`
+										: `${Math.round((file.size || file.size) / 1024)} KB`}
 							</p>
 							<p className="text-sm">
 								<strong>Last Modified:</strong>{' '}

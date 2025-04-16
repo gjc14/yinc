@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useFetcher } from 'react-router'
 
 import type { FileMetadata } from '~/lib/db/schema'
 import { isConventionalError } from '~/lib/utils'
@@ -30,20 +31,15 @@ export const isMIMEType = (
 
 /**
  * Generate a role and type based storage key for the file, for example:
- * asset/private/image/papa@1234567890-ABCD-ddd0bbb-88ee-1234-8abc-c098765b1b1b
+ * {userId}/asset/image/papa@ABCD-ddd0bbb-88ee-1234-8abc-c098765b1b1b
  * @param file pass in file type and file name
  * @param access role based authentication
  * @returns the key (path) of the file
  */
-export const generateStorageKey = (
-	file: { type: string; name: string },
-	access: 'private' | 'public',
-) => {
+export const generateStorageKey = (file: File, userId: string) => {
 	const fileType = file.type.split('/')[0]
-	const timestamp = Date.now()
-	const randomRef = Math.random().toString(36).substring(2, 6).toUpperCase()
-	const randomUUID = crypto.randomUUID()
-	return `asset/${access}/${fileType}/papa@${timestamp}-${randomRef}-${randomUUID}`
+	const uuid = crypto.randomUUID()
+	return `${userId}/assets/${fileType}/${uuid}`
 }
 
 // Generate SHA-256 checksum for a file
@@ -55,7 +51,9 @@ async function generateChecksum(file: File): Promise<string> {
 	return hashHex
 }
 
-const api = '/admin/assets/resource'
+export const assetResourceRoute = '/admin/assets/resource'
+
+export type FileUploading = { file: File; key: string }
 
 /**
  * Fetch the api to get presigned PUT URLs, and new metadata for the files
@@ -63,13 +61,13 @@ const api = '/admin/assets/resource'
  * @returns { FileWithFileMetadata & { presignedUrl: string }}[] - array of file and metadata with presigned URL
  */
 export const fetchPresignedPutUrls = async (
-	files: (File & { key: string })[],
+	files: FileUploading[],
 ): Promise<(FileWithFileMetadata & { presignedUrl: string })[]> => {
 	try {
-		const fileMetadataPromise = files.map(async file => {
+		const fileMetadataPromise = files.map(async ({ file, key }) => {
 			const fileChecksum = await generateChecksum(file)
 			const fileMetadata: PresignRequest[number] = {
-				key: file.key,
+				key: key,
 				type: file.type,
 				size: file.size,
 				checksum: fileChecksum,
@@ -80,7 +78,7 @@ export const fetchPresignedPutUrls = async (
 
 		const fileMetadata = await Promise.all(fileMetadataPromise)
 
-		const postPresignedUrl = await fetch(api, {
+		const postPresignedUrl = await fetch(assetResourceRoute, {
 			method: 'POST',
 			body: JSON.stringify(fileMetadata),
 			headers: {
@@ -101,12 +99,12 @@ export const fetchPresignedPutUrls = async (
 		const presignedUrls = presignUrlResponseSchema.parse(responsePayload.data)
 
 		// Update files with presigned URLs, and new id, updatedAt
-		const updatedFiles = files.map(file => {
-			const matched = presignedUrls.find(url => url.metadata.key === file.key)
+		const updatedFiles = files.map(({ file, key }) => {
+			const matched = presignedUrls.find(url => url.metadata.key === key)
 			if (!matched) throw new Error('Presign data not found')
 			const { metadata, presignedUrl } = matched
 			return {
-				file: file,
+				file,
 				...metadata,
 				presignedUrl: presignedUrl,
 			}
@@ -117,43 +115,31 @@ export const fetchPresignedPutUrls = async (
 	}
 }
 
-/**
- * Fetch object storage api to delete file
- * @param key
- * @returns void
- */
-export const deleteFileFetch = async (key: string) => {
-	try {
-		const res = await fetch(api, {
-			method: 'DELETE',
-			body: JSON.stringify({ key }),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-
-		if (!res.ok) {
-			throw new Error(`Failed to delete key: ${key}`)
-		}
-	} catch (error) {
-		throw error
-	}
-}
-
 // Types for upload progress tracking
 type UploadProgress = {
-	key: string
+	file: File
 	progress: number
 	status: 'pending' | 'uploading' | 'completed' | 'error'
 	error?: string
 }
-type UploadState = Record<string, UploadProgress>
+export type UploadState = {
+	[key: string]: UploadProgress
+}
 
 /**
  * Hook to get upload function progress for files
  */
 export const useFileUpload = () => {
 	const [uploadProgress, setUploadProgress] = useState<UploadState>({})
+	const fetcher = useFetcher()
+
+	const handleDelete = (key: string) => {
+		fetcher.submit(JSON.stringify({ key }), {
+			action: assetResourceRoute,
+			method: 'DELETE',
+			encType: 'application/json',
+		})
+	}
 
 	const uploadSingleFile = async (
 		file: FileWithFileMetadata & { presignedUrl: string },
@@ -198,7 +184,7 @@ export const useFileUpload = () => {
 							error,
 						},
 					}))
-					deleteFileFetch(file.key)
+					handleDelete(file.key)
 					reject(new Error(error))
 				}
 			}
@@ -214,7 +200,7 @@ export const useFileUpload = () => {
 						error,
 					},
 				}))
-				deleteFileFetch(file.key)
+				handleDelete(file.key)
 				reject(new Error(error))
 			}
 
@@ -239,7 +225,7 @@ export const useFileUpload = () => {
 			await uploadSingleFile(file)
 		} catch (error) {
 			if (retries > 0) {
-				console.log(
+				console.warn(
 					`Retrying upload for ${file.name}, attempts left: ${retries}`,
 				)
 				return uploadSingleFileWithRetry(file, retries - 1)
@@ -256,10 +242,10 @@ export const useFileUpload = () => {
 		// Initialize progress state for all files
 		setUploadProgress(prev => {
 			const initial = files.reduce(
-				(acc, file) => ({
+				(acc, { file, key }) => ({
 					...acc,
-					[file.key]: {
-						key: file.key,
+					[key]: {
+						file: file,
 						progress: 0,
 						status: 'pending' as const,
 					},
@@ -281,6 +267,7 @@ export const useFileUpload = () => {
 
 	return {
 		uploadProgress,
+		setUploadProgress,
 		uploadToPresignedUrl,
 	}
 }
