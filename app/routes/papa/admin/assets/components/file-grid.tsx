@@ -56,11 +56,13 @@ export const FileGrid = (props: FileGridProps) => {
 	if (!props.dialogTrigger) {
 		return <FileGridMain {...props} />
 	} else if (props.dialogTrigger) {
+		const [open, setOpen] = useState(false)
+
 		return (
-			<Dialog>
+			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>{props.dialogTrigger}</DialogTrigger>
-				<DialogContent className="max-h-[80vh] max-w-xl overflow-scroll">
-					<DialogHeader>
+				<DialogContent className="max-h-[90vh] min-w-[50vw] max-w-xl overflow-scroll">
+					<DialogHeader className="h-fit">
 						<DialogTitle>Assets</DialogTitle>
 						<DialogDescription>
 							Lists all your asstes here, You could drag or click to upload your
@@ -68,7 +70,13 @@ export const FileGrid = (props: FileGridProps) => {
 						</DialogDescription>
 					</DialogHeader>
 
-					<FileGridMain {...props} />
+					<FileGridMain
+						{...props}
+						onFileSelect={file => {
+							setOpen(false)
+							props.onFileSelect?.(file)
+						}}
+					/>
 				</DialogContent>
 			</Dialog>
 		)

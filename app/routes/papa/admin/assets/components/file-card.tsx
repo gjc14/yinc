@@ -106,8 +106,16 @@ export const FileCard = ({
 			className={cn(
 				'group relative flex flex-col items-center justify-center border rounded-lg aspect-square overflow-hidden',
 				className,
+				onSelect ? 'cursor-pointer' : 'cursor-default',
 			)}
 			onClick={e => e.stopPropagation()}
+			onDoubleClick={() => {
+				if (onSelect) {
+					handleSelect()
+				} else {
+					setOpen(true)
+				}
+			}}
 		>
 			{fileGeneralType === 'image' ? (
 				<img src={url} alt={file.name} className="" />
@@ -206,7 +214,6 @@ export const FileCard = ({
 							)}
 						</DialogDescription>
 					</DialogHeader>
-
 					<div className="flex flex-col items-center gap-1.5 overflow-scroll px-1">
 						<div className="w-full gap-2">
 							<Label htmlFor="id" className="px-1">
