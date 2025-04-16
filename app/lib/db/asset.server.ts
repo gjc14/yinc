@@ -23,7 +23,7 @@ export const getUploadUrl = async ({
 	type: string
 	checksum: string
 }) => {
-	if (!S3) return null
+	if (!S3) throw new Error('S3 client not initialized')
 
 	try {
 		// https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html
@@ -40,13 +40,12 @@ export const getUploadUrl = async ({
 		)
 		return presignedUrl
 	} catch (error) {
-		console.error('Presign url error', error)
-		return null
+		throw new Error(`Presign url error: ${error}`)
 	}
 }
 
 export const getFileUrl = async (key: string) => {
-	if (!S3) return null
+	if (!S3) throw new Error('S3 client not initialized')
 
 	try {
 		const command = new GetObjectCommand({
@@ -56,8 +55,7 @@ export const getFileUrl = async (key: string) => {
 		const presignedUrl = await getSignedUrl(S3, command, { expiresIn: 300 })
 		return presignedUrl
 	} catch (error) {
-		console.error('Presign url error', error)
-		return null
+		throw new Error(`Get file url error: ${error}`)
 	}
 }
 
@@ -67,7 +65,7 @@ export const getFileUrl = async (key: string) => {
  * @returns void
  */
 export const deleteFile = async (key: string) => {
-	if (!S3) return null
+	if (!S3) throw new Error('S3 client not initialized')
 
 	await S3.send(
 		new DeleteObjectCommand({
