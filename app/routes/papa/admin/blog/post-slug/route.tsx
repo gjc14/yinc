@@ -78,6 +78,10 @@ export default function AdminPost() {
 		window.localStorage.removeItem(`dirty-post-${post.id}`)
 	}
 
+	const handleDiscard = () => {
+		postContentRef.current?.resetPost()
+	}
+
 	return (
 		<AdminSectionWrapper className="items-center pt-16 md:pt-12">
 			<div className="z-10 fixed top-16 right-6 flex items-center gap-2">
@@ -124,16 +128,9 @@ export default function AdminPost() {
 						</AlertDialogHeader>
 						<AlertDialogFooter>
 							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<Link to="/admin/blog">
-								<AlertDialogAction
-									onClick={() => {
-										window.localStorage.removeItem(`dirty-post-${post.id}`)
-									}}
-									className="w-full"
-								>
-									Discard
-								</AlertDialogAction>
-							</Link>
+							<AlertDialogAction onClick={handleDiscard}>
+								Discard
+							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>

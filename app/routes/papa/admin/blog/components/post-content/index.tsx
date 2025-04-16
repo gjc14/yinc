@@ -46,6 +46,7 @@ interface PostContentProps {
 
 export interface PostContentHandle {
 	getPostState: () => PostWithRelations
+	resetPost: () => void
 }
 
 // TODO: Add featured image; edit author; publish schedule
@@ -188,6 +189,11 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 
 		useImperativeHandle(ref, () => ({
 			getPostState: () => postState,
+			resetPost() {
+				setPostState(post)
+				editorRef.current?.updateContent(post.content || '')
+				window.localStorage.removeItem(`dirty-post-${post.id}`)
+			},
 		}))
 
 		return (
