@@ -30,9 +30,9 @@ export const YoutubeButton = ({ editor }: { editor: Editor }) => {
 			<PopoverContent className="w-96">
 				<div className="grid gap-3">
 					<div className="space-y-2">
-						<h4>Dimensions</h4>
+						<h4>Youtube Link</h4>
 						<p className="text-sm text-muted-foreground">
-							Set the dimensions for your Youtube video.
+							Copy and paste the Youtube link you want to embed.
 						</p>
 					</div>
 
@@ -43,24 +43,6 @@ export const YoutubeButton = ({ editor }: { editor: Editor }) => {
 								ref={urlInputRef}
 								id="url"
 								placeholder="https://www.youtube.com/watch?v=MgsdDfdGdHc"
-								className="col-span-2 h-8"
-							/>
-						</div>
-						<div className="grid grid-cols-3 items-center gap-1">
-							<Label htmlFor="width">Width</Label>
-							<Input
-								ref={widthInputRef}
-								id="width"
-								defaultValue="640"
-								className="col-span-2 h-8"
-							/>
-						</div>
-						<div className="grid grid-cols-3 items-center gap-1">
-							<Label htmlFor="height">Height</Label>
-							<Input
-								ref={heightInputRef}
-								id="height"
-								defaultValue="480"
 								className="col-span-2 h-8"
 							/>
 						</div>
@@ -78,8 +60,6 @@ export const YoutubeButton = ({ editor }: { editor: Editor }) => {
 									if (url) {
 										editor.commands.setYoutubeVideo({
 											src: url,
-											width: Math.max(320, parseInt(width || '0')),
-											height: Math.max(180, parseInt(height || '0')),
 										})
 									}
 								}}

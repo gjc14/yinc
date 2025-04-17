@@ -12,12 +12,12 @@ import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
 import Underline from '@tiptap/extension-underline'
-import Youtube from '@tiptap/extension-youtube'
 import StarterKit from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
 
 // import { SlashCommand } from './slash-command'
 import { ColorHighlighter } from './color-highlighter'
+import { Youtube } from './responseive-youtube'
 import { SmilieReplacer } from './smilie-replacer'
 import { StreamView } from './stream-view'
 
@@ -67,8 +67,12 @@ export const ExtensionKit = ({
 		TextAlign.configure({ types: ['heading', 'paragraph'] }),
 		TextStyle.configure({}),
 		CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
-		ImageBlock,
-		Youtube,
+		ImageBlock.configure({
+			inline: true,
+		}),
+		Youtube.configure({
+			inline: true,
+		}),
 		TaskList,
 		TaskItem.configure({
 			nested: true,
