@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { CloudUploadIcon, CupSoda } from 'lucide-react'
 
+import { Button } from '~/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -43,6 +44,8 @@ export const FileGrid = (props: FileGridProps) => {
 		return <FileGridMain {...props} />
 	} else if (props.dialogTrigger) {
 		const [open, setOpen] = useState(false)
+		const [visuallySelected, setVisuallySelected] =
+			useState<FileMetadata | null>(null)
 
 		return (
 			<Dialog open={open} onOpenChange={setOpen}>
@@ -52,6 +55,17 @@ export const FileGrid = (props: FileGridProps) => {
 						<DialogTitle>Assets</DialogTitle>
 						<DialogDescription className="w-full grow flex items-center">
 							Manage gallery, select or upload assets here.
+							<Button
+								className="ml-auto"
+								disabled={!visuallySelected}
+								onClick={() => {
+									if (!visuallySelected) return
+									props.onFileSelect?.(visuallySelected)
+									setOpen(false)
+								}}
+							>
+								Select
+							</Button>
 						</DialogDescription>
 					</DialogHeader>
 
@@ -61,6 +75,8 @@ export const FileGrid = (props: FileGridProps) => {
 							setOpen(false)
 							props.onFileSelect?.(file)
 						}}
+						visuallySelected={visuallySelected}
+						setVisuallySelected={setVisuallySelected}
 					/>
 				</DialogContent>
 			</Dialog>
@@ -79,7 +95,14 @@ const FileGridMain = ({
 	onFileDeleted,
 	onUpload,
 	dialogTrigger,
-}: FileGridProps) => {
+	visuallySelected,
+	setVisuallySelected,
+}: FileGridProps & {
+	visuallySelected?: FileMetadata | null
+	setVisuallySelected?: React.Dispatch<
+		React.SetStateAction<FileMetadata | null>
+	>
+}) => {
 	const { data: userSession } = authClient.useSession()
 
 	///////////////////////////////////////////
@@ -213,6 +236,8 @@ const FileGridMain = ({
 								onSelect={onFileSelect}
 								onUpdate={handleFileUpdate}
 								onDeleted={handleFileDelete}
+								visuallySelected={visuallySelected}
+								setVisuallySelected={setVisuallySelected}
 							/>
 						)
 					})}

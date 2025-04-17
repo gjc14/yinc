@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFetcher } from 'react-router'
 
 import {
@@ -48,6 +48,10 @@ export type FileCardProps = {
 	onSelect?: (file: FileMetadata) => void
 	onUpdate?: (file: FileMetadata) => void
 	onDeleted?: (file: FileMetadata) => void
+	visuallySelected?: FileMetadata | null
+	setVisuallySelected?: React.Dispatch<
+		React.SetStateAction<FileMetadata | null>
+	>
 }
 
 export const FileCard = ({
@@ -57,6 +61,8 @@ export const FileCard = ({
 	onSelect,
 	onUpdate,
 	onDeleted,
+	visuallySelected,
+	setVisuallySelected,
 }: FileCardProps) => {
 	const fetcher = useFetcher()
 	const nameRef = useRef<HTMLInputElement>(null)
@@ -99,6 +105,17 @@ export const FileCard = ({
 		onDeleted?.(file)
 		setDeleteAlert(false)
 		setOpen(false)
+
+		if (setVisuallySelected) {
+			setTimeout(() => {
+				setVisuallySelected(prev => {
+					if (prev?.id === file.id) {
+						return null
+					}
+					return prev
+				})
+			}, 0)
+		}
 	}
 
 	return (
@@ -107,8 +124,14 @@ export const FileCard = ({
 				'group relative flex flex-col items-center justify-center border rounded-lg aspect-square overflow-hidden',
 				className,
 				onSelect ? 'cursor-pointer' : 'cursor-default',
+				visuallySelected?.id === file.id
+					? 'border-2 border-primary border-dashed'
+					: '',
 			)}
-			onClick={e => e.stopPropagation()}
+			onClick={e => {
+				e.stopPropagation()
+				setVisuallySelected?.(file)
+			}}
 			onDoubleClick={() => {
 				if (onSelect) {
 					handleSelect()
@@ -127,7 +150,7 @@ export const FileCard = ({
 				<File />
 			)}
 			{deleteAlert && (
-				<div className="absolute w-full h-full flex flex-col justify-center items-center backdrop-blur-xs gap-1.5 pt-3">
+				<div className="absolute w-full h-full flex flex-col justify-center items-center rounded-lg backdrop-blur-xs gap-1.5 pt-3">
 					<Button
 						variant={'destructive'}
 						size={'sm'}
@@ -144,7 +167,6 @@ export const FileCard = ({
 					</button>
 				</div>
 			)}
-
 			{/* options */}
 			<div
 				className={cn(
@@ -164,7 +186,6 @@ export const FileCard = ({
 					<Expand />
 				</ToolBarButton>
 			</div>
-
 			{/* Dialog */}
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogContent
