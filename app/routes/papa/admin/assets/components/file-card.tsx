@@ -264,10 +264,7 @@ export const FileCard = ({
 							</p>
 							<p className="text-sm">
 								<strong>File Size:</strong>{' '}
-								{file.size >
-								// file.size is available when it is fetched from the server
-								// When user uploads a file, new file type FileWithFileMetadata will include a { ...others, file: File }, in which file.size will be saved to { size: number }
-								1024 * 1024 * 1024
+								{file.size > 1024 * 1024 * 1024
 									? `${Math.round(
 											(file.size || file.size) / 1024 / 1024 / 1024,
 										)} GB`
