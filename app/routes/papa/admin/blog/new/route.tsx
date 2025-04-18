@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFetcher, useNavigate, useNavigation } from 'react-router'
 
-import { Loader2, Menu, PlusCircle, Trash } from 'lucide-react'
+import { Loader2, PlusCircle, Settings, Trash } from 'lucide-react'
 
 import {
 	AlertDialog,
@@ -15,24 +15,23 @@ import {
 	AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { FullScreenLoading } from '~/components/loading'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, user as userTable } from '~/lib/db/schema'
-import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import { AdminSectionWrapper } from '~/routes/papa/admin/components/admin-wrapper'
 
-import { PostContent, type PostContentHandle } from '../components/post-content'
+import { PostComponent, type PostHandle } from '../components/post-component'
+import type { action } from '../resource'
 
 export default function AdminNewPost() {
-	const fetcher = useFetcher<ConventionalActionResponse<{ slug: string }>>()
+	const fetcher = useFetcher<typeof action>()
 	const navigate = useNavigate()
 	const navigation = useNavigation()
 
 	const { tags, categories, admin } = useAdminBlogContext()
 
-	const postContentRef = useRef<PostContentHandle>(null)
+	const postContentRef = useRef<PostHandle>(null)
 	const [isDirty, setIsDirty] = useState(false)
 
 	const post = useMemo(
@@ -53,18 +52,17 @@ export default function AdminNewPost() {
 
 	useEffect(() => {
 		if (fetcher.state === 'loading' && fetcher.data) {
-			const { err, data } = fetcher.data
-			if (!err) {
-				navigate(`/admin/blog/${data?.slug}`)
-			} else {
-				console.error('Error creating post:', err)
+			const { data } = fetcher.data
+			if (data) {
+				navigate(`/admin/blog/${data.slug}`)
+				window.localStorage.removeItem(`dirty-post-${-1}`)
 			}
 		}
 	}, [fetcher])
 
 	const handleCreate = () => {
 		const postState = postContentRef.current?.getPostState()
-		if (!postState || !isDirty || isSubmitting) return
+		if (!postState || !isDirty || isSubmitting || isNavigating) return
 
 		const date = new Date()
 		const now = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(
@@ -97,30 +95,31 @@ export default function AdminNewPost() {
 		})
 
 		setIsDirty(false)
-		window.localStorage.removeItem(`dirty-post-${-1}`)
 	}
 
+	// Handle post change
 	const handleDiscard = () => {
-		postContentRef.current?.resetPost()
+		postContentRef.current?.discardRequest()
+	}
+
+	const toggleSettings = () => {
+		postContentRef.current?.toggleSettings()
 	}
 
 	return (
-		<AdminSectionWrapper
-			className={`items-center pt-16 md:pt-12 ${isNavigating ? 'overflow-hidden' : ''}`}
-		>
-			{isNavigating && <FullScreenLoading contained />}
-
+		<AdminSectionWrapper className="items-center pt-16 md:pt-12">
 			<div className="z-10 fixed top-16 right-6 flex items-center gap-2">
 				{/* Discard */}
 				<AlertDialog>
-					{isDirty && (
-						<AlertDialogTrigger asChild>
-							<Button size={'sm'} variant={'destructive'}>
-								<Trash height={16} width={16} />
-								<p className="text-xs">Discard</p>
-							</Button>
-						</AlertDialogTrigger>
-					)}
+					{isDirty ||
+						(false && (
+							<AlertDialogTrigger asChild>
+								<Button size={'sm'} variant={'destructive'}>
+									<Trash height={16} width={16} />
+									<p className="text-xs">Discard</p>
+								</Button>
+							</AlertDialogTrigger>
+						))}
 					<AlertDialogContent>
 						<AlertDialogHeader>
 							<AlertDialogTitle>Discard Post</AlertDialogTitle>
@@ -141,24 +140,35 @@ export default function AdminNewPost() {
 				<Button
 					type="submit"
 					size={'sm'}
-					disabled={!isDirty}
+					disabled={!isDirty || isSubmitting || isNavigating}
 					onClick={handleCreate}
 				>
-					{isSubmitting ? (
+					{isSubmitting || (isNavigating && fetcher.data) ? (
 						<Loader2 size={16} className="animate-spin" />
 					) : (
 						<PlusCircle size={16} />
 					)}
-					<p className="text-xs">{isSubmitting ? 'Creating...' : 'Create'}</p>
+					<p className="text-xs">
+						{isNavigating && fetcher.data
+							? 'Redirecting...'
+							: isSubmitting
+								? 'Creating...'
+								: 'Create'}
+					</p>
 				</Button>
 
 				{/* Open settings */}
-				<Button className="rounded-full" size={'icon'} variant={'outline'}>
-					<Menu />
+				<Button
+					className="rounded-full"
+					size={'icon'}
+					variant={'outline'}
+					onClick={toggleSettings}
+				>
+					<Settings />
 				</Button>
 			</div>
 
-			<PostContent
+			<PostComponent
 				ref={postContentRef}
 				post={post}
 				tags={tags}
@@ -166,8 +176,10 @@ export default function AdminNewPost() {
 					const { subCategories, ...categoryWithoutSub } = c
 					return categoryWithoutSub
 				})}
-				onDirtyChange={isDirty => setIsDirty(isDirty)}
+				isDirty={isDirty}
+				setIsDirty={setIsDirty}
 				onSave={handleCreate}
+				onDeleteRequest={() => {}}
 			/>
 		</AdminSectionWrapper>
 	)

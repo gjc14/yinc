@@ -6,7 +6,6 @@ import {
 	useRef,
 	useState,
 } from 'react'
-import { useFetcher, useNavigate } from 'react-router'
 
 import {
 	AlertDialog,
@@ -21,10 +20,8 @@ import {
 import DefaultTipTap, {
 	type EditorRef,
 } from '~/components/editor/default-tiptap'
-import { FullScreenLoading } from '~/components/loading'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
-import { type ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
 import { MainPost } from '~/routes/web/blog/post-slug/components/main-post'
 
@@ -35,29 +32,32 @@ interface PostContentProps {
 	post: PostWithRelations
 	tags: Tag[]
 	categories: Category[]
-	onDirtyChange: (isDirty: boolean) => void
-	onSave?: () => void
+	isDirty: boolean
+	setIsDirty: React.Dispatch<React.SetStateAction<boolean>>
+	onSave: () => void
+	onDeleteRequest: () => void
 }
 
-export interface PostContentHandle {
+export interface PostHandle {
 	getPostState: () => PostWithRelations
-	resetPost: () => void
+	discardRequest: () => void
+	toggleSettings: () => void
 }
 
 // TODO: Add featured image; edit author; publish schedule
 // TODO: Editor upload image; link setting popup
-export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
-	({ post, tags, categories, onDirtyChange, onSave }, ref) => {
-		const fetcher = useFetcher<ConventionalActionResponse>()
-		const navigate = useNavigate()
-
+export const PostComponent = forwardRef<PostHandle, PostContentProps>(
+	(
+		{ post, tags, categories, isDirty, setIsDirty, onSave, onDeleteRequest },
+		ref,
+	) => {
 		const editorRef = useRef<EditorRef>(null)
 		const editor = editorRef.current?.editor ?? null
 		const isDirtyPostInitialized = useRef(false)
 
 		const [openAlert, setOpenAlert] = useState(false) // AlertDialog
+		const [openSettings, setOpenSettings] = useState(false) // PostSettings
 		const [postState, setPostState] = useState<PostWithRelations>(post)
-		const [isDirty, setIsDirty] = useState(false)
 
 		const postLocalStorageKey = `dirty-post-${postState.id}`
 
@@ -97,7 +97,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 					content,
 				}))
 			},
-			500,
+			300,
 			[],
 		)
 
@@ -106,23 +106,17 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 				if (!window) return
 				window.localStorage.setItem(postLocalStorageKey, JSON.stringify(post))
 			},
-			500,
+			200,
 			[],
 		)
 
-		const isDeleting = fetcher.state !== 'idle'
-
-		const handleDelete = () => {
-			fetcher.submit(
-				{
-					id: postState.id,
-				},
-				{
-					method: 'DELETE',
-					action: '/admin/blog/resource',
-					encType: 'application/json',
-				},
-			)
+		const handleDiscard = () => {
+			setPostState(post)
+			if (!post.content) {
+				return editor?.commands.clearContent()
+			}
+			editor?.commands.setContent(JSON.parse(post.content))
+			window.localStorage.removeItem(`dirty-post-${post.id}`)
 		}
 
 		// Initialize recover/discard unsaved changes
@@ -145,10 +139,8 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 			// Every time post loaded, check current edit state with post loaded
 			const diff = areDifferentPosts(postState, post)
 			if (diff) {
-				onDirtyChange(true)
 				setIsDirty(true)
 			} else {
-				onDirtyChange(false)
 				setIsDirty(false)
 			}
 		}, [post])
@@ -161,71 +153,38 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 			const diff = areDifferentPosts(postState, post)
 			if (diff) {
 				if (!isDirty) {
-					onDirtyChange(true)
 					setIsDirty(true)
 				}
 				debouncedLocalStorageUpdate(postState)
 			} else {
 				if (isDirty) {
-					onDirtyChange(false)
 					setIsDirty(false)
 				}
 				window.localStorage.removeItem(postLocalStorageKey)
 			}
 		}, [postState])
 
-		useEffect(() => {
-			if (fetcher.state === 'loading' && fetcher.data) {
-				const { err } = fetcher.data
-				if (!err) {
-					navigate('/admin/blog')
-				}
-			}
-		}, [fetcher])
-
 		useImperativeHandle(ref, () => ({
 			getPostState: () => postState,
-			resetPost() {
-				setPostState(post)
-				if (!post.content) {
-					return editor?.commands.clearContent()
-				}
-				editor?.commands.setContent(JSON.parse(post.content))
-				window.localStorage.removeItem(`dirty-post-${post.id}`)
+			discardRequest: () => {
+				setOpenAlert(true)
+			},
+			toggleSettings: () => {
+				setOpenSettings(prev => !prev)
 			},
 		}))
 
 		return (
-			<div
-				className={`w-full max-w-prose px-5 text-pretty xl:px-0 ${
-					isDeleting ? ' overflow-hidden' : ''
-				}`}
-			>
-				{/* TODO: Loading does not cover overflow */}
-				{isDeleting && <FullScreenLoading contained />}
+			<div className="w-full max-w-prose px-5 text-pretty xl:px-0">
 				<AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
 					<AlertDialogContent>
 						<AlertDialogHeader>
-							<AlertDialogTitle>
-								{isDirtyPostInitialized.current
-									? 'Are you absolutely sure?'
-									: 'Unsaved changes detected'}
-							</AlertDialogTitle>
+							<AlertDialogTitle>Unsaved changes detected</AlertDialogTitle>
 							<AlertDialogDescription>
-								{isDirtyPostInitialized.current ? (
-									<>
-										This action cannot be undone. This will permanently delete{' '}
-										<span className="font-bold text-primary">
-											{postState.title}
-										</span>{' '}
-										(id: {postState.id}).
-									</>
-								) : (
-									<>
-										Do you want to recover your unsaved changes? For post{' '}
-										<strong>{postState.title}</strong> (id: {postState.id})
-									</>
-								)}
+								Do you want to{' '}
+								{isDirtyPostInitialized.current ? 'discard' : 'recover'} your
+								unsaved changes? For post <strong>{postState.title}</strong>{' '}
+								(id: {postState.id})
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
@@ -241,13 +200,11 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 							<AlertDialogAction
 								onClick={() =>
 									isDirtyPostInitialized.current
-										? handleDelete()
+										? handleDiscard()
 										: recoverLocalStorageContent()
 								}
 							>
-								{isDirtyPostInitialized.current
-									? 'Delete permanently'
-									: 'Recover'}
+								{isDirtyPostInitialized.current ? 'Discard' : 'Recover'}
 							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>
@@ -278,14 +235,16 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 					</MainPost>
 				</div>
 
-				<PostSettings
-					postState={postState}
-					setPostState={setPostState}
-					tags={tags}
-					categories={categories}
-					editorRef={editorRef}
-					setOpenAlert={setOpenAlert}
-				/>
+				{openSettings && (
+					<PostSettings
+						postState={postState}
+						setPostState={setPostState}
+						tags={tags}
+						categories={categories}
+						editorRef={editorRef}
+						onDeleteRequest={onDeleteRequest}
+					/>
+				)}
 			</div>
 		)
 	},

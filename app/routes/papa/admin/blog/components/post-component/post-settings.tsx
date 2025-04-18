@@ -14,14 +14,14 @@ export const PostSettings = ({
 	tags,
 	categories,
 	editorRef,
-	setOpenAlert,
+	onDeleteRequest,
 }: {
 	postState: PostWithRelations
 	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
 	tags: Tag[]
 	categories: Category[]
 	editorRef: React.RefObject<EditorRef>
-	setOpenAlert: React.Dispatch<React.SetStateAction<boolean>>
+	onDeleteRequest: () => void
 }) => {
 	return (
 		<section className="w-full grow flex flex-col gap-5 my-12">
@@ -48,10 +48,7 @@ export const PostSettings = ({
 				editorRef={editorRef}
 			/>
 
-			<DangerZone
-				postState={postState}
-				onDeleteRequest={() => setOpenAlert(true)}
-			/>
+			<DangerZone postState={postState} onDeleteRequest={onDeleteRequest} />
 		</section>
 	)
 }

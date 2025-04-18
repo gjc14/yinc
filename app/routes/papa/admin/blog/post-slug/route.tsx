@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
-import { Link, useFetcher, useParams } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useFetcher, useNavigate, useParams } from 'react-router'
 
-import { ExternalLink, Loader2, Menu, Save, Trash } from 'lucide-react'
+import { ExternalLink, Loader2, Save, Settings, Trash } from 'lucide-react'
 
 import {
 	AlertDialog,
@@ -12,34 +12,53 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
 import type { PostWithRelations } from '~/lib/db/post.server'
-import { type ConventionalActionResponse } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
 import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import { AdminSectionWrapper } from '~/routes/papa/admin/components/admin-wrapper'
 
-import { PostContent, type PostContentHandle } from '../components/post-content'
+import { PostComponent, type PostHandle } from '../components/post-component'
+import type { action } from '../resource'
 
-export default function AdminPost() {
-	const fetcher = useFetcher<ConventionalActionResponse<PostWithRelations>>()
+export default function AdminSlugPost() {
+	const fetcher = useFetcher<typeof action>()
+	const navigate = useNavigate()
 	const params = useParams()
 
 	const { tags, categories, posts } = useAdminBlogContext()
 
-	const postContentRef = useRef<PostContentHandle>(null)
+	const postContentRef = useRef<PostHandle>(null)
 	const [isDirty, setIsDirty] = useState(false)
+	const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
 
 	const post = posts.find(p => p.slug === params.postSlug)
 
 	const isSubmitting = fetcher.state === 'submitting'
+	const isSaving = isSubmitting && fetcher.formMethod === 'PUT'
+	const isDeleting = isSubmitting && fetcher.formMethod === 'DELETE'
+	const isNavigating = fetcher.state === 'loading'
+
+	useEffect(() => {
+		if (fetcher.state === 'loading' && fetcher.data) {
+			if (fetcher.formMethod === 'DELETE') {
+				fetcher.data.data && navigate('/admin/blog')
+			}
+			if (fetcher.formMethod === 'PUT') {
+				const updatedPost = fetcher.data.data
+				updatedPost.slug !== post?.slug &&
+					navigate('/admin/blog/' + updatedPost.slug)
+				window.localStorage.removeItem(`dirty-post-${post?.id}`)
+			}
+		}
+	}, [fetcher])
 
 	if (!post) {
 		return <h2 className="grow flex items-center justify-center">Not found</h2>
 	}
 
+	// Handle db save
 	const handleSave = () => {
 		const postState = postContentRef.current?.getPostState()
 		if (!postState || !isDirty || isSubmitting) return
@@ -75,15 +94,45 @@ export default function AdminPost() {
 		})
 
 		setIsDirty(false)
-		window.localStorage.removeItem(`dirty-post-${post.id}`)
 	}
 
+	// Handle db delete
+	const handleDelete = async () => {
+		if (!post || isSubmitting) return
+
+		fetcher.submit(
+			{
+				id: post.id,
+			},
+			{
+				method: 'DELETE',
+				action: '/admin/blog/resource',
+				encType: 'application/json',
+			},
+		)
+	}
+
+	// Handle post change
 	const handleDiscard = () => {
-		postContentRef.current?.resetPost()
+		postContentRef.current?.discardRequest()
+	}
+
+	const toggleSettings = () => {
+		postContentRef.current?.toggleSettings()
 	}
 
 	return (
 		<AdminSectionWrapper className="items-center pt-16 md:pt-12">
+			{/* Delete post alert */}
+			<PostDeleteAlert
+				open={deleteAlertOpen}
+				onOpenChange={setDeleteAlertOpen}
+				post={post}
+				handleDelete={handleDelete}
+				isDeleting={isDeleting}
+				isNavigating={isNavigating}
+			/>
+
 			<div className="z-10 fixed top-16 right-6 flex items-center gap-2">
 				{/* Preview */}
 				{post.status !== 'PUBLISHED' ? (
@@ -110,39 +159,21 @@ export default function AdminPost() {
 				)}
 
 				{/* Discard */}
-				<AlertDialog>
-					{isDirty && (
-						<AlertDialogTrigger asChild>
-							<Button size={'sm'} variant={'destructive'}>
-								<Trash height={16} width={16} />
-								<p className="text-xs">Discard</p>
-							</Button>
-						</AlertDialogTrigger>
-					)}
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Discard Post</AlertDialogTitle>
-							<AlertDialogDescription>
-								Are you sure you want to discard this post
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDiscard}>
-								Discard
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
+				{isDirty && (
+					<Button size={'sm'} variant={'destructive'} onClick={handleDiscard}>
+						<Trash height={16} width={16} />
+						<p className="text-xs">Discard</p>
+					</Button>
+				)}
 
 				{/* Save */}
 				<Button
 					type="submit"
 					size={'sm'}
-					disabled={!isDirty}
+					disabled={!isDirty || isSubmitting}
 					onClick={handleSave}
 				>
-					{isSubmitting ? (
+					{isSaving ? (
 						<Loader2 size={16} className="animate-spin" />
 					) : (
 						<Save size={16} />
@@ -151,13 +182,17 @@ export default function AdminPost() {
 				</Button>
 
 				{/* Open settings */}
-
-				<Button className="rounded-full" size={'icon'} variant={'outline'}>
-					<Menu />
+				<Button
+					className="rounded-full"
+					size={'icon'}
+					variant={'outline'}
+					onClick={toggleSettings}
+				>
+					<Settings />
 				</Button>
 			</div>
 
-			<PostContent
+			<PostComponent
 				ref={postContentRef}
 				post={post}
 				tags={tags}
@@ -165,9 +200,57 @@ export default function AdminPost() {
 					const { subCategories, ...categoryWithoutSub } = c
 					return categoryWithoutSub
 				})}
-				onDirtyChange={isDirty => setIsDirty(isDirty)}
+				isDirty={isDirty}
+				setIsDirty={setIsDirty}
 				onSave={handleSave}
+				onDeleteRequest={() => setDeleteAlertOpen(true)}
 			/>
 		</AdminSectionWrapper>
+	)
+}
+
+const PostDeleteAlert = ({
+	post,
+	handleDelete,
+	open,
+	onOpenChange,
+	isDeleting,
+	isNavigating,
+}: {
+	post: PostWithRelations
+	handleDelete: () => void
+	open: boolean
+	onOpenChange: (open: boolean) => void
+	isDeleting: boolean
+	isNavigating: boolean
+}) => {
+	return (
+		<AlertDialog open={open} onOpenChange={onOpenChange}>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+					<AlertDialogDescription>
+						This action cannot be undone. This will permanently delete{' '}
+						<span className="font-bold text-primary">{post.title}</span> (id:{' '}
+						{post.id}).
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel>Cancel</AlertDialogCancel>
+					<AlertDialogAction
+						disabled={isDeleting || isNavigating}
+						onClick={e => {
+							e.preventDefault()
+							handleDelete()
+						}}
+					>
+						{(isDeleting || isNavigating) && (
+							<Loader2 className="animate-spin" />
+						)}
+						{isNavigating ? 'Redirecting...' : 'Delete permanently'}
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
 	)
 }
