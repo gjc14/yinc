@@ -17,7 +17,7 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from '~/components/ui/sidebar'
-import { FullScreenLoading } from '~/components/loading'
+import { FullScreenLoader } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
 import { generateBreadcrumbs } from '~/lib/utils'
 import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
@@ -97,7 +97,7 @@ export default function Admin() {
 				pluginRoutes={memoizedPluginRoutes}
 			/>
 			<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
-				{isMounted && isPending && <FullScreenLoading />}
+				{isMounted && isPending && <FullScreenLoader />}
 				<MemoHeaderWithBreadcrumb />
 
 				<Outlet context={adminLoaderData} />

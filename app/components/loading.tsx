@@ -12,19 +12,11 @@ export const Loading = ({
 	return <Loader2 size={size} className={cn('animate-spin', className)} />
 }
 
-export const FullScreenLoading = ({
-	contained = false,
-	className,
-}: {
-	contained?: boolean
-	className?: string
-}) => {
+export const FullScreenLoader = ({ className }: { className?: string }) => {
 	return (
 		<div
 			className={cn(
-				`z-9999 ${
-					contained ? 'absolute' : 'fixed'
-				} inset-0 flex justify-center items-center backdrop-blur-md`,
+				`z-9999 fixed inset-0 flex justify-center items-center backdrop-blur-md`,
 				className,
 			)}
 		>
