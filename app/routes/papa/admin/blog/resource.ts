@@ -46,9 +46,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 				return {
 					msg: `Post ${post.title} created successfully`,
-					data: {
-						slug: post.slug,
-					},
+					data: post,
 				} satisfies ConventionalActionResponse<{ slug: string }>
 			} catch (error) {
 				return handleError(error, request)
@@ -73,6 +71,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 				return {
 					msg: `Post ${post.title} updated successfully`,
+					data: post,
 				} satisfies ConventionalActionResponse
 			} catch (error) {
 				return handleError(error, request)
@@ -89,6 +88,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					const { post } = await deletePost(jsonData.id)
 					return {
 						msg: `Post ${post.title} deleted successfully`,
+						data: post,
 					} satisfies ConventionalActionResponse
 				} else {
 					throw new Error('Invalid argument')
