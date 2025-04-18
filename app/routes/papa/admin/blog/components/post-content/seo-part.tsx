@@ -19,7 +19,7 @@ export const SeoPart = ({
 }: {
 	postState: PostWithRelations
 	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
-	editorRef: React.MutableRefObject<EditorRef | null>
+	editorRef: React.RefObject<EditorRef>
 }) => {
 	return (
 		<>
@@ -93,7 +93,7 @@ export const SeoPart = ({
 					className="mt-2"
 					onClick={() => {
 						setPostState(prev => {
-							const text = editorRef.current?.getText() || ''
+							const text = editorRef.current?.editor?.getText() || ''
 							if (!text) {
 								toast.error('No content to generate SEO description')
 								return prev

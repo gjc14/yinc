@@ -15,8 +15,7 @@ import { MenuBar } from '../components/menus/menu-bar'
 import ExtensionKit from '../extensions/extension-kit'
 
 export interface EditorRef {
-	updateContent: (content: string) => void
-	getText: () => string
+	editor: Editor | null
 }
 
 interface EditorProps {
@@ -67,12 +66,7 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 	useImperativeHandle(
 		ref,
 		() => ({
-			updateContent(content: string) {
-				editor?.commands.setContent(JSON.parse(content))
-			},
-			getText() {
-				return editor?.getText() || ''
-			},
+			editor,
 		}),
 		[editor],
 	)

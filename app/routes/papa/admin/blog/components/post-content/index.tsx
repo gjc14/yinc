@@ -51,7 +51,8 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 		const fetcher = useFetcher<ConventionalActionResponse>()
 		const navigate = useNavigate()
 
-		const editorRef = useRef<EditorRef | null>(null)
+		const editorRef = useRef<EditorRef>(null)
+		const editor = editorRef.current?.editor ?? null
 		const isDirtyPostInitialized = useRef(false)
 
 		const [openAlert, setOpenAlert] = useState(false) // AlertDialog
@@ -83,7 +84,7 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 			setPostState(postWithDates)
 			// Ensure editor content is also updated if it exists in the stored object
 			if (postWithDates.content !== undefined) {
-				editorRef.current?.updateContent(postWithDates.content)
+				editor?.commands.setContent(JSON.parse(postWithDates.content))
 			}
 
 			isDirtyPostInitialized.current = true
@@ -186,7 +187,10 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 			getPostState: () => postState,
 			resetPost() {
 				setPostState(post)
-				editorRef.current?.updateContent(post.content || '')
+				if (!post.content) {
+					return editor?.commands.clearContent()
+				}
+				editor?.commands.setContent(JSON.parse(post.content))
 				window.localStorage.removeItem(`dirty-post-${post.id}`)
 			},
 		}))
