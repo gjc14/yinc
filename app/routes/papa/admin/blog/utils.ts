@@ -1,4 +1,4 @@
-import { generateHTML } from '@tiptap/react'
+import { generateHTML, generateText } from '@tiptap/react'
 
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
 import type { PostWithRelations } from '~/lib/db/post.server'
@@ -55,6 +55,12 @@ export const areDifferentPosts = (
 	// content compare
 	if (firstPost.content !== secondPost.content) {
 		try {
+			const firstPostContent = firstPost.content
+				? generateText(JSON.parse(firstPost.content), [...ExtensionKit()])
+				: ''
+			const secondPostContent = secondPost.content
+				? generateText(JSON.parse(secondPost.content), [...ExtensionKit()])
+				: ''
 			const firstEditorContent = firstPost.content
 				? generateHTML(JSON.parse(firstPost.content), [...ExtensionKit()])
 				: ''
@@ -62,7 +68,12 @@ export const areDifferentPosts = (
 				? generateHTML(JSON.parse(secondPost.content), [...ExtensionKit()])
 				: ''
 
-			if (areValuesDiff(firstEditorContent, secondEditorContent)) {
+			const hasContent = firstPostContent !== '' || secondPostContent !== ''
+
+			if (
+				hasContent &&
+				areValuesDiff(firstEditorContent, secondEditorContent)
+			) {
 				difference.push('content')
 			}
 		} catch (e) {
