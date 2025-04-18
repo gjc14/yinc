@@ -55,7 +55,7 @@ if (S3) {
 		)
 		if (!isPapaExists) {
 			console.warn(
-				'Bucket papa not found, please create it. Refer to ./app/lib/utils.tsx or ./README.md',
+				'Bucket papa not found, please create it. Refer to ./README.md',
 			)
 		}
 	})

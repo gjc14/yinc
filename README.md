@@ -75,8 +75,8 @@ Coming soon
 # Clone the repo
 git clone https://github.com/gjc14/papa.git
 
-# Navigate to project and copy .env.sample
-cd papa && mv .env.sample .env
+# Navigate to project and copy .env.example
+cd papa && mv .env.example .env
 ```
 
 <!-- prettier-ignore -->
@@ -105,7 +105,7 @@ cd papa && mv .env.sample .env
    `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
 10. `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`,
     `OBJECT_STORAGE_ACCOUNT_ID`: Where you save your objects, accept S3
-    compatible services. Using in route `/admin/api/object-storage`
+    compatible services. Using in route `/admin/assets/resource`
 
 ### 2. Install and push database schema
 
