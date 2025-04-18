@@ -60,9 +60,9 @@ export const ExtensionKit = ({
 
 		// Nodes
 		Placeholder.configure({
-			placeholder: () => {
-				return 'Press "/" to open commands, "/ai" for continue writing'
-			},
+			// placeholder: () => {
+			// 	return 'Press "/" to open commands, "/ai" for continue writing'
+			// },
 		}),
 		TextAlign.configure({ types: ['heading', 'paragraph'] }),
 		TextStyle.configure({}),
