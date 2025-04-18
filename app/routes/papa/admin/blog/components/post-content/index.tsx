@@ -18,7 +18,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
-import { Separator } from '~/components/ui/separator'
 import DefaultTipTap, {
 	type EditorRef,
 } from '~/components/editor/default-tiptap'
@@ -29,12 +28,8 @@ import { type ConventionalActionResponse } from '~/lib/utils'
 import { useDebounce } from '~/lib/utils/debounce'
 import { MainPost } from '~/routes/web/blog/post-slug/components/main-post'
 
-import { areDifferentPosts } from '../../utils'
-import { DangerZone } from './danger-zone'
-import { PostMetaPart } from './post-meta-part'
-import { SeoPart } from './seo-part'
-import { TaxonomyPart } from './taxonomy-part'
-import { convertStringDatesToDateObjects } from './utils'
+import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
+import { PostSettings } from './post-settings'
 
 interface PostContentProps {
 	post: PostWithRelations
@@ -291,51 +286,3 @@ export const PostContent = forwardRef<PostContentHandle, PostContentProps>(
 		)
 	},
 )
-
-export const PostSettings = ({
-	postState,
-	setPostState,
-	tags,
-	categories,
-	editorRef,
-	setOpenAlert,
-}: {
-	postState: PostWithRelations
-	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
-	tags: Tag[]
-	categories: Category[]
-	editorRef: React.RefObject<EditorRef>
-	setOpenAlert: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
-	return (
-		<section className="w-full grow flex flex-col gap-5 my-12">
-			<PostMetaPart
-				postState={postState}
-				setPostState={setPostState}
-				editorRef={editorRef}
-			/>
-
-			<Separator />
-
-			<TaxonomyPart
-				postState={postState}
-				setPostState={setPostState}
-				tags={tags}
-				categories={categories}
-			/>
-
-			<Separator />
-
-			<SeoPart
-				postState={postState}
-				setPostState={setPostState}
-				editorRef={editorRef}
-			/>
-
-			<DangerZone
-				postState={postState}
-				onDeleteRequest={() => setOpenAlert(true)}
-			/>
-		</section>
-	)
-}
