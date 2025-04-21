@@ -20,7 +20,7 @@ const rl = readline.createInterface({
 const askEmail = (): Promise<string> => {
 	return new Promise(resolve => {
 		rl.question(
-			'\n請輸入管理員電子郵件地址 (Please enter Admin Email) (按下 ^+C 以關閉) (Press ^+C to exit): ',
+			'\n❓ 請輸入管理員電子郵件地址 (Please enter Admin Email) (按下 ^+C 以關閉) (Press ^+C to exit): ',
 			email => {
 				if (!isValidEmail(email)) {
 					console.error(
@@ -37,7 +37,7 @@ const askEmail = (): Promise<string> => {
 const askName = (): Promise<string> => {
 	return new Promise(resolve => {
 		rl.question(
-			'\n設定您的名字 (Please enter your name) (按下 ^+C 以關閉) (Press ^+C to exit): ',
+			'\n❓ 設定您的名字 (Please enter your name) (按下 ^+C 以關閉) (Press ^+C to exit): ',
 			name => resolve(name),
 		)
 	})
@@ -59,7 +59,7 @@ async function checkAndCreateAdmin() {
 
 			// Create admin
 			console.log(
-				'\n管理員不存在，正在建立... (Admin does not exist. Creating...)',
+				'\n🔄 管理員不存在，正在建立... (Admin does not exist. Creating...)',
 			)
 			const { user } = await auth.api.createUser({
 				body: {
@@ -77,28 +77,25 @@ async function checkAndCreateAdmin() {
 				.where(eq(schema.user.id, user.id))
 
 			console.log(
-				`管理員已建立！請使用 ${user.email} 登入。 (Admin created! Sign in with ${user.email})`,
+				`✅ 管理員已建立！請使用 ${'user.email'} 登入。 (Admin created! Sign in with ${'user.email'})`,
 			)
 
-			console.log('正在建立預設資料 (Inserting default data)...')
+			console.log('🔄 正在建立預設資料 (Inserting default data)...')
 			await db.transaction(async tx => {
 				await insertDefaultData(tx, user.id)
 				tx.execute(sql`create schema if not exists ${pgSchema('default')}`)
 			})
-			console.log('預設資料已建立 (Default data created)')
-
-			console.warn(`\n* * * \n初始化完成！(Initialization complete)\n* * *\n`)
+			console.log('✅ 預設資料已建立 (Default data created)')
 		} else {
-			console.log(`管理員已存在。Admin already exists.\n`)
+			console.log(`⚠️ 管理員已存在。Admin already exists.`)
 		}
 	} catch (error) {
 		console.error(
-			'檢查/建立管理員使用者時發生錯誤 (Error checking/creating admin):',
+			'❌ 檢查/建立管理員使用者時發生錯誤 (Error checking/creating admin):',
 			error,
 		)
 		process.exit(1)
 	} finally {
-		console.log('\n* * *\n歡迎使用 Papa 🥔✨\nWelcome to Papa 🥔✨\n* * *')
 		process.exit(0)
 	}
 }
@@ -118,7 +115,7 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 			featuredImage: defaultPost.featuredImage,
 		})
 		.returning()
-	console.log('\n預設文章已建立 (Default post created):', postCreated.title)
+	console.log('\n✅ 預設文章已建立 (Default post created):', postCreated.title)
 
 	await tx.insert(schema.seosTable).values({
 		metaTitle: defaultPost.title,
@@ -128,13 +125,13 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 		route: '/blog/' + postCreated.slug,
 	})
 	console.log(
-		'\n預設文章 SEO 已建立 (Default post SEO created):',
+		'\n✅ 預設文章 SEO 已建立 (Default post SEO created):',
 		defaultPost.title,
 	)
 
 	const tags = await tx.insert(schema.tagsTable).values(defaultTags).returning()
 	console.log(
-		'\n預設標籤已建立 (Default tags created):',
+		'\n✅ 預設標籤已建立 (Default tags created):',
 		defaultTags.map(tag => ({
 			name: tag.name,
 		})),
@@ -145,7 +142,7 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 		.values(defaultCategories)
 		.returning()
 	console.log(
-		'\n預設分類已建立 (Default categories created):',
+		'\n✅ 預設分類已建立 (Default categories created):',
 		defaultCategories.map(category => ({
 			name: category.name,
 		})),
@@ -165,7 +162,7 @@ const insertDefaultData = async (tx: TransactionType, adminId: string) => {
 		})),
 	)
 	console.log(
-		'\n預設文章與標籤、分類關聯已建立 (Default post to tags and categories created)',
+		'\n✅ 預設文章與標籤、分類關聯已建立 (Default post to tags and categories created)',
 	)
 }
 

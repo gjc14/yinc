@@ -192,7 +192,9 @@ async function setupBucketWithCors(
  * Main function: Initialize admin storage
  */
 async function initAdminStorage() {
-	console.log('🚀 初始化 R2 物件存儲... (Initializing R2 object storage...)')
+	console.log(
+		'\n–––––\n\n🚀 初始化 R2 物件存儲... (Initializing R2 object storage...)',
+	)
 
 	if (!checkRequiredEnvVars()) {
 		process.exit(1)
