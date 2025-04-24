@@ -154,12 +154,6 @@ layer(base);
 		@apply font-serif-tw text-base md:text-lg;
 	}
 
-	/* Remove margin top from first element and its descendants */
-	.prose-article > *:first-child,
-	.prose-article > *:first-child * {
-		margin-top: 0 !important;
-	}
-
 	.prose-article pre {
 		@apply border border-transparent bg-zinc-950 not-dark:rounded-none dark:border-border;
 	}

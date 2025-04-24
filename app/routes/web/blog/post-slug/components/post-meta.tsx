@@ -99,7 +99,7 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
                 </div> */}
 					</div>
 
-					<Separator className="mb-8" />
+					<Separator className="mb-3" />
 				</>
 			)}
 		</div>
