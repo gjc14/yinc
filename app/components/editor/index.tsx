@@ -10,9 +10,9 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react'
 import { cn } from '~/lib/utils'
 import { type ChatAPICustomBody } from '~/routes/papa/admin/api/ai-chat/route'
 
-import { DefaultBubbleMenu } from '../components/menus/bubble-menu'
-import { MenuBar } from '../components/menus/menu-bar'
-import ExtensionKit from '../extensions/extension-kit'
+import { DefaultBubbleMenu } from './components/menus/bubble-menu'
+import { MenuBar } from './components/menus/menu-bar'
+import ExtensionKit from './extensions/extension-kit'
 
 export interface EditorRef {
 	editor: Editor | null

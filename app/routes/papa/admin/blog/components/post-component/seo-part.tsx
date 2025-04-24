@@ -8,7 +8,7 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
-import { type EditorRef } from '~/components/editor/default-tiptap'
+import { type EditorRef } from '~/components/editor'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { generateSeoDescription } from '~/lib/utils/seo'
 

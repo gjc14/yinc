@@ -1,5 +1,5 @@
 import { Separator } from '~/components/ui/separator'
-import { type EditorRef } from '~/components/editor/default-tiptap'
+import { type EditorRef } from '~/components/editor'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 

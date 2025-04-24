@@ -15,7 +15,7 @@ import {
 	SelectValue,
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
-import { type EditorRef } from '~/components/editor/default-tiptap'
+import { type EditorRef } from '~/components/editor'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus } from '~/lib/db/schema'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'

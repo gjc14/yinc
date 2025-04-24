@@ -17,9 +17,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
-import DefaultTipTap, {
-	type EditorRef,
-} from '~/components/editor/default-tiptap'
+import RichTextEditor, { type EditorRef } from '~/components/editor'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import { useDebounce } from '~/lib/utils/debounce'
@@ -224,7 +222,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 							})
 						}}
 					>
-						<DefaultTipTap
+						<RichTextEditor
 							ref={editorRef}
 							content={postState.content || undefined}
 							onUpdate={({ toJSON }) => {
