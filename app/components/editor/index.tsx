@@ -56,6 +56,28 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 					toText: () => editor.getText(),
 				})
 		},
+		async onDrop(e, slice, moved) {
+			if (moved) return
+
+			const dataTransfer = e.dataTransfer
+			if (!dataTransfer) return
+
+			const files = Array.from(dataTransfer.files)
+
+			if (files.length) {
+				e.preventDefault()
+				const awaitHandleFiles = files.map(async file => {
+					console.log('File dropped:', file)
+
+					switch (file.type.split('/')[0]) {
+						case 'image':
+							return await handleImageDrop(file)
+					}
+				})
+
+				await Promise.all(awaitHandleFiles)
+			}
+		},
 		editorProps: {
 			attributes: {
 				class: 'mt-6 prose-article focus:outline-hidden',
@@ -69,6 +91,32 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 			editor,
 		}),
 		[editor],
+	)
+
+	/////////////////////////////
+	///      Drop Upload      ///
+	/////////////////////////////
+	const imageBlobMap = new Map<string, File>()
+	const handleImageDrop = useCallback(
+		async (file: File) => {
+			if (!editor) return
+
+			const previewURL = URL.createObjectURL(file)
+			console.log('Image file dropped', previewURL)
+			// TODO: when saved, loop over post and replace previewURL with URL after upload
+			imageBlobMap.set(previewURL, file)
+
+			editor
+				.chain()
+				.focus()
+				.setImage({
+					src: URL.createObjectURL(file),
+					alt: file.name || 'image',
+					title: file.name || 'image',
+				})
+				.run()
+		},
+		[imageBlobMap, editor],
 	)
 
 	////////////////////////

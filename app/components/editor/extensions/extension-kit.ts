@@ -69,6 +69,9 @@ export const ExtensionKit = ({
 		CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
 		ImageBlock.configure({
 			inline: true,
+			HTMLAttributes: {
+				class: 'inline-block',
+			},
 		}),
 		Youtube.configure({
 			inline: true,
