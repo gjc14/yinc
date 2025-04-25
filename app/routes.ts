@@ -6,7 +6,7 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
-// import { cv } from './plugins/cv/routes'
+// import { cv } from './routes/cv/routes'
 
 const systemRoutes = [
 	layout('./routes/layout.tsx', [

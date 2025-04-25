@@ -7,7 +7,7 @@ import {
 
 const systemRoutes = [
 	...prefix('/cv', [
-		layout('./plugins/cv/layout.tsx', [index('./plugins/cv/index/route.tsx')]),
+		layout('./routes/cv/layout.tsx', [index('./routes/cv/index/route.tsx')]),
 	]),
 ] satisfies RouteConfig
 
