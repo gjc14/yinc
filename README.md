@@ -48,9 +48,11 @@
 2. `{} API > Manage API Tokens`: Click **Create API Token** button, and set
    Permissions to Admin Read & Write and TTL to Forever.
 3. Paste it into `.env` as `OBJECT_STORAGE_ACCESS_KEY_ID`,
-   `OBJECT_STORAGE_SECRET_ACCESS_KEY`, and `OBJECT_STORAGE_ACCOUNT_ID`.
-4. In `.env` please configure your desired `BUCKET_NAME`, papa will create a
-   bucket with this given name.
+   `OBJECT_STORAGE_SECRET_ACCESS_KEY`.
+4. As for `OBJECT_STORAGE_ACCOUNT_ID`, you will find it by opening
+   `{} API > Use R2 with APIs`.
+5. In `.env` please configure your desired `BUCKET_NAME`, papa will create a
+   bucket with this given name, default to `papa`.
 
 ### Set up [AWS S3](https://aws.amazon.com/s3/)
 
