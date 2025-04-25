@@ -15,8 +15,11 @@ import { emailInstance } from '../utils/email'
 import { ac, admin, user } from './permissions'
 import { sendMagicLink } from './utils'
 
-const appName = process.env.APP_NAME ?? 'PAPA'
-const baseURL = process.env.VITE_BASE_URL ?? 'http://localhost:5173'
+const appName = process.env.APP_NAME || 'PAPA'
+const baseURL =
+	process.env.NODE_ENV === 'production'
+		? process.env.VITE_BASE_URL || 'http://localhost:5173'
+		: 'http://localhost:5173'
 
 export const auth = betterAuth({
 	appName,
