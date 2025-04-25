@@ -6,6 +6,8 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
+import { webPage } from './routes/web/routes'
+
 // import { cv } from './routes/cv/routes'
 
 const systemRoutes = [
@@ -24,7 +26,8 @@ const systemRoutes = [
 			]),
 			route('/*', './routes/web/$/route.tsx'),
 
-			// Adding web plugins
+			// Adding customized web routes
+			...webPage(),
 		]),
 
 		// Auth
