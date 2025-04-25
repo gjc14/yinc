@@ -48,14 +48,14 @@ export const S3 =
 			})
 		: null
 
-if (S3) {
+if (process.env.NODE_ENV && S3) {
 	S3.send(new ListBucketsCommand({})).then(result => {
 		const isPapaExists = !!result.Buckets?.find(
-			bucket => bucket.Name === (process.env.BUCKET_NAME ?? 'papa'),
+			bucket => bucket.Name === (process.env.BUCKET_NAME || 'papa'),
 		)
 		if (!isPapaExists) {
 			console.warn(
-				`Bucket ${process.env.BUCKET_NAME ?? 'papa'} not found, please create it. Refer to ./README.md`,
+				`Bucket ${process.env.BUCKET_NAME || 'papa'} not found, please create it. Refer to ./README.md`,
 			)
 		}
 	})

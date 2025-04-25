@@ -64,7 +64,9 @@ function checkResendApiKey(): boolean {
 		)
 	}
 
-	console.log('✅ Email 設定正確 (Email is set correctly)')
+	console.log(
+		'✅ Email 寄送系統設定正確 (Email sending system is set correctly)',
+	)
 	return true
 }
 
