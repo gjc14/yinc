@@ -56,9 +56,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				const { user } = await auth.api.createUser({
 					body: {
 						email,
-						name,
+						name: name || email,
 						password: '',
 						role: 'admin',
+					},
+				})
+
+				await auth.api.sendVerificationEmail({
+					body: {
+						email: user.email,
+						callbackURL: '/admin',
 					},
 				})
 

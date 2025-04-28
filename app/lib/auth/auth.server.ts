@@ -13,7 +13,7 @@ import { db } from '~/lib/db/db.server'
 
 import { emailInstance } from '../utils/email'
 import { ac, admin, user } from './permissions'
-import { sendMagicLink } from './utils'
+import { sendMagicLink, sendVerifyLink } from './utils'
 
 const appName = process.env.APP_NAME || 'PAPA'
 const baseURL =
@@ -30,6 +30,22 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: false,
 	},
+	emailVerification: {
+		sendOnSignUp: true,
+		...(emailInstance
+			? {
+					sendVerificationEmail: async ({ user, url, token }, request) => {
+						await sendVerifyLink({
+							email: user.email,
+							token: token,
+							url: url,
+							emailInstance: emailInstance!,
+						})
+					},
+				}
+			: {}),
+	},
+
 	plugins: [
 		adminPlugin({
 			ac,
