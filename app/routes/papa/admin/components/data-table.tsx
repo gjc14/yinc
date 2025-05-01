@@ -4,6 +4,7 @@ import { useFetcher } from 'react-router'
 import type {
 	ColumnDef,
 	ColumnFiltersState,
+	PaginationState,
 	RowSelectionState,
 	SortingState,
 	Table as TableType,
@@ -41,6 +42,14 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '~/components/ui/select'
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -77,6 +86,10 @@ interface DataTableProps<TData, TValue> {
 	 * ]
 	 */
 	rowGroupStyle?: RowGroupStyle[]
+	/**
+	 * Initial page size, defaults to 10
+	 */
+	initialPageSize?: number
 }
 
 type RowGroupStyle = {
@@ -94,10 +107,15 @@ export function DataTable<TData, TValue>({
 	rowSelection: externalRowSelection,
 	setRowSelection: externalSetRowSelection,
 	rowGroupStyle,
+	initialPageSize = 10,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+	const [pagination, setPagination] = useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: initialPageSize,
+	})
 
 	const [internalRowSelection, setInternalRowSelection] =
 		useState<RowSelectionState>({})
@@ -115,6 +133,7 @@ export function DataTable<TData, TValue>({
 		columns: [...(selectable ? [createSelectColumn<TData>()] : []), ...columns],
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
+		onPaginationChange: setPagination,
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
 		onColumnFiltersChange: setColumnFilters,
@@ -126,7 +145,10 @@ export function DataTable<TData, TValue>({
 			columnFilters,
 			columnVisibility,
 			rowSelection,
+			pagination,
 		},
+		// 确保表格知道总页数
+		pageCount: Math.ceil(data.length / pagination.pageSize),
 	})
 
 	const getRowClassName = useCallback(
@@ -143,6 +165,17 @@ export function DataTable<TData, TValue>({
 		},
 		[rowGroupStyle],
 	)
+
+	// 用于调试的函数，可以在开发时检查分页状态
+	const debugPagination = () => {
+		console.log('Current page index:', pagination.pageIndex)
+		console.log('Current page size:', pagination.pageSize)
+		console.log('Total pages:', table.getPageCount())
+		console.log('Can go to next page:', table.getCanNextPage())
+		console.log('Can go to previous page:', table.getCanPreviousPage())
+		console.log('Current page data rows:', table.getRowModel().rows.length)
+		console.log('Total rows:', data.length)
+	}
 
 	return (
 		<section className="flex flex-col gap-3">
@@ -235,29 +268,56 @@ export function DataTable<TData, TValue>({
 					)}
 				</TableBody>
 			</Table>
-			<div className="flex items-center justify-end space-x-2 pt-4">
+			<div className="flex items-center justify-between space-x-2 pt-3.5">
 				{selectable && (
 					<div className="flex-1 text-sm text-muted-foreground pl-2.5">
 						{table.getFilteredSelectedRowModel().rows.length} of{' '}
 						{table.getFilteredRowModel().rows.length} row(s) selected.
 					</div>
 				)}
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.previousPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
-					Previous
-				</Button>
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.nextPage()}
-					disabled={!table.getCanNextPage()}
-				>
-					Next
-				</Button>
+				<div className="ml-auto flex items-center space-x-2">
+					<div className="text-xs text-muted-foreground">
+						Page {pagination.pageIndex + 1} of {table.getPageCount() || 1}
+					</div>
+					<Select
+						value={String(pagination.pageSize)}
+						onValueChange={value => {
+							table.setPageSize(Number(value))
+						}}
+					>
+						<SelectTrigger className="w-20 h-8">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								{[
+									10, 20, 30, 50, 100, 200, 300, 500, 800, 1000, 1500, 2000,
+									3000, 5000, 10000,
+								].map(pageSize => (
+									<SelectItem key={pageSize} value={String(pageSize)}>
+										{pageSize}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => table.previousPage()}
+						disabled={!table.getCanPreviousPage()}
+					>
+						Previous
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => table.nextPage()}
+						disabled={!table.getCanNextPage()}
+					>
+						Next
+					</Button>
+				</div>
 			</div>
 		</section>
 	)
