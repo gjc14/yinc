@@ -11,7 +11,7 @@ export default function Web() {
 	return (
 		<>
 			{data?.user.role === 'admin' && (
-				<Link to={'/admin'}>
+				<Link to={'/admin'} className="z-99999">
 					<Button
 						variant="ghost"
 						size={'icon'}

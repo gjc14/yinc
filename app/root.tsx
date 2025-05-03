@@ -192,8 +192,8 @@ export default function App() {
 						closeButton: 'border border-primary',
 					},
 				}}
+				className="z-99999"
 			/>
-			<div className=" bg-blend-difference"></div>
 			<Outlet />
 		</>
 	)
