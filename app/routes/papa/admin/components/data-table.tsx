@@ -1,10 +1,13 @@
+/**
+ * DataTable component for displaying tabular data with sorting, filtering, and pagination.
+ * This is a client side table
+ */
 import { useCallback, useState } from 'react'
 import { useFetcher } from 'react-router'
 
 import type {
 	ColumnDef,
 	ColumnFiltersState,
-	PaginationState,
 	RowSelectionState,
 	SortingState,
 	Table as TableType,
@@ -44,7 +47,6 @@ import {
 import {
 	Select,
 	SelectContent,
-	SelectGroup,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
@@ -87,7 +89,8 @@ interface DataTableProps<TData, TValue> {
 	 */
 	rowGroupStyle?: RowGroupStyle[]
 	/**
-	 * Initial page size, defaults to 10
+	 * Initial page size for pagination
+	 * @default 10
 	 */
 	initialPageSize?: number
 }
@@ -112,7 +115,7 @@ export function DataTable<TData, TValue>({
 	const [sorting, setSorting] = useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-	const [pagination, setPagination] = useState<PaginationState>({
+	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: initialPageSize,
 	})
@@ -147,7 +150,6 @@ export function DataTable<TData, TValue>({
 			rowSelection,
 			pagination,
 		},
-		// 确保表格知道总页数
 		pageCount: Math.ceil(data.length / pagination.pageSize),
 	})
 
@@ -165,17 +167,6 @@ export function DataTable<TData, TValue>({
 		},
 		[rowGroupStyle],
 	)
-
-	// 用于调试的函数，可以在开发时检查分页状态
-	const debugPagination = () => {
-		console.log('Current page index:', pagination.pageIndex)
-		console.log('Current page size:', pagination.pageSize)
-		console.log('Total pages:', table.getPageCount())
-		console.log('Can go to next page:', table.getCanNextPage())
-		console.log('Can go to previous page:', table.getCanPreviousPage())
-		console.log('Current page data rows:', table.getRowModel().rows.length)
-		console.log('Total rows:', data.length)
-	}
 
 	return (
 		<section className="flex flex-col gap-3">
@@ -268,39 +259,47 @@ export function DataTable<TData, TValue>({
 					)}
 				</TableBody>
 			</Table>
-			<div className="flex items-center justify-between space-x-2 pt-3.5">
+			<div className="flex items-center justify-between space-x-2 pt-4">
 				{selectable && (
 					<div className="flex-1 text-sm text-muted-foreground pl-2.5">
 						{table.getFilteredSelectedRowModel().rows.length} of{' '}
 						{table.getFilteredRowModel().rows.length} row(s) selected.
 					</div>
 				)}
+
 				<div className="ml-auto flex items-center space-x-2">
-					<div className="text-xs text-muted-foreground">
-						Page {pagination.pageIndex + 1} of {table.getPageCount() || 1}
-					</div>
+					<span className="text-xs text-muted-foreground">
+						Page {table.getState().pagination.pageIndex + 1} of{' '}
+						{table.getPageCount()}
+					</span>
 					<Select
-						value={String(pagination.pageSize)}
-						onValueChange={value => {
-							table.setPageSize(Number(value))
-						}}
+						onValueChange={v =>
+							setPagination({
+								...pagination,
+								pageSize: Number(v),
+							})
+						}
+						defaultValue={pagination.pageSize.toString()}
 					>
-						<SelectTrigger className="w-20 h-8">
+						<SelectTrigger className="w-[90px]">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectGroup>
-								{[
-									10, 20, 30, 50, 100, 200, 300, 500, 800, 1000, 1500, 2000,
-									3000, 5000, 10000,
-								].map(pageSize => (
-									<SelectItem key={pageSize} value={String(pageSize)}>
-										{pageSize}
-									</SelectItem>
-								))}
-							</SelectGroup>
+							<SelectItem value="10">10</SelectItem>
+							<SelectItem value="20">20</SelectItem>
+							<SelectItem value="25">25</SelectItem>
+							<SelectItem value="50">50</SelectItem>
+							<SelectItem value="100">100</SelectItem>
+							<SelectItem value="200">200</SelectItem>
+							<SelectItem value="250">250</SelectItem>
+							<SelectItem value="500">500</SelectItem>
+							<SelectItem value="750">750</SelectItem>
+							<SelectItem value="1000">1000</SelectItem>
+							<SelectItem value="1500">1500</SelectItem>
+							<SelectItem value="2000">2000</SelectItem>
 						</SelectContent>
 					</Select>
+
 					<Button
 						variant="outline"
 						size="sm"
