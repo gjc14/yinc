@@ -89,6 +89,6 @@ export const auth = betterAuth({
 		}),
 	],
 	advanced: {
-		cookiePrefix: 'papa',
+		cookiePrefix: appName,
 	},
 })
