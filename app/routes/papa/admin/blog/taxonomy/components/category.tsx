@@ -110,10 +110,15 @@ const SubCategoryComponent = ({
 }
 
 export const generateNewCategory = (newCategoryName: string) => {
+	let slug = generateSlug(newCategoryName)
+	if (!slug) {
+		slug = generateSlug(String(Date.now()))
+	}
+
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
 		name: newCategoryName,
-		slug: generateSlug(newCategoryName),
+		slug,
 		description: '',
 		subCategories: [],
 		posts: [],
@@ -196,10 +201,15 @@ export const generateNewSubCategory = (
 	newSubcategoryName: string,
 	categoryId: number,
 ) => {
+	let slug = generateSlug(newSubcategoryName)
+	if (!slug) {
+		slug = generateSlug(String(Date.now()))
+	}
+
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
 		name: newSubcategoryName,
-		slug: generateSlug(newSubcategoryName),
+		slug,
 		description: '',
 		categoryId,
 		parentId: categoryId,

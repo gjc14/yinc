@@ -19,9 +19,14 @@ export const createCategory = async ({
 	name: string
 	description?: string
 }): Promise<{ category: Category }> => {
+	let slug = generateSlug(name)
+	if (!slug) {
+		slug = generateSlug(String(Date.now()))
+	}
+
 	const [category] = await db
 		.insert(categoriesTable)
-		.values({ name, slug: generateSlug(name), description })
+		.values({ name, slug, description })
 		.returning()
 	return { category }
 }
@@ -58,9 +63,14 @@ export const createSubcategory = async ({
 	name: string
 	description?: string
 }): Promise<{ subcategory: SubCategory }> => {
+	let slug = generateSlug(name)
+	if (!slug) {
+		slug = generateSlug(String(Date.now()))
+	}
+
 	const [subcategory] = await db
 		.insert(subCategoriesTable)
-		.values({ name, categoryId, slug: generateSlug(name), description })
+		.values({ name, categoryId, slug, description })
 		.returning()
 	return { subcategory }
 }
@@ -94,9 +104,14 @@ export const createTag = async ({
 	name: string
 	description?: string
 }): Promise<{ tag: Tag }> => {
+	let slug = generateSlug(name)
+	if (!slug) {
+		slug = generateSlug(String(Date.now()))
+	}
+
 	const [tag] = await db
 		.insert(tagsTable)
-		.values({ name, slug: generateSlug(name), description })
+		.values({ name, slug, description })
 		.returning()
 	return { tag }
 }

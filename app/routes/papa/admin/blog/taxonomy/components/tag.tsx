@@ -47,10 +47,15 @@ const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {
 }
 
 export const generateNewTag = (newTagName: string) => {
+	let slug = generateSlug(newTagName)
+	if (!slug) {
+		slug = generateSlug(String(Date.now()))
+	}
+
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
 		name: newTagName,
-		slug: generateSlug(newTagName),
+		slug,
 		description: '',
 		posts: [],
 	} satisfies TagType
