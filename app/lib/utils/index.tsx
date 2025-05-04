@@ -59,31 +59,31 @@ export const capitalize = (string: string) => {
 
 export const generateBreadcrumbs = (pathname: string) => {
 	const paths = pathname.split('/').filter(Boolean)
-	const breadcrumbItems = paths.reduce((acc: JSX.Element[], path, index) => {
-		const link = `/${paths.slice(0, index + 1).join('/')}`
-		acc.push(
-			<BreadcrumbItem key={index} className="hidden md:block">
-				<NavLink
-					to={link}
-					className={({ isActive }) =>
-						`${isActive ? 'text-primary' : 'hover:text-primary'} text-sm`
-					}
-					end
-				>
-					{capitalize(path)}
-				</NavLink>
-			</BreadcrumbItem>,
-		)
-		if (index < paths.length - 1) {
+	const breadcrumbItems = paths.reduce(
+		(acc: React.ReactNode[], path, index) => {
+			const link = `/${paths.slice(0, index + 1).join('/')}`
 			acc.push(
-				<BreadcrumbSeparator
-					key={`separator-${index}`}
-					className="hidden md:block size-3"
-				/>,
+				<BreadcrumbItem key={index} className="">
+					<NavLink
+						to={link}
+						className={({ isActive }) =>
+							`${isActive ? 'text-primary' : 'hover:text-primary'} text-sm`
+						}
+						end
+					>
+						{capitalize(path)}
+					</NavLink>
+				</BreadcrumbItem>,
 			)
-		}
-		return acc
-	}, [])
+			if (index < paths.length - 1) {
+				acc.push(
+					<BreadcrumbSeparator key={`separator-${index}`} className="size-3" />,
+				)
+			}
+			return acc
+		},
+		[],
+	)
 
 	return breadcrumbItems
 }

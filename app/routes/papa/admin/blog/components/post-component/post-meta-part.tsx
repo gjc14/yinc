@@ -32,6 +32,25 @@ export const PostMetaPart = ({
 	return (
 		<>
 			<div>
+				<Label htmlFor="image">Image</Label>
+				<Input
+					id="imageUrl"
+					name="imageUrl"
+					type="text"
+					placeholder="Featured image URL?"
+					value={postState.featuredImage || ''}
+					onChange={e => {
+						setPostState(prev => {
+							const newPost = {
+								...prev,
+								featuredImage: e.target.value,
+							}
+							return newPost
+						})
+					}}
+				/>
+			</div>
+			<div>
 				<Label htmlFor="status">Status</Label>
 				<Select
 					value={postState.status}
@@ -99,6 +118,7 @@ export const PostMetaPart = ({
 						Generate
 					</Button>
 				</div>
+				{/* 這邊加上 preview */}
 			</div>
 
 			<div>
