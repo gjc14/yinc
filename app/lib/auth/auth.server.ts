@@ -92,3 +92,5 @@ export const auth = betterAuth({
 		cookiePrefix: appName,
 	},
 })
+
+export type Session = typeof auth.$Infer.Session

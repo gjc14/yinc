@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router'
 
-import type { UserWithRole } from 'better-auth/plugins'
 import {
 	BadgeCheck,
 	Bell,
@@ -33,9 +32,10 @@ import {
 } from '~/components/ui/sidebar'
 import { ThemeDropDownMenu } from '~/components/theme-toggle'
 import { authClient } from '~/lib/auth/auth-client'
+import type { Session } from '~/lib/auth/auth.server'
 
 interface NavUserProps {
-	user: UserWithRole
+	user: Session['user']
 }
 
 export const NavUser = ({ user }: NavUserProps) => {
