@@ -47,6 +47,7 @@ export const SignInForm = () => {
 				onError: ctx => {
 					console.error(ctx.error)
 					alert('Error sending magic link: ' + ctx.error.message)
+					setIsSubmitting(false)
 				},
 			},
 		)
