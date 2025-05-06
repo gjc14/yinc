@@ -78,6 +78,7 @@
 		"drizzle-zod": "^0.7.1",
 		"embla-carousel-react": "^8.3.0",
 		"framer-motion": "^12.9.2",
+		"input-otp": "^1.4.2",
 		"isbot": "^5.1.27",
 		"lowlight": "^3.1.0",
 		"lucide-react": "^0.503.0",
