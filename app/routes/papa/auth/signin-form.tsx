@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Form } from 'react-router'
+import { Form, useNavigate } from 'react-router'
+
+import { REGEXP_ONLY_DIGITS } from 'input-otp'
+import { toast } from 'sonner'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -11,13 +14,24 @@ import {
 	CardTitle,
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
+import {
+	InputOTP,
+	InputOTPGroup,
+	InputOTPSlot,
+} from '~/components/ui/input-otp'
 import { Label } from '~/components/ui/label'
 import { Loading } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
 
 export const SignInForm = () => {
+	const navigate = useNavigate()
+
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [countDown, setCountDown] = useState(0)
+	const [showOtpInput, setShowOtpInput] = useState(false)
+	const [email, setEmail] = useState('')
+	const [otp, setOtp] = useState('')
+
 	const sendDisabled = countDown > 0 || isSubmitting
 
 	useEffect(() => {
@@ -30,27 +44,65 @@ export const SignInForm = () => {
 		}
 	}, [countDown])
 
-	const handleSignIn = async (email: string) => {
-		await authClient.signIn.magicLink(
+	const handleSendOTP = async () => {
+		if (sendDisabled) return
+
+		if (!email) {
+			alert('Please enter a valid email address')
+			return
+		}
+
+		setIsSubmitting(true)
+
+		await authClient.emailOtp.sendVerificationOtp(
 			{
 				email: email,
-				callbackURL: '/admin',
+				type: 'sign-in',
 			},
 			{
-				onRequest: () => {
-					setIsSubmitting(true)
-				},
 				onSuccess: () => {
-					setIsSubmitting(false)
-					alert('Magic link has sent to your email!')
+					setShowOtpInput(true)
+					setCountDown(30)
+					toast.success('Verification code has sent to your email!')
 				},
 				onError: ctx => {
+					alert('Error sending OTP: ' + ctx.error.message)
 					console.error(ctx.error)
-					alert('Error sending magic link: ' + ctx.error.message)
-					setIsSubmitting(false)
 				},
 			},
 		)
+
+		setIsSubmitting(false)
+	}
+
+	const handleSignIn = async () => {
+		if (isSubmitting) return
+
+		if (!otp || otp.length !== 6) {
+			alert('Please enter a valid OTP code')
+			return
+		}
+
+		setIsSubmitting(true)
+
+		await authClient.signIn.emailOtp(
+			{
+				email: email,
+				otp: otp,
+			},
+			{
+				onSuccess: () => {
+					toast.success('Successfully signed in!')
+					navigate('/admin')
+				},
+				onError: ctx => {
+					alert('Error verifying OTP: ' + ctx.error.message)
+					console.error(ctx.error)
+				},
+			},
+		)
+
+		setIsSubmitting(false)
 	}
 
 	return (
@@ -58,49 +110,101 @@ export const SignInForm = () => {
 			<CardHeader>
 				<CardTitle className="text-2xl">Sign in</CardTitle>
 				<CardDescription>
-					Enter your email below to access admin dashboard.
+					{showOtpInput ? (
+						<>
+							Enter the verification code sent to:
+							<br />
+							<strong>{email}</strong>
+						</>
+					) : (
+						'Enter your email below to access admin dashboard.'
+					)}
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="grid gap-4">
-				<Form
-					id="sign-in"
-					className="grid gap-2"
-					onSubmit={e => {
-						e.preventDefault()
-						if (isSubmitting) return
-						if (sendDisabled) return
-
-						const formData = new FormData(e.currentTarget)
-						const email = formData.get('email') as string
-						handleSignIn(email)
-						setCountDown(30)
-					}}
-				>
-					<Label htmlFor="email">Email</Label>
-					<Input
-						id="email"
-						type="email"
-						name="email"
-						placeholder="cyc@email.com"
-						required
-					/>
-				</Form>
+				{!showOtpInput ? (
+					<Form
+						id="send-otp"
+						className="grid gap-2"
+						onSubmit={e => {
+							e.preventDefault()
+							handleSendOTP()
+						}}
+					>
+						<Label htmlFor="email">Email</Label>
+						<Input
+							id="email"
+							type="email"
+							placeholder="cyc@email.com"
+							value={email}
+							onChange={e => setEmail(e.target.value)}
+							required
+						/>
+					</Form>
+				) : (
+					<Form
+						id="sign-in"
+						className="grid gap-4 items-center justify-center"
+						onSubmit={e => {
+							e.preventDefault()
+							handleSignIn()
+						}}
+					>
+						<InputOTP
+							id="otp"
+							maxLength={6}
+							pattern={REGEXP_ONLY_DIGITS}
+							value={otp}
+							onChange={value => setOtp(value)}
+						>
+							<InputOTPGroup>
+								<InputOTPSlot index={0} />
+								<InputOTPSlot index={1} />
+								<InputOTPSlot index={2} />
+								<InputOTPSlot index={3} />
+								<InputOTPSlot index={4} />
+								<InputOTPSlot index={5} />
+							</InputOTPGroup>
+						</InputOTP>
+					</Form>
+				)}
 			</CardContent>
-			<CardFooter>
-				<Button
-					className="w-full"
-					disabled={sendDisabled}
-					type="submit"
-					form="sign-in"
-				>
-					{isSubmitting ? (
-						<Loading />
-					) : sendDisabled ? (
-						<span>Wait {countDown} to sign in again</span>
-					) : (
-						'Sign in with Magic Link'
-					)}
-				</Button>
+			<CardFooter className={`${showOtpInput ? 'flex flex-col gap-3' : ''}`}>
+				{!showOtpInput ? (
+					<Button
+						className="w-full"
+						disabled={sendDisabled}
+						type="submit"
+						form="send-otp"
+					>
+						{isSubmitting ? (
+							<Loading />
+						) : countDown > 0 ? (
+							<span>Wait {countDown}s to sign in again</span>
+						) : (
+							'Send Verification Code'
+						)}
+					</Button>
+				) : (
+					<>
+						<Button
+							className="w-full"
+							disabled={isSubmitting}
+							type="submit"
+							form="sign-in"
+						>
+							{isSubmitting ? <Loading /> : 'Verify & Sign In'}
+						</Button>
+						<Button
+							variant="outline"
+							className="w-full"
+							onClick={handleSendOTP}
+							disabled={sendDisabled}
+						>
+							{countDown > 0 ? `Resend in ${countDown}s` : 'Resend Code'}
+						</Button>
+					</>
+				)}
 			</CardFooter>
 		</Card>
 	)

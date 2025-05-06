@@ -5,7 +5,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import {
 	admin as adminPlugin,
-	magicLink,
+	emailOTP,
 	organization,
 } from 'better-auth/plugins'
 
@@ -13,13 +13,15 @@ import { db } from '~/lib/db/db.server'
 
 import { emailInstance } from '../utils/email'
 import { ac, admin, user } from './permissions'
-import { sendMagicLink, sendVerifyLink } from './utils'
+import { sendSignInOTP, sendVerifyLink } from './utils'
 
 const appName = process.env.APP_NAME || 'PAPA'
 const baseURL =
 	process.env.NODE_ENV === 'production'
 		? process.env.VITE_BASE_URL || 'http://localhost:5173'
 		: 'http://localhost:5173'
+
+const otpExpireIn = 60 * 5 // 5 minutes
 
 export const auth = betterAuth({
 	appName,
@@ -56,16 +58,38 @@ export const auth = betterAuth({
 		}),
 		...(emailInstance
 			? [
-					magicLink({
-						sendMagicLink: async ({ email, token, url }, request) => {
-							sendMagicLink({
-								email,
-								url,
-								token,
-								emailInstance: emailInstance!,
-							})
+					// magicLink({
+					// 	sendMagicLink: async ({ email, token, url }, request) => {
+					// 		sendMagicLink({
+					// 			email,
+					// 			url,
+					// 			token,
+					// 			emailInstance: emailInstance!,
+					// 		})
+					// 	},
+					// 	disableSignUp: true,
+					// }),
+					emailOTP({
+						expiresIn: otpExpireIn, // 5 minutes
+						async sendVerificationOTP({ email, otp, type }) {
+							console.log('sendVerificationOTP', email, otp, type)
+							switch (type) {
+								case 'sign-in':
+									await sendSignInOTP({
+										email,
+										otp,
+										expireIn: otpExpireIn,
+										emailInstance: emailInstance!,
+									})
+									break
+								case 'email-verification':
+									console.warn('Email verification not implemented')
+									break
+								case 'forget-password':
+									console.warn('Forget password not implemented')
+									break
+							}
 						},
-						disableSignUp: true,
 					}),
 				]
 			: []),
