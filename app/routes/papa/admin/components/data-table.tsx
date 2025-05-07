@@ -281,22 +281,17 @@ export function DataTable<TData, TValue>({
 						}
 						defaultValue={pagination.pageSize.toString()}
 					>
-						<SelectTrigger className="w-[90px]">
+						<SelectTrigger className="w-[80px] h-8">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="10">10</SelectItem>
 							<SelectItem value="20">20</SelectItem>
-							<SelectItem value="25">25</SelectItem>
 							<SelectItem value="50">50</SelectItem>
 							<SelectItem value="100">100</SelectItem>
-							<SelectItem value="200">200</SelectItem>
-							<SelectItem value="250">250</SelectItem>
+							<SelectItem value="250">200</SelectItem>
 							<SelectItem value="500">500</SelectItem>
-							<SelectItem value="750">750</SelectItem>
 							<SelectItem value="1000">1000</SelectItem>
-							<SelectItem value="1500">1500</SelectItem>
-							<SelectItem value="2000">2000</SelectItem>
 						</SelectContent>
 					</Select>
 
