@@ -17,7 +17,22 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from '~/components/ui/dialog'
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetHeader,
+	SheetTitle,
+} from '~/components/ui/sheet'
 import RichTextEditor, { type EditorRef } from '~/components/editor'
+import { useIsMobile } from '~/hooks/use-mobile'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import { useDebounce } from '~/lib/utils/debounce'
@@ -49,6 +64,8 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		{ post, tags, categories, isDirty, setIsDirty, onSave, onDeleteRequest },
 		ref,
 	) => {
+		const isMobile = useIsMobile()
+
 		const editorRef = useRef<EditorRef>(null)
 		const editor = editorRef.current?.editor ?? null
 		const isDirtyPostInitialized = useRef(false)
@@ -173,7 +190,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		}))
 
 		return (
-			<div className="w-full max-w-prose px-5 text-pretty xl:px-0">
+			<div className="w-full flex flex-col items-center lg:flex-row lg:items-start lg:justify-around">
 				<AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
 					<AlertDialogContent>
 						<AlertDialogHeader>
@@ -208,7 +225,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					</AlertDialogContent>
 				</AlertDialog>
 
-				<div className="flex flex-col">
+				<div className="max-w-prose flex flex-col px-5 text-pretty xl:px-0">
 					<MainPost
 						post={postState}
 						editable
@@ -233,15 +250,52 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					</MainPost>
 				</div>
 
-				{openSettings && (
-					<PostSettings
-						postState={postState}
-						setPostState={setPostState}
-						tags={tags}
-						categories={categories}
-						editorRef={editorRef}
-						onDeleteRequest={onDeleteRequest}
-					/>
+				{isMobile ? (
+					<Dialog open={openSettings} onOpenChange={setOpenSettings}>
+						<DialogContent className="max-h-[90vh] overflow-y-auto">
+							<DialogHeader>
+								<DialogTitle>Post Settings</DialogTitle>
+								<DialogDescription>
+									Post metadata, categories, tags, and SEO settings. You could
+									also delete post here.
+								</DialogDescription>
+							</DialogHeader>
+
+							<div className="py-3.5">
+								<PostSettings
+									postState={postState}
+									setPostState={setPostState}
+									tags={tags}
+									categories={categories}
+									editorRef={editorRef}
+									onDeleteRequest={onDeleteRequest}
+								/>
+							</div>
+						</DialogContent>
+					</Dialog>
+				) : (
+					<Sheet open={openSettings} onOpenChange={setOpenSettings}>
+						<SheetContent className="overflow-y-auto">
+							<SheetHeader>
+								<SheetTitle>Post Settings</SheetTitle>
+								<SheetDescription>
+									Post metadata, categories, tags, and SEO settings. You could
+									also delete post here.
+								</SheetDescription>
+							</SheetHeader>
+
+							<div className="py-3.5">
+								<PostSettings
+									postState={postState}
+									setPostState={setPostState}
+									tags={tags}
+									categories={categories}
+									editorRef={editorRef}
+									onDeleteRequest={onDeleteRequest}
+								/>
+							</div>
+						</SheetContent>
+					</Sheet>
 				)}
 			</div>
 		)

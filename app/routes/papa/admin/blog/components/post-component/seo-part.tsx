@@ -19,7 +19,7 @@ export const SeoPart = ({
 }: {
 	postState: PostWithRelations
 	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
-	editorRef: React.RefObject<EditorRef>
+	editorRef: React.RefObject<EditorRef | null>
 }) => {
 	return (
 		<>

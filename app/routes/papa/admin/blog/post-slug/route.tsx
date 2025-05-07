@@ -133,7 +133,7 @@ export default function AdminSlugPost() {
 				isNavigating={isNavigating}
 			/>
 
-			<div className="z-10 fixed top-16 right-6 flex items-center gap-2">
+			<div className="z-10 fixed top-16 right-6 flex items-center gap-2 backdrop-blur-md px-2 py-1 rounded-xl">
 				{/* Preview */}
 				{post.status !== 'PUBLISHED' ? (
 					!isDirty ? (
