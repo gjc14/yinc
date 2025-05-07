@@ -1,15 +1,21 @@
 import { memo, useEffect, useMemo, useState } from 'react'
 import {
+	isRouteErrorResponse,
+	Link,
 	Outlet,
 	redirect,
 	useLoaderData,
 	useLocation,
 	useOutletContext,
+	useRouteError,
 	type LoaderFunctionArgs,
 	type MetaFunction,
 } from 'react-router'
 
+import { Undo2 } from 'lucide-react'
+
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
+import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import {
 	SIDEBAR_COOKIE_NAME,
@@ -125,4 +131,97 @@ const HeaderWithBreadcrumb = () => {
 
 export const useAdminContext = () => {
 	return useOutletContext<Awaited<ReturnType<typeof loader>>>()
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError()
+
+	// Route throw new Response (404, etc.)
+	if (isRouteErrorResponse(error)) {
+		console.error('Route Error Response:', error)
+
+		switch (error.status) {
+			case 404:
+				return (
+					<ErrorTemplate
+						status={error.status}
+						statusText={error.statusText || 'Page Not Found'}
+						returnTo={'/admin'}
+					/>
+				)
+			default:
+				return (
+					<ErrorTemplate
+						status={error.status}
+						statusText={error.statusText || 'Error Response'}
+						returnTo={'/admin'}
+					/>
+				)
+		}
+	} else if (error instanceof Error) {
+		// throw new Error('message')
+		console.error('Error:', error)
+
+		return (
+			<ErrorTemplate
+				status={500}
+				statusText={'Internal Error'}
+				returnTo={'/admin'}
+			/>
+		)
+	}
+
+	console.error('Unknown Error:', error)
+
+	return (
+		// Unknown error
+		<ErrorTemplate
+			status={'XXX'}
+			statusText={'Unknown Error'}
+			returnTo={'/admin'}
+		/>
+	)
+}
+
+const ErrorTemplate = ({
+	status,
+	statusText,
+	returnTo,
+}: {
+	status: string | number
+	statusText: string
+	returnTo: string
+}) => {
+	return (
+		<main className="w-screen h-screen flex flex-col items-center justify-center">
+			<div className="fixed text-center">
+				<div className="flex items-center justify-center mb-3">
+					<h1 className="inline-block mr-5 pr-5 text-3xl font-normal border-r">
+						{status}
+					</h1>
+					<h2 className="text-base font-light">{statusText || 'Error Page'}</h2>
+				</div>
+
+				<Link to={returnTo}>
+					<Button variant={'link'}>
+						<span>
+							Return to <code>{returnTo}</code>
+						</span>
+						<Undo2 size={12} />
+					</Button>
+				</Link>
+			</div>
+
+			<div className="fixed bottom-8 flex items-center font-open-sans">
+				<p className="inline-block mr-3 pr-5 text-lg font-normal border-r">
+					Papa
+				</p>
+				<div className="inline-block">
+					<p className="text-xs font-light text-left">
+						© {new Date().getFullYear()} CHIU YIN CHEN @Taipei
+					</p>
+				</div>
+			</div>
+		</main>
+	)
 }
