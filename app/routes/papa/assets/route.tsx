@@ -8,7 +8,7 @@ import { db } from '~/lib/db/db.server'
 import { validateAdminSession } from '../auth/utils'
 import { presignedUrlRes } from './helpers'
 
-// Usage: papa.com/assets/{assetId}
+// Usage: papa.cloud/assets/{assetId}
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const assetId = params.assetId
 

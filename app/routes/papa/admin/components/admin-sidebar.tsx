@@ -22,7 +22,7 @@ import { ServiceSwicher, type ServiceSwicherProps } from './service-swicher'
 
 const services: ServiceSwicherProps['services'] = [
 	{
-		name: 'Papa CMS',
+		name: 'Papa',
 		logo: () => <Command className="size-4" />,
 		plan: 'Startup',
 		url: '/admin',

@@ -1,6 +1,6 @@
 import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
 
-// Usage: papacms.com/assets/my-file-key?visibility=public
+// Usage: papa.cloud/assets/my-file-key?visibility=public
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const { searchParams } = new URL(request.url)
 

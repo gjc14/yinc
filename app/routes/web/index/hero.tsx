@@ -46,10 +46,9 @@ export const Hero = () => {
 					</div>
 
 					<motion.p {...fade()}>
-						Papa CMS includes front page and CMS admin page. To start building
-						your website, please edit _web/route.tsx for front page layout, and
-						the _web._index/route.tsx for / page. You could also find some
-						useful components in /app/components. 🚀
+						Papa is an AI-native open-source application designed to help SMEs
+						manage both internal workflows and external presence — all in one
+						place.
 					</motion.p>
 					<motion.p {...fade()}>
 						Papa is built on top of&nbsp;
@@ -67,7 +66,7 @@ export const Hero = () => {
 
 					<div className="flex gap-3">
 						<a
-							href="https://papacms.vercel.app"
+							href="https://papacloud.vercel.app"
 							aria-label="Go to papa"
 							target="_blank"
 							rel="noopener noreferrer"

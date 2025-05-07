@@ -1,8 +1,8 @@
-# Papa CMS
+# Papa
 
 <!-- prettier-ignore -->
 > [!NOTE]
-> Welcome to PapaCMS, this is an open-source project for building modern web with React and TypeScript.
+> Welcome to Papa, this is an open-source project for building modern web with React and TypeScript.
 
 ## Tech Stack
 
@@ -30,7 +30,7 @@
 2. Get a PostgreSQL database, either host locally or use
    [Neon](https://neon.tech/), which provides 0.5G storage for up to 10
    projects. 512MB is capable of more than 17,000 of
-   [What is PapaCMS (30kB)](https://papacms.vercel.app/blog/what-is-papa) post.
+   [What is Papa (30kB)](https://papacloud.vercel.app/blog/what-is-papa) post.
 3. Have a [Resend](https://resend.com/) account to send email. Every Resend
    account has a [free 3,000 emails/mo quota](https://resend.com/pricing).
 4. Setup an object storage either in
@@ -40,7 +40,7 @@
    [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/),
    [reCAPTCHA v3](https://www.google.com/recaptcha/about/) (coming soon) or
    [hCaptcha](https://www.hcaptcha.com/) (coming soon) to secure your form.
-6. Chose where to deploy your PapaCMS application.
+6. Chose where to deploy your Papa application.
 
 ### Set up [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/)
 

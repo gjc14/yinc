@@ -33,7 +33,7 @@ export const MagicLinkEmail = ({ magicLink }: { magicLink: string }) => (
 				</Text>
 				<Hr style={hr} />
 				<Text style={footer}>
-					Build with <Link href="https://papacms.com">papacms.com</Link>
+					Build with <Link href="https://papa.cloud">papa.cloud</Link>
 				</Text>
 			</Container>
 		</Body>

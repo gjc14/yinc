@@ -15,7 +15,7 @@ export const Footer = () => {
 			<p className="text-sm text-primary">
 				Built somewhere on the 🌏. © {new Date().getFullYear()}{' '}
 				<a
-					href="https://papacms.com"
+					href="https://papa.cloud"
 					aria-label="Go to papa"
 					target="_blank"
 					rel="noopener noreferrer"
