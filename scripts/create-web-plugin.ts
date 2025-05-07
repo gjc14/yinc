@@ -80,6 +80,9 @@ const filePathExampleWebConfig = join(
 )
 
 try {
+	console.log('Not Implemented')
+	process.exit(1)
+
 	await mkdir(
 		join(
 			process.cwd(),
