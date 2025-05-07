@@ -5,6 +5,10 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
+const customizedRoutes = [
+	// Add your customized routes here
+] satisfies RouteConfig
+
 const systemRoutes = [
 	route('/admin', './routes/papa/admin/layout.tsx', [
 		index('./routes/papa/admin/index/route.tsx'),
@@ -67,13 +71,10 @@ const systemRoutes = [
 		route('*', './routes/papa/admin/$/route.tsx'),
 
 		// Adding admin plugins
+		...customizedRoutes,
 	]),
 ] satisfies RouteConfig
 
-const customizedRoutes = [
-	// Add your customized routes here
-] satisfies RouteConfig
-
 export const adminPage = () => {
-	return [...systemRoutes, ...customizedRoutes]
+	return [...systemRoutes]
 }

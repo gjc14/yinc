@@ -6,6 +6,10 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
+const customizedRoutes = [
+	// Add your customized routes here
+] satisfies RouteConfig
+
 const systemRoutes = [
 	layout('./routes/web/layout.tsx', [
 		index('./routes/web/index/route.tsx'),
@@ -19,26 +23,23 @@ const systemRoutes = [
 		]),
 		route('/*', './routes/web/$/route.tsx'),
 
-		// Adding customized web routes
-	]),
-
-	...prefix('/hello-world', [
-		layout('./routes/web/hello-world/layout.tsx', [
-			index('./routes/web/hello-world/index/route.tsx'),
-			route(':whateverParam', './routes/web/hello-world/param/route.tsx'),
+		...prefix('/hello-world', [
+			layout('./routes/web/hello-world/layout.tsx', [
+				index('./routes/web/hello-world/index/route.tsx'),
+				route(':whateverParam', './routes/web/hello-world/param/route.tsx'),
+			]),
 		]),
-	]),
-	// This is the same as the above, but using the `route` function
-	// route('/hello-world/hello', './routes/web/hello-world/layout.tsx', [
-	// 	index('./routes/web/hello-world/index/route.tsx'),
-	// 	route(':whateverParam', './routes/web/hello-world/param/route.tsx'),
-	// ])
-] satisfies RouteConfig
+		// This is the same as the above, but using the `route` function
+		// route('/hello-world/hello', './routes/web/hello-world/layout.tsx', [
+		// 	index('./routes/web/hello-world/index/route.tsx'),
+		// 	route(':whateverParam', './routes/web/hello-world/param/route.tsx'),
+		// ])
 
-const customizedRoutes = [
-	// Add your customized routes here
+		// Adding customized web routes
+		...customizedRoutes,
+	]),
 ] satisfies RouteConfig
 
 export const webPage = () => {
-	return [...systemRoutes, ...customizedRoutes]
+	return [...systemRoutes]
 }

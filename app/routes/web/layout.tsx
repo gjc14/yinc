@@ -1,21 +1,13 @@
 import {
 	isRouteErrorResponse,
 	Link,
-	Meta,
 	Outlet,
 	useRouteError,
 	type MetaFunction,
 } from 'react-router'
 
 import { motion } from 'framer-motion'
-import {
-	AlertCircle,
-	ArrowLeft,
-	FileQuestion,
-	MoveLeftIcon,
-	ServerCrash,
-	Settings,
-} from 'lucide-react'
+import { AlertCircle, ArrowLeft, Settings } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { fade } from '~/components/motions'
