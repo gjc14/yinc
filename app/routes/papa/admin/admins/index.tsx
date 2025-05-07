@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
@@ -44,6 +44,13 @@ export default function AdminAdminUsers() {
 	const users = allUsers.filter(user => user.role === 'admin')
 
 	const isSubmitting = fetcher.state === 'submitting'
+
+	const tableData = useMemo(() => {
+		return users.map(u => ({
+			...u,
+			setRowsDeleting,
+		}))
+	}, [users])
 
 	return (
 		<AdminSectionWrapper>
@@ -106,10 +113,7 @@ export default function AdminAdminUsers() {
 			</AdminHeader>
 			<DataTable
 				columns={columns}
-				data={users.map(u => ({
-					...u,
-					setRowsDeleting,
-				}))}
+				data={tableData}
 				rowGroupStyle={[
 					{
 						rowIds: rowsDeleting,

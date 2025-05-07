@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useFetcher } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
@@ -47,6 +47,15 @@ export default function AdminPost() {
 		console.log('rowSelection', rowSelection)
 	}, [rowSelection, rowsDeleting])
 
+	const tableData = useMemo(() => {
+		return posts.map(p => {
+			return {
+				...p,
+				setRowsDeleting,
+			}
+		})
+	}, [posts])
+
 	return (
 		<AdminSectionWrapper>
 			<AdminHeader>
@@ -62,12 +71,7 @@ export default function AdminPost() {
 			</AdminHeader>
 			<DataTable
 				columns={columns}
-				data={posts.map(p => {
-					return {
-						...p,
-						setRowsDeleting,
-					}
-				})}
+				data={tableData}
 				hideColumnFilter
 				rowSelection={rowSelection}
 				setRowSelection={setRowSelection}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
@@ -33,6 +33,13 @@ export default function AdminSEO() {
 	const [open, setOpen] = useState(false)
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
 
+	const tableData = useMemo(() => {
+		return seos.map(s => ({
+			...s,
+			setRowsDeleting,
+		}))
+	}, [seos])
+
 	return (
 		<AdminSectionWrapper>
 			<AdminHeader>
@@ -55,10 +62,7 @@ export default function AdminSEO() {
 			</AdminHeader>
 			<DataTable
 				columns={columns}
-				data={seos.map(s => ({
-					...s,
-					setRowsDeleting,
-				}))}
+				data={tableData}
 				rowGroupStyle={[
 					{
 						rowIds: rowsDeleting,

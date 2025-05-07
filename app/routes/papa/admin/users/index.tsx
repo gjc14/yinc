@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
@@ -26,6 +26,13 @@ export default function AdminAllUsers() {
 	const { users } = useLoaderData<typeof loader>()
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
 
+	const tableData = useMemo(() => {
+		return users.map(u => ({
+			...u,
+			setRowsDeleting,
+		}))
+	}, [users])
+
 	return (
 		<AdminSectionWrapper>
 			<AdminHeader>
@@ -33,10 +40,7 @@ export default function AdminAllUsers() {
 			</AdminHeader>
 			<DataTable
 				columns={columns}
-				data={users.map(u => ({
-					...u,
-					setRowsDeleting,
-				}))}
+				data={tableData}
 				rowGroupStyle={[
 					{
 						rowIds: rowsDeleting,
