@@ -135,7 +135,12 @@ export const SignInForm = () => {
 						<Input
 							id="email"
 							type="email"
-							placeholder="cyc@email.com"
+							placeholder={
+								'yo@' +
+								(import.meta.env.DEV
+									? 'papa.cloud'
+									: import.meta.env.VITE_BASE_URL.split('://')[1])
+							}
 							value={email}
 							onChange={e => setEmail(e.target.value)}
 							required

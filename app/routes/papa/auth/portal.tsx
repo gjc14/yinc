@@ -14,7 +14,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	return null
 }
 
-export default function AdminAuth() {
+export default function AdminPortal() {
 	return (
 		<MainWrapper className="justify-center">
 			<SignInForm />

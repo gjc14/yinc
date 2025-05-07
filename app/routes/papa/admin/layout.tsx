@@ -50,7 +50,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const usesrSession = await validateAdminSession(request)
 
 	if (!usesrSession) {
-		throw redirect('/admin/signin')
+		throw redirect('/admin/portal')
 	}
 
 	const cookieHeader = request.headers.get('Cookie')

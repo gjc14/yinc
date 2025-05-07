@@ -16,7 +16,7 @@ const systemRoutes = [
 	route('assets/error', './routes/papa/assets/error.tsx'),
 
 	// Auth Page
-	route('/admin/signin', './routes/papa/auth/signin.tsx'),
+	route('/admin/portal', './routes/papa/auth/portal.tsx'),
 
 	// Admin route
 	...adminPage(),
