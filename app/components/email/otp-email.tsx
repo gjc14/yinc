@@ -16,7 +16,7 @@ interface OtpEmailProps {
 	expireIn?: number
 	username: string
 	companyName: string
-	logoUrl: string
+	logoUrl?: string
 }
 
 const baseURL =

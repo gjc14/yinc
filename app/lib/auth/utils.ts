@@ -82,7 +82,7 @@ export const sendSignInOTP = async ({
 	const { error } = await emailInstance.emails.send({
 		from,
 		to: [email],
-		subject: '輸入您的 OTP 一次性密碼登入！Enter your OTP to sign in',
+		subject: `[${otp}] 是您的 OTP，輸入以登入 ${appName}！Enter your OTP to sign in ${appName}`,
 		react: OtpEmail({
 			otp,
 			expireIn,
