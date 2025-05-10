@@ -117,7 +117,7 @@ export default function AdminGenerativeAI() {
 			</AdminHeader>
 			<Separator />
 
-			<ScrollArea className="grow h-screen" ref={scrollAreaRef}>
+			<ScrollArea className="grow h-svh" ref={scrollAreaRef}>
 				<div className="max-w-3xl mx-auto space-y-12 px-3 sm:px-5">
 					{messages.length !== 0 ? (
 						messages.map(message => {

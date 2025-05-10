@@ -14,7 +14,7 @@ export default function AssetsError() {
 	const { status, statusText } = useLoaderData<typeof loader>()
 
 	return (
-		<div className="h-screen w-screen grow flex flex-col items-center justify-center">
+		<div className="h-svh w-screen grow flex flex-col items-center justify-center">
 			<h1>Asset Error</h1>
 			<p>
 				{status || 'Unknown status code'} | {statusText || 'Unknown error'}

@@ -89,7 +89,7 @@ export default function BlogPost() {
 	}, [post])
 
 	return (
-		<div className="w-full max-w-prose min-h-screen px-5 mt-32 text-pretty xl:px-0">
+		<div className="w-full max-w-prose min-h-svh px-5 mt-32 text-pretty xl:px-0">
 			<MainPost post={post} />
 
 			<PostFooter post={post} next={nextPost} prev={prevPost} />

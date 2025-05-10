@@ -57,7 +57,7 @@ export function ErrorBoundary() {
 		switch (error.status) {
 			case 404:
 				return (
-					<main className="w-screen h-screen flex flex-col items-center justify-center">
+					<main className="w-screen h-svh flex flex-col items-center justify-center">
 						<motion.h1
 							className="mb-2 text-[8rem] leading-none tracking-tight sm:text-[10rem] md:text-[15rem]"
 							{...fade()}
@@ -82,7 +82,7 @@ export function ErrorBoundary() {
 				)
 			default:
 				return (
-					<main className="w-screen h-screen flex flex-col items-center justify-center">
+					<main className="w-screen h-svh flex flex-col items-center justify-center">
 						<a
 							className="z-10 text-sm underline underline-offset-4"
 							href={`https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${error.status}`}
@@ -118,7 +118,7 @@ export function ErrorBoundary() {
 		console.error('Error:', error)
 
 		return (
-			<main className="w-screen h-screen flex flex-col items-center justify-center">
+			<main className="w-screen h-svh flex flex-col items-center justify-center">
 				<motion.h1
 					className="mb-2 text-[8rem] leading-none tracking-tight sm:text-[10rem] md:text-[15rem]"
 					{...fade()}
@@ -156,7 +156,7 @@ export function ErrorBoundary() {
 
 	return (
 		// Unknown error
-		<main className="w-screen h-screen flex flex-col items-center justify-center">
+		<main className="w-screen h-svh flex flex-col items-center justify-center">
 			<motion.h1
 				className="mb-2 text-[8rem] leading-none tracking-tight sm:text-[10rem] md:text-[15rem]"
 				{...fade()}

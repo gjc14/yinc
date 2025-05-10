@@ -6,7 +6,7 @@ export async function loader() {
 
 export default function Layout() {
 	return (
-		<main className="h-screen w-screen flex flex-col items-center justify-center border-4 border-primary border-dotted overflow-scroll">
+		<main className="h-svh w-screen flex flex-col items-center justify-center border-4 border-primary border-dotted overflow-scroll">
 			<p>This content is from layout.tsx file.</p>
 			<Outlet />
 		</main>

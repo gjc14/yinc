@@ -193,7 +193,7 @@ const ErrorTemplate = ({
 	returnTo: string
 }) => {
 	return (
-		<main className="w-screen h-screen flex flex-col items-center justify-center">
+		<main className="w-screen h-svh flex flex-col items-center justify-center">
 			<div className="fixed text-center">
 				<div className="flex items-center justify-center mb-3">
 					<h1 className="inline-block mr-5 pr-5 text-3xl font-normal border-r">

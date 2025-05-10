@@ -207,7 +207,7 @@ export function ErrorBoundary() {
 		console.error('Route Error Response:', error)
 
 		return (
-			<main className="w-screen h-screen flex flex-col items-center justify-center">
+			<main className="w-screen h-svh flex flex-col items-center justify-center">
 				<p>Root Error Boundary.</p>
 				<p>
 					Server Response <strong>{error.status}</strong>
@@ -219,7 +219,7 @@ export function ErrorBoundary() {
 		console.error('Error:', error)
 
 		return (
-			<main className="w-screen h-screen flex flex-col items-center justify-center">
+			<main className="w-screen h-svh flex flex-col items-center justify-center">
 				<p>Root Error Boundary.</p>
 				<p>
 					Error <strong>{error.message}</strong>
@@ -232,7 +232,7 @@ export function ErrorBoundary() {
 
 	return (
 		// Unknown error
-		<main className="w-screen h-screen flex flex-col items-center justify-center">
+		<main className="w-screen h-svh flex flex-col items-center justify-center">
 			<p>Root Error Boundary.</p>
 			<p>Unknown Error</p>
 		</main>
