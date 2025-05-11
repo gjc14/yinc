@@ -6,6 +6,7 @@ export default defineConfig({
 	dialect: 'postgresql',
 	schema: [
 		'./app/lib/db/schema/**/*',
+		'./app/routes/**/lib/db/schema/**/*',
 		'./app/routes/plugins/**/lib/db/schema/**/*',
 	],
 	dbCredentials: {
