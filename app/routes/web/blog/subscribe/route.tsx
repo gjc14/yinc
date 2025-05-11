@@ -10,9 +10,9 @@ const captchaSchema = z.enum(['turnstile', 'recaptcha', 'hcaptcha'])
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method !== 'POST') {
-		return Response.json({
+		return {
 			err: 'Method not allowed',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	const formData = await request.formData()
@@ -22,9 +22,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	const zCaptchaResult = captchaSchema.safeParse(captcha)
 
 	if (!zCaptchaResult.success) {
-		return Response.json({
+		return {
 			err: 'Invalid arguments, missing captcha',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	switch (zCaptchaResult.data) {
@@ -33,9 +33,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 			const zTurnstileResult = z.string().safeParse(turnstileResponse)
 			if (!zTurnstileResult.success) {
-				return Response.json({
+				return {
 					err: 'Invalid arguments',
-				} satisfies ConventionalActionResponse)
+				} satisfies ConventionalActionResponse
 			}
 
 			const passed = await TurnstileSiteVerify(
@@ -43,30 +43,30 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				process.env.TURNSTILE_SECRET_KEY ?? '',
 			)
 			if (!passed) {
-				return Response.json({
+				return {
 					err: 'CAPTCHA Failed! Please try again',
-				} satisfies ConventionalActionResponse)
+				} satisfies ConventionalActionResponse
 			}
 			break
 		}
 		case 'recaptcha': {
-			return Response.json({
+			return {
 				err: 'Recaptcha not implemented',
-			} satisfies ConventionalActionResponse)
+			} satisfies ConventionalActionResponse
 		}
 		case 'hcaptcha': {
-			return Response.json({
+			return {
 				err: 'Hcaptcha not implemented',
-			} satisfies ConventionalActionResponse)
+			} satisfies ConventionalActionResponse
 		}
 	}
 
 	// Create
 	const email = formData.get('email')
 	if (typeof email !== 'string' || !isValidEmail(email)) {
-		return Response.json({
+		return {
 			err: 'Invalid arguments',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	try {
@@ -79,15 +79,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			},
 		})
 
-		return Response.json({
+		return {
 			msg: `Welcom! Subscribed with ${user.email}!`,
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	} catch (error) {
 		// TODO: Handle user existing error
 		console.error('Error creating user:', error)
-		return Response.json({
+		return {
 			err: 'Failed to subscribe',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 }
 

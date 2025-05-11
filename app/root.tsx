@@ -110,7 +110,7 @@ export default function App() {
 				),
 			)
 
-			// Convention: actions return Response.json({ msg, data? } | { err, data?}) refer to README.md or ./app/libs/utils.tsx
+			// Convention: actions return { msg, data? } | { err, data? } refer to README.md or ./app/libs/utils.tsx
 			const actionResponses = fetchers.filter(fetcher => {
 				return (
 					fetcher.state === 'loading' &&

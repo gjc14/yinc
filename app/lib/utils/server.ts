@@ -8,7 +8,7 @@ const { DatabaseError } = pkg
 /**
  * @param error passing error from catch when try update database with drizzle and zod
  * @param request MDN Request
- * @returns Response.json
+ * @returns { err: string } error message
  */
 export const handleError = (
 	error: unknown,
@@ -17,27 +17,27 @@ export const handleError = (
 ) => {
 	if (error instanceof z.ZodError) {
 		console.error(error.message)
-		return Response.json({
+		return {
 			err: 'Internal error: Invalid argument',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	if (error instanceof DatabaseError) {
 		console.error(error)
-		return Response.json({
+		return {
 			err: error.detail ?? 'Database error',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	if (error instanceof Error) {
 		console.error(error.message)
-		return Response.json({
+		return {
 			err: error.message,
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	console.error(error)
-	return Response.json({
+	return {
 		err: errorMessage ?? 'Internal error: Unknown error',
-	} satisfies ConventionalActionResponse)
+	} satisfies ConventionalActionResponse
 }

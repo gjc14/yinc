@@ -174,14 +174,14 @@ type ReturnData = {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (a) {
-		return Response.json({
+		return {
 			msg: `Welcome to PAPA!`,
 			data: { name: newName },
-		} satisfies ConventionalActionResponse<ReturnData>)
+		} satisfies ConventionalActionResponse<ReturnData>
 	} else {
-		return Response.json({
+		return {
 			err: 'Method not allowed',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 }
 

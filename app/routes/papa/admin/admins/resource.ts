@@ -18,9 +18,9 @@ const userUpdateSchema = createUpdateSchema(user).required().omit({
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (!['POST', 'PUT', 'DELETE'].includes(request.method)) {
-		return Response.json({
+		return {
 			err: 'Method not allowed',
-		} satisfies ConventionalActionResponse)
+		} satisfies ConventionalActionResponse
 	}
 
 	const adminSession = await validateAdminSession(request)
@@ -69,9 +69,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					},
 				})
 
-				return Response.json({
+				return {
 					msg: `Admin ${user.email} has created successfully`,
-				} satisfies ConventionalActionResponse)
+				} satisfies ConventionalActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -91,9 +91,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					},
 				})
 
-				return Response.json({
+				return {
 					msg: 'Success update ' + (userUpdated.name || userUpdated.email),
-				} satisfies ConventionalActionResponse)
+				} satisfies ConventionalActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -105,9 +105,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 			try {
 				const { user } = await deleteUser(userId)
-				return Response.json({
+				return {
 					msg: `${user.email} deleted successfully`,
-				} satisfies ConventionalActionResponse)
+				} satisfies ConventionalActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
