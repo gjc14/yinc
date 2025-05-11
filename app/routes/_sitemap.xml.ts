@@ -64,6 +64,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			},
 		})
 	} catch (e) {
-		throw new Response('Internal Server Error', { status: 500 })
+		throw new Response('', { status: 500, statusText: 'Internal Server Error' })
 	}
 }

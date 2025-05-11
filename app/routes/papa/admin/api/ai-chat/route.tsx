@@ -35,7 +35,7 @@ export interface ChatAPICustomBody {
 
 export async function action({ request }: ActionFunctionArgs) {
 	if (request.method !== 'POST') {
-		throw new Response('Method not allowed', { status: 405 })
+		throw new Response('', { status: 405, statusText: 'Method not allowed' })
 	}
 
 	await validateAdminSession(request)
@@ -95,6 +95,6 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	} catch (error) {
 		console.error('Streaming error:', error)
-		return new Response('Streaming failed', { status: 500 })
+		return new Response('', { status: 500, statusText: 'Streaming failed' })
 	}
 }
