@@ -1,7 +1,7 @@
 import pkg from 'pg'
 import { z } from 'zod'
 
-import { type ConventionalActionResponse } from '~/lib/utils'
+import { capitalize, type ConventionalActionResponse } from '~/lib/utils'
 
 const { DatabaseError } = pkg
 
@@ -25,7 +25,7 @@ export const handleError = (
 	if (error instanceof DatabaseError) {
 		console.error(error)
 		return {
-			err: error.detail ?? 'Database error',
+			err: capitalize(error.message) || error.detail || 'Database error',
 		} satisfies ConventionalActionResponse
 	}
 
