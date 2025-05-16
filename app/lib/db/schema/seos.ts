@@ -1,24 +1,13 @@
 import { relations, type InferSelectModel } from 'drizzle-orm'
-import {
-	boolean,
-	integer,
-	pgTable,
-	serial,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, serial, varchar } from 'drizzle-orm/pg-core'
 
+import { timestampAttributes } from './helpers'
 import { postsTable } from './posts'
 
 export type Seo = InferSelectModel<typeof seosTable>
 
 export const seosTable = pgTable('seos', {
 	id: serial('id').primaryKey(),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at')
-		.notNull()
-		.defaultNow()
-		.$onUpdate(() => new Date()),
 	metaTitle: varchar('meta_title', { length: 255 }),
 	metaDescription: varchar('meta_description', { length: 255 }),
 	keywords: varchar('keywords', { length: 255 }),
@@ -29,6 +18,8 @@ export const seosTable = pgTable('seos', {
 	postId: integer('post_id')
 		.unique()
 		.references(() => postsTable.id, { onDelete: 'cascade' }),
+
+	...timestampAttributes,
 })
 
 export const seosRelations = relations(seosTable, ({ one }) => ({

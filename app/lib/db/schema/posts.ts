@@ -1,14 +1,8 @@
 import { relations, type InferSelectModel } from 'drizzle-orm'
-import {
-	pgEnum,
-	pgTable,
-	serial,
-	text,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core'
+import { pgEnum, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core'
 
 import { user } from './auth'
+import { timestampAttributes } from './helpers'
 import { seosTable } from './seos'
 import { postsToCategories, postsToTags } from './taxonomies'
 
@@ -16,11 +10,6 @@ export type Post = InferSelectModel<typeof postsTable>
 
 export const postsTable = pgTable('posts', {
 	id: serial('id').primaryKey(),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at')
-		.notNull()
-		.defaultNow()
-		.$onUpdate(() => new Date()),
 	slug: varchar('slug').notNull().unique(),
 	title: varchar('title').notNull(),
 	content: text('content'),
@@ -31,6 +20,8 @@ export const postsTable = pgTable('posts', {
 	authorId: text('author_id').references(() => user.id, {
 		onDelete: 'set null',
 	}),
+
+	...timestampAttributes,
 })
 
 export const postsRelations = relations(postsTable, ({ one, many }) => ({
