@@ -76,26 +76,41 @@ cd papa && mv .env.example .env
 > [!WARNING]
 > VITE will expose any environment variable with _VITE_\_ prefix, please use it carefully.
 
-1. `DATABASE_URL`: We are using PostgreSQL.
-2. (optional) Set `TURNSTILE_SITE_KEY`: This key is used to
-   [get Turnstile token](https://developers.cloudflare.com/turnstile/get-started/)
-   in client, if you use
-   [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) as
-   captcha, so should be exposed in the frontend with _VITE_\_ prefix.
-3. (optional) `TURNSTILE_SECRET_KEY`: Used to
-   [verify Turnstile token](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
-   get in the frontend in the backend
-4. `AUTH_SECRET`: Use
-   `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"` to
-   generate a random secret with node.
-5. `AUTH_EMAIL`: The email address sending authentication emails.
-6. `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
-   mode, probably `http://localhost:5173`. In production environment, please use
-   where your app is. E.g. `https://papa.delicioso`.
-7. `APP_NAME`: What you call your app.
-8. `RESEND_API_KEY`: Send emails via Resend.
-9. (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
-   `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
+1.  `DATABASE_URL`: We connect to PostgreSQL using node-postgres (pg), so both
+    direct and pooled connections are supported.
+
+    - Direct connections provide a one-to-one connection from your app to the
+      database. They are ideal for long-lived environments like VMs or
+      containers.
+    - Pooled connections (e.g., via PgBouncer in transaction or session pooling
+      mode) allow sharing a limited number of database connections across many
+      stateless requests. This is especially important when running on
+      serverless platforms, where each request may create a new database
+      connection.
+
+    - **When using stateless/serverless architecture, we recommend using pooled
+      connections to avoid hitting connection limits and to ensure
+      scalability.**
+
+2.  (optional) Set `TURNSTILE_SITE_KEY`: This key is used to
+    [get Turnstile token](https://developers.cloudflare.com/turnstile/get-started/)
+    in client, if you use
+    [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) as
+    captcha, so should be exposed in the frontend with _VITE_\_ prefix.
+3.  (optional) `TURNSTILE_SECRET_KEY`: Used to
+    [verify Turnstile token](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
+    get in the frontend in the backend
+4.  `AUTH_SECRET`: Use
+    `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+    to generate a random secret with node.
+5.  `AUTH_EMAIL`: The email address sending authentication emails.
+6.  `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
+    mode, probably `http://localhost:5173`. In production environment, please
+    use where your app is. E.g. `https://papa.delicioso`.
+7.  `APP_NAME`: What you call your app.
+8.  `RESEND_API_KEY`: Send emails via Resend.
+9.  (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
+    `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
 10. `BUCKET_NAME`,`OBJECT_STORAGE_ACCESS_KEY_ID`,
     `OBJECT_STORAGE_SECRET_ACCESS_KEY`, `OBJECT_STORAGE_ACCOUNT_ID`: Where you
     save your objects, accept S3 compatible services. Using in route
