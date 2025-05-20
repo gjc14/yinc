@@ -11,12 +11,13 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
+import { yinRoutes } from '../plugins/yin/routes'
 import { blogRoute, indexRoute, splatRoute } from './papa.routes'
 
 // Configure your customized routes here
 const customizedRoutes = [
 	// Add your customized routes here
-	route('/cv', './routes/plugins/cv/index/route.tsx'),
+	...yinRoutes(),
 ] satisfies RouteConfig
 
 const systemRoutes = [
