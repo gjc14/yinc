@@ -11,6 +11,7 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
+import { yinRoutes } from '../plugins/yin/routes'
 import { blogRoute, indexRoute, splatRoute } from './papa.routes'
 
 // Configure your customized routes here
