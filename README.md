@@ -128,6 +128,14 @@ This command will start the project by adding an admin with default posts.
 
 You will be asked for **Email** and your **Name**. Enter them in the teminal.
 
+- If you have already init the project:
+
+```sh
+npm run dev
+```
+
+- If you're starting a new project:
+
 ```sh
 npm run init
 ```
