@@ -3,8 +3,6 @@ import { route, type RouteConfig } from '@react-router/dev/routes'
 import { adminPage } from './routes/papa/admin/routes'
 import { webPage } from './routes/web/routes'
 
-// import { cv } from './routes/cv/routes'
-
 const systemRoutes = [
 	...webPage(),
 
@@ -27,4 +25,4 @@ const systemRoutes = [
 ] satisfies RouteConfig
 
 export default [...systemRoutes]
-// export default [...systemRoutes, ...cv()]
+// export default [...systemRoutes, ...otherPluginRoutes]
