@@ -6,6 +6,7 @@
 	"proseWrap": "always",
 	"tabWidth": 2,
 	"useTabs": true,
+	"objectWrap": "preserve",
 	"plugins": ["@ianvs/prettier-plugin-sort-imports"],
 	"importOrder": [
 		"^(react(-.*)?$)|(react/(.*)$)|^(react$)",
