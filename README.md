@@ -151,28 +151,82 @@ admin panel.
 
 ## Routes
 
+<!-- prettier-ignore -->
+> [!IMPORTANT]
+> All `routes.ts` will runs at the same level of your `vite.config.ts` and is not part of bundle. Therefore, please use relative paths to import your routes, avoiding `~/your/route/config/path`.
+> More details please refer to this [react router issue](https://github.com/remix-run/react-router/issues/12706).
+
+**Config files:**
+
+1. Admin routes are configured in `/app/routes/papa/admin/routes.ts`
+2. Web routes are configured in `/app/routes/web/routes.ts`
+
+### Web Route
+
+TODO
+
+### Admin Route
+
+You may run `npm run create-plugin:admin` to generate the example routes.
+
+These actions will be done:
+
+1. Generate example admin route
+2. Generate example admin sub route
+3. Generate papa config file for nav
+4. Generate example routes config
+5. Modify `/app/routes/papa/admin/routes.ts` file
+
+```tsx
+// /app/routes/plugins/example-plugin/routes.ts
+import { type RouteConfig } from '@react-router/dev/routes'
+
+// This should be imported and used as `...customizedAdminRoutes` in `customizedRoutes` of `/app/routes/papa/admin/routes.ts`
+export const customizedAdminRoutes = [
+	// write your admin routes here, route should either:
+	// 1. relative path: `route('custom-route', './where/your/file.tsx')` , which will automatically render under `/admin/custom-route`.
+	// 2. direct path start with `/admin`: `route('/admin/custom-route', './where/your/file.tsx')`
+] satisfies RouteConfig
+```
+
+In `/app/routes/papa/admin/routes.ts` for example:
+
+```tsx
+// /app/routes/papa/admin/routes.ts
+import { customizedAdminRoutes } from '../../plugins/example-plugin/routes.ts'
+
+// Configure your customized routes here
+const customizedRoutes = [
+	// Add your customized routes here
+	...customizedAdminRoutes,
+] satisfies RouteConfig
+
+// ... other codes
+```
+
+### Advanced
+
 To add customized routes in this project, just defines a `routes.ts` in the
 top-level of your plugin folder. Defines with
 [React Router Routes](https://reactrouter.com/start/framework/routing)
 
 ```tsx
-// plugins/cv/routes.ts
-import {
-	index,
-	layout,
-	prefix,
-	type RouteConfig,
-} from '@react-router/dev/routes'
+// /app/routes.ts
+import { route, type RouteConfig } from '@react-router/dev/routes'
 
-const systemRoutes = [
-	...prefix('/cv', [
-		layout('./plugins/cv/layout.tsx', [index('./plugins/cv/index/route.tsx')]),
-	]),
+// 1. Define your routes
+const myRoutes = [
+	// route('the-parent', './path/to/route.tsx', [
+	//      // children routes will be rendered if parent route has <Outlet />
+	//      index('./path/to/index-route.tsx')
+	//      route('the-child', './path/to/child-route.tsx', [
+	//          // It is also able to add children in children
+	//      ])
+	// ])
 ] satisfies RouteConfig
 
-export const cv = () => {
-	return systemRoutes
-}
+// 2. Add it to default
+export default [...systemRoutes, ...myRoutes]
 ```
 
 ## Action
@@ -209,7 +263,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 // If you use fetcher, you could benefit from the generic return data
-const fetcher = useFetcher<ReturnType>()
+const fetcher = useFetcher<typeof action>()
 
 useEffect(() => {
 	if (fetcher.status === 'loading' && fetcher.data.data) {
@@ -234,7 +288,7 @@ Organization
 
 ### Sign In
 
-- For safety concern, now only Magic Link method is available.
+- For safety concern, now only OTP method is available.
 
 ## Admin Components
 
@@ -327,7 +381,7 @@ export function MyComponent() {
 			]}
 			hideColumnFilter
 		>
-			{/* DataTable passes a table ref for you to use table api */}
+			{/* DataTable passes a table ref for you to use table api, and this will be rendered above table in toolbox */}
 			{table => (
 				<Input
 					placeholder="Filter email..."
@@ -339,6 +393,23 @@ export function MyComponent() {
 				/>
 			)}
 		</DataTable>
+	)
+}
+```
+
+### Admin Wrapper
+
+```tsx
+export default function AdminExample() {
+	return (
+		<AdminSectionWrapper>
+			<AdminHeader>
+				<AdminTitle title="Your admin title"></AdminTitle>
+				<AdminActions>{/* You may put some buttons here */}</AdminActions>
+			</AdminHeader>
+			{/* Your main content goes here */}
+			<AdminContent>Main content</AdminContent>
+		</AdminSectionWrapper>
 	)
 }
 ```

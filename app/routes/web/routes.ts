@@ -1,3 +1,8 @@
+/**
+ * This file runs at the same level of your vite.config.ts and is not part of bundle.
+ * Therefore, please use relative paths to import your routes, avoiding `~/your/route/config/path`.
+ * @see https://github.com/remix-run/react-router/issues/12706
+ */
 import {
 	index,
 	layout,
