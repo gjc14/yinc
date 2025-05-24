@@ -8,7 +8,7 @@ import { SignInForm } from './signin-form'
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await auth.api.getSession(request)
 
-	if (session) {
+	if (session && session.user.role === 'admin') {
 		return redirect('/admin')
 	}
 	return null
