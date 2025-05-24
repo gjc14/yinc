@@ -6,15 +6,12 @@ import dynamicIconImports from 'lucide-react/dynamicIconImports'
 import { z } from 'zod'
 
 /**
- * Read all the plugin configs from the `app/routes/plugins/*.plugin/papa.config.ts`
+ * Read all the plugin configs from the `app/routes/plugins/[plugin]/papa.config.ts`
  */
 export const getPluginConfigs = async (): Promise<PapaConfig[]> => {
-	const modules = import.meta.glob(
-		'/app/routes/plugins/*.plugin/papa.config.ts',
-		{
-			import: 'default',
-		},
-	)
+	const modules = import.meta.glob('/app/routes/plugins/*/papa.config.ts', {
+		import: 'default',
+	})
 
 	const configs = []
 

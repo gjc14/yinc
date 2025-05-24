@@ -61,7 +61,13 @@ export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
 							onOpenChange={setIsActive}
 						>
 							<SidebarMenuItem>
-								<NavLink to={'/admin' + item.url} end>
+								<NavLink
+									to={
+										'/admin' +
+										(item.url.startsWith('/') ? item.url : `/${item.url}`)
+									}
+									end
+								>
 									{({ isActive }) => (
 										<SidebarMenuButton
 											tooltip={item.title}
@@ -88,7 +94,18 @@ export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
 											<SidebarMenuSub>
 												{item.sub?.map(subItem => (
 													<SidebarMenuSubItem key={subItem.title}>
-														<NavLink to={'/admin' + item.url + subItem.url} end>
+														<NavLink
+															to={
+																'/admin' +
+																(item.url.startsWith('/')
+																	? item.url
+																	: `/${item.url}`) +
+																(subItem.url.startsWith('/')
+																	? subItem.url
+																	: `/${subItem.url}`)
+															}
+															end
+														>
 															{({ isActive }) => (
 																<SidebarMenuSubButton
 																	className={
