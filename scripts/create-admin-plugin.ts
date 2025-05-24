@@ -1,56 +1,137 @@
 import { mkdir, writeFile } from 'fs/promises'
 import { join } from 'path'
 
-const examplePage = `
-import type { LoaderFunctionArgs MetaFunction } from 'react-router'
-import { Outlet } from 'react-router'
+const exampleAdminPage = `
+// example-plugin/example-admin-page/route.tsx
+import { useEffect } from 'react'
+import { Outlet, useFetcher } from 'react-router'
 
-export const meta: MetaFunction<typeof loader> = () => {
-    return [
-        { title: 'Example plugin page for Admin' },
-        { name: 'description', content: 'Example plugin page for Admin' },
-    ]
+import { Button } from '~/components/ui/button'
+import type { ConventionalActionResponse } from '~/lib/utils'
+import {
+	AdminActions,
+	AdminContent,
+	AdminHeader,
+	AdminSectionWrapper,
+	AdminTitle,
+} from '~/routes/papa/admin/components/admin-wrapper'
+
+import type { Route } from './+types/route'
+
+// Admin route does not need metadata, which is for seo
+
+export const action = async ({ request }: Route.ActionArgs) => {
+	const formData = await request.formData()
+	const client = formData.get('client')
+
+	// Data got from the form is typed \`FormDataEntryValue | null\` so we need to check the type
+	if (!client || typeof client !== 'string') {
+		throw new Error('Client is not a string')
+	}
+
+	if (client === 'failed') {
+		return {
+			err: 'Hello from the action with conventional error return',
+		} satisfies ConventionalActionResponse
+	}
+
+	return {
+		msg: 'Hello from the action',
+	} satisfies ConventionalActionResponse
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-    // SEO in admin page is not necessary
-    return null
-}
+export default function AdminExample() {
+	const fetcher = useFetcher<typeof action>()
 
-export default function ExamplePluginPage() {
-    return (
-        <div className="h-full w-full flex flex-col items-center justify-center space-y-2">
-            <h1>Example Plugin Page</h1>
-            <p className="text-center">⬇️⬇️⬇️ Nested child routes ⬇️⬇️⬇️</p>
+	const handleClickError = async () => {
+		alert('Your going to see an intentional Internal Server Error')
+		fetcher.submit({ client: 'failed' }, { method: 'post' })
+	}
 
-            <Outlet />
-        </div>
-    )
+	const handleClickSuccess = async () => {
+		alert('Sending correct data to the server action')
+		fetcher.submit({ client: 'success' }, { method: 'post' })
+	}
+
+	const handleClickTypeError = async () => {
+		alert('Sending type error data to the server action')
+		fetcher.submit({}, { method: 'post' })
+	}
+
+	useEffect(() => {
+		// Effect will run when the fetcher data changes (when the action is called)
+		if (fetcher.data) {
+			// This data will be typed because we assigned <typeof action> to fetcher
+			const data = fetcher.data
+			console.log('fetcher.data', data)
+		}
+	}, [fetcher.data])
+
+	return (
+		<AdminSectionWrapper>
+			<AdminHeader>
+				<AdminTitle title="Admin Route Example"></AdminTitle>
+				<AdminActions>
+					{/* You may put some buttons here */}
+					<Button
+						onClick={() => {
+							// Your function here
+							handleClickTypeError()
+						}}
+					>
+						Type Error
+					</Button>
+					<Button
+						onClick={() => {
+							// Your function here
+							handleClickError()
+						}}
+					>
+						Error
+					</Button>
+					<Button
+						onClick={() => {
+							// Your function here
+							handleClickSuccess()
+						}}
+					>
+						Success
+					</Button>
+				</AdminActions>
+			</AdminHeader>
+
+			<AdminContent>
+				{/* Your main content goes here */}
+				Write some content here
+				<p className="text-2xl font-bold">Main Content</p>
+			</AdminContent>
+		</AdminSectionWrapper>
+	)
 }
 `
 
-const examplePageSub = `
-import { LoaderFunctionArgs, type MetaFunction } from 'react-router'
+const exampleAdminSubPage = `
+// example-plugin/example-admin-sub-page/route.tsx
+import {
+	AdminContent,
+	AdminHeader,
+	AdminSectionWrapper,
+	AdminTitle,
+} from '~/routes/papa/admin/components/admin-wrapper'
 
-export const meta: MetaFunction<typeof loader> = () => {
-    return [
-        { title: 'Sub page of example plugin page' },
-        { name: 'description', content: 'Sub page of example plugin page' },
-    ]
-}
+export default function AdminExample() {
+	return (
+		<AdminSectionWrapper>
+			<AdminHeader>
+				<AdminTitle title="Sub Route"></AdminTitle>
+			</AdminHeader>
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-    // SEO in admin page is not necessary
-    return null
-}
-
-export default function ExamplePluginSubPage() {
-    return (
-        <div className="p-5 m-3 bg-secondary border border-white grid items-center justify-center">
-            <h2>Nested sub page of Example Plugin Page</h2>
-            <p className="text-center text-xl">✨🕸️😗🪹🌏</p>
-        </div>
-    )
+			<AdminContent>
+				{/* Your main content goes here */}
+				Write some content here in sub route
+			</AdminContent>
+		</AdminSectionWrapper>
+	)
 }
 `
 
@@ -63,12 +144,12 @@ const config = (): PapaConfig => {
         adminRoutes: [
             {
                 title: 'Example Plugin',
-                url: '/example',
+                url: 'example-admin-page',
                 iconName: 'rocket',
                 sub: [
                     {
                         title: 'Sub Page',
-                        url: '/sub',
+                        url: 'example-admin-sub-page',
                     },
                 ],
             },
@@ -79,52 +160,88 @@ const config = (): PapaConfig => {
 export default config
 `
 
-const filePathExample = join(
+const exampleAdminPageRoute = `
+// example-plugin/routes.ts
+import {
+	index,
+	layout,
+	prefix,
+	route,
+	type RouteConfig,
+} from '@react-router/dev/routes'
+
+// This should be imported and used as \`...customizedAdminRoutes\` in \`customizedRoutes\` of \`/app/routes/papa/admin/routes.ts\`
+export const customizedAdminRoutes = [
+	// write your admin routes here, route should either:
+	// 1. relative path: \`route('custom-route', './where/your/file.tsx')\` , which will automatically render under \`/admin/custom-route\`.
+	// 2. direct path start with \`/admin\`: \`route('/admin/custom-route', './where/your/file.tsx')\`
+
+	route(
+		'example-admin-page',
+		'./routes/plugins/example-plugin/example-admin-page/route.tsx',
+	),
+	route(
+		'example-admin-page/example-admin-sub-page',
+		'./routes/plugins/example-plugin/example-admin-sub-page/route.tsx',
+	),
+] satisfies RouteConfig
+`
+
+const filePathExampleAdmin = join(
 	process.cwd(),
-	'app/routes/plugins/example.plugin/_papa.admin.example/route.tsx',
+	'app/routes/plugins/example-plugin/example-admin-page/route.tsx',
 )
 
-const filePathExampleSub = join(
+const filePathExampleAdminSub = join(
 	process.cwd(),
-	'app/routes/plugins/example.plugin/_papa.admin.example.sub/route.tsx',
+	'app/routes/plugins/example-plugin/example-admin-sub-page/route.tsx',
 )
 
 const filePathExampleAdminConfig = join(
 	process.cwd(),
-	'app/routes/plugins/example.plugin/papa.config.ts',
+	'app/routes/plugins/example-plugin/papa.config.ts',
+)
+
+const filePathExamplePluginRoutes = join(
+	process.cwd(),
+	'app/routes/plugins/example-plugin/routes.ts',
 )
 
 try {
-	console.log('Not Implemented')
-	process.exit(1)
-
+	await mkdir(join(process.cwd(), 'app/routes/plugins/example-plugin'), {
+		recursive: true,
+	})
 	await mkdir(
-		join(
-			process.cwd(),
-			'app/routes/plugins/example.plugin/_papa.admin.example',
-		),
-		{ recursive: true },
+		join(process.cwd(), 'app/routes/plugins/example-plugin/example-admin-page'),
+		{
+			recursive: true,
+		},
 	)
 	await mkdir(
 		join(
 			process.cwd(),
-			'app/routes/plugins/example.plugin/_papa.admin.example.sub',
+			'app/routes/plugins/example-plugin/example-admin-sub-page',
 		),
-		{ recursive: true },
+		{
+			recursive: true,
+		},
 	)
 
-	await writeFile(filePathExample, examplePage.trim())
-	await writeFile(filePathExampleSub, examplePageSub.trim())
+	await writeFile(filePathExampleAdmin, exampleAdminPage.trim())
+	await writeFile(filePathExampleAdminSub, exampleAdminSubPage.trim())
 	await writeFile(filePathExampleAdminConfig, exampleAdminPapaConfig.trim())
+	await writeFile(filePathExamplePluginRoutes, exampleAdminPageRoute.trim())
+
 	console.log(
-		`Example admin pages and config created successfully in routes folder ${
-			filePathExample.split('app/routes')[1]
-		}, ${filePathExampleSub.split('app/routes')[1]} and ${
-			filePathExampleAdminConfig.split('app/routes')[1]
-		}
+		`🎉 Example admin pages and config created successfully in routes folder
+
+		1️⃣ ${filePathExampleAdmin.split('app/routes')[1]}
+		2️⃣ ${filePathExampleAdminSub.split('app/routes')[1]}
+		3️⃣ ${filePathExampleAdminConfig.split('app/routes')[1]}
+		4️⃣ ${filePathExamplePluginRoutes.split('app/routes')[1]}
         
-        Navigate to '/admin/example' and '/admin/example/sub' to see in action
-        `.replace(/^ {8}/gm, ''),
+        🏄 Navigate to 'admin/example-admin-page' to see in action
+        `.replace(/^[ \t]+/gm, ''),
 	)
 } catch (err) {
 	console.error('Error creating example admin files:', err)
