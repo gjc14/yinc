@@ -82,4 +82,29 @@ const AdminActions = ({
 	)
 }
 
-export { AdminActions, AdminHeader, AdminSectionWrapper, AdminTitle }
+const AdminContent = ({
+	children,
+	className,
+}: {
+	children?: React.ReactNode
+	className?: string
+}) => {
+	return (
+		<main
+			className={cn(
+				'w-full h-full flex flex-col items-center justify-center gap-2 overflow-auto',
+				className,
+			)}
+		>
+			{children}
+		</main>
+	)
+}
+
+export {
+	AdminActions,
+	AdminHeader,
+	AdminSectionWrapper,
+	AdminTitle,
+	AdminContent,
+}
