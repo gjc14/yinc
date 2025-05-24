@@ -1,4 +1,4 @@
-import { asc, desc, eq, gt, lt } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, lt } from 'drizzle-orm'
 
 import { user as userTable } from '~/lib/db/schema'
 
@@ -12,11 +12,17 @@ type User = typeof userTable.$inferSelect
  * @param pageSize number of records to fetch
  * @param direction direction of the pagination
  */
-export const getUsers = async (
-	cursor: string = '',
-	pageSize: number = 10,
-	direction: 'next' | 'previous' = 'next',
-): Promise<{
+export const getUsers = async ({
+	cursor = '',
+	pageSize = 10,
+	direction = 'next',
+	role,
+}: {
+	cursor?: string
+	pageSize?: number
+	direction?: 'next' | 'previous'
+	role?: 'admin' | 'user'
+} = {}): Promise<{
 	users: User[]
 	nextCursor: string | null
 	prevCursor: string | null
@@ -27,19 +33,23 @@ export const getUsers = async (
 			.from(userTable)
 			.limit(pageSize + 1) // Get one more to check if there is more data
 
+		const userRoleFilter = role ? eq(userTable.role, role) : undefined
+
 		if (cursor) {
+			console.log('userRoleFilter', userRoleFilter)
+
 			if (direction === 'next') {
 				return baseQuery
-					.where(lt(userTable.id, cursor))
+					.where(and(lt(userTable.id, cursor), userRoleFilter))
 					.orderBy(desc(userTable.id))
 			} else {
 				return baseQuery
-					.where(gt(userTable.id, cursor))
+					.where(and(gt(userTable.id, cursor), userRoleFilter))
 					.orderBy(asc(userTable.id))
 			}
 		} else {
 			// Start from the beginning
-			return baseQuery.orderBy(desc(userTable.id))
+			return baseQuery.where(userRoleFilter).orderBy(desc(userTable.id))
 		}
 	}
 

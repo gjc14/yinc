@@ -33,15 +33,15 @@ import {
 import { UserContent } from '~/routes/papa/admin/components/user-content'
 
 export const loader = async () => {
-	return await getUsers()
+	return await getUsers({
+		role: 'admin',
+	})
 }
 
 export default function AdminAdminUsers() {
 	const fetcher = useFetcher()
-	const { users: allUsers } = useLoaderData<typeof loader>()
+	const { users } = useLoaderData<typeof loader>()
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
-
-	const users = allUsers.filter(user => user.role === 'admin')
 
 	const isSubmitting = fetcher.state === 'submitting'
 

@@ -19,7 +19,9 @@ import {
 import { UserContent } from '~/routes/papa/admin/components/user-content'
 
 export const loader = async () => {
-	return await getUsers()
+	return await getUsers({
+		role: 'user',
+	})
 }
 
 export default function AdminAllUsers() {
