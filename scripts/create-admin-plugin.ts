@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'fs/promises'
+import { mkdir, readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 const exampleAdminPage = `
@@ -207,6 +207,8 @@ const filePathExamplePluginRoutes = join(
 	'app/routes/plugins/example-plugin/routes.ts',
 )
 
+const adminRoutesPath = join(process.cwd(), 'app/routes/papa/admin/routes.ts')
+
 try {
 	await mkdir(join(process.cwd(), 'app/routes/plugins/example-plugin'), {
 		recursive: true,
@@ -231,6 +233,44 @@ try {
 	await writeFile(filePathExampleAdminSub, exampleAdminSubPage.trim())
 	await writeFile(filePathExampleAdminConfig, exampleAdminPapaConfig.trim())
 	await writeFile(filePathExamplePluginRoutes, exampleAdminPageRoute.trim())
+
+	// Modify adminRoutesPath
+	try {
+		let adminRoutesContent = await readFile(adminRoutesPath, 'utf-8')
+		const importStatement =
+			"import { customizedAdminRoutes } from '../../plugins/example-plugin/routes';"
+		const importAnchor = "from '@react-router/dev/routes'" // Anchor to insert the import after
+		const customizedRoutesAnchor = '// Add your customized routes here' // Anchor to insert the spread operator after
+
+		// Add import statement if not already present
+		if (!adminRoutesContent.includes(importStatement)) {
+			const importIndex =
+				adminRoutesContent.indexOf(importAnchor) + importAnchor.length
+			adminRoutesContent =
+				adminRoutesContent.slice(0, importIndex) +
+				'\n' +
+				importStatement +
+				adminRoutesContent.slice(importIndex)
+		}
+
+		// Add ...customizedAdminRoutes to the array
+		const spreadRoutes = '...customizedAdminRoutes,'
+		if (!adminRoutesContent.includes(spreadRoutes)) {
+			const customizedRoutesIndex =
+				adminRoutesContent.indexOf(customizedRoutesAnchor) +
+				customizedRoutesAnchor.length
+			adminRoutesContent =
+				adminRoutesContent.slice(0, customizedRoutesIndex) +
+				'\n\t' +
+				spreadRoutes +
+				adminRoutesContent.slice(customizedRoutesIndex)
+		}
+
+		await writeFile(adminRoutesPath, adminRoutesContent.trim())
+		console.log(`✅ Successfully updated ${adminRoutesPath}`)
+	} catch (err) {
+		console.error(`Error updating ${adminRoutesPath}:`, err)
+	}
 
 	console.log(
 		`🎉 Example admin pages and config created successfully in routes folder
