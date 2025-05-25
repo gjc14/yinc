@@ -92,7 +92,7 @@ const AdminContent = ({
 	return (
 		<main
 			className={cn(
-				'w-full h-full flex flex-col items-center justify-center gap-2 overflow-auto',
+				'w-full h-auto grow flex flex-col items-center gap-2 overflow-auto',
 				className,
 			)}
 		>
