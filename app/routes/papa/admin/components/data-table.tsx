@@ -348,13 +348,20 @@ export const AdminDataTableMoreMenu = ({
 	id,
 	children,
 	hideDelete,
-	deleteTarget,
+	deleteTarget = '-->',
 	onDelete,
 }: {
 	id: number | string
+	/** Optional children, you could use <DropdownMenuItem> */
 	children?: React.ReactNode
+	/** If you don't want to provide delete function */
 	hideDelete?: boolean
+	/**
+	 * Pass in for the display name of this object
+	 * @default - using id
+	 */
 	deleteTarget?: string
+	/** Callback function to handle deletion */
 	onDelete?: () => void
 }) => {
 	const fetcher = useFetcher()
@@ -378,8 +385,14 @@ export const AdminDataTableMoreMenu = ({
 
 			<DropdownMenuContent>
 				<DropdownMenuLabel>Manage</DropdownMenuLabel>
-				<DropdownMenuSeparator />
-				{children}
+
+				{children && (
+					<>
+						<DropdownMenuSeparator />
+						{children}
+					</>
+				)}
+
 				{!hideDelete && (
 					<>
 						<DropdownMenuSeparator />
@@ -396,11 +409,7 @@ export const AdminDataTableMoreMenu = ({
 						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 						<AlertDialogDescription>
 							This action cannot be undone. This will permanently delete{' '}
-							{deleteTarget ? (
-								<span className="font-bold text-primary">{deleteTarget}</span>
-							) : (
-								'this data'
-							)}{' '}
+							<span className="font-bold text-primary">{deleteTarget}</span>
 							(id: {id}).
 						</AlertDialogDescription>
 					</AlertDialogHeader>
