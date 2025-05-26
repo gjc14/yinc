@@ -33,7 +33,11 @@ export const auth = betterAuth({
 		enabled: false,
 	},
 	emailVerification: {
-		sendOnSignUp: true,
+		/**
+		 * User will automatically be verified and signed up if they are new to the app.
+		 * Please look for "Sign in with OTP" section in the documentation.
+		 * @see https://www.better-auth.com/docs/plugins/email-otp#sign-in-with-otp
+		 */
 		...(emailInstance
 			? {
 					sendVerificationEmail: async ({ user, url, token }, request) => {
