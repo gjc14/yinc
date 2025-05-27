@@ -3,7 +3,7 @@ import { cn } from '~/lib/utils'
 /**
  * Input your text as children. To change separator color, use { color: 'your-color' }.
  */
-const SeparatorWithText = ({
+export const SeparatorWithText = ({
 	className,
 	text,
 }: {
@@ -18,5 +18,3 @@ const SeparatorWithText = ({
 		</div>
 	)
 }
-
-export default SeparatorWithText

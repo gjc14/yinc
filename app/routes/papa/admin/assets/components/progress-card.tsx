@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 
-import AnimatedCircularProgressBar from '~/components/ui/animated-circular-progress-bar'
+import { AnimatedCircularProgressBar } from '~/components/ui/animated-circular-progress-bar'
 import { Button } from '~/components/ui/button'
 import {
 	Collapsible,

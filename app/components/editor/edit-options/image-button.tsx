@@ -13,7 +13,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '~/components/ui/popover'
-import SeparatorWithText from '~/components/separator-with-text'
+import { SeparatorWithText } from '~/components/separator-with-text'
 import type { FileMetadata } from '~/lib/db/schema'
 import { FileGrid } from '~/routes/papa/admin/assets/components/file-grid'
 import type { loader } from '~/routes/papa/admin/assets/resource'
