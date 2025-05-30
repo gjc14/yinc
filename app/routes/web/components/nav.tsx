@@ -20,7 +20,7 @@ export const Nav = () => {
 
 			{/* Add your own routes here */}
 			<CustomNav to="/blog">Blog</CustomNav>
-			<CustomNav to="/cv">CV</CustomNav>
+			<CustomNav to="/store">Store</CustomNav>
 			<ThemeToggle className="border-0 rounded-full p-0" />
 		</nav>
 	)
