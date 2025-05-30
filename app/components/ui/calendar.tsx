@@ -1,10 +1,19 @@
 import * as React from 'react'
-import { DayPicker } from 'react-day-picker'
+import { DayPicker, type DropdownProps } from 'react-day-picker'
 
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react'
+import { SelectTrigger } from '@radix-ui/react-select'
+import {
+	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
+	ChevronsUpDown,
+	ChevronUp,
+} from 'lucide-react'
 
 import { buttonVariants } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
+
+import { Select, SelectContent, SelectItem, SelectValue } from './select'
 
 function Calendar({
 	className,
@@ -28,6 +37,7 @@ function Calendar({
 				// Caption
 				month_caption:
 					'flex justify-center relative pt-1 items-center text-sm font-medium',
+				dropdowns: 'flex items-center gap-2',
 				button_previous: cn(
 					buttonVariants({ variant: 'outline' }),
 					'size-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1 z-10',
@@ -63,6 +73,8 @@ function Calendar({
 				...classNames,
 			}}
 			components={{
+				MonthsDropdown: SelectDropdown,
+				YearsDropdown: SelectDropdown,
 				Chevron({ orientation, className, ...rest }) {
 					switch (orientation) {
 						case 'left':
@@ -84,3 +96,39 @@ function Calendar({
 }
 
 export { Calendar }
+
+function SelectDropdown(props: DropdownProps) {
+	const { options, value, onChange } = props
+
+	const handleValueChange = (newValue: string) => {
+		if (onChange) {
+			const syntheticEvent = {
+				target: {
+					value: newValue,
+				},
+			} as React.ChangeEvent<HTMLSelectElement>
+
+			onChange(syntheticEvent)
+		}
+	}
+
+	return (
+		<Select value={value?.toString()} onValueChange={handleValueChange}>
+			<SelectTrigger className="flex items-center gap-1 text-sm">
+				<SelectValue />
+				<ChevronsUpDown className="size-3 text-muted-foreground" />
+			</SelectTrigger>
+			<SelectContent>
+				{options?.map(option => (
+					<SelectItem
+						key={option.value}
+						value={option.value.toString()}
+						disabled={option.disabled}
+					>
+						{option.label}
+					</SelectItem>
+				))}
+			</SelectContent>
+		</Select>
+	)
+}
