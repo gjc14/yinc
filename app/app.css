@@ -67,6 +67,8 @@ layer(base);
 	--radius: 0.625rem;
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.141 0.005 285.823);
+	--brand: 27 59% 67%;
+	--brand-foreground: 0 0% 3%;
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.141 0.005 285.823);
 	--popover: oklch(1 0 0);
@@ -102,6 +104,8 @@ layer(base);
 .dark {
 	--background: oklch(0.141 0.005 285.823);
 	--foreground: oklch(0.985 0 0);
+	--brand: 27 59% 67%;
+	--brand-foreground: 0 0% 3%;
 	--card: oklch(0.21 0.006 285.885);
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.21 0.006 285.885);
