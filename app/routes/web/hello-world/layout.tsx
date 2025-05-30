@@ -1,6 +1,12 @@
 import { Outlet } from 'react-router'
 
 export async function loader() {
+	if (process.env.NODE_ENV === 'production') {
+		// In production, we might want to redirect or show a different message
+		throw new Response('', {
+			status: 404,
+		})
+	}
 	return null
 }
 
