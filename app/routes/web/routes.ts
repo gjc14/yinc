@@ -11,7 +11,6 @@ import {
 	type RouteConfig,
 } from '@react-router/dev/routes'
 
-import { yinRoutes } from '../plugins/yin/routes'
 import { blogRoute, indexRoute, splatRoute } from './papa.routes'
 
 // Configure your customized routes here
@@ -31,6 +30,9 @@ const customizedRoutes = [
 		// 	route(':whateverParam', './routes/web/hello-world/param/route.tsx'),
 		// ])
 	]),
+
+	// The first version of CV
+	route('/cv.0', './routes/plugins/cv/index/route.tsx'),
 ] satisfies RouteConfig
 
 const systemRoutes = [
