@@ -14,7 +14,7 @@
 		"create-plugin:web": "tsx scripts/create-web-plugin.ts",
 		"format": "prettier --write .",
 		"db:push": "npx drizzle-kit push",
-		"auth:generate": "npx @better-auth/cli@latest generate --config app/lib/auth/auth.server.ts --output app/lib/db/schema/auth.ts"
+		"auth:generate": "npx @better-auth/cli generate --config app/lib/auth/auth.server.ts --output app/lib/db/schema/auth.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/anthropic": "^1.2.10",
@@ -101,6 +101,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
+		"@better-auth/cli": "^1.2.5",
 		"@ianvs/prettier-plugin-sort-imports": "^4.4.1",
 		"@react-router/dev": "^7.5.3",
 		"@tailwindcss/typography": "^0.5.16",
