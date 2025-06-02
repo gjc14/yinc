@@ -44,6 +44,7 @@ import { PostSettings } from './post-settings'
 interface PostContentProps {
 	post: PostWithRelations
 	tags: Tag[]
+	/** Only top-level categories */
 	categories: Category[]
 	isDirty: boolean
 	setIsDirty: React.Dispatch<React.SetStateAction<boolean>>

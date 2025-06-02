@@ -2,20 +2,19 @@ import { redirect, type ActionFunctionArgs } from 'react-router'
 
 import { z } from 'zod'
 
-import type { Category, SubCategory, Tag } from '~/lib/db/schema'
+import type { Category, Tag } from '~/lib/db/schema'
 import {
 	createCategory,
-	createSubcategory,
+	createChildCategory,
 	createTag,
 	deleteCategory,
-	deleteSubcategory,
 	deleteTag,
 } from '~/lib/db/taxonomy.server'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
 
-const intentSchema = z.enum(['category', 'subcategory', 'tag'])
+const intentSchema = z.enum(['category', 'child-category', 'tag'])
 export type Intents = z.infer<typeof intentSchema>
 
 // Schema for both category and tag
@@ -99,7 +98,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			}
 		}
 
-		case 'subcategory': {
+		case 'child-category': {
 			const deleteMesage = (name: string) => {
 				return '子類別 ' + name + ' 已刪除'
 			}
@@ -108,30 +107,30 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				if (request.method === 'POST') {
 					const { id, parentId, name, description } =
 						subTaxonomySchema.parse(formObject)
-					const { subcategory } = await createSubcategory({
-						categoryId: parentId,
+					const { category } = await createChildCategory({
+						parentId: parentId,
 						name,
 						description,
 					})
 					return {
-						msg: 'New subcategory created',
-						data: { ...subcategory, originalId: id },
+						msg: 'New child category created',
+						data: { ...category, originalId: id },
 						options: {
 							preventAlert: true,
 						},
 					} satisfies ConventionalActionResponse<
-						SubCategory & { originalId: number }
+						Category & { originalId: number }
 					>
 				} else if (request.method === 'DELETE') {
 					const { id } = deleteSchema.parse(formObject)
-					const { subcategory } = await deleteSubcategory(id)
-					if (!subcategory) {
+					const { category } = await deleteCategory(id)
+					if (!category) {
 						return {
-							err: 'Subcategory not found',
+							err: 'Category not found',
 						} satisfies ConventionalActionResponse
 					}
 					return {
-						msg: deleteMesage(subcategory.name),
+						msg: deleteMesage(category.name),
 					} satisfies ConventionalActionResponse
 				}
 			} catch (error) {

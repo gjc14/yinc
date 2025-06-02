@@ -6,8 +6,8 @@ import { eq } from 'drizzle-orm'
 import { db } from '~/lib/db/db.server'
 
 import { generateSlug } from '../utils/seo'
-import type { Category, SubCategory, Tag } from './schema'
-import { categoriesTable, subCategoriesTable, tagsTable } from './schema'
+import type { Category, Tag } from './schema'
+import { categoriesTable, tagsTable } from './schema'
 
 /**
  * Tag and Category functions
@@ -32,10 +32,10 @@ export const createCategory = async ({
 }
 
 export const getCategories = async (): Promise<{
-	categories: (Category & { subCategories: SubCategory[] })[]
+	categories: (Category & { children: Category[] })[]
 }> => {
 	const categories = await db.query.categoriesTable.findMany({
-		with: { subCategories: true },
+		with: { children: true },
 		orderBy: (table, { asc }) => {
 			return asc(table.id)
 		},
@@ -53,47 +53,38 @@ export const deleteCategory = async (
 	return { category }
 }
 
-// Subcategory functions
-export const createSubcategory = async ({
-	categoryId,
+// Create a child category
+export const createChildCategory = async ({
+	parentId,
 	name,
 	description = '',
 }: {
-	categoryId: number
+	parentId: number
 	name: string
 	description?: string
-}): Promise<{ subcategory: SubCategory }> => {
+}): Promise<{ category: Category }> => {
 	let slug = generateSlug(name)
 	if (!slug) {
 		slug = generateSlug(String(Date.now()))
 	}
 
-	const [subcategory] = await db
-		.insert(subCategoriesTable)
-		.values({ name, categoryId, slug, description })
+	const [category] = await db
+		.insert(categoriesTable)
+		.values({ name, slug, description, parentId })
 		.returning()
-	return { subcategory }
+	return { category }
 }
 
-export const getSubcategories = async (): Promise<{
-	subcategories: SubCategory[]
+// Get all categories with their hierarchical structure
+export const getCategoriesHierarchy = async (): Promise<{
+	categories: Category[]
 }> => {
-	const subcategories = await db.query.subCategoriesTable.findMany({
+	const categories = await db.query.categoriesTable.findMany({
 		orderBy: (table, { asc }) => {
 			return asc(table.id)
 		},
 	})
-	return { subcategories }
-}
-
-export const deleteSubcategory = async (
-	id: number,
-): Promise<{ subcategory: SubCategory }> => {
-	const [subcategory] = await db
-		.delete(subCategoriesTable)
-		.where(eq(subCategoriesTable.id, id))
-		.returning()
-	return { subcategory }
+	return { categories }
 }
 
 // Tag functions

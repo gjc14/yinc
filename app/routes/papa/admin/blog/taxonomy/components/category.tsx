@@ -6,7 +6,6 @@ import { CircleX, PlusCircle } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
-import type { SubCategory } from '~/lib/db/schema'
 import { generateSlug } from '~/lib/utils/seo'
 
 import { actionRoute } from '..'
@@ -42,7 +41,7 @@ const CategoryComponent = ({
 			<div className="font-medium">
 				{cat.name}
 				<p className="text-sm text-muted-foreground">
-					{cat.subCategories.length} 個子類別
+					{cat.children?.length || 0} 個子類別
 				</p>
 			</div>
 			<CircleX
@@ -70,11 +69,13 @@ const CategoryComponent = ({
 	)
 }
 
-// SubCategory Component
-const SubCategoryComponent = ({
-	subcategory,
+// ChildCategory Component
+const ChildCategoryComponent = ({
+	category,
 }: {
-	subcategory: SubCategory & { _isPending?: true }
+	category: CategoryType['children'][number] & {
+		_isPending?: true
+	}
 }) => {
 	const fetcher = useFetcher()
 	const isDeleting = fetcher.state !== 'idle'
@@ -85,19 +86,19 @@ const SubCategoryComponent = ({
 				isDeleting ? 'opacity-50' : ''
 			}`}
 		>
-			<div className="font-medium">{subcategory.name}</div>
+			<div className="font-medium">{category.name}</div>
 			<CircleX
 				className={
 					'h-5 w-5' +
-					(isDeleting || subcategory._isPending
+					(isDeleting || category._isPending
 						? ' opacity-50 cursor-not-allowed'
 						: ' cursor-pointer hover:text-destructive')
 				}
 				onClick={() => {
-					if (isDeleting || subcategory._isPending) return
+					if (isDeleting || category._isPending) return
 
 					fetcher.submit(
-						{ id: subcategory.id, intent: 'subcategory' },
+						{ id: category.id, intent: 'child-category' },
 						{
 							method: 'DELETE',
 							action: actionRoute,
@@ -120,7 +121,8 @@ export const generateNewCategory = (newCategoryName: string) => {
 		name: newCategoryName,
 		slug,
 		description: '',
-		subCategories: [],
+		parentId: null,
+		children: [],
 		posts: [],
 	} satisfies CategoryType
 }
@@ -197,47 +199,48 @@ export const CategoriesSection = ({
 	)
 }
 
-export const generateNewSubCategory = (
-	newSubcategoryName: string,
-	categoryId: number,
+export const generateNewChildCategory = (
+	newChildCategoryName: string,
+	parentId: number,
 ) => {
-	let slug = generateSlug(newSubcategoryName)
+	let slug = generateSlug(newChildCategoryName)
 	if (!slug) {
 		slug = generateSlug(String(Date.now()))
 	}
 
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
-		name: newSubcategoryName,
+		name: newChildCategoryName,
 		slug,
 		description: '',
-		categoryId,
-		parentId: categoryId,
-	} satisfies SubCategory & { parentId: number }
+		parentId: parentId,
+		children: [],
+		posts: [],
+	} satisfies CategoryType
 }
 
-// Subcategories Section Component (Right)
-export const SubcategoriesSection = ({
+// Category Hierarchy Section Component (Right)
+export const CategoryHierarchySection = ({
 	category,
 }: {
 	category: CategoryType | null
 }) => {
-	const [newSubcategoryName, setNewSubcategoryName] = useState('')
+	const [newChildCategoryName, setNewChildCategoryName] = useState('')
 	const submit = useSubmit()
 
-	const addSubcategory = () => {
-		if (!category?.id || !newSubcategoryName.trim()) return
+	const addChildCategory = () => {
+		if (!category?.id || !newChildCategoryName.trim()) return
 
-		const newSubcategory = generateNewSubCategory(
-			newSubcategoryName,
+		const newChildCategory = generateNewChildCategory(
+			newChildCategoryName,
 			category.id,
 		)
 
 		submit(
-			{ ...newSubcategory, intent: 'subcategory' },
+			{ ...newChildCategory, intent: 'child-category' },
 			{ method: 'POST', action: actionRoute, navigate: false },
 		)
-		setNewSubcategoryName('')
+		setNewChildCategoryName('')
 	}
 
 	return (
@@ -253,14 +256,14 @@ export const SubcategoriesSection = ({
 					<Form
 						onSubmit={e => {
 							e.preventDefault()
-							addSubcategory()
+							addChildCategory()
 						}}
 						className="flex gap-2 mb-4"
 					>
 						<Input
 							placeholder="新增子類別名稱"
-							value={newSubcategoryName}
-							onChange={e => setNewSubcategoryName(e.target.value)}
+							value={newChildCategoryName}
+							onChange={e => setNewChildCategoryName(e.target.value)}
 							className="flex-1"
 						/>
 						<Button type="submit" size="sm">
@@ -271,11 +274,11 @@ export const SubcategoriesSection = ({
 
 					<ScrollArea className="h-[400px] pr-4">
 						<div className="space-y-2">
-							{category.subCategories.length > 0 ? (
-								category.subCategories.map(subcategory => (
-									<SubCategoryComponent
-										subcategory={subcategory}
-										key={subcategory.id}
+							{category.children && category.children.length > 0 ? (
+								category.children.map(childCategory => (
+									<ChildCategoryComponent
+										category={childCategory}
+										key={childCategory.id}
 									/>
 								))
 							) : (

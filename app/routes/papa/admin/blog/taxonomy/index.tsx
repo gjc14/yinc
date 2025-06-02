@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 
-import type { SubCategory } from '~/lib/db/schema'
 import {
 	AdminActions,
 	AdminHeader,
@@ -9,12 +8,15 @@ import {
 } from '~/routes/papa/admin/components/admin-wrapper'
 
 import { useAdminBlogContext } from '../layout'
-import { CategoriesSection, SubcategoriesSection } from './components/category'
+import {
+	CategoriesSection,
+	CategoryHierarchySection,
+} from './components/category'
 import { TagsSection } from './components/tag'
 import type { CategoryType, TagType } from './type'
 import {
 	usePendingCategories,
-	usePendingSubCategories,
+	usePendingChildCategories,
 	usePendingTags,
 } from './utils'
 
@@ -33,8 +35,8 @@ export default function AdminTaxonomy() {
 	)
 	const pendingCategories: (CategoryType & { _isPending: true })[] =
 		usePendingCategories().map(p => ({ ...p, _isPending: true }))
-	const pendingSubCategories: (SubCategory & { _isPending: true })[] =
-		usePendingSubCategories().map(p => ({ ...p, _isPending: true }))
+	const pendingChildCategories: (CategoryType & { _isPending: true })[] =
+		usePendingChildCategories().map(p => ({ ...p, _isPending: true }))
 
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
 		null,
@@ -60,15 +62,15 @@ export default function AdminTaxonomy() {
 	const categories: (CategoryType & { _isPending?: true })[] = useMemo(
 		() => [
 			...categoriesLoader.map(category => {
-				const thisPendingSub = pendingSubCategories.filter(
-					pendingSubCategory => pendingSubCategory.categoryId === category.id,
+				const thisPendingChildren = pendingChildCategories.filter(
+					pendingChild => pendingChild.parentId === category.id,
 				)
 				return {
 					...category,
-					subCategories: [
-						...category.subCategories,
-						...thisPendingSub.filter(
-							p => !category.subCategories.some(sub => sub.slug === p.slug),
+					children: [
+						...category.children,
+						...thisPendingChildren.filter(
+							p => !category.children.some(child => child.slug === p.slug),
 						),
 					],
 					posts: postsLoader.filter(post =>
@@ -83,7 +85,7 @@ export default function AdminTaxonomy() {
 					),
 			),
 		],
-		[categoriesLoader, postsLoader, pendingSubCategories, pendingCategories],
+		[categoriesLoader, postsLoader, pendingChildCategories, pendingCategories],
 	)
 
 	const selectedCategory = useMemo(
@@ -108,13 +110,13 @@ export default function AdminTaxonomy() {
 
 				{/* Categories Section (Middle) */}
 				<CategoriesSection
-					categories={categories}
+					categories={categories.filter(c => !c.parentId)}
 					selectedCategoryId={selectedCategoryId}
 					setSelectedCategoryId={setSelectedCategoryId}
 				/>
 
-				{/* Subcategories Section (Right) */}
-				<SubcategoriesSection category={selectedCategory} />
+				{/* Category Hierarchy Section (Right) */}
+				<CategoryHierarchySection category={selectedCategory} />
 			</div>
 		</AdminSectionWrapper>
 	)
