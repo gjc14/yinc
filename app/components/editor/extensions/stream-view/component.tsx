@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 
+import { useCompletion } from '@ai-sdk/react'
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
-import { useCompletion } from 'ai/react'
 import { Loader, RotateCcw, StopCircle } from 'lucide-react'
 import remarkGfm from 'remark-gfm'
 
@@ -80,12 +80,7 @@ export default (props: NodeViewProps) => {
 				)}
 			</div>
 
-			<ReactMarkdown
-				remarkPlugins={[remarkGfm]}
-				className={'text-muted-foreground'}
-			>
-				{completion}
-			</ReactMarkdown>
+			<ReactMarkdown remarkPlugins={[remarkGfm]}>{completion}</ReactMarkdown>
 
 			{isLoading && <Loader className="animate-spin-slow" />}
 		</NodeViewWrapper>
