@@ -7,32 +7,13 @@ import {
 } from 'react-router'
 
 import { motion } from 'framer-motion'
-import { AlertCircle, ArrowLeft, Settings } from 'lucide-react'
+import { AlertCircle, ArrowLeft } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { fade } from '~/components/motions'
-import { authClient } from '~/lib/auth/auth-client'
 
 export default function Web() {
-	const { data } = authClient.useSession()
-
-	return (
-		<>
-			{data?.user.role === 'admin' && (
-				<Link to={'/admin'} className="z-99999">
-					<Button
-						variant="ghost"
-						size={'icon'}
-						className="fixed right-1 bottom-1"
-						aria-label="go to admin page"
-					>
-						<Settings />
-					</Button>
-				</Link>
-			)}
-			<Outlet />
-		</>
-	)
+	return <Outlet />
 }
 
 export const meta: MetaFunction = ({ error }) => {

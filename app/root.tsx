@@ -18,6 +18,7 @@ import {
 
 import { toast, Toaster } from 'sonner'
 
+import { FloatingToolkit } from './components/floating-toolkit'
 import { GlobalLoading } from './components/global-loading'
 import {
 	getCustomTheme,
@@ -44,8 +45,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<ClientHintCheck />
 			</head>
 			<body>
-				<GlobalLoading />
 				<ThemeProvider cookieTheme={theme}>
+					<GlobalLoading />
+					<FloatingToolkit />
 					{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
 					{children}
 				</ThemeProvider>
