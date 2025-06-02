@@ -1,5 +1,7 @@
-import { relations, type InferSelectModel } from 'drizzle-orm'
+import { relations, sql, type InferSelectModel } from 'drizzle-orm'
 import {
+	check,
+	foreignKey,
 	integer,
 	pgTable,
 	primaryKey,
@@ -25,40 +27,37 @@ export const tagsRelations = relations(tagsTable, ({ many }) => ({
 
 export type Category = InferSelectModel<typeof categoriesTable>
 
-export const categoriesTable = pgTable('categories', {
-	id: serial('id').primaryKey(),
-	name: varchar('name', { length: 100 }).notNull(),
-	slug: varchar('slug', { length: 100 }).notNull().unique(),
-	description: varchar('description', { length: 255 }),
-})
-
-export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
-	postsToCategories: many(postsToCategories),
-	subCategories: many(subCategoriesTable),
-}))
-
-export type SubCategory = InferSelectModel<typeof subCategoriesTable>
-
-export const subCategoriesTable = pgTable(
-	'sub_categories',
+export const categoriesTable = pgTable(
+	'categories',
 	{
 		id: serial('id').primaryKey(),
 		name: varchar('name', { length: 100 }).notNull(),
 		slug: varchar('slug', { length: 100 }).notNull(),
 		description: varchar('description', { length: 255 }),
-		categoryId: integer('category_id')
-			.notNull()
-			.references(() => categoriesTable.id, { onDelete: 'cascade' }),
+		parentId: integer('parent_id'),
 	},
-	table => [uniqueIndex('sub_category_idx').on(table.name, table.categoryId)],
+	table => [
+		// Prevent self-reference: a category cannot be its own parent
+		check('no_self_reference', sql`${table.id} != ${table.parentId}`),
+		foreignKey({
+			name: 'parent_category_fk',
+			columns: [table.parentId],
+			foreignColumns: [table.id],
+		}).onDelete('cascade'),
+	],
 )
 
-export const subCategoriesRelations = relations(
-	subCategoriesTable,
-	({ one }) => ({
-		category: one(categoriesTable, {
-			fields: [subCategoriesTable.categoryId],
+export const categoriesRelations = relations(
+	categoriesTable,
+	({ one, many }) => ({
+		postsToCategories: many(postsToCategories),
+		parent: one(categoriesTable, {
+			fields: [categoriesTable.parentId],
 			references: [categoriesTable.id],
+			relationName: 'parent_child',
+		}),
+		children: many(categoriesTable, {
+			relationName: 'parent_child',
 		}),
 	}),
 )
