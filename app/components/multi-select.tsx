@@ -93,20 +93,34 @@ export const MultiSelect = ({
 		[selected, onUnSelect, updateSelected],
 	)
 
+	const selectables = options.filter(option => {
+		return !selected.some(
+			selectedOption => selectedOption.value === option.value,
+		)
+	})
+
 	const handleKeyDown = React.useCallback(
 		(e: React.KeyboardEvent<HTMLDivElement>) => {
 			if (isComposing) return
 			const input = inputRef.current
 			if (input) {
 				if (e.key === 'Enter') {
-					if (
-						input.value !== '' &&
-						getCommandStateRef.current?.getCommandState().filtered.count === 0
-					) {
-						const id = onEnterNewValue?.(input.value) ?? input.value
-						const newSelected = [...selected, { value: id, label: input.value }]
-						updateSelected(newSelected)
-						setInputValue('')
+					if (input.value !== '') {
+						// Check if we should create a new value
+						// Either no filtered results or no selectables available
+						const commandState = getCommandStateRef.current?.getCommandState()
+						const shouldCreateNew =
+							commandState?.filtered.count === 0 || selectables.length === 0
+
+						if (shouldCreateNew) {
+							const id = onEnterNewValue?.(input.value) ?? input.value
+							const newSelected = [
+								...selected,
+								{ value: id, label: input.value },
+							]
+							updateSelected(newSelected)
+							setInputValue('')
+						}
 					}
 				}
 				if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -120,14 +134,15 @@ export const MultiSelect = ({
 				}
 			}
 		},
-		[isComposing, onEnterNewValue, selected, handleUnselect, updateSelected],
+		[
+			isComposing,
+			onEnterNewValue,
+			selected,
+			handleUnselect,
+			updateSelected,
+			selectables.length,
+		],
 	)
-
-	const selectables = options.filter(option => {
-		return !selected.some(
-			selectedOption => selectedOption.value === option.value,
-		)
-	})
 
 	return (
 		<Command
@@ -188,7 +203,7 @@ export const MultiSelect = ({
 						(selectables.length > 0 ? (
 							<div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in">
 								<CommandEmpty>
-									No results found. Enter to create one.
+									Press Enter to create "{inputValue}"
 								</CommandEmpty>
 								<CommandGroup className="h-full overflow-auto">
 									{selectables.map(option => {
@@ -212,20 +227,13 @@ export const MultiSelect = ({
 									})}
 								</CommandGroup>
 							</div>
-						) : (
+						) : inputValue !== '' ? (
 							<div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in">
-								<CommandGroup className="h-full overflow-auto">
-									<CommandItem
-										onMouseDown={undefined}
-										onSelect={undefined}
-										className={'cursor-default'}
-										disabled
-									>
-										Add some options...
-									</CommandItem>
-								</CommandGroup>
+								<CommandEmpty>
+									Press Enter to create "{inputValue}"
+								</CommandEmpty>
 							</div>
-						))}
+						) : null)}
 				</CommandList>
 			</div>
 		</Command>
