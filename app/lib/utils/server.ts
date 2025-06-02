@@ -6,15 +6,17 @@ import { capitalize, type ConventionalActionResponse } from '~/lib/utils'
 const { DatabaseError } = pkg
 
 /**
+ * Handle errors from database operations and return appropriate error responses
  * @param error passing error from catch when try update database with drizzle and zod
  * @param request MDN Request
- * @returns { err: string } error message
+ * @returns `{ err: string }` error message
  */
-export const handleError = (
+export const handleError = <T>(
 	error: unknown,
 	request: Request,
-	{ errorMessage }: { errorMessage?: string } = {},
-) => {
+	options: { errorMessage?: string } = {},
+): ConventionalActionResponse<T> => {
+	const { errorMessage } = options
 	if (error instanceof z.ZodError) {
 		console.error(error.message)
 		return {

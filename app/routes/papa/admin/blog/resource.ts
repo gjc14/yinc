@@ -3,7 +3,12 @@ import { type ActionFunctionArgs } from 'react-router'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-import { createPost, deletePost, updatePost } from '~/lib/db/post.server'
+import {
+	createPost,
+	deletePost,
+	updatePost,
+	type PostWithRelations,
+} from '~/lib/db/post.server'
 import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
@@ -49,7 +54,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					data: post,
 				} satisfies ConventionalActionResponse<{ slug: string }>
 			} catch (error) {
-				return handleError(error, request)
+				return handleError<PostWithRelations>(error, request)
 			}
 
 		case 'PUT':
@@ -74,7 +79,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					data: post,
 				} satisfies ConventionalActionResponse
 			} catch (error) {
-				return handleError(error, request)
+				return handleError<PostWithRelations>(error, request)
 			}
 
 		case 'DELETE':
@@ -94,7 +99,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					throw new Error('Invalid argument')
 				}
 			} catch (error) {
-				return handleError(error, request)
+				return handleError<PostWithRelations>(error, request)
 			}
 
 		default:

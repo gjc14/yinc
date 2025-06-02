@@ -46,10 +46,11 @@ export default function AdminSlugPost() {
 				fetcher.data.data && navigate('/admin/blog')
 			}
 			if (fetcher.formMethod === 'PUT') {
-				const updatedPost = fetcher.data.data
-				updatedPost.slug !== post?.slug &&
-					navigate('/admin/blog/' + updatedPost.slug)
-				window.localStorage.removeItem(`dirty-post-${post?.id}`)
+				const { data } = fetcher.data
+				if (data) {
+					data.slug !== post?.slug && navigate('/admin/blog/' + data.slug)
+					window.localStorage.removeItem(`dirty-post-${post?.id}`)
+				}
 			}
 		}
 	}, [fetcher])
