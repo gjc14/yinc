@@ -11,7 +11,12 @@ export const SeparatorWithText = ({
 	text: string
 }) => {
 	return (
-		<div className={cn('flex items-center text-muted text-xs py-1', className)}>
+		<div
+			className={cn(
+				'flex items-center text-muted-foreground/75 text-xs py-1',
+				className,
+			)}
+		>
 			<hr className="grow border-current" />
 			<span className={'px-3'}>{text}</span>
 			<hr className="grow border-current" />

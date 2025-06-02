@@ -177,7 +177,7 @@ export const FileCard = ({
 			>
 				<ToolBarButton
 					onClick={() => setDeleteAlert(true)}
-					className="hover:text-destructive-foreground hover:bg-destructive"
+					className="hover:text-white hover:bg-destructive"
 				>
 					<Trash2 />
 				</ToolBarButton>

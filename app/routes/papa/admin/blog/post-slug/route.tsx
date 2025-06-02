@@ -174,11 +174,7 @@ export default function AdminSlugPost() {
 					disabled={!isDirty || isSubmitting}
 					onClick={handleSave}
 				>
-					{isSaving ? (
-						<Loader2 size={16} className="animate-spin" />
-					) : (
-						<Save size={16} />
-					)}
+					{isSaving && <Loader2 size={16} className="animate-spin" />}
 					<p className="text-xs">Save</p>
 				</Button>
 
