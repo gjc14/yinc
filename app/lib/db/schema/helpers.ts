@@ -1,22 +1,24 @@
 import { timestamp } from 'drizzle-orm/pg-core'
 
 export const timestampAttribute = {
-	timestamp: timestamp().notNull().defaultNow(),
+	timestamp: timestamp({ withTimezone: true }).notNull().defaultNow(),
 }
 
 export const createdAtAttribute = {
-	createdAt: timestamp('created_at').notNull().defaultNow(),
+	createdAt: timestamp('created_at', { withTimezone: true })
+		.notNull()
+		.defaultNow(),
 }
 
 export const updatedAtAttribute = {
-	updatedAt: timestamp('updated_at')
+	updatedAt: timestamp('updated_at', { withTimezone: true })
 		.notNull()
 		.defaultNow()
 		.$onUpdate(() => new Date()),
 }
 
 export const deletedAtAttribute = {
-	deletedAt: timestamp('deleted_at'),
+	deletedAt: timestamp('deleted_at', { withTimezone: true }),
 }
 
 export const timestampAttributes = {
