@@ -119,7 +119,7 @@ cd papa && mv .env.example .env
 ### 2. Install and push database schema
 
 ```sh
-npm install
+pnpm install
 ```
 
 ### 3. Initialize the project
@@ -131,13 +131,13 @@ You will be asked for **Email** and your **Name**. Enter them in the teminal.
 - If you have already init the project:
 
 ```sh
-npm run dev
+pnpm run dev
 ```
 
 - If you're starting a new project:
 
 ```sh
-npm run init
+pnpm run init
 ```
 
 🎉 Now your project should be running on
@@ -167,7 +167,7 @@ TODO
 
 ### Admin Route
 
-You may run `npm run create-plugin:admin` to generate the example routes.
+You may run `pnpm run create-plugin:admin` to generate the example routes.
 
 These actions will be done:
 

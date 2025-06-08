@@ -401,7 +401,7 @@ const defaultPost = {
 			{
 				type: 'codeBlock',
 				attrs: { language: null },
-				content: [{ type: 'text', text: 'npm run init ' }],
+				content: [{ type: 'text', text: 'pnpm run init ' }],
 			},
 			{
 				type: 'paragraph',
