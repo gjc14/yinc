@@ -13,8 +13,8 @@
 		"create-plugin:admin": "tsx scripts/create-admin-plugin.ts",
 		"create-plugin:web": "tsx scripts/create-web-plugin.ts",
 		"format": "prettier --write .",
-		"db:push": "pnpm dlx drizzle-kit push",
-		"auth:generate": "pnpm dlx @better-auth/cli generate --config app/lib/auth/auth.server.ts --output app/lib/db/schema/auth.ts"
+		"db:push": "pnpm exec drizzle-kit push",
+		"auth:generate": "pnpm exec @better-auth/cli generate --config app/lib/auth/auth.server.ts --output app/lib/db/schema/auth.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/anthropic": "^1.2.10",
