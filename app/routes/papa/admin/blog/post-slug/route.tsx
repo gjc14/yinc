@@ -78,7 +78,11 @@ export default function AdminSlugPost() {
 		const postReady = {
 			...postState,
 			title: postState.title || `Post-${now}`,
-			slug: postState.slug || generateSlug(postState.title || `Post-${now}`),
+			slug:
+				postState.slug ||
+				generateSlug(postState.title || `Post-${now}`, {
+					fallbackPrefix: 'post',
+				}),
 			createdAt: undefined,
 			updatedAt: undefined,
 			seo: {

@@ -174,10 +174,9 @@ export const PostMetaPart = ({
 						type="button"
 						variant={'secondary'}
 						onClick={() => {
-							let slug = generateSlug(postState.title)
-							if (!slug) {
-								slug = generateSlug(String(postState.id))
-							}
+							const slug = generateSlug(postState.title, {
+								fallbackPrefix: 'post',
+							})
 
 							setPostState(prev => {
 								const newPost = {

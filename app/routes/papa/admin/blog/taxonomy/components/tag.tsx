@@ -47,10 +47,7 @@ const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {
 }
 
 export const generateNewTag = (newTagName: string) => {
-	let slug = generateSlug(newTagName)
-	if (!slug) {
-		slug = generateSlug(String(Date.now()))
-	}
+	const slug = generateSlug(newTagName, { fallbackPrefix: 'tag' })
 
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),

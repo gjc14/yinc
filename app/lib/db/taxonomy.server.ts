@@ -19,10 +19,7 @@ export const createCategory = async ({
 	name: string
 	description?: string
 }): Promise<{ category: Category }> => {
-	let slug = generateSlug(name)
-	if (!slug) {
-		slug = generateSlug(String(Date.now()))
-	}
+	const slug = generateSlug(name, { fallbackPrefix: 'category' })
 
 	const [category] = await db
 		.insert(categoriesTable)
@@ -63,10 +60,7 @@ export const createChildCategory = async ({
 	name: string
 	description?: string
 }): Promise<{ category: Category }> => {
-	let slug = generateSlug(name)
-	if (!slug) {
-		slug = generateSlug(String(Date.now()))
-	}
+	const slug = generateSlug(name, { fallbackPrefix: 'child-category' })
 
 	const [category] = await db
 		.insert(categoriesTable)
@@ -95,10 +89,7 @@ export const createTag = async ({
 	name: string
 	description?: string
 }): Promise<{ tag: Tag }> => {
-	let slug = generateSlug(name)
-	if (!slug) {
-		slug = generateSlug(String(Date.now()))
-	}
+	const slug = generateSlug(name, { fallbackPrefix: 'tag' })
 
 	const [tag] = await db
 		.insert(tagsTable)

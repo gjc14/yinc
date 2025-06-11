@@ -1,12 +1,79 @@
 import type { Seo } from '~/lib/db/schema'
 
-export const generateSlug = (name: string) => {
-	return name
-		.replace(/^\s+|\s+$/g, '')
-		.toLowerCase()
-		.replace(/[^a-z0-9 -]/g, '')
-		.replace(/\s+/g, '-')
-		.replace(/-+/g, '-')
+// Counter to ensure unique slugs when generating fallbacks
+let slugCounter = 0
+
+/**
+ * Generate a URL-safe slug from a string with multi-language support
+ * @param name - The input string to convert to a slug
+ * @param options - Optional configuration
+ * @returns A URL-safe slug string
+ */
+export const generateSlug = (
+	name: string,
+	options: {
+		maxLength?: number
+		fallbackPrefix?: string
+		preserveUnicode?: boolean
+	} = {},
+) => {
+	const {
+		maxLength = 50,
+		fallbackPrefix = 'item',
+		preserveUnicode = true,
+	} = options
+
+	if (!name || typeof name !== 'string') {
+		return generateFallbackSlug(fallbackPrefix)
+	}
+
+	// Trim whitespace
+	let slug = name.trim()
+
+	if (preserveUnicode) {
+		// For multi-language support, convert to lowercase and handle Unicode characters
+		slug = slug
+			.toLowerCase()
+			// Replace spaces and special punctuation with hyphens
+			.replace(/[\s\u3000]+/g, '-') // \u3000 is CJK ideographic space
+			// Remove or replace problematic characters but keep Unicode letters/numbers
+			.replace(/[^\p{L}\p{N}\-_.~]/gu, '')
+			// Handle multiple consecutive hyphens
+			.replace(/-+/g, '-')
+			// Remove leading/trailing hyphens
+			.replace(/^-+|-+$/g, '')
+	} else {
+		// Only ASCII characters
+		slug = slug
+			.toLowerCase()
+			.replace(/[^a-z0-9 -]/g, '')
+			.replace(/\s+/g, '-')
+			.replace(/-+/g, '-')
+			.replace(/^-+|-+$/g, '')
+	}
+
+	// Truncate if too long
+	if (slug.length > maxLength) {
+		slug = slug.substring(0, maxLength).replace(/-+$/, '')
+	}
+
+	// If slug is empty or too short after processing, generate fallback
+	if (!slug || slug.length < 1) {
+		return generateFallbackSlug(fallbackPrefix)
+	}
+
+	return slug
+}
+
+/**
+ * Generate a unique fallback slug
+ * @param prefix - Prefix for the fallback slug
+ * @returns A unique fallback slug
+ */
+const generateFallbackSlug = (prefix: string = 'item'): string => {
+	const timestamp = Date.now()
+	const counter = ++slugCounter
+	return `${prefix}-${timestamp}-${counter}`
 }
 
 export const createMeta = (seo: Seo, url: URL) => {

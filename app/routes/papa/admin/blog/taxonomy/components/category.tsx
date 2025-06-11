@@ -111,10 +111,7 @@ const ChildCategoryComponent = ({
 }
 
 export const generateNewCategory = (newCategoryName: string) => {
-	let slug = generateSlug(newCategoryName)
-	if (!slug) {
-		slug = generateSlug(String(Date.now()))
-	}
+	const slug = generateSlug(newCategoryName, { fallbackPrefix: 'category' })
 
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
@@ -203,10 +200,9 @@ export const generateNewChildCategory = (
 	newChildCategoryName: string,
 	parentId: number,
 ) => {
-	let slug = generateSlug(newChildCategoryName)
-	if (!slug) {
-		slug = generateSlug(String(Date.now()))
-	}
+	const slug = generateSlug(newChildCategoryName, {
+		fallbackPrefix: 'child-category',
+	})
 
 	return {
 		id: -(Math.floor(Math.random() * 2147483648) + 1),
