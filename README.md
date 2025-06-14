@@ -9,11 +9,13 @@
 - **Framework**: [React Router v7](https://reactrouter.com/home/)
 - **Database**: [PostgreSQL](https://www.postgresql.org/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Storage**:
-  [Cloudflare R2](https://www.cloudflare.com/zh-tw/developer-platform/products/r2/)
+- **Storage**: [AWS S3](https://aws.amazon.com/s3/) /
+  [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/)
 - **Style**: [tailwindcss](https://tailwindcss.com/)
 - **UI LIbrary**: [shadcn/ui](https://ui.shadcn.com/)
-- **Email SDK**: [Resend](https://resend.com/)
+- **Email SDK**:
+  [Any SMTP](https://www.cloudflare.com/learning/email-security/what-is-smtp/) /
+  [AWS SES](https://aws.amazon.com/ses/) / [Resend](https://resend.com/)
 - **Authentication**: [Better Auth](https://www.better-auth.com/)
 - **Text Editor**: [Tiptap](https://tiptap.dev/)
 
@@ -27,20 +29,36 @@
 
 1. Prepare an useful IDE. (e.g.
    [Visual Studio Code](https://code.visualstudio.com/))
-2. Get a PostgreSQL database, either host locally or use
-   [Neon](https://neon.tech/), which provides 0.5G storage for up to 10
-   projects. 512MB is capable of more than 17,000 of
-   [What is Papa (30kB)](https://papacloud.vercel.app/blog/what-is-papa) post.
-3. Have a [Resend](https://resend.com/) account to send email. Every Resend
-   account has a [free 3,000 emails/mo quota](https://resend.com/pricing).
+2. Get a
+   [PostgreSQL Open Source Relational Database](https://www.postgresql.org/). If
+   you don't want to host it locally, we recommend using
+   [Supabase](https://supabase.com/) or [Neon](https://neon.tech/). They both
+   provide 0.5GB storage 0.5G storage, which is capable of more than 15,000 post
+   like [What is Papa (30kB)](https://papacloud.vercel.app/blog/what-is-papa).
+3. Have a SMTP server provider. It is common to use third-party email service
+   such as:
+   1. [AWS SES](https://aws.amazon.com/ses/), which is
+      [SUPER economic](https://aws.amazon.com/ses/pricing/);
+   2. [Mailjet](https://www.mailjet.com/), provides
+      [free 6,000 emails/mo](https://www.mailjet.com/pricing/), made for
+      front-end users, with features like drag-and-drop email builders;
+   3. [MailGun](https://www.mailgun.com), provides
+      [free 100 emails/day](https://www.mailgun.com/pricing/), made for
+      developers, with
+      [additional HIPAA compliance](https://www.mailjet.com/resources/comparisons/mailgun/)
+      and robust APIs;
+   4. [Resend](https://resend.com/), provides
+      [free 3,000 emails/mo](https://resend.com/pricing);
+   5. [SendGrid](https://sendgrid.com/en-us/pricing);
+   6. [mailchimp](https://mailchimp.com/), provides
+      [free 1,000 emails/mo](https://mailchimp.com/pricing/marketing/compare-plans).
 4. Setup an object storage either in
    [Cloudflare R2 (10GB free tier)](https://www.cloudflare.com/developer-platform/products/r2/)
    or [AWS S3](https://aws.amazon.com/s3/).
-5. Have either
+5. (optional) Have either
    [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/),
    [reCAPTCHA v3](https://www.google.com/recaptcha/about/) (coming soon) or
    [hCaptcha](https://www.hcaptcha.com/) (coming soon) to secure your form.
-6. Chose where to deploy your Papa application.
 
 ### Set up [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/)
 
@@ -62,15 +80,17 @@ Coming soon
 
 ## Usage
 
-### 1. Clone and configure the required environment variables
+### 1. Clone the repository
 
 ```sh
 # Clone the repo
 git clone https://github.com/gjc14/papa.git
 
 # Navigate to project and copy .env.example
-cd papa && mv .env.example .env
+cd ./papa && cp .env.example .env
 ```
+
+### 2. Configure the required environment variables
 
 <!-- prettier-ignore -->
 > [!WARNING]
@@ -92,7 +112,7 @@ cd papa && mv .env.example .env
       connections to avoid hitting connection limits and to ensure
       scalability.**
 
-2.  (optional) Set `TURNSTILE_SITE_KEY`: This key is used to
+2.  (optional) Set `VITE_TURNSTILE_SITE_KEY`: This key is used to
     [get Turnstile token](https://developers.cloudflare.com/turnstile/get-started/)
     in client, if you use
     [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) as
@@ -103,24 +123,69 @@ cd papa && mv .env.example .env
 4.  `AUTH_SECRET`: Use
     `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
     to generate a random secret with node.
-5.  `AUTH_EMAIL`: The email address sending authentication emails.
-6.  `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
+5.  `VITE_BASE_URL`: This is the domain where you're hosting this app. In dev
     mode, probably `http://localhost:5173`. In production environment, please
     use where your app is. E.g. `https://papa.delicioso`.
-7.  `APP_NAME`: What you call your app.
-8.  `RESEND_API_KEY`: Send emails via Resend.
-9.  `BUCKET_NAME`,`OBJECT_STORAGE_ACCESS_KEY_ID`,
+6.  `APP_NAME`: What you call your app.
+7.  `EMAIL_PROVIDER`: Options: `smtp`, `ses`, `resend`, `nodemailer` (same as
+    `smtp`). Default `resend`
+8.  `EMAIL_FROM`: This email must be verified, with format:
+    `Your Name <verified@email.com>`
+9.  Email provider credentials:
+
+    1.  **SMTP**
+
+        - `SMTP_HOST`: smtp.provider.com
+        - `SMTP_PORT`: Email servers are using `587` as default TLS. Default
+          `587`
+        - `SMTP_SECURE`: Set to `true` if using port 465 (SSL), `false` for 587
+          port (encrypted/TLS). Default `false`
+        - `SMTP_USER`: user name
+        - `SMTP_PASS`: password correspond to user name
+
+    2.  **AWS SES (Simple Email Service)**
+
+        It is easier to just generate **SMTP Credentials** than generating SDK
+        access keys. If you still want to generate credentials for SDK, please
+        checkout
+        [Sending email through Amazon SES using an AWS SDK](https://docs.aws.amazon.com/ses/latest/dg/send-an-email-using-sdk-programmatically.html)
+        and
+        [Types of Amazon SES credentials](https://docs.aws.amazon.com/ses/latest/dg/send-email-concepts-credentials.html)
+
+        - `AWS_SES_REGION`: e.g. `ap-northeast-1`
+        - `AWS_SES_ACCESS_KEY_ID`: Get this from `IAM`
+        - `AWS_SES_SECRET_ACCESS_KEY`: Get this from `IAM`, you should set
+          Permissions policies of the user to:
+          ```json
+          {
+          	"Version": "2012-10-17",
+          	"Statement": [
+          		{
+          			"Effect": "Allow",
+          			"Action": ["ses:*"], // Allow all ses services
+          			"Resource": "*"
+          		}
+          	]
+          }
+          ```
+
+    3.  **Resend**
+        - `RESEND_API_KEY`: something like `re_blablabla`
+
+10. `EMAIL_FROM`: The email address sending authentication emails.
+11. `BUCKET_NAME`,`OBJECT_STORAGE_ACCESS_KEY_ID`,
     `OBJECT_STORAGE_SECRET_ACCESS_KEY`, `OBJECT_STORAGE_ACCOUNT_ID`: Where you
     save your objects, accept S3 compatible services. Using in route
     `/admin/assets/resource`
 
-### 2. Install and push database schema
+### 3. Install and push database schema
 
 ```sh
 pnpm install
+# or pnpm i
 ```
 
-### 3. Initialize the project
+### 4. Initialize the project
 
 This command will start the project by adding an admin with default posts.
 
@@ -129,7 +194,7 @@ You will be asked for **Email** and your **Name**. Enter them in the teminal.
 - If you have already init the project:
 
 ```sh
-pnpm run dev
+pnpm dev
 ```
 
 - If you're starting a new project:
