@@ -3,7 +3,7 @@ import type { Resend } from 'resend'
 import MagicLinkEmail from '~/components/email/magic-link'
 import OtpEmail from '~/components/email/otp-email'
 import WelcomeEmail from '~/components/email/welcome-email'
-import type { EmailService } from '~/lib/utils/email/service'
+import type { EmailService } from '~/lib/email/service'
 
 export const sendMagicLink = async ({
 	email,

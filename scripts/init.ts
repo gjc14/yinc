@@ -3,7 +3,7 @@
  */
 import 'dotenv/config'
 
-import { emailService } from '~/lib/utils/email'
+import { emailService } from '~/lib/email'
 
 function checkDatabaseUrl(): boolean {
 	const databaseUrl = process.env.DATABASE_URL

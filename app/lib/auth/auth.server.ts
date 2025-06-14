@@ -11,7 +11,7 @@ import {
 
 import { db } from '~/lib/db/db.server'
 
-import { emailService } from '../utils/email'
+import { emailService } from '../email'
 import { ac, admin, user } from './permissions'
 import { sendSignInOTP, sendVerifyLink } from './utils'
 

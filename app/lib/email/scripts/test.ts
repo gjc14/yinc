@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { stdin as input, stdout as output } from 'node:process'
 import * as readline from 'node:readline/promises'
 
-import { emailService } from '~/lib/utils/email'
+import { emailService } from '~/lib/email'
 
 const rl = readline.createInterface({ input, output })
 
