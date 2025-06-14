@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Building, Command, LifeBuoy, Send } from 'lucide-react'
+import { Building, Command, LifeBuoy, Send, UserCog2 } from 'lucide-react'
 
 import {
 	Sidebar,
@@ -42,12 +42,7 @@ const MainNavItems: PapaAdminMenuItem[] = [
 		sub: [{ title: 'Categories / Tags', url: 'taxonomy' }],
 	},
 	{ iconName: 'text-search', title: 'SEO', url: '/admin/seo' },
-	{ iconName: 'database', title: 'Assets', url: '/admin/assets' },
-	{
-		iconName: 'user-cog-2',
-		title: 'Admins',
-		url: '/admin/admins',
-	},
+	{ iconName: 'cloud', title: 'Assets', url: '/admin/assets' },
 ]
 
 const SecondaryNavItems: NavSecondaryItem[] = [
@@ -69,6 +64,11 @@ const SecondaryNavItems: NavSecondaryItem[] = [
 		title: 'Company',
 		url: '/admin/company',
 		icon: Building,
+	},
+	{
+		title: 'Admins',
+		url: '/admin/admins',
+		icon: UserCog2,
 	},
 ]
 
