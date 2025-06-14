@@ -94,7 +94,7 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 					className="flex-1"
 				/>
 				<Button type="submit" size="sm">
-					<PlusCircle className="h-4 w-4 mr-2" />
+					<PlusCircle />
 					新增
 				</Button>
 			</Form>

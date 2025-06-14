@@ -40,12 +40,12 @@ export function FloatingToolkit() {
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" side="top" className="w-56 mb-2">
 						<DropdownMenuItem onClick={() => navigate('/')}>
-							<PanelTop className="mr-2 h-4 w-4" />
+							<PanelTop className="mr-2 size-4" />
 							<span>View Website</span>
 						</DropdownMenuItem>
 
 						<DropdownMenuItem onClick={() => navigate('/admin')}>
-							<DashboardIcon className="mr-2 h-4 w-4" />
+							<DashboardIcon className="mr-2 size-4" />
 							<span>Go to Dashboard</span>
 						</DropdownMenuItem>
 
@@ -58,7 +58,7 @@ export function FloatingToolkit() {
 								)
 							}
 						>
-							<HelpCircle className="mr-2 h-4 w-4" />
+							<HelpCircle className="mr-2 size-4" />
 							<span>Help & Resources</span>
 						</DropdownMenuItem>
 
@@ -66,7 +66,7 @@ export function FloatingToolkit() {
 
 						<ThemeDropDownMenu asChild>
 							<DropdownMenuItem onSelect={e => e.preventDefault()}>
-								<CurrentThemeIcon className="mr-2 h-4 w-4" />
+								<CurrentThemeIcon className="mr-2 size-4" />
 								<span>Change Theme</span>
 							</DropdownMenuItem>
 						</ThemeDropDownMenu>
@@ -74,7 +74,7 @@ export function FloatingToolkit() {
 						<DropdownMenuSeparator />
 
 						<DropdownMenuItem onClick={() => authClient.signOut()}>
-							<LogOut className="mr-2 h-4 w-4" />
+							<LogOut className="mr-2 size-4" />
 							<span>Sign Out</span>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
