@@ -33,7 +33,13 @@ export const MenuBar = ({
 	onAiProviderSelect?: (ai: Provider) => void
 }) => {
 	return (
-		<div id="menu-bar" className={cn('py-1.5 border-y', className)}>
+		<div
+			id="menu-bar"
+			className={cn(
+				'py-1.5 border border-muted-foreground rounded-lg',
+				className,
+			)}
+		>
 			<div id="buttons" className="flex flex-wrap items-center gap-1 p-1">
 				{/* Formatting */}
 				{editMarkOptions.map((option, index) => (

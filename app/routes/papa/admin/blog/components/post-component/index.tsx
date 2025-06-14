@@ -226,7 +226,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					</AlertDialogContent>
 				</AlertDialog>
 
-				<div className="max-w-prose flex flex-col px-5 text-pretty xl:px-0">
+				<div className="w-full max-w-prose flex flex-col px-5 text-pretty xl:px-0">
 					<MainPost
 						post={postState}
 						editable

@@ -28,8 +28,8 @@ export const PopoverMenuOptions = ({
 }: {
 	options: OptionTypes[]
 	editor: Editor
-	activeIcon?: JSX.Element
-	defaultIcon: JSX.Element
+	activeIcon?: React.ReactNode
+	defaultIcon: React.ReactNode
 	hideIndicator?: boolean
 }) => {
 	return (

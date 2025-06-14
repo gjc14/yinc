@@ -4,12 +4,12 @@ import './styles.scss'
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
 // import { DefaultFloatingMenu } from '../components/menus/floating-menu'
-import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import { Editor, EditorContent, useEditor } from '@tiptap/react'
 
 import { cn } from '~/lib/utils'
 import { type ChatAPICustomBody } from '~/routes/papa/admin/api/ai-chat/route'
 
+import { Loading } from '../loading'
 import { DefaultBubbleMenu } from './components/menus/bubble-menu'
 import { MenuBar } from './components/menus/menu-bar'
 import ExtensionKit from './extensions/extension-kit'
@@ -166,6 +166,14 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 		[editor],
 	)
 
+	if (!editor) {
+		return (
+			<div className={cn('grow flex justify-center', props.className)}>
+				<Loading className="m-3" />
+			</div>
+		)
+	}
+
 	return (
 		<div
 			className={cn(
@@ -173,50 +181,38 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 				props.className,
 			)}
 		>
+			<MenuBar
+				editor={editor}
+				className={cn(props.menuBarClassName)}
+				onComplete={() => onComplete(editor)}
+				onAiProviderSelect={ai => setAiProvider(ai)}
+			/>
+
+			{/* TODO: Many bubble menus like image/youtube/link */}
+
+			<DefaultBubbleMenu
+				editor={editor}
+				onComplete={() => onComplete(editor)}
+			/>
+
+			{/* <DefaultFloatingMenu editor={editor} /> */}
+
 			{/* Editor part */}
-			<div className="grow">
-				{editor && (
-					<MenuBar
-						editor={editor}
-						className={props.menuBarClassName}
-						onComplete={() => onComplete(editor)}
-						onAiProviderSelect={ai => setAiProvider(ai)}
-					/>
-				)}
-				{/* TODO: Many bubble menus like image/youtube/link */}
-				{editor && (
-					<DefaultBubbleMenu
-						editor={editor}
-						onComplete={() => onComplete(editor)}
-					/>
-				)}
-				{/* {editor && <DefaultFloatingMenu editor={editor} />} */}
-				<EditorContent
-					onClick={() => editor?.commands.focus()}
-					onKeyDown={e => {
-						e.stopPropagation()
+			<EditorContent
+				onClick={() => editor?.commands.focus()}
+				onKeyDown={e => {
+					e.stopPropagation()
 
-						if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-							e.preventDefault()
-							props.onSave?.()
-						}
-					}}
-					editor={editor}
-					className={cn('grow cursor-text', props.editorContentClassName)}
-				/>
-			</div>
+					if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+						e.preventDefault()
+						props.onSave?.()
+					}
+				}}
+				editor={editor}
+				className={cn('grow cursor-text', props.editorContentClassName)}
+			/>
 
-			<footer className="flex justify-end items-center pt-2 px-1 border-t text-xs text-muted-foreground">
-				<a
-					href="https://github.com/gjc14/papa"
-					target="_blank"
-					rel="noopener noreferrer"
-					title="View source code on GitHub"
-					aria-label="View source code on GitHub"
-				>
-					<GitHubLogoIcon />
-				</a>
-			</footer>
+			<footer className="flex pt-2 px-1 border-t" />
 		</div>
 	)
 })

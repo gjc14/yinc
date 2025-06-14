@@ -127,7 +127,7 @@ export default function AdminSlugPost() {
 	}
 
 	return (
-		<AdminSectionWrapper className="items-center pt-16 md:pt-12">
+		<AdminSectionWrapper className="items-center">
 			{/* Delete post alert */}
 			<PostDeleteAlert
 				open={deleteAlertOpen}
@@ -138,7 +138,7 @@ export default function AdminSlugPost() {
 				isNavigating={isNavigating}
 			/>
 
-			<div className="z-10 fixed top-16 right-6 flex items-center gap-2 backdrop-blur-md px-2 py-1 rounded-xl">
+			<div className="w-full z-10 sticky top-0 flex items-center justify-end gap-2 border-y border-primary backdrop-blur-xs px-2 py-1">
 				{/* Preview */}
 				{post.status !== 'PUBLISHED' ? (
 					!isDirty ? (
@@ -156,9 +156,9 @@ export default function AdminSlugPost() {
 					)
 				) : (
 					<Link to={`/blog/${post.slug}`} target="_blank">
-						<Button variant={'link'} className="px-2">
+						<Button variant={'link'}>
 							See post
-							<ExternalLink size={12} />
+							<ExternalLink className="!size-3.5" />
 						</Button>
 					</Link>
 				)}
