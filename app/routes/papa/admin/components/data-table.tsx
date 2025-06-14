@@ -169,7 +169,7 @@ export function DataTable<TData, TValue>({
 	)
 
 	return (
-		<section className="flex flex-col gap-3">
+		<section className="relative flex flex-col gap-3">
 			<div className="flex gap-2">
 				{children && children(table)}
 
@@ -207,6 +207,16 @@ export function DataTable<TData, TValue>({
 			</div>
 			<Table aria-label="table">
 				<TableHeader aria-label="table-header">
+					{/* <div className="z-10 absolute grow flex justify-center border rounded-xl px-2 py-1 mx-auto left-[50%] top-0 translate-x-[-50%] backdrop-blur-xs">
+						<Button
+							variant={'ghost'}
+							onClick={() =>
+								alert(JSON.stringify(table.getSelectedRowModel().rows, null, 2))
+							}
+						>
+							Selected
+						</Button>
+					</div> */}
 					{table.getHeaderGroups().map(headerGroup => (
 						<TableRow key={headerGroup.id} className="border-primary">
 							{headerGroup.headers.map(header => {
@@ -328,7 +338,7 @@ function createSelectColumn<T>(): ColumnDef<T> {
 				}
 				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
 				aria-label="Select all"
-				className="mr-1"
+				className="mr-1 rounded-none"
 			/>
 		),
 		cell: ({ row }) => (
@@ -336,7 +346,7 @@ function createSelectColumn<T>(): ColumnDef<T> {
 				checked={row.getIsSelected()}
 				onCheckedChange={value => row.toggleSelected(!!value)}
 				aria-label="Select row"
-				className="mr-1"
+				className="mr-1 rounded-none"
 			/>
 		),
 		enableSorting: false,
