@@ -4,6 +4,15 @@ import { Form, useFetcher, useSubmit } from 'react-router'
 import { CircleX, PlusCircle } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { generateSlug } from '~/lib/utils/seo'
@@ -61,6 +70,7 @@ export const generateNewTag = (newTagName: string) => {
 // Tags Section Component (Left)
 export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 	const [newTagName, setNewTagName] = useState('')
+	const [filter, setFilter] = useState('')
 	const submit = useSubmit()
 
 	const addTag = () => {
@@ -74,38 +84,61 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 		setNewTagName('')
 	}
 
+	const filteredTags = tags.filter(tag =>
+		tag.name.toLowerCase().includes(filter.toLowerCase()),
+	)
+
 	return (
 		<div className="border rounded-lg p-4 shadow-xs col-span-1 sm:col-span-2 lg:col-span-1">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">標籤</h2>
+				<Dialog>
+					<DialogTrigger className="cursor-pointer">
+						<PlusCircle size={20} />
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>新增標籤</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<Form
+							onSubmit={e => {
+								e.preventDefault()
+								addTag()
+							}}
+							className="flex items-center gap-2"
+						>
+							<Input
+								placeholder="新增標籤名稱"
+								value={newTagName}
+								onChange={e => setNewTagName(e.target.value)}
+								className="flex-1"
+							/>
+							<DialogClose asChild>
+								<Button type="submit" size="sm">
+									<PlusCircle />
+									新增
+								</Button>
+							</DialogClose>
+						</Form>
+					</DialogContent>
+				</Dialog>
 			</div>
 
-			<Form
-				onSubmit={e => {
-					e.preventDefault()
-					addTag()
-				}}
-				className="flex gap-2 mb-4"
-			>
-				<Input
-					placeholder="新增標籤名稱"
-					value={newTagName}
-					onChange={e => setNewTagName(e.target.value)}
-					className="flex-1"
-				/>
-				<Button type="submit" size="sm">
-					<PlusCircle />
-					新增
-				</Button>
-			</Form>
+			<Input
+				placeholder="篩選"
+				value={filter}
+				onChange={e => setFilter(e.target.value)}
+				className="flex-1 mb-4"
+			/>
 
-			<ScrollArea className="h-[400px] pr-4">
+			<ScrollArea className="h-[400px]">
 				<div className="space-y-2">
-					{tags.length > 0 ? (
-						tags.map(tag => <TagComponent tag={tag} key={tag.id} />)
+					{filteredTags.length > 0 ? (
+						filteredTags.map(tag => <TagComponent tag={tag} key={tag.id} />)
 					) : (
 						<div className="text-center py-8 text-muted-foreground">
-							尚無標籤
+							{filter ? '查無標籤' : '尚無標籤'}
 						</div>
 					)}
 				</div>

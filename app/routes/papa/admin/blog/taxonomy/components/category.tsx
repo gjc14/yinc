@@ -1,9 +1,18 @@
 import { useState } from 'react'
 import { Form, useFetcher, useSubmit } from 'react-router'
 
+import { DialogClose } from '@radix-ui/react-dialog'
 import { CircleX, PlusCircle } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { generateSlug } from '~/lib/utils/seo'
@@ -135,6 +144,7 @@ export const CategoriesSection = ({
 	setSelectedCategoryId: (id: number) => void
 }) => {
 	const [newCategoryName, setNewCategoryName] = useState('')
+	const [filter, setFilter] = useState('')
 	const submit = useSubmit()
 
 	const addCategory = () => {
@@ -153,43 +163,73 @@ export const CategoriesSection = ({
 		setSelectedCategoryId(id)
 	}
 
+	const filteredCategories = categories.filter(category =>
+		category.name.toLowerCase().includes(filter.toLowerCase()),
+	)
+
 	return (
 		<div className="border rounded-lg p-4 shadow-xs">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">類別</h2>
+				<Dialog>
+					<DialogTrigger className="cursor-pointer">
+						<PlusCircle size={20} />
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>新增類別</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<Form
+							id="add-category-form"
+							onSubmit={e => {
+								e.preventDefault()
+								addCategory()
+							}}
+							className="flex items-center gap-2"
+						>
+							<Input
+								placeholder="新增類別名稱"
+								value={newCategoryName}
+								onChange={e => setNewCategoryName(e.target.value)}
+								className="flex-1"
+							/>
+							<DialogClose asChild>
+								<Button type="submit" size="sm">
+									<PlusCircle />
+									新增
+								</Button>
+							</DialogClose>
+						</Form>
+					</DialogContent>
+				</Dialog>
 			</div>
 
-			<Form
-				onSubmit={e => {
-					e.preventDefault()
-					addCategory()
-				}}
-				className="flex gap-2 mb-4"
-			>
-				<Input
-					placeholder="新增類別名稱"
-					value={newCategoryName}
-					onChange={e => setNewCategoryName(e.target.value)}
-					className="flex-1"
-				/>
-				<Button type="submit" size="sm">
-					<PlusCircle />
-					新增
-				</Button>
-			</Form>
+			<Input
+				placeholder="篩選"
+				value={filter}
+				onChange={e => setFilter(e.target.value)}
+				className="flex-1 mb-4"
+			/>
 
-			<ScrollArea className="h-[400px] pr-4">
+			<ScrollArea className="h-[400px]">
 				<div className="space-y-2">
-					{categories.map(category => (
-						<CategoryComponent
-							cat={category}
-							key={category.id}
-							selectedCategoryId={selectedCategoryId}
-							onClick={() =>
-								!category._isPending && handleCategorySelect(category.id)
-							}
-						/>
-					))}
+					{filteredCategories.length > 0 ? (
+						filteredCategories.map(category => (
+							<CategoryComponent
+								cat={category}
+								key={category.id}
+								selectedCategoryId={selectedCategoryId}
+								onClick={() =>
+									!category._isPending && handleCategorySelect(category.id)
+								}
+							/>
+						))
+					) : (
+						<div className="text-center py-8 text-muted-foreground">
+							{filter ? '查無類別' : '尚無類別'}
+						</div>
+					)}
 				</div>
 			</ScrollArea>
 		</div>
@@ -222,6 +262,7 @@ export const CategoryHierarchySection = ({
 	category: CategoryType | null
 }) => {
 	const [newChildCategoryName, setNewChildCategoryName] = useState('')
+	const [filter, setFilter] = useState('')
 	const submit = useSubmit()
 
 	const addChildCategory = () => {
@@ -239,39 +280,66 @@ export const CategoryHierarchySection = ({
 		setNewChildCategoryName('')
 	}
 
+	const filteredChildren =
+		category?.children.filter(child =>
+			child.name.toLowerCase().includes(filter.toLowerCase()),
+		) || []
+
 	return (
 		<div className="border rounded-lg p-4 shadow-xs">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">
 					{category ? `${category?.name} 的子類別` : '子類別'}
 				</h2>
+				<Dialog>
+					<DialogTrigger
+						className={`${category ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+						disabled={!category}
+					>
+						<PlusCircle size={20} />
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>新增子類別</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<Form
+							onSubmit={e => {
+								e.preventDefault()
+								addChildCategory()
+							}}
+							className="flex items-center gap-2 mb-4"
+						>
+							<Input
+								placeholder="新增子類別名稱"
+								value={newChildCategoryName}
+								onChange={e => setNewChildCategoryName(e.target.value)}
+								className="flex-1"
+							/>
+							<DialogClose asChild>
+								<Button type="submit" size="sm">
+									<PlusCircle />
+									新增
+								</Button>
+							</DialogClose>
+						</Form>
+					</DialogContent>
+				</Dialog>
 			</div>
 
 			{category ? (
 				<>
-					<Form
-						onSubmit={e => {
-							e.preventDefault()
-							addChildCategory()
-						}}
-						className="flex gap-2 mb-4"
-					>
-						<Input
-							placeholder="新增子類別名稱"
-							value={newChildCategoryName}
-							onChange={e => setNewChildCategoryName(e.target.value)}
-							className="flex-1"
-						/>
-						<Button type="submit" size="sm">
-							<PlusCircle />
-							新增
-						</Button>
-					</Form>
+					<Input
+						placeholder="篩選"
+						value={filter}
+						onChange={e => setFilter(e.target.value)}
+						className="flex-1 mb-4"
+					/>
 
-					<ScrollArea className="h-[400px] pr-4">
+					<ScrollArea className="h-[400px]">
 						<div className="space-y-2">
-							{category.children && category.children.length > 0 ? (
-								category.children.map(childCategory => (
+							{filteredChildren && filteredChildren.length > 0 ? (
+								filteredChildren.map(childCategory => (
 									<ChildCategoryComponent
 										category={childCategory}
 										key={childCategory.id}
@@ -279,7 +347,7 @@ export const CategoryHierarchySection = ({
 								))
 							) : (
 								<div className="text-center py-8 text-muted-foreground">
-									尚無子類別
+									{filter ? '查無子類別' : '尚無子類別'}
 								</div>
 							)}
 						</div>
