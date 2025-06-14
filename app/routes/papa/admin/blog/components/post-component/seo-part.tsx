@@ -9,6 +9,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { type EditorRef } from '~/components/editor'
+import { MultiSelect } from '~/components/multi-select'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { generateSeoDescription } from '~/lib/utils/seo'
 
@@ -111,6 +112,28 @@ export const SeoPart = ({
 				>
 					Generate SEO Description
 				</Button>
+			</div>
+
+			<div>
+				<Label htmlFor="seo-keywords">SEO Keywords</Label>
+				<MultiSelect
+					options={[]}
+					selected={(postState.seo.keywords ?? '')
+						.split(',')
+						.map(k => k.trim())
+						.filter(k => k !== '')
+						.map(k => ({ label: k, value: k }))}
+					onSelectedChange={selectedArr => {
+						const keywords = selectedArr.map(s => s.label).join(', ')
+						setPostState(prev => ({
+							...prev,
+							seo: {
+								...prev.seo,
+								keywords,
+							},
+						}))
+					}}
+				/>
 			</div>
 		</>
 	)
