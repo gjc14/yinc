@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import * as readline from 'readline'
+import * as readline from 'node:readline'
 
 import { eq, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
