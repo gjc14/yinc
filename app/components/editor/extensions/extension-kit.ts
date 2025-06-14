@@ -19,7 +19,6 @@ import { common, createLowlight } from 'lowlight'
 import { ColorHighlighter } from './color-highlighter'
 import { Youtube } from './responseive-youtube'
 import { SmilieReplacer } from './smilie-replacer'
-import { StreamView } from './stream-view'
 
 /**
  * ExtensionKit
@@ -85,7 +84,6 @@ export const ExtensionKit = ({
 		// SlashCommand,
 		SmilieReplacer,
 		ColorHighlighter,
-		StreamView,
 	]
 }
 

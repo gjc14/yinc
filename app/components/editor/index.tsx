@@ -1,13 +1,12 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 import './styles.scss'
 
-import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
+import { forwardRef, useCallback, useImperativeHandle } from 'react'
 
 // import { DefaultFloatingMenu } from '../components/menus/floating-menu'
 import { Editor, EditorContent, useEditor } from '@tiptap/react'
 
 import { cn } from '~/lib/utils'
-import { type ChatAPICustomBody } from '~/routes/papa/admin/api/ai-chat/route'
 
 import { Loading } from '../loading'
 import { DefaultBubbleMenu } from './components/menus/bubble-menu'
@@ -119,53 +118,6 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 		[imageBlobMap, editor],
 	)
 
-	////////////////////////
-	///        AI        ///
-	////////////////////////
-	const [aiProvider, setAiProvider] = useState<ChatAPICustomBody['provider']>(
-		'gemini-1.5-flash-latest',
-	)
-
-	const onComplete = useCallback(
-		(editor: Editor) => {
-			const { selection, doc } = editor.state
-			const { $head, from, to } = selection
-
-			const defaultPrompt =
-				'Please write a post about human education and its impact on eliminating Inequality Gap between Rich and Poor.'
-			if (selection.empty) {
-				// Use last 20 "lines" as prompt
-				const textBefore = doc.textBetween(0, $head.pos, '[papa | split]')
-
-				const prompt =
-					textBefore
-						.split('[papa | split]')
-						.filter(Boolean)
-						.slice(-20)
-						.join(' | ') || defaultPrompt
-
-				editor.commands.setStreamView({
-					prompt,
-					provider: aiProvider,
-					status: 'loading',
-				})
-			} else {
-				// Use selected text as prompt
-				const content = doc.textBetween(from, to, '[papa | split]')
-				const prompt =
-					content.split('[papa | split]').filter(Boolean).join(' | ') ||
-					defaultPrompt
-
-				editor.commands.setStreamView({
-					prompt,
-					provider: aiProvider,
-					status: 'loading',
-				})
-			}
-		},
-		[editor],
-	)
-
 	if (!editor) {
 		return (
 			<div className={cn('grow flex justify-center', props.className)}>
@@ -181,19 +133,11 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 				props.className,
 			)}
 		>
-			<MenuBar
-				editor={editor}
-				className={cn(props.menuBarClassName)}
-				onComplete={() => onComplete(editor)}
-				onAiProviderSelect={ai => setAiProvider(ai)}
-			/>
+			<MenuBar editor={editor} className={cn(props.menuBarClassName)} />
 
 			{/* TODO: Many bubble menus like image/youtube/link */}
 
-			<DefaultBubbleMenu
-				editor={editor}
-				onComplete={() => onComplete(editor)}
-			/>
+			<DefaultBubbleMenu editor={editor} />
 
 			{/* <DefaultFloatingMenu editor={editor} /> */}
 

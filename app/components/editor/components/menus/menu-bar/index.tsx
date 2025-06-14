@@ -1,10 +1,7 @@
 import { Editor } from '@tiptap/react'
-import { WandSparkles } from 'lucide-react'
 
-import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import { cn } from '~/lib/utils'
-import { type Provider } from '~/routes/papa/admin/api/ai-chat/route'
 
 import {
 	editAlignOptions,
@@ -18,19 +15,13 @@ import {
 	YoutubeButton,
 } from '../../../edit-options'
 import { ToggleButton } from '../../toggle-button'
-import { TooltipWrapper } from '../../tooltip-wrapper'
-import { AIProviderSelector } from './ai-provider-selector'
 
 export const MenuBar = ({
 	editor,
 	className,
-	onComplete,
-	onAiProviderSelect,
 }: {
 	editor: Editor
 	className?: string
-	onComplete?: () => void
-	onAiProviderSelect?: (ai: Provider) => void
 }) => {
 	return (
 		<div
@@ -165,30 +156,6 @@ export const MenuBar = ({
 				<LinkUnlinkButtons editor={editor} />
 				<ImageButton editor={editor} />
 				<YoutubeButton editor={editor} />
-
-				<Separator orientation="vertical" className="h-full min-h-[1.5rem]" />
-
-				{/* AI */}
-				<TooltipWrapper
-					asChild
-					tooltip="Generate content with AI"
-					shortcut={'/ai'}
-				>
-					<Button
-						variant="outline"
-						className="w-fit h-7 ml-2 px-2"
-						size={'sm'}
-						onClick={() => onComplete?.()}
-					>
-						<WandSparkles />
-						AI Completion
-					</Button>
-				</TooltipWrapper>
-
-				<AIProviderSelector
-					onAiProviderSelect={onAiProviderSelect}
-					className="ml-auto"
-				/>
 			</div>
 		</div>
 	)

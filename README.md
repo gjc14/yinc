@@ -109,9 +109,7 @@ cd papa && mv .env.example .env
     use where your app is. E.g. `https://papa.delicioso`.
 7.  `APP_NAME`: What you call your app.
 8.  `RESEND_API_KEY`: Send emails via Resend.
-9.  (optional) `GOOGLE_GENERATIVE_AI_API_KEY`, `OPENAI_API_KEY`,
-    `ANTHROPIC_API_KEY`: For use of Generative AI in `/admin/api/ai`
-10. `BUCKET_NAME`,`OBJECT_STORAGE_ACCESS_KEY_ID`,
+9.  `BUCKET_NAME`,`OBJECT_STORAGE_ACCESS_KEY_ID`,
     `OBJECT_STORAGE_SECRET_ACCESS_KEY`, `OBJECT_STORAGE_ACCOUNT_ID`: Where you
     save your objects, accept S3 compatible services. Using in route
     `/admin/assets/resource`

@@ -17,13 +17,7 @@ import {
 import { PopoverMenuOptions } from '../popover-options'
 import { ToggleButton } from '../toggle-button'
 
-export const DefaultBubbleMenu = ({
-	editor,
-	onComplete,
-}: {
-	editor: Editor
-	onComplete?: () => void
-}) => {
+export const DefaultBubbleMenu = ({ editor }: { editor: Editor }) => {
 	const activeParagraphOption = [
 		...editParagraphOptions,
 		...editListOptions,
@@ -55,17 +49,6 @@ export const DefaultBubbleMenu = ({
 			editor={editor}
 			className="flex items-center p-1 gap-0.5 bg-primary-foreground border border-border rounded-md shadow-md"
 		>
-			{/* AI Write */}
-			<ToggleButton
-				onClick={onComplete}
-				disabled={undefined}
-				tooltip={'AI Continue Writing'}
-			>
-				<WandSparkles size={16} />
-			</ToggleButton>
-
-			<Separator orientation="vertical" className="h-full min-h-[1.5rem]" />
-
 			{/* Paragraph options */}
 			<PopoverMenuOptions
 				editor={editor}

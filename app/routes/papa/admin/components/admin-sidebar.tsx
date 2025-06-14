@@ -39,10 +39,7 @@ const MainNavItems: PapaAdminMenuItem[] = [
 		iconName: 'pen',
 		title: 'Blog',
 		url: '/admin/blog',
-		sub: [
-			{ title: 'Taxonomies', url: 'taxonomy' },
-			{ title: 'Generative AI', url: 'generative' },
-		],
+		sub: [{ title: 'Categories / Tags', url: 'taxonomy' }],
 	},
 	{ iconName: 'text-search', title: 'SEO', url: '/admin/seo' },
 	{ iconName: 'database', title: 'Assets', url: '/admin/assets' },

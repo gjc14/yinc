@@ -14,9 +14,7 @@ const systemRoutes = [
 		index('./routes/papa/admin/index/route.tsx'),
 
 		// Admin API
-		...prefix('api', [
-			route('ai/chat', './routes/papa/admin/api/ai-chat/route.tsx'),
-		]),
+		...prefix('api', []),
 		// Assets
 		...prefix('assets', [
 			index('./routes/papa/admin/assets/index.tsx'),
@@ -35,7 +33,6 @@ const systemRoutes = [
 		// Blog
 		route('blog', './routes/papa/admin/blog/layout.tsx', [
 			index('./routes/papa/admin/blog/index/route.tsx'),
-			route('generative', './routes/papa/admin/blog/generative/route.tsx'),
 			route('new', './routes/papa/admin/blog/new/route.tsx'),
 			route(':postSlug', './routes/papa/admin/blog/post-slug/route.tsx'),
 			route('resource', './routes/papa/admin/blog/resource.ts'),
