@@ -85,9 +85,9 @@ export const FileGrid = (props: FileGridProps) => {
 }
 
 /**
- * File grid does nothing but passing props from FileGrid to FileCard, or passing FileCard actions out.
+ * Main component rendering the file grid with drag and drop support.
  */
-const FileGridMain = ({
+export const FileGridMain = ({
 	files,
 	origin,
 	onFileSelect,

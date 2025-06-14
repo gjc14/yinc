@@ -19,7 +19,7 @@ import {
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
 
-import { FileGrid } from './components/file-grid'
+import { FileGridMain } from './components/file-grid'
 import type { loader } from './resource'
 import { MIMETypes } from './utils'
 
@@ -75,7 +75,7 @@ export default function AdminAsset() {
 				</AdminActions>
 			</AdminHeader>
 			{hasObjectStorage ? (
-				<FileGrid
+				<FileGridMain
 					files={filesDisplayed}
 					onFileUpdate={fileMeta => {
 						setFilesState(
