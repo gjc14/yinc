@@ -65,10 +65,16 @@ export const FileCard = ({
 	setVisuallySelected,
 }: FileCardProps) => {
 	const fetcher = useFetcher()
-	const nameRef = useRef<HTMLInputElement>(null)
-	const descRef = useRef<HTMLTextAreaElement>(null)
 	const [open, setOpen] = useState(false)
 	const [deleteAlert, setDeleteAlert] = useState(false)
+
+	const [fileName, setFileName] = useState(file.name)
+	const [description, setDescription] = useState(file.description ?? '')
+
+	useEffect(() => {
+		setFileName(file.name || '')
+		setDescription(file.description || '')
+	}, [file.name, file.description])
 
 	const fileGeneralType = file.type.split('/')[0]
 	const url = `/assets/${file.id}`
@@ -83,8 +89,8 @@ export const FileCard = ({
 
 		const fileMetadataUpdated = {
 			...file,
-			name: nameRef.current?.value ?? file.name,
-			description: descRef.current?.value ?? file.description,
+			name: fileName,
+			description: description,
 		}
 
 		onUpdate?.(fileMetadataUpdated)
@@ -188,10 +194,7 @@ export const FileCard = ({
 			</div>
 			{/* Dialog */}
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent
-					className="max-h-[90vh] overflow-scroll"
-					onClick={e => e.stopPropagation()}
-				>
+				<DialogContent className="max-h-[90vh] overflow-scroll">
 					<DialogHeader className="space-y-3">
 						<DialogTitle className="flex grid-cols-3 items-center gap-1.5">
 							{file.name}
@@ -261,10 +264,10 @@ export const FileCard = ({
 								File Name
 							</Label>
 							<Input
-								ref={nameRef}
 								id="name"
 								placeholder="File name"
-								defaultValue={file.name}
+								value={fileName}
+								onChange={e => setFileName(e.target.value)}
 							/>
 						</div>
 						<div className="w-full gap-2">
@@ -273,10 +276,10 @@ export const FileCard = ({
 							</Label>
 							<Textarea
 								id="description"
-								ref={descRef}
 								placeholder="Description"
-								defaultValue={file.description ?? ''}
-							></Textarea>
+								value={description}
+								onChange={e => setDescription(e.target.value)}
+							/>
 						</div>
 
 						<div id="file-details" className="w-full my-2 px-1">
@@ -321,11 +324,11 @@ export const FileCard = ({
 							<AlertDialogContent>
 								<AlertDialogHeader>
 									<AlertDialogTitle>
-										Continute delete this file permanently?
+										Continue delete this file permanently?
 									</AlertDialogTitle>
 									<AlertDialogDescription>
 										This action cannot be undone. This will permanently delete{' '}
-										{file.name} servers.
+										{file.name} from servers.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>
