@@ -15,21 +15,13 @@ const systemRoutes = [
 
 		// Admin API
 		...prefix('api', []),
+
 		// Assets
 		...prefix('assets', [
 			index('./routes/papa/admin/assets/index.tsx'),
 			route('resource', './routes/papa/admin/assets/resource.ts'),
 		]),
-		// Account
-		route('account', './routes/papa/admin/account/layout.tsx', [
-			index('./routes/papa/admin/account/index/route.tsx'),
-			route('billing', './routes/papa/admin/account/billing/route.tsx'),
-			route(
-				'notification',
-				'./routes/papa/admin/account/notification/route.tsx',
-			),
-			route('security', './routes/papa/admin/account/security/route.tsx'),
-		]),
+
 		// Blog
 		route('blog', './routes/papa/admin/blog/layout.tsx', [
 			index('./routes/papa/admin/blog/index/route.tsx'),
@@ -41,6 +33,23 @@ const systemRoutes = [
 				route('resource', './routes/papa/admin/blog/taxonomy/resource.ts'),
 			]),
 		]),
+		// SEO
+		...prefix('seo', [
+			index('./routes/papa/admin/seo/index.tsx'),
+			route('resource', './routes/papa/admin/seo/resource.ts'),
+		]),
+
+		// Account
+		route('account', './routes/papa/admin/account/layout.tsx', [
+			index('./routes/papa/admin/account/index/route.tsx'),
+			route('billing', './routes/papa/admin/account/billing/route.tsx'),
+			route(
+				'notification',
+				'./routes/papa/admin/account/notification/route.tsx',
+			),
+			route('security', './routes/papa/admin/account/security/route.tsx'),
+		]),
+
 		// Company
 		route('company', './routes/papa/admin/company/layout.tsx', [
 			index('./routes/papa/admin/company/index/route.tsx'),
@@ -51,11 +60,7 @@ const systemRoutes = [
 			),
 			route('security', './routes/papa/admin/company/security/route.tsx'),
 		]),
-		// SEO
-		...prefix('seo', [
-			index('./routes/papa/admin/seo/index.tsx'),
-			route('resource', './routes/papa/admin/seo/resource.ts'),
-		]),
+
 		...prefix('users', [
 			index('./routes/papa/admin/users/index.tsx'),
 			route('resource', './routes/papa/admin/users/resource.ts'),
