@@ -6,10 +6,8 @@ import {
 	ChevronRight,
 	CreditCard,
 	LogOut,
-	Moon,
 	Shield,
 	Sparkles,
-	Sun,
 	type LucideIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -30,7 +28,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
-import { ThemeDropDownMenu } from '~/components/theme-toggle'
+import { CurrentThemeIcon, ThemeDropDownMenu } from '~/components/theme-toggle'
 import { authClient } from '~/lib/auth/auth-client'
 import type { Session } from '~/lib/auth/auth.server'
 
@@ -122,17 +120,8 @@ export const NavUser = ({ user }: NavUserProps) => {
 									className="group flex items-center gap-2"
 									onClick={() => {}}
 								>
-									<div className="relative size-4">
-										<Sun
-											size={16}
-											className="absolute transition-transform group-hover:rotate-[25deg] scale-100 rotate-0 dark:scale-0 dark:rotate-90"
-										/>
-										<Moon
-											size={16}
-											className="absolute transition-transform group-hover:rotate-[25deg] scale-0 rotate-90 dark:scale-100 dark:rotate-0"
-										/>
-									</div>
-									<p className="text-sm">Change theme</p>
+									<CurrentThemeIcon className="group-hover:rotate-[25deg] dark:group-hover:rotate-[25deg] transition-transform" />
+									<p className="text-sm">Change Theme</p>
 								</DropdownMenuItem>
 							</ThemeDropDownMenu>
 						</DropdownMenuGroup>
@@ -144,7 +133,7 @@ export const NavUser = ({ user }: NavUserProps) => {
 							>
 								<LogOut
 									size={16}
-									className="transition-transform group-hover:translate-x-0.5"
+									className="transition-transform rotate-180 group-hover:-translate-x-0.5"
 								/>
 								<p className="text-sm">Sign Out</p>
 							</button>
