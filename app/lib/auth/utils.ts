@@ -5,6 +5,8 @@ import OtpEmail from '~/components/email/otp-email'
 import WelcomeEmail from '~/components/email/welcome-email'
 import type { EmailService } from '~/lib/email/service'
 
+import { getEmailAddressFromENV } from '../email/utils'
+
 export const sendMagicLink = async ({
 	email,
 	url,
@@ -19,7 +21,7 @@ export const sendMagicLink = async ({
 	emailService?: EmailService
 }): Promise<void> => {
 	const appName = process.env.APP_NAME ?? 'PAPA'
-	const from = `🪄${appName} Magic Link <${process.env.AUTH_EMAIL}>`
+	const from = `🪄${appName} Magic Link <${getEmailAddressFromENV()}>`
 
 	if (emailService) {
 		await emailService.sendReactEmail({
@@ -58,7 +60,7 @@ export const sendVerifyLink = async ({
 	emailService?: EmailService
 }): Promise<void> => {
 	const appName = process.env.APP_NAME ?? 'PAPA'
-	const from = `🔓${appName} Verify <${process.env.AUTH_EMAIL}>`
+	const from = `🔓${appName} Verify <${getEmailAddressFromENV()}>`
 
 	if (emailService) {
 		await emailService.sendReactEmail({
@@ -110,7 +112,7 @@ export const sendSignInOTP = async ({
 	emailService?: EmailService
 }): Promise<void> => {
 	const appName = process.env.APP_NAME ?? 'PAPA'
-	const from = `${appName} <${process.env.AUTH_EMAIL}>`
+	const from = `${appName} <${getEmailAddressFromENV()}>`
 
 	if (emailService) {
 		await emailService.sendReactEmail({
