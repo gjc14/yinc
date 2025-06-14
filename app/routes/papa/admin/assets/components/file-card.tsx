@@ -194,25 +194,7 @@ export const FileCard = ({
 				>
 					<DialogHeader className="space-y-3">
 						<DialogTitle className="flex grid-cols-3 items-center gap-1.5">
-							{onSelect ? (
-								<Button size={'sm'} onClick={handleSelect} asChild>
-									<DialogClose>Select</DialogClose>
-								</Button>
-							) : (
-								<Label htmlFor="name">Filename</Label>
-							)}
-							<Input
-								ref={nameRef}
-								id="name"
-								placeholder="File name"
-								defaultValue={file.name}
-								className="grow"
-							/>
-							<a href={url} target="_blank" rel="noopener noreferrer">
-								<Button variant={'ghost'}>
-									<ExternalLink className="w-5 h-5" />
-								</Button>
-							</a>
+							{file.name}
 						</DialogTitle>
 						<DialogDescription className="min-h-36 flex flex-col justify-center items-center gap-2 border rounded-lg overflow-hidden">
 							{fileGeneralType === 'image' ? (
@@ -255,18 +237,36 @@ export const FileCard = ({
 							<Label htmlFor="url" className="px-1">
 								URL
 							</Label>
-							<p
-								id="url"
-								className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
-								onClick={() => {
-									navigator.clipboard.writeText(origin + url)
-									toast.success('Copied to clipboard')
-								}}
-							>
-								{origin + url}
-							</p>
+							<div className="flex gap-2 items-center">
+								<p
+									id="url"
+									className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
+									onClick={() => {
+										navigator.clipboard.writeText(origin + url)
+										toast.success('Copied to clipboard')
+									}}
+								>
+									{origin + url}
+								</p>
+								<a href={url} target="_blank" rel="noopener noreferrer">
+									<Button variant={'ghost'} size={'icon'}>
+										<ExternalLink className="w-5 h-5" />
+									</Button>
+								</a>
+							</div>
 						</div>
 
+						<div className="w-full gap-2">
+							<Label htmlFor="name" className="px-1">
+								File Name
+							</Label>
+							<Input
+								ref={nameRef}
+								id="name"
+								placeholder="File name"
+								defaultValue={file.name}
+							/>
+						</div>
 						<div className="w-full gap-2">
 							<Label htmlFor="description" className="px-1">
 								Description
