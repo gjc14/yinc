@@ -18,6 +18,34 @@ type ThemeToggleProps = {
 	className?: string
 }
 
+export const CurrentThemeIcon = ({
+	size = 'sm',
+	className,
+}: {
+	size?: 'sm' | 'md' | 'lg'
+	className?: string
+}) => {
+	const iconSizes = {
+		sm: 'size-4',
+		md: 'size-5',
+		lg: 'size-6',
+	}
+
+	return (
+		<span
+			className={cn('relative flex items-center justify-center', className)}
+		>
+			<Sun
+				className={`${iconSizes[size]} rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0`}
+			/>
+			<Moon
+				className={`absolute ${iconSizes[size]} rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100`}
+			/>
+			<span className="sr-only">Toggle theme</span>
+		</span>
+	)
+}
+
 export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
 	({ size = 'sm', className }, ref) => {
 		const { setTheme } = useTheme()
@@ -26,12 +54,6 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
 			sm: 'size-7',
 			md: 'size-9',
 			lg: 'size-11',
-		}
-
-		const iconSizes = {
-			sm: 'size-4',
-			md: 'size-5',
-			lg: 'size-6',
 		}
 
 		return (
@@ -43,13 +65,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
 						size="icon"
 						className={cn(buttonSizes[size], className)}
 					>
-						<Sun
-							className={`${iconSizes[size]} rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0`}
-						/>
-						<Moon
-							className={`absolute ${iconSizes[size]} rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100`}
-						/>
-						<span className="sr-only">Toggle theme</span>
+						<CurrentThemeIcon size={size} />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
