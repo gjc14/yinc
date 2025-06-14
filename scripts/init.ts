@@ -3,7 +3,7 @@
  */
 import 'dotenv/config'
 
-import { emailInstance } from '~/lib/utils/email'
+import { emailService } from '~/lib/utils/email'
 
 function checkDatabaseUrl(): boolean {
 	const databaseUrl = process.env.DATABASE_URL
@@ -55,13 +55,14 @@ function checkObjectStorage(): boolean {
 }
 
 function checkResendApiKey(): boolean {
-	if (!emailInstance) {
+	if (!emailService) {
 		console.warn(
-			'\n⚠️ Email 設定尚未完成，您必須提供 AUTH_EMAIL 以及 RESEND_API_KEY 環境變數以啟用 Email 功能 (Email setup is not complete, you must provide AUTH_EMAIL and RESEND_API_KEY environment variables to enable email functionality)',
+			'\n⚠️ Email 設定尚未完成，您必須提供 EMAIL_FROM 以及相應的 Email 服務配置環境變數以啟用 Email 功能 (Email setup is not complete, you must provide EMAIL_FROM and corresponding email service configuration environment variables to enable email functionality)',
 		)
 		console.warn(
-			'\n您可以從 https://resend.com 獲取 API 金鑰。(You can get the API key from https://resend.com.)',
+			'\n支援的 Email 服務：Resend、Nodemailer、AWS SES。(Supported email services: Resend, Nodemailer, AWS SES.)',
 		)
+		return false
 	}
 
 	console.log(

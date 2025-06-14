@@ -11,7 +11,7 @@ import {
 
 import { db } from '~/lib/db/db.server'
 
-import { emailInstance } from '../utils/email'
+import { emailService } from '../utils/email'
 import { ac, admin, user } from './permissions'
 import { sendSignInOTP, sendVerifyLink } from './utils'
 
@@ -38,14 +38,14 @@ export const auth = betterAuth({
 		 * Please look for "Sign in with OTP" section in the documentation.
 		 * @see https://www.better-auth.com/docs/plugins/email-otp#sign-in-with-otp
 		 */
-		...(emailInstance
+		...(emailService
 			? {
 					sendVerificationEmail: async ({ user, url, token }, request) => {
 						await sendVerifyLink({
 							email: user.email,
 							token: token,
 							url: url,
-							emailInstance: emailInstance!,
+							emailService: emailService!,
 						})
 					},
 				}
@@ -60,7 +60,7 @@ export const auth = betterAuth({
 				user,
 			},
 		}),
-		...(emailInstance
+		...(emailService
 			? [
 					// magicLink({
 					// 	sendMagicLink: async ({ email, token, url }, request) => {
@@ -68,7 +68,7 @@ export const auth = betterAuth({
 					// 			email,
 					// 			url,
 					// 			token,
-					// 			emailInstance: emailInstance!,
+					// 			emailService: emailService!,
 					// 		})
 					// 	},
 					// 	disableSignUp: true,
@@ -83,7 +83,7 @@ export const auth = betterAuth({
 										email,
 										otp,
 										expireIn: otpExpireIn,
-										emailInstance: emailInstance!,
+										emailService: emailService!,
 									})
 									break
 								case 'email-verification':
