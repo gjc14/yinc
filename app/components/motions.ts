@@ -1,3 +1,5 @@
+import type { MotionProps } from 'framer-motion'
+
 type FadeProps = {
 	direction?: 'up' | 'down' | 'left' | 'right'
 	delay?: number
@@ -10,7 +12,7 @@ export function fade({
 	delay = 0,
 	duration = 0.5,
 	distance = 15,
-}: FadeProps = {}) {
+}: FadeProps = {}): MotionProps {
 	const hidden = () => {
 		switch (direction) {
 			case 'up':
