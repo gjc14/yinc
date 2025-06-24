@@ -210,7 +210,45 @@ admin panel.
 
 ---
 
-# Documents
+### 5. Upload your logo and favicon
+
+<!-- prettier-ignore -->
+> [!NOTE]
+> All the file in `/public` folder will be directly available with relative
+> path. For example, `/public/logo.png` will be accessable at
+> `localhost:5173/logo.png`.
+
+To use your own logo, please overwrite `logo.png`, `logo-512.png`,
+`logo-300.png`, `logo-100.png`, `logo-32.png` & `favicon.ico`.
+
+You can run `convert:logo` and `convert:favicon` to convert your `logo.png` to
+other sizes.
+
+> [FFmpeg](https://www.ffmpeg.org/about.html) is a leading multimedia framework,
+> able to encode, decode, and many other command to edit media. To use FFmpeg,
+> please first [download](https://www.ffmpeg.org/download.html) and install it.
+
+```sh
+pnpm run convert:logo
+```
+
+```sh
+pnpm run convert:favicon
+```
+
+or run the following `ffmpeg` command in the folder.
+
+```sh
+for size in 512 300 100 32; do
+  ffmpeg -i logo.png -vf scale=${size}:-1 logo-${size}.png
+done
+```
+
+```sh
+ffmpeg -i logo.png -vf "scale=32:32:force_original_aspect_ratio=decrease,pad=32:32:(ow-iw)/2:(oh-ih)/2:color=0x00000000" -y favicon.ico
+```
+
+# Documentation
 
 ## Routes
 
