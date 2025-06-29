@@ -3,6 +3,7 @@ import { join } from 'path'
 
 const exampleAdminPage = `
 // example-plugin/example-admin-page/route.tsx
+import type { Route } from './+types/route'
 import { useEffect } from 'react'
 import { Outlet, useFetcher } from 'react-router'
 
@@ -15,8 +16,6 @@ import {
 	AdminSectionWrapper,
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
-
-import type { Route } from './+types/route'
 
 // Admin route does not need metadata, which is for seo
 

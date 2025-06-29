@@ -9,6 +9,7 @@
 	"objectWrap": "preserve",
 	"plugins": ["@ianvs/prettier-plugin-sort-imports"],
 	"importOrder": [
+		"^./\\+types/(.*)$",
 		"^(react(-.*)?$)|(react/(.*)$)|^(react$)",
 		"",
 		"<THIRD_PARTY_MODULES>",
