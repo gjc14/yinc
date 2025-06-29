@@ -13,7 +13,11 @@ import { db } from '~/lib/db/db.server'
 
 import { emailService } from '../email'
 import { ac, admin, user } from './permissions'
-import { sendSignInOTP, sendVerifyLink } from './utils'
+import {
+	sendSignInOTP,
+	sendVerifyChangeEmailLink,
+	sendVerifyLink,
+} from './utils'
 
 const appName = process.env.APP_NAME || 'PAPA'
 const baseURL =
@@ -50,6 +54,32 @@ export const auth = betterAuth({
 					},
 				}
 			: {}),
+	},
+	user: {
+		/**
+		 * User should verify change with current email.
+		 * After verification, 1) email will be changed, meanwhile, 2) another verification email will be sent to the new email.
+		 * @see https://www.better-auth.com/docs/concepts/users-accounts#change-email
+		 */
+		changeEmail: {
+			enabled: true,
+			...(true
+				? {
+						sendChangeEmailVerification: async (
+							{ user, newEmail, url, token },
+							request,
+						) => {
+							await sendVerifyChangeEmailLink({
+								email: user.email, // verification email must be sent to the current user email to approve the change
+								newEmail,
+								url,
+								token,
+								emailService: emailService!,
+							})
+						},
+					}
+				: {}),
+		},
 	},
 
 	plugins: [

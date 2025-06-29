@@ -1,7 +1,6 @@
-import type { Resend } from 'resend'
-
 import MagicLinkEmail from '~/components/email/magic-link'
 import OtpEmail from '~/components/email/otp-email'
+import VerifyChangeEmail from '~/components/email/verify-change-email'
 import WelcomeEmail from '~/components/email/welcome-email'
 import type { EmailService } from '~/lib/email/service'
 
@@ -11,37 +10,25 @@ export const sendMagicLink = async ({
 	email,
 	url,
 	token,
-	emailInstance,
 	emailService,
 }: {
 	email: string
 	url: string
 	token: string
-	emailInstance?: Resend
-	emailService?: EmailService
+	emailService: EmailService
 }): Promise<void> => {
 	const appName = process.env.APP_NAME ?? 'PAPA'
 	const from = `🪄${appName} Magic Link <${getEmailAddressFromENV()}>`
 
-	if (emailService) {
+	try {
 		await emailService.sendReactEmail({
 			from,
 			to: email,
 			subject: '點擊魔法連結以登入您的帳號！Click the link to sign in',
 			react: MagicLinkEmail({ magicLink: url }),
 		})
-	} else if (emailInstance) {
-		const { error } = await emailInstance.emails.send({
-			from,
-			to: [email],
-			subject: '點擊魔法連結以登入您的帳號！Click the link to sign in',
-			react: MagicLinkEmail({ magicLink: url }),
-		})
-		if (error) {
-			console.error(error)
-			throw new Error('Error when sending magic link email')
-		}
-	} else {
+	} catch (error) {
+		console.error('Error when sending magic link email', error)
 		throw new Error('No email service available')
 	}
 }
@@ -50,19 +37,17 @@ export const sendVerifyLink = async ({
 	email,
 	url,
 	token,
-	emailInstance,
 	emailService,
 }: {
 	email: string
 	url: string
 	token: string
-	emailInstance?: Resend
-	emailService?: EmailService
+	emailService: EmailService
 }): Promise<void> => {
 	const appName = process.env.APP_NAME ?? 'PAPA'
 	const from = `🔓${appName} Verify <${getEmailAddressFromENV()}>`
 
-	if (emailService) {
+	try {
 		await emailService.sendReactEmail({
 			from,
 			to: email,
@@ -74,23 +59,48 @@ export const sendVerifyLink = async ({
 				verifyLink: url,
 			}),
 		})
-	} else if (emailInstance) {
-		const { error } = await emailInstance.emails.send({
+	} catch (error) {
+		console.error('Error when sending verify link email', error)
+		throw new Error('No email service available')
+	}
+}
+
+/**
+ * This email will be sent to the current user email to approve the change.
+ * After verification, another email will be sent to the new email address to verify the change.
+ * @see https://www.better-auth.com/docs/concepts/users-accounts#change-email
+ */
+export const sendVerifyChangeEmailLink = async ({
+	email,
+	newEmail,
+	url,
+	token,
+	emailService,
+}: {
+	email: string
+	newEmail: string
+	url: string
+	token: string
+	emailService: EmailService
+}): Promise<void> => {
+	const appName = process.env.APP_NAME ?? 'PAPA'
+	const from = `🔓${appName} Verify <${getEmailAddressFromENV()}>`
+
+	try {
+		await emailService.sendReactEmail({
 			from,
-			to: [email],
-			subject: '點擊連結以驗證您的帳號！Click the link to verify your email',
-			react: WelcomeEmail({
+			to: email,
+			subject: '點擊連結以確認更改您的 Email 至 ' + newEmail,
+			react: VerifyChangeEmail({
 				appName: appName,
 				logoUrl: process.env.VITE_BASE_URL + '/logo.png',
 				userFirstname: email.split('@')[0],
 				verifyLink: url,
+				newEmail,
 			}),
 		})
-		if (error) {
-			console.error(error)
-			throw new Error('Error when sending verify link email')
-		}
-	} else {
+	} catch (error) {
+		console.error('Error when sending verify change email link', error)
 		throw new Error('No email service available')
 	}
 }
@@ -102,19 +112,17 @@ export const sendSignInOTP = async ({
 	email,
 	otp,
 	expireIn,
-	emailInstance,
 	emailService,
 }: {
 	email: string
 	otp: string
 	expireIn: number
-	emailInstance?: Resend
-	emailService?: EmailService
+	emailService: EmailService
 }): Promise<void> => {
 	const appName = process.env.APP_NAME ?? 'PAPA'
 	const from = `${appName} <${getEmailAddressFromENV()}>`
 
-	if (emailService) {
+	try {
 		await emailService.sendReactEmail({
 			from,
 			to: email,
@@ -126,23 +134,8 @@ export const sendSignInOTP = async ({
 				username: email.split('@')[0],
 			}),
 		})
-	} else if (emailInstance) {
-		const { error } = await emailInstance.emails.send({
-			from,
-			to: [email],
-			subject: `[${otp}] 是您的 OTP，輸入以登入 ${appName}！Enter your OTP to sign in ${appName}`,
-			react: OtpEmail({
-				otp,
-				expireIn,
-				companyName: appName,
-				username: email.split('@')[0],
-			}),
-		})
-		if (error) {
-			console.error(error)
-			throw new Error('Error when sending magic link email')
-		}
-	} else {
+	} catch (error) {
+		console.error('Error when sending OTP email', error)
 		throw new Error('No email service available')
 	}
 }
