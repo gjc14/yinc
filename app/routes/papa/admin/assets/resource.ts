@@ -155,7 +155,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				return handleError(error, request)
 			}
 		default:
-			throw new Response('', { status: 405, statusText: 'Method not allowed' })
+			throw new Response('', { status: 405 })
 	}
 }
 

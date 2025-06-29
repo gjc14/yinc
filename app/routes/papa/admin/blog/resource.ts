@@ -103,6 +103,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			}
 
 		default:
-			throw new Response('', { status: 405, statusText: 'Method not allowed' })
+			throw new Response('', { status: 405 })
 	}
 }

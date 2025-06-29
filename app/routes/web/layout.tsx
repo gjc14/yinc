@@ -11,21 +11,34 @@ import { AlertCircle, ArrowLeft } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { fade } from '~/components/motions'
-
-export default function Web() {
-	return <Outlet />
-}
+import { statusCodeMap } from '~/lib/utils/status-code'
 
 export const meta: MetaFunction = ({ error }) => {
 	if (isRouteErrorResponse(error)) {
-		switch (error.status) {
-			case 404:
-				return [
-					{ title: '404 - Not Found' },
-					{ name: 'description', content: 'Requested resource not found' },
-				]
-		}
+		const statusMessage = statusCodeMap[error.status]
+		const errorMessage = error.data || statusMessage.text || 'Error Response'
+		return [
+			{
+				title: `${error.status} - ${errorMessage}`,
+			},
+			{
+				name: 'description',
+				content: statusMessage?.description || 'Route Error Response',
+			},
+		]
+	} else {
+		return [
+			{ title: 'Error' },
+			{
+				name: 'description',
+				content: 'An unexpected error occurred.',
+			},
+		]
 	}
+}
+
+export default function Web() {
+	return <Outlet />
 }
 
 export function ErrorBoundary() {
@@ -61,7 +74,11 @@ export function ErrorBoundary() {
 						</Link>
 					</main>
 				)
-			default:
+			default: {
+				const statusMessage = statusCodeMap[error.status]
+				const errorMessage =
+					error.data || statusMessage.text || 'Error Response'
+
 				return (
 					<main className="w-screen h-svh flex flex-col items-center justify-center">
 						<a
@@ -80,19 +97,20 @@ export function ErrorBoundary() {
 							{error.status}
 						</motion.h1>
 
-						{error.statusText && (
+						{errorMessage && (
 							<h2 className="mb-8 text-2xl font-semibold md:text-3xl">
-								{error.statusText}
+								{errorMessage}
 							</h2>
 						)}
 
 						<Link to={'/'}>
-							<Button variant={'link'}>
+							<Button variant={'outline'} className="rounded-full">
 								<ArrowLeft /> Back to Home
 							</Button>
 						</Link>
 					</main>
 				)
+			}
 		}
 	} else if (error instanceof Error) {
 		// throw new Error('message')

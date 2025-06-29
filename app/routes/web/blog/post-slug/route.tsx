@@ -32,7 +32,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const meta = seo ? createMeta(seo, new URL(request.url)) : null
 
 	if (!params.postSlug) {
-		throw new Response('', { status: 404, statusText: 'Post not found' })
+		throw new Response('', { status: 404 })
 	}
 
 	const { searchParams } = new URL(request.url)
@@ -45,12 +45,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	try {
 		const { post, prevPost, nextPost } = await getPostBySlug(params.postSlug)
 		if (!post || (!preview && post.status !== 'PUBLISHED')) {
-			throw new Response('', { status: 404, statusText: 'Post not found' })
+			throw new Response('', { status: 404 })
 		}
 		return { post, prevPost, nextPost, meta }
 	} catch (error) {
 		console.error(error)
-		throw new Response('', { status: 404, statusText: 'Post not found' })
+		throw new Response('', { status: 404 })
 	}
 }
 
@@ -62,8 +62,7 @@ export const clientLoader = async ({
 	params,
 }: ClientLoaderFunctionArgs) => {
 	const postSlug = params.postSlug
-	if (!postSlug)
-		throw new Response('', { status: 404, statusText: 'Post not found' })
+	if (!postSlug) throw new Response('', { status: 404 })
 
 	const cachedPost = cache[postSlug]
 

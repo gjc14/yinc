@@ -26,13 +26,16 @@ import {
 import { FullScreenLoader } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
 import { generateBreadcrumbs } from '~/lib/utils'
+import { statusCodeMap } from '~/lib/utils/status-code'
 import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
 import { getPluginConfigs } from '~/routes/plugins/utils/get-plugin-configs.server'
 
 import { validateAdminSession } from '../auth/utils'
 
-export const meta: MetaFunction = () => {
-	return [{ title: 'Admin' }, { name: 'description', content: 'Admin page' }]
+export const meta: MetaFunction = ({ error }) => {
+	if (!error) {
+		return [{ title: 'Admin' }, { name: 'description', content: 'Admin page' }]
+	}
 }
 
 const parseSidebarStatus = (cookieHeader: string) => {
@@ -140,24 +143,16 @@ export function ErrorBoundary() {
 	if (isRouteErrorResponse(error)) {
 		console.error('Route Error Response:', error)
 
-		switch (error.status) {
-			case 404:
-				return (
-					<ErrorTemplate
-						status={error.status}
-						statusText={error.statusText || 'Page Not Found'}
-						returnTo={'/admin'}
-					/>
-				)
-			default:
-				return (
-					<ErrorTemplate
-						status={error.status}
-						statusText={error.statusText || 'Error Response'}
-						returnTo={'/admin'}
-					/>
-				)
-		}
+		const statusMessage = statusCodeMap[error.status]
+		const errorMessage = error.data || statusMessage.text || 'Error Response'
+
+		return (
+			<ErrorTemplate
+				status={error.status}
+				statusText={errorMessage}
+				returnTo={'/admin'}
+			/>
+		)
 	} else if (error instanceof Error) {
 		// throw new Error('message')
 		console.error('Error:', error)

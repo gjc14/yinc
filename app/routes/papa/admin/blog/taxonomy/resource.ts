@@ -37,7 +37,7 @@ const deleteSchema = z.object({
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method !== 'POST' && request.method !== 'DELETE') {
-		throw new Response('', { status: 405, statusText: 'Method not allowd' })
+		throw new Response('', { status: 405 })
 	}
 
 	await validateAdminSession(request)
@@ -48,7 +48,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	const { data, success } = intentSchema.safeParse(intent)
 
 	if (!success) {
-		throw new Response('', { status: 400, statusText: 'Invalid argument' })
+		throw new Response('', { status: 400 })
 	}
 
 	const formObject = Object.fromEntries(formData)
@@ -176,7 +176,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		}
 
 		default: {
-			throw new Response('', { status: 400, statusText: 'Invalid argument' })
+			throw new Response('', { status: 400 })
 		}
 	}
 }

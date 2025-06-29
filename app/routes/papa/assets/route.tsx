@@ -23,14 +23,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		where: (t, { eq, and }) => and(eq(t.id, assetId)),
 	})
 
-	if (!metadata)
-		throw new Response('', { status: 404, statusText: 'Not Found' })
+	if (!metadata) throw new Response('', { status: 404 })
 
 	if (!metadata.public) {
 		// TODO: check ACL (access control) here
 		const session = await validateAdminSession(request)
 		if (metadata.ownerId !== session.user.id) {
-			throw new Response('', { status: 401, statusText: 'Unauthorized' })
+			throw new Response('', { status: 401 })
 		}
 	}
 
