@@ -20,7 +20,7 @@ export function FloatingToolkit() {
 
 	if (isPending) {
 		return (
-			<div className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-lg">
+			<div className="fixed bottom-6 right-6 z-99999 flex items-center justify-center w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-lg">
 				<Loader className="size-8 animate-spin text-white dark:text-black" />
 			</div>
 		)
@@ -28,7 +28,7 @@ export function FloatingToolkit() {
 
 	if (data?.user.role === 'admin') {
 		return (
-			<div className="fixed bottom-6 right-6 z-50">
+			<div className="fixed bottom-6 right-6 z-99999">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button

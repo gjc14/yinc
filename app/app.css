@@ -144,7 +144,7 @@ layer(base);
 	}
 
 	body {
-		@apply relative w-full min-h-svh bg-background text-foreground antialiased transition-colors duration-300 overscroll-y-none;
+		@apply relative w-full bg-background text-foreground antialiased;
 	}
 
 	/* From Apple.com home page h1 */
