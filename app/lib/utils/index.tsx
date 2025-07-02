@@ -57,8 +57,12 @@ export const capitalize = (string: string) => {
 	return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
+export const pathes = (pathname: string) => {
+	return pathname.split('/').filter(Boolean)
+}
+
 export const generateBreadcrumbs = (pathname: string) => {
-	const paths = pathname.split('/').filter(Boolean)
+	const paths = pathes(pathname)
 	const breadcrumbItems = paths.reduce(
 		(acc: React.ReactNode[], path, index) => {
 			const link = `/${paths.slice(0, index + 1).join('/')}`
@@ -71,7 +75,11 @@ export const generateBreadcrumbs = (pathname: string) => {
 						}
 						end
 					>
-						{capitalize(path)}
+						{path
+							.replace(/[-_]/g, ' ')
+							.split(' ')
+							.map(word => capitalize(word))
+							.join(' ')}
 					</NavLink>
 				</BreadcrumbItem>,
 			)

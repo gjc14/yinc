@@ -15,6 +15,7 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { cn } from '~/lib/utils'
 import { generateSlug } from '~/lib/utils/seo'
 
 import { actionRoute } from '..'
@@ -35,16 +36,14 @@ const CategoryComponent = ({
 
 	return (
 		<div
-			className={`flex justify-between items-center p-3 rounded-md bg-muted transition-colors ${
-				isDeleting ? 'opacity-50' : ''
-			}
-            ${cat._isPending ? 'cursor-not-allowed' : 'cursor-pointer'}
-            ${
-							selectedCategoryId === cat.id
-								? 'bg-primary text-primary-foreground'
-								: 'bg-muted hover:bg-muted/80'
-						}
-            `}
+			className={cn(
+				`flex justify-between items-center p-3 rounded-md bg-muted transition-colors`,
+				isDeleting ? 'opacity-50' : '',
+				cat._isPending ? 'cursor-not-allowed' : 'cursor-pointer',
+				selectedCategoryId === cat.id
+					? 'bg-primary text-primary-foreground'
+					: 'bg-muted hover:bg-muted/80',
+			)}
 			onClick={onClick}
 		>
 			<div className="font-medium">
@@ -91,9 +90,11 @@ const ChildCategoryComponent = ({
 
 	return (
 		<div
-			className={`flex justify-between items-center p-3 rounded-md bg-muted ${
-				isDeleting ? 'opacity-50' : ''
-			}`}
+			className={cn(
+				`flex justify-between items-center p-3 rounded-md bg-muted transition-colors`,
+				isDeleting ? 'opacity-50' : '',
+				category._isPending ? 'cursor-not-allowed' : 'cursor-pointer',
+			)}
 		>
 			<div className="font-medium">{category.name}</div>
 			<CircleX
