@@ -194,7 +194,10 @@ export const FileCard = ({
 			</div>
 			{/* Dialog */}
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent className="max-h-[90vh] overflow-scroll">
+				<DialogContent
+					className="max-h-[90vh] overflow-scroll"
+					onDoubleClick={e => e.stopPropagation()}
+				>
 					<DialogHeader className="space-y-3">
 						<DialogTitle className="flex grid-cols-3 items-center gap-1.5">
 							{file.name}
