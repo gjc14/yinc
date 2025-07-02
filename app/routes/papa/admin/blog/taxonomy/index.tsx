@@ -7,7 +7,7 @@ import {
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
 
-import { useAdminBlogContext } from '../layout'
+import type { Route } from './+types'
 import {
 	CategoriesSection,
 	CategoryHierarchySection,
@@ -23,12 +23,13 @@ import {
 export const actionRoute = '/admin/blog/taxonomy/resource'
 
 // Main Component
-export default function AdminTaxonomy() {
+export default function AdminTaxonomy({ matches }: Route.ComponentProps) {
+	const match = matches[2]
 	const {
 		tags: tagsLoader,
 		categories: categoriesLoader,
 		posts: postsLoader,
-	} = useAdminBlogContext()
+	} = match.data
 
 	const pendingTags: (TagType & { _isPending: true })[] = usePendingTags().map(
 		p => ({ ...p, _isPending: true }),

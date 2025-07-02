@@ -1,8 +1,7 @@
-import { Outlet, useLoaderData, useOutletContext } from 'react-router'
+import { Outlet } from 'react-router'
 
 import { getPosts } from '~/lib/db/post.server'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'
-import { useAdminContext } from '~/routes/papa/admin/layout'
 
 export const loader = async () => {
 	try {
@@ -17,15 +16,5 @@ export const loader = async () => {
 }
 
 export default function AdminBlog() {
-	const loaderDate = useLoaderData<typeof loader>()
-	const adminContext = useAdminContext()
-
-	return <Outlet context={{ ...loaderDate, ...adminContext }} />
-}
-
-export const useAdminBlogContext = () => {
-	return useOutletContext<
-		ReturnType<typeof useLoaderData<typeof loader>> &
-			ReturnType<typeof useAdminContext>
-	>()
+	return <Outlet />
 }

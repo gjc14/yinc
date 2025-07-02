@@ -10,7 +10,7 @@ const customizedRoutes = [
 ] satisfies RouteConfig
 
 const systemRoutes = [
-	route('/admin', './routes/papa/admin/layout.tsx', [
+	route('/admin', './routes/papa/admin/layout/route.tsx', [
 		index('./routes/papa/admin/index/route.tsx'),
 
 		// Admin API

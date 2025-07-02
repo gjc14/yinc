@@ -9,16 +9,16 @@ import {
 	SidebarHeader,
 } from '~/components/ui/sidebar'
 import type { Session } from '~/lib/auth/auth.server'
-import { NavMain } from '~/routes/papa/admin/components/nav/nav-main'
-import { NavPlugins } from '~/routes/papa/admin/components/nav/nav-plugins'
 import {
-	NavSecondary,
-	type NavSecondaryItem,
-} from '~/routes/papa/admin/components/nav/nav-secondary'
-import { NavUser } from '~/routes/papa/admin/components/nav/nav-user'
+	ServiceSwicher,
+	type ServiceSwicherProps,
+} from '~/routes/papa/admin/components/service-swicher'
 import type { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
 
-import { ServiceSwicher, type ServiceSwicherProps } from './service-swicher'
+import { NavMain } from './nav-main'
+import { NavPlugins } from './nav-plugins'
+import { NavSecondary, type NavSecondaryItem } from './nav-secondary'
+import { NavUser } from './nav-user'
 
 const services: ServiceSwicherProps['services'] = [
 	{

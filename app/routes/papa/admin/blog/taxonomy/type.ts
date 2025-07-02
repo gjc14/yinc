@@ -1,10 +1,10 @@
 import type { PostWithRelations } from '~/lib/db/post.server'
-import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
+import type { Category, Tag } from '~/lib/db/schema'
 
-export type TagType = ReturnType<typeof useAdminBlogContext>['tags'][number] & {
+export type TagType = Tag & {
 	posts: PostWithRelations[]
 }
 
-export type CategoryType = ReturnType<
-	typeof useAdminBlogContext
->['categories'][number] & { posts: PostWithRelations[] }
+export type CategoryType = Category & {
+	children: Category[]
+} & { posts: PostWithRelations[] }

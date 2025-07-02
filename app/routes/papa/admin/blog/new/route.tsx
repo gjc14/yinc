@@ -1,3 +1,4 @@
+import type { Route } from './+types/route'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFetcher, useNavigate, useNavigation } from 'react-router'
 
@@ -18,18 +19,20 @@ import { Button } from '~/components/ui/button'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, user as userTable } from '~/lib/db/schema'
 import { generateSlug } from '~/lib/utils/seo'
-import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import { AdminSectionWrapper } from '~/routes/papa/admin/components/admin-wrapper'
 
 import { PostComponent, type PostHandle } from '../components/post-component'
 import type { action } from '../resource'
 
-export default function AdminNewPost() {
+export default function AdminNewPost({ matches }: Route.ComponentProps) {
 	const fetcher = useFetcher<typeof action>()
 	const navigate = useNavigate()
 	const navigation = useNavigation()
 
-	const { tags, categories, admin } = useAdminBlogContext()
+	const adminMatch = matches[1]
+	const blogMatch = matches[2]
+	const { admin } = adminMatch.data
+	const { tags, categories } = blogMatch.data
 
 	const postContentRef = useRef<PostHandle>(null)
 	const [isDirty, setIsDirty] = useState(false)

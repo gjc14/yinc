@@ -1,42 +1,39 @@
+import type { Route } from './+types/route'
 import { memo, useEffect, useMemo, useState } from 'react'
 import {
 	isRouteErrorResponse,
 	Link,
 	Outlet,
 	redirect,
-	useLoaderData,
-	useLocation,
-	useOutletContext,
 	useRouteError,
-	type LoaderFunctionArgs,
 	type MetaFunction,
 } from 'react-router'
 
 import { Undo2 } from 'lucide-react'
 
-import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
 import { Button } from '~/components/ui/button'
-import { Separator } from '~/components/ui/separator'
 import {
 	SIDEBAR_COOKIE_NAME,
 	SidebarInset,
 	SidebarProvider,
-	SidebarTrigger,
 } from '~/components/ui/sidebar'
 import { FullScreenLoader } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
-import { generateBreadcrumbs } from '~/lib/utils'
 import { statusCodeMap } from '~/lib/utils/status-code'
-import { AdminSidebar } from '~/routes/papa/admin/components/admin-sidebar'
 import { getPluginConfigs } from '~/routes/plugins/utils/get-plugin-configs.server'
 
-import { validateAdminSession } from '../auth/utils'
+import { validateAdminSession } from '../../auth/utils'
+import { AdminSidebar } from './components/admin-sidebar'
+import { HeaderWithBreadcrumbs } from './components/header-breadcrumbs'
 
 export const meta: MetaFunction = ({ error }) => {
 	if (!error) {
 		return [{ title: 'Admin' }, { name: 'description', content: 'Admin page' }]
 	}
 }
+
+const MemoAdminSidebar = memo(AdminSidebar)
+const MemoHeaderWithBreadcrumb = memo(HeaderWithBreadcrumbs)
 
 const parseSidebarStatus = (cookieHeader: string) => {
 	const cookies = Object.fromEntries(
@@ -49,7 +46,7 @@ const parseSidebarStatus = (cookieHeader: string) => {
 	return cookies[SIDEBAR_COOKIE_NAME]
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
 	const usesrSession = await validateAdminSession(request)
 
 	if (!usesrSession) {
@@ -74,11 +71,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 }
 
-const MemoAdminSidebar = memo(AdminSidebar)
-
-export default function Admin() {
-	const adminLoaderData = useLoaderData<typeof loader>()
-	const { admin, pluginRoutes, sidebarStatus } = adminLoaderData
+export default function Admin({ loaderData }: Route.ComponentProps) {
+	const { admin, pluginRoutes, sidebarStatus } = loaderData
 	const { isPending } = authClient.useSession()
 	const [isMounted, setIsMounted] = useState(false)
 
@@ -92,7 +86,6 @@ export default function Admin() {
 		[admin],
 	)
 
-	const MemoHeaderWithBreadcrumb = memo(HeaderWithBreadcrumb)
 	const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])
 
 	useEffect(() => {
@@ -100,7 +93,7 @@ export default function Admin() {
 	}, [])
 
 	return (
-		<SidebarProvider defaultOpen={sidebarStatus}>
+		<SidebarProvider defaultOpen={sidebarStatus} className="">
 			<MemoAdminSidebar
 				user={memoizedUser}
 				pluginRoutes={memoizedPluginRoutes}
@@ -109,31 +102,10 @@ export default function Admin() {
 				{isMounted && isPending && <FullScreenLoader />}
 				<MemoHeaderWithBreadcrumb />
 
-				<Outlet context={adminLoaderData} />
+				<Outlet />
 			</SidebarInset>
 		</SidebarProvider>
 	)
-}
-
-const HeaderWithBreadcrumb = () => {
-	const location = useLocation()
-	const breadcrumbPaths = generateBreadcrumbs(location.pathname)
-
-	return (
-		<header className="flex my-3 shrink-0 items-center gap-2">
-			<div className="flex items-center gap-2 px-4">
-				<SidebarTrigger className="-ml-1" />
-				<Separator orientation="vertical" className="mr-2 h-4" />
-				<Breadcrumb>
-					<BreadcrumbList>{breadcrumbPaths}</BreadcrumbList>
-				</Breadcrumb>
-			</div>
-		</header>
-	)
-}
-
-export const useAdminContext = () => {
-	return useOutletContext<Awaited<ReturnType<typeof loader>>>()
 }
 
 export function ErrorBoundary() {

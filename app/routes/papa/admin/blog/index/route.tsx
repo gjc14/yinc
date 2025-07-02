@@ -1,3 +1,4 @@
+import type { Route } from './+types/route'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useFetcher } from 'react-router'
 
@@ -7,6 +8,7 @@ import { ArrowUpDown, PlusCircle } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
+import type { PostWithRelations } from '~/lib/db/post.server'
 import {
 	AdminActions,
 	AdminHeader,
@@ -18,28 +20,10 @@ import {
 	DataTable,
 } from '~/routes/papa/admin/components/data-table'
 
-import { useAdminBlogContext } from '../layout'
+export default function AdminPost({ matches }: Route.ComponentProps) {
+	const match = matches[2]
+	const { posts, tags, categories } = match.data
 
-export default function AdminPost() {
-	const { posts, tags, categories } = useAdminBlogContext()
-	const [tagsState, setTagsState] = useState(
-		tags.map(tag => {
-			return {
-				...tag,
-				posts: posts.filter(post => post.tags.map(t => t.id).includes(tag.id)),
-			}
-		}),
-	)
-	const [categoriesState, setCategoriesState] = useState(
-		categories.map(category => {
-			return {
-				...category,
-				posts: posts.filter(post =>
-					post.categories.map(c => c.id).includes(category.id),
-				),
-			}
-		}),
-	)
 	const [rowSelection, setRowSelection] = useState({})
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
 
@@ -97,10 +81,8 @@ export default function AdminPost() {
 	)
 }
 
-type PostLoaded = ReturnType<typeof useAdminBlogContext>['posts'][number]
-
 export const columns: ColumnDef<
-	PostLoaded & {
+	PostWithRelations & {
 		setRowsDeleting: React.Dispatch<React.SetStateAction<Set<string>>>
 	}
 >[] = [

@@ -1,4 +1,4 @@
-import { Outlet, useOutletContext } from 'react-router'
+import { Outlet } from 'react-router'
 
 import {
 	AnimatedNav,
@@ -10,8 +10,6 @@ import {
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
 
-import { useAdminContext } from '../layout'
-
 const AdminAccountRoutes: RouteButton[] = [
 	{ to: '/admin/account', title: 'Profile' },
 	{ to: '/admin/account/billing', title: 'Billing' },
@@ -20,8 +18,6 @@ const AdminAccountRoutes: RouteButton[] = [
 ]
 
 export default function AdminAccount() {
-	const admin = useAdminContext()
-
 	return (
 		<AdminSectionWrapper>
 			<AdminHeader>
@@ -29,11 +25,7 @@ export default function AdminAccount() {
 					<AnimatedNav routes={AdminAccountRoutes} />
 				</AdminTitle>
 			</AdminHeader>
-			<Outlet context={admin} />
+			<Outlet />
 		</AdminSectionWrapper>
 	)
-}
-
-export const useAccountContext = () => {
-	return useOutletContext<ReturnType<typeof useAdminContext>>()
 }

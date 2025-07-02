@@ -1,7 +1,8 @@
+import type { Route } from './+types/route'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useFetcher, useNavigate, useParams } from 'react-router'
 
-import { ExternalLink, Loader2, Save, Settings, Trash } from 'lucide-react'
+import { ExternalLink, Loader2, Settings, Trash } from 'lucide-react'
 
 import {
 	AlertDialog,
@@ -16,18 +17,18 @@ import {
 import { Button } from '~/components/ui/button'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { generateSlug } from '~/lib/utils/seo'
-import { useAdminBlogContext } from '~/routes/papa/admin/blog/layout'
 import { AdminSectionWrapper } from '~/routes/papa/admin/components/admin-wrapper'
 
 import { PostComponent, type PostHandle } from '../components/post-component'
 import type { action } from '../resource'
 
-export default function AdminSlugPost() {
+export default function AdminSlugPost({ matches }: Route.ComponentProps) {
 	const fetcher = useFetcher<typeof action>()
 	const navigate = useNavigate()
 	const params = useParams()
 
-	const { tags, categories, posts } = useAdminBlogContext()
+	const blogMatch = matches[2]
+	const { tags, categories, posts } = blogMatch.data
 
 	const postContentRef = useRef<PostHandle>(null)
 	const [isDirty, setIsDirty] = useState(false)
