@@ -32,15 +32,19 @@ export default function AdminAsset() {
 	const [filesState, setFilesState] = useState(files)
 	const [display, setDisplay] = useState<(typeof displayOptions)[number]>('all')
 
-	const filesDisplayed = filesState.filter(file => {
-		if (display === 'all') return true
-		if (display === 'file') {
-			const fileGeneralType = file.type.split('/')[0]
-			return ['application', 'model', 'font', 'text'].includes(fileGeneralType)
-		}
-		const fileGeneralType = file.type.split('/')[0]
-		return fileGeneralType === display
-	})
+	const filesDisplayed =
+		display === 'all'
+			? filesState
+			: filesState.filter(file => {
+					if (display === 'file') {
+						const fileGeneralType = file.type.split('/')[0]
+						return ['application', 'model', 'font', 'text'].includes(
+							fileGeneralType,
+						)
+					}
+					const fileGeneralType = file.type.split('/')[0]
+					return fileGeneralType === display
+				})
 
 	useEffect(() => {
 		setFilesState(files)
@@ -52,7 +56,7 @@ export default function AdminAsset() {
 				<AdminTitle
 					title="Assets"
 					description="Manage all your assets on Papa platform"
-				></AdminTitle>
+				/>
 				<AdminActions>
 					<Label htmlFor="asset-filter">Filter by</Label>
 					<Select

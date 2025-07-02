@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 import { CloudUploadIcon, CupSoda } from 'lucide-react'
@@ -177,6 +177,10 @@ export const FileGridMain = ({
 	///   File handling   ///
 	/////////////////////////
 	const [fileState, setFileState] = useState<FileGridProps['files']>(files)
+
+	useEffect(() => {
+		setFileState(files)
+	}, [files])
 
 	const handleFileUpdate = (fileMeta: FileMetadata) => {
 		// Handle object storage connection
