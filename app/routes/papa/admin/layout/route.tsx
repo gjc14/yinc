@@ -12,11 +12,7 @@ import {
 import { Undo2 } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
-import {
-	SIDEBAR_COOKIE_NAME,
-	SidebarInset,
-	SidebarProvider,
-} from '~/components/ui/sidebar'
+import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
 import { FullScreenLoader } from '~/components/loading'
 import { authClient } from '~/lib/auth/auth-client'
 import { statusCodeMap } from '~/lib/utils/status-code'
@@ -35,29 +31,12 @@ export const meta: MetaFunction = ({ error }) => {
 const MemoAdminSidebar = memo(AdminSidebar)
 const MemoHeaderWithBreadcrumb = memo(HeaderWithBreadcrumbs)
 
-const parseSidebarStatus = (cookieHeader: string) => {
-	const cookies = Object.fromEntries(
-		cookieHeader.split(';').map(cookie => {
-			const [name, value] = cookie.trim().split('=')
-			return [name, decodeURIComponent(value)]
-		}),
-	)
-
-	return cookies[SIDEBAR_COOKIE_NAME]
-}
-
 export const loader = async ({ request }: Route.LoaderArgs) => {
 	const usesrSession = await validateAdminSession(request)
 
 	if (!usesrSession) {
 		throw redirect('/admin/portal')
 	}
-
-	const cookieHeader = request.headers.get('Cookie')
-
-	const parsedSidebarStatus = cookieHeader
-		? parseSidebarStatus(cookieHeader)
-		: null
 
 	const pluginConfigs = await getPluginConfigs()
 	const pluginRoutes = pluginConfigs
@@ -67,12 +46,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 	return {
 		admin: usesrSession.user,
 		pluginRoutes: pluginRoutes,
-		sidebarStatus: parsedSidebarStatus === 'true',
 	}
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
-	const { admin, pluginRoutes, sidebarStatus } = loaderData
+	const { admin, pluginRoutes } = loaderData
 	const { isPending } = authClient.useSession()
 	const [isMounted, setIsMounted] = useState(false)
 
@@ -93,7 +71,7 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 	}, [])
 
 	return (
-		<SidebarProvider defaultOpen={sidebarStatus} className="">
+		<SidebarProvider className="">
 			<MemoAdminSidebar
 				user={memoizedUser}
 				pluginRoutes={memoizedPluginRoutes}

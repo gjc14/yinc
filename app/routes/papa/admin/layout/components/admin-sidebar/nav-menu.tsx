@@ -22,29 +22,39 @@ import {
 import Icon from '~/components/dynamic-icon'
 import type { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
 
-export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
-	if (plugins.length <= 0) {
+interface NavMenuProps {
+	items: PapaAdminMenuItem[]
+	title?: string
+	emptyMessage?: string
+}
+
+export function NavMenu({ items, title, emptyMessage }: NavMenuProps) {
+	// Handle empty state for plugins
+	if (emptyMessage && items.length <= 0) {
 		return (
 			<SidebarGroup className="group-data-[collapsible=icon]:hidden">
-				<SidebarGroupLabel>You have no plugin</SidebarGroupLabel>
+				<SidebarGroupLabel>{emptyMessage}</SidebarGroupLabel>
 			</SidebarGroup>
 		)
 	}
+
 	return (
-		<SidebarGroup className="group-data-[collapsible=icon]:hidden">
-			<SidebarGroupLabel>Plugins</SidebarGroupLabel>
+		<SidebarGroup
+			className={title ? 'group-data-[collapsible=icon]:hidden' : ''}
+		>
+			{title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
 			<SidebarMenu>
-				{plugins.map(item => {
-					const [isActive, setIsActive] = useState(false)
+				{items.map(item => {
+					const [open, setOpen] = useState(false)
 
 					return (
 						<Collapsible
 							key={item.title}
 							asChild
-							open={isActive}
-							onOpenChange={setIsActive}
+							open={open}
+							onOpenChange={setOpen}
 						>
-							<SidebarMenuItem>
+							<SidebarMenuItem className="cursor-pointer">
 								<NavLink
 									to={
 										'/admin' +
@@ -55,11 +65,11 @@ export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
 									{({ isActive }) => (
 										<SidebarMenuButton
 											tooltip={item.title}
-											className={
+											className={`cursor-pointer ${
 												isActive
 													? 'bg-sidebar-accent text-sidebar-accent-foreground'
 													: ''
-											}
+											}`}
 										>
 											<Icon name={item.iconName} />
 											<span>{item.title}</span>
@@ -69,7 +79,7 @@ export function NavPlugins({ plugins }: { plugins: PapaAdminMenuItem[] }) {
 								{item.sub?.length ? (
 									<>
 										<CollapsibleTrigger asChild>
-											<SidebarMenuAction className="data-[state=open]:rotate-90">
+											<SidebarMenuAction className="data-[state=open]:rotate-90 cursor-pointer">
 												<ChevronRight />
 												<span className="sr-only">Toggle</span>
 											</SidebarMenuAction>

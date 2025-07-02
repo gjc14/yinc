@@ -67,8 +67,8 @@ layer(base);
 	--radius: 0.625rem;
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.141 0.005 285.823);
-	--brand: oklch(76.52% 0.08747 60.741);
-	--brand-foreground: oklch(13.441% 0.00002 271.152);
+	--brand: oklch(91.814% 0.06015 82.519);
+	--brand-foreground: oklch(0.141 0.005 285.823);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.141 0.005 285.823);
 	--popover: oklch(1 0 0);
@@ -104,8 +104,8 @@ layer(base);
 .dark {
 	--background: oklch(0.141 0.005 285.823);
 	--foreground: oklch(0.985 0 0);
-	--brand: 27 59% 67%;
-	--brand-foreground: 0 0% 3%;
+	--brand: oklch(44.908% 0.05894 64.396);
+	--brand-foreground: oklch(0.985 0 0);
 	--card: oklch(0.21 0.006 285.885);
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.21 0.006 285.885);
@@ -140,11 +140,11 @@ layer(base);
 
 @layer base {
 	* {
-		@apply scroll-smooth border-border outline-ring/50;
+		@apply border-border outline-ring/50;
 	}
 
 	body {
-		@apply relative w-full bg-background text-foreground antialiased;
+		@apply bg-background text-foreground;
 	}
 
 	/* From Apple.com home page h1 */

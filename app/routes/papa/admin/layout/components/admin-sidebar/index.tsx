@@ -15,8 +15,7 @@ import {
 } from '~/routes/papa/admin/components/service-swicher'
 import type { PapaAdminMenuItem } from '~/routes/plugins/utils/get-plugin-configs.server'
 
-import { NavMain } from './nav-main'
-import { NavPlugins } from './nav-plugins'
+import { NavMenu } from './nav-menu'
 import { NavSecondary, type NavSecondaryItem } from './nav-secondary'
 import { NavUser } from './nav-user'
 
@@ -33,16 +32,16 @@ const MainNavItems: PapaAdminMenuItem[] = [
 	{
 		iconName: 'user-round',
 		title: 'Users',
-		url: '/admin/users',
+		url: 'users',
 	},
 	{
 		iconName: 'pen',
 		title: 'Blog',
-		url: '/admin/blog',
+		url: 'blog',
 		sub: [{ title: 'Categories / Tags', url: 'taxonomy' }],
 	},
-	{ iconName: 'text-search', title: 'SEO', url: '/admin/seo' },
-	{ iconName: 'cloud', title: 'Assets', url: '/admin/assets' },
+	{ iconName: 'text-search', title: 'SEO', url: 'seo' },
+	{ iconName: 'cloud', title: 'Assets', url: 'assets' },
 ]
 
 const SecondaryNavItems: NavSecondaryItem[] = [
@@ -88,8 +87,12 @@ export function AdminSidebar({
 				<ServiceSwicher services={services} />
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={MainNavItems} />
-				<NavPlugins plugins={pluginRoutes} />
+				<NavMenu items={MainNavItems} />
+				<NavMenu
+					items={pluginRoutes}
+					title="Plugins"
+					emptyMessage="No plugin"
+				/>
 				<NavSecondary items={SecondaryNavItems} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
