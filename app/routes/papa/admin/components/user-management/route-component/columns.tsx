@@ -7,9 +7,9 @@ import { Badge } from '~/components/ui/badge'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import type { user as userTable } from '~/lib/db/schema'
 import { AdminDataTableMoreMenu } from '~/routes/papa/admin/components/data-table'
-import { UserContent } from '~/routes/papa/admin/components/user-content'
 
 import { SimpleSortHeader } from '../../data-table/simple-sort-header'
+import { UserContent } from '../user-content'
 
 type User = typeof userTable.$inferSelect
 
