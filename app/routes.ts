@@ -11,7 +11,6 @@ const systemRoutes = [
 
 	// PAPA assets resource route
 	route('assets/:assetId', './routes/papa/assets/route.tsx'),
-	route('assets/error', './routes/papa/assets/error.tsx'),
 
 	// Auth Page
 	route('/admin/portal', './routes/papa/auth/portal.tsx'),
