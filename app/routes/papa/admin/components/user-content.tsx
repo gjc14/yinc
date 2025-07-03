@@ -1,4 +1,4 @@
-import { useFetcher } from 'react-router'
+import { Form } from 'react-router'
 
 import { Loader2, Save } from 'lucide-react'
 
@@ -29,19 +29,15 @@ export const UserContent = ({
 	user,
 	open,
 	setOpen,
-	action,
-	method,
+	onSubmit,
+	isSubmitting = false,
 }: {
 	user: User
 	open: boolean
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
-	action: string
-	method: 'PUT' | 'POST'
+	onSubmit: (formData: FormData) => void
+	isSubmitting?: boolean
 }) => {
-	const fetcher = useFetcher()
-	const isSubmitting =
-		fetcher.formAction === action && fetcher.state === 'submitting'
-
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-scroll">
@@ -52,7 +48,7 @@ export const UserContent = ({
 						updated on {user.updatedAt.toLocaleString('zh-TW')}
 					</DialogDescription>
 				</DialogHeader>
-				<fetcher.Form
+				<Form
 					id="user-content"
 					className="grid gap-4 py-4"
 					onSubmit={e => {
@@ -65,10 +61,7 @@ export const UserContent = ({
 							formData.set(field, isChecked.toString())
 						})
 
-						fetcher.submit(formData, {
-							method,
-							action,
-						})
+						onSubmit(formData)
 					}}
 				>
 					<input type="hidden" name="id" defaultValue={user.id} />
@@ -160,7 +153,7 @@ export const UserContent = ({
 						/>
 					</div>
 					{/* TODO: Ban Expires */}
-				</fetcher.Form>
+				</Form>
 				<DialogFooter>
 					<Button form="user-content" type="submit" disabled={isSubmitting}>
 						{isSubmitting ? (

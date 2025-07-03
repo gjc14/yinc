@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
 
-import { type ColumnDef } from '@tanstack/react-table'
-import { Loader2, PlusCircle } from 'lucide-react'
+import { type ColumnDef, type RowSelectionState } from '@tanstack/react-table'
+import { ChevronDown, Loader2, PlusCircle } from 'lucide-react'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -16,7 +16,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '~/components/ui/dialog'
-import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { getUsers } from '~/lib/db/user.server'
@@ -44,6 +51,16 @@ export default function AdminAdminUsers() {
 	const fetcher = useFetcher()
 	const { users } = useLoaderData<typeof loader>()
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+	// The ids selected returned by setRowSelection
+	// are the same as index of the raw data passed in to the table
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+
+	const selectedUsers = useMemo(() => {
+		const selectedRows = Object.keys(rowSelection).filter(
+			key => rowSelection[key],
+		)
+		return users.filter((_, i) => selectedRows.includes(i.toString()))
+	}, [rowSelection, users])
 
 	const isSubmitting = fetcher.state === 'submitting'
 
@@ -122,17 +139,45 @@ export default function AdminAdminUsers() {
 						className: 'opacity-50 pointer-events-none',
 					},
 				]}
+				rowSelection={rowSelection}
+				setRowSelection={setRowSelection}
 				hideColumnFilter
 			>
 				{table => (
-					<Input
-						placeholder="Filter email..."
-						value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-						onChange={event =>
-							table.getColumn('email')?.setFilterValue(event.target.value)
-						}
-						className="max-w-sm"
-					/>
+					<div className="w-full flex items-center justify-between gap-2">
+						<Input
+							placeholder="Filter email..."
+							type="email"
+							value={
+								(table.getColumn('email')?.getFilterValue() as string) ?? ''
+							}
+							onChange={event =>
+								table.getColumn('email')?.setFilterValue(event.target.value)
+							}
+							className="max-w-sm"
+						/>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild hidden={!selectedUsers.length}>
+								<Button variant="outline" disabled={!selectedUsers.length}>
+									Actions
+									<ChevronDown />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuLabel>Bulk Operations</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onClick={() => {
+										// Handle bulk delete action
+										// fetcher.submit
+									}}
+									className="bg-destructive text-white"
+								>
+									Delete
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
 				)}
 			</DataTable>
 		</AdminSectionWrapper>
@@ -247,7 +292,7 @@ export const columns: ColumnDef<
 								{ id },
 								{
 									method: 'DELETE',
-									action: `/admin/admins/resource`,
+									action: '/admin/admins/resource',
 								},
 							)
 						}}
@@ -257,8 +302,16 @@ export const columns: ColumnDef<
 						</DropdownMenuItem>
 					</AdminDataTableMoreMenu>
 					<UserContent
-						method="PUT"
-						action={`/admin/admins/resource`}
+						onSubmit={formData => {
+							fetcher.submit(formData, {
+								method: 'PUT',
+								action: '/admin/admins/resource',
+							})
+						}}
+						isSubmitting={
+							fetcher.formAction === '/admin/admins/resource' &&
+							fetcher.state === 'submitting'
+						}
 						user={{
 							...row.original,
 							updatedAt: new Date(row.original.updatedAt),

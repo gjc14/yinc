@@ -1,10 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useFetcher, useLoaderData } from 'react-router'
 
-import { type ColumnDef } from '@tanstack/react-table'
+import { type ColumnDef, type RowSelectionState } from '@tanstack/react-table'
+import { ChevronDown } from 'lucide-react'
 
 import { Badge } from '~/components/ui/badge'
-import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
+import { Button } from '~/components/ui/button'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { getUsers } from '~/lib/db/user.server'
 import {
@@ -29,6 +38,16 @@ export const loader = async () => {
 export default function AdminAllUsers() {
 	const { users } = useLoaderData<typeof loader>()
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+	// The ids selected returned by setRowSelection
+	// are the same as index of the raw data passed in to the table
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+
+	const selectedUsers = useMemo(() => {
+		const selectedRows = Object.keys(rowSelection).filter(
+			key => rowSelection[key],
+		)
+		return users.filter((_, i) => selectedRows.includes(i.toString()))
+	}, [rowSelection, users])
 
 	const tableData = useMemo(() => {
 		return users.map(u => ({
@@ -54,14 +73,40 @@ export default function AdminAllUsers() {
 				hideColumnFilter
 			>
 				{table => (
-					<Input
-						placeholder="Filter email..."
-						value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-						onChange={event =>
-							table.getColumn('email')?.setFilterValue(event.target.value)
-						}
-						className="max-w-sm"
-					/>
+					<div className="w-full flex items-center justify-between gap-2">
+						<Input
+							placeholder="Filter email..."
+							type="email"
+							value={
+								(table.getColumn('email')?.getFilterValue() as string) ?? ''
+							}
+							onChange={event =>
+								table.getColumn('email')?.setFilterValue(event.target.value)
+							}
+							className="max-w-sm"
+						/>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild hidden={!selectedUsers.length}>
+								<Button variant="outline" disabled={!selectedUsers.length}>
+									Actions
+									<ChevronDown />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuLabel>Bulk Operations</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onClick={() => {
+										// Handle bulk delete action
+										// fetcher.submit
+									}}
+									className="bg-destructive text-white"
+								>
+									Delete
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
 				)}
 			</DataTable>
 		</AdminSectionWrapper>
@@ -176,7 +221,7 @@ export const columns: ColumnDef<
 								{ id },
 								{
 									method: 'DELETE',
-									action: `/admin/users/resource`,
+									action: '/admin/users/resource',
 								},
 							)
 						}}
@@ -186,8 +231,16 @@ export const columns: ColumnDef<
 						</DropdownMenuItem>
 					</AdminDataTableMoreMenu>
 					<UserContent
-						method="PUT"
-						action={`/admin/users/resource`}
+						onSubmit={formData => {
+							fetcher.submit(formData, {
+								method: 'PUT',
+								action: '/admin/users/resource',
+							})
+						}}
+						isSubmitting={
+							fetcher.formAction === '/admin/users/resource' &&
+							fetcher.state === 'submitting'
+						}
 						user={{
 							...row.original,
 							updatedAt: new Date(row.original.updatedAt),
