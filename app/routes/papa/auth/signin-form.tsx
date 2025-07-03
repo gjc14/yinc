@@ -34,6 +34,7 @@ export const SignInForm = () => {
 	const [otp, setOtp] = useState('')
 
 	const sendDisabled = countDown > 0 || isSubmitting
+	const otpLength = 6
 
 	useEffect(() => {
 		if (countDown > 0) {
@@ -44,6 +45,13 @@ export const SignInForm = () => {
 			return () => clearTimeout(timer)
 		}
 	}, [countDown])
+
+	// Auto signin when OTP is complete
+	useEffect(() => {
+		if (otp.length === otpLength && showOtpInput && !isSubmitting) {
+			handleSignIn()
+		}
+	}, [otp, showOtpInput, isSubmitting])
 
 	const handleSendOTP = async () => {
 		if (sendDisabled) return
@@ -158,7 +166,7 @@ export const SignInForm = () => {
 					>
 						<InputOTP
 							id="otp"
-							maxLength={6}
+							maxLength={otpLength}
 							pattern={REGEXP_ONLY_DIGITS}
 							value={otp}
 							onChange={value => setOtp(value)}
