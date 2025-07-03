@@ -75,7 +75,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} delete`,
 					} satisfies ConventionalActionResponse
 				} else {
-					throw new Error('Invalid argument')
+					throw new Error('Invalid arguments')
 				}
 			} catch (error) {
 				return handleError(error, request)

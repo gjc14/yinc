@@ -96,7 +96,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						data: post,
 					} satisfies ConventionalActionResponse
 				} else {
-					throw new Error('Invalid argument')
+					throw new Error('Invalid arguments')
 				}
 			} catch (error) {
 				return handleError<PostWithRelations>(error, request)

@@ -20,7 +20,7 @@ export const handleError = <T>(
 	if (error instanceof z.ZodError) {
 		console.error(error.message)
 		return {
-			err: 'Internal error: Invalid argument',
+			err: 'Internal error: Invalid arguments',
 		} satisfies ConventionalActionResponse
 	}
 

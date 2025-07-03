@@ -149,7 +149,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						msg: `File ${fileMetadata.name} deleted successfully`,
 					} satisfies ConventionalActionResponse
 				} else {
-					throw new Error('Invalid argument')
+					throw new Error('Invalid arguments')
 				}
 			} catch (error) {
 				return handleError(error, request)
