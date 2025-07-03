@@ -144,7 +144,7 @@ layer(base);
 	}
 
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground text-pretty;
 	}
 
 	/* From Apple.com home page h1 */

@@ -249,7 +249,7 @@ export const FileGridMain = ({
 			) : (
 				<div className="w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3 text-muted-foreground">
 					<CupSoda size={50} />
-					<p className="text-center text-pretty max-w-sm">
+					<p className="text-center max-w-sm">
 						No file found, drag and drop, or click to select files now
 					</p>
 				</div>

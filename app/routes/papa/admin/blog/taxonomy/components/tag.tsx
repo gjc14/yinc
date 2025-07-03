@@ -89,7 +89,7 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 	)
 
 	return (
-		<div className="border rounded-lg p-4 shadow-xs col-span-1 sm:col-span-2 lg:col-span-1">
+		<div className="border rounded-lg p-4 shadow-xs col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col h-full">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">標籤</h2>
 				<Dialog>
@@ -129,10 +129,10 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 				placeholder="篩選"
 				value={filter}
 				onChange={e => setFilter(e.target.value)}
-				className="flex-1 mb-4"
+				className="mb-4"
 			/>
 
-			<ScrollArea className="h-[400px]">
+			<ScrollArea className="flex-1 min-h-0">
 				<div className="space-y-2">
 					{filteredTags.length > 0 ? (
 						filteredTags.map(tag => <TagComponent tag={tag} key={tag.id} />)

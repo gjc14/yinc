@@ -73,7 +73,7 @@ export function ErrorBoundary() {
 							Page Not Found
 						</h2>
 
-						<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center text-pretty">
+						<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center">
 							Sorry, we couldn’t find the page you’re looking for.
 						</p>
 
@@ -139,7 +139,7 @@ export function ErrorBoundary() {
 					Internal Server Error
 				</h2>
 
-				<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center text-pretty">
+				<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center">
 					Something went wrong on our servers.
 				</p>
 
@@ -175,7 +175,7 @@ export function ErrorBoundary() {
 
 			<h2 className="mb-8 text-2xl font-semibold md:text-3xl">Unknown Error</h2>
 
-			<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center text-pretty">
+			<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center">
 				Ops! Something went wrong.
 			</p>
 

@@ -65,12 +65,12 @@ export const NavUser = ({ user }: NavUserProps) => {
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
-							<Avatar className="h-8 w-8 rounded-lg">
+							<Avatar className="h-8 w-8 rounded-md">
 								<AvatarImage
 									src={user.image || '/placeholders/avatar.png'}
 									alt={user.name}
 								/>
-								<AvatarFallback className="rounded-lg">PA</AvatarFallback>
+								<AvatarFallback>PA</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-semibold">{user.name}</span>

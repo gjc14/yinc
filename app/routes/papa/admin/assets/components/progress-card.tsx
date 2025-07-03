@@ -61,10 +61,10 @@ export const ProgressCard = ({
 							key={key}
 							className="flex items-center px-5 py-3.5 border rounded-md bg-muted"
 						>
-							<div className="grow max-w-[calc(100%-2rem)] gap-0.5">
+							<div className="flex-1 min-w-0 pr-3">
 								{/* File name */}
 								<div
-									className="flex items-center justify-start px-0.5 gap-0"
+									className="flex items-center justify-start gap-0"
 									title={`${file}`}
 								>
 									<span className="text-sm font-medium truncate mr-1">
@@ -83,12 +83,12 @@ export const ProgressCard = ({
 								)}
 							</div>
 
-							<div className="ml-3 mr-1 flex shrink-0 items-center">
+							<div className="flex shrink-0 items-center">
 								{status === 'completed' ? (
 									<Button
 										variant="outline"
 										size="icon"
-										className="w-5 h-5 rounded-full bg-lime-500 dark:bg-lime-600 hover:bg-transparent dark:hover:bg-transparent hover:border border-0 border-primary transition-colors duration-200 group"
+										className="w-5 h-5 p-0 rounded-full bg-lime-500 dark:bg-lime-600 hover:bg-transparent dark:hover:bg-transparent hover:border border-0 border-primary transition-colors duration-200 group"
 										onClick={e => {
 											e.stopPropagation()
 											setHiddenProgressCards(prev => {
@@ -98,8 +98,8 @@ export const ProgressCard = ({
 											})
 										}}
 									>
-										<Check className="h-4 w-4 group-hover:hidden" />
-										<X className="h-4 w-4 hidden group-hover:block" />
+										<Check className="h-3 w-3 group-hover:hidden" />
+										<X className="h-3 w-3 hidden group-hover:block" />
 										<span className="sr-only">
 											{status === 'completed'
 												? 'Mark as incomplete'
@@ -110,7 +110,7 @@ export const ProgressCard = ({
 									<Button
 										variant="outline"
 										size="icon"
-										className="w-5 h-5 rounded-full bg-red-500 dark:bg-red-600 hover:bg-transparent dark:hover:bg-transparent hover:border border-0 border-primary transition-colors duration-200 group"
+										className="w-5 h-5 p-0 rounded-full bg-red-500 dark:bg-red-600 hover:bg-transparent dark:hover:bg-transparent hover:border border-0 border-primary transition-colors duration-200 group"
 										onClick={e => {
 											e.stopPropagation()
 											setHiddenProgressCards(prev => {
@@ -120,7 +120,7 @@ export const ProgressCard = ({
 											})
 										}}
 									>
-										<X className="h-4 w-4" />
+										<X className="h-3 w-3" />
 										<span className="sr-only">{status}</span>
 									</Button>
 								) : (

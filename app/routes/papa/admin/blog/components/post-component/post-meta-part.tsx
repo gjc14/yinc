@@ -117,7 +117,7 @@ export const PostMetaPart = ({
 				) : (
 					<div className="border rounded-xl w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3">
 						<CloudAlert size={50} />
-						<p className="text-center text-pretty max-w-sm">
+						<p className="text-center max-w-sm">
 							Please setup your S3 Object Storage to start uploading assets
 						</p>
 					</div>

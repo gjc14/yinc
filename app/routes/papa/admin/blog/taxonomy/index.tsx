@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 
 import {
 	AdminActions,
+	AdminContent,
 	AdminHeader,
 	AdminSectionWrapper,
 	AdminTitle,
@@ -105,7 +106,7 @@ export default function AdminTaxonomy({ matches }: Route.ComponentProps) {
 				<AdminActions></AdminActions>
 			</AdminHeader>
 
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			<AdminContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 grid-rows-1">
 				{/* Tags Section (Left) */}
 				<TagsSection tags={tags} />
 
@@ -118,7 +119,7 @@ export default function AdminTaxonomy({ matches }: Route.ComponentProps) {
 
 				{/* Category Hierarchy Section (Right) */}
 				<CategoryHierarchySection category={selectedCategory} />
-			</div>
+			</AdminContent>
 		</AdminSectionWrapper>
 	)
 }

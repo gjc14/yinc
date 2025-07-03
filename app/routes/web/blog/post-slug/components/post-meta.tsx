@@ -22,7 +22,7 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 							alt={post.author?.name || 'Author avatar'}
 						/>
 						<AvatarFallback>
-							{post.author?.name?.charAt(0) || 'P'}
+							{post.author?.name?.charAt(0) || 'PA'}
 						</AvatarFallback>
 					</Avatar>
 					<div className="flex flex-col">

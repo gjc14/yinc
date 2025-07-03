@@ -169,7 +169,7 @@ export const CategoriesSection = ({
 	)
 
 	return (
-		<div className="border rounded-lg p-4 shadow-xs">
+		<div className="border rounded-lg p-4 shadow-xs flex flex-col h-full">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">類別</h2>
 				<Dialog>
@@ -210,10 +210,10 @@ export const CategoriesSection = ({
 				placeholder="篩選"
 				value={filter}
 				onChange={e => setFilter(e.target.value)}
-				className="flex-1 mb-4"
+				className="mb-4"
 			/>
 
-			<ScrollArea className="h-[400px]">
+			<ScrollArea className="flex-1 min-h-0">
 				<div className="space-y-2">
 					{filteredCategories.length > 0 ? (
 						filteredCategories.map(category => (
@@ -287,7 +287,7 @@ export const CategoryHierarchySection = ({
 		) || []
 
 	return (
-		<div className="border rounded-lg p-4 shadow-xs">
+		<div className="border rounded-lg p-4 shadow-xs flex flex-col h-full">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">
 					{category ? `${category?.name} 的子類別` : '子類別'}
@@ -334,10 +334,10 @@ export const CategoryHierarchySection = ({
 						placeholder="篩選"
 						value={filter}
 						onChange={e => setFilter(e.target.value)}
-						className="flex-1 mb-4"
+						className="mb-4"
 					/>
 
-					<ScrollArea className="h-[400px]">
+					<ScrollArea className="flex-1 min-h-0">
 						<div className="space-y-2">
 							{filteredChildren && filteredChildren.length > 0 ? (
 								filteredChildren.map(childCategory => (

@@ -120,7 +120,7 @@ export const columns: ColumnDef<PostWithRelations>[] = [
 				row.original.author?.name ?? row.original.author?.email ?? 'P'
 			const updatedAt = row.original.updatedAt
 			return (
-				<div className="mx-2 my-3 flex flex-col text-pretty">
+				<div className="mx-2 my-3 flex flex-col">
 					<h2 className="text-2xl">
 						<Link to={url}>{title}</Link>
 					</h2>

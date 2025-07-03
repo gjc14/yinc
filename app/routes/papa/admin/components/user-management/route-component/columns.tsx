@@ -3,6 +3,7 @@ import { useFetcher } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
 
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import type { user as userTable } from '~/lib/db/schema'
@@ -24,11 +25,13 @@ export const columns: ColumnDef<
 		cell: ({ row }) => {
 			return (
 				<div className="flex items-center justify-center">
-					<img
-						src={row.original.image || '/placeholders/avatar.png'}
-						alt={row.original.name}
-						className="w-8 h-8 rounded-full shrink-0"
-					/>
+					<Avatar className="h-8 w-8 rounded-full">
+						<AvatarImage
+							src={row.original.image || '/placeholders/avatar.png'}
+							alt={row.original.name}
+						/>
+						<AvatarFallback>PA</AvatarFallback>
+					</Avatar>
 				</div>
 			)
 		},
