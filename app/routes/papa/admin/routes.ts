@@ -61,14 +61,9 @@ const systemRoutes = [
 			route('security', './routes/papa/admin/company/security/route.tsx'),
 		]),
 
-		...prefix('users', [
-			index('./routes/papa/admin/users/index.tsx'),
-			route('resource', './routes/papa/admin/users/resource.ts'),
-		]),
-		...prefix('admins', [
-			index('./routes/papa/admin/admins/index.tsx'),
-			route('resource', './routes/papa/admin/admins/resource.ts'),
-		]),
+		route('user/resource', './routes/papa/admin/user/resource.ts'),
+		route('users', './routes/papa/admin/user/users.tsx'),
+		route('admins', './routes/papa/admin/user/admins.tsx'),
 
 		route('*', './routes/papa/admin/$/route.tsx'),
 

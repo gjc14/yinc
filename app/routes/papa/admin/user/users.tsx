@@ -221,7 +221,7 @@ export const columns: ColumnDef<
 								{ id },
 								{
 									method: 'DELETE',
-									action: '/admin/users/resource',
+									action: '/admin/user/resource',
 								},
 							)
 						}}
@@ -234,11 +234,11 @@ export const columns: ColumnDef<
 						onSubmit={formData => {
 							fetcher.submit(formData, {
 								method: 'PUT',
-								action: '/admin/users/resource',
+								action: '/admin/user/resource',
 							})
 						}}
 						isSubmitting={
-							fetcher.formAction === '/admin/users/resource' &&
+							fetcher.formAction === '/admin/user/resource' &&
 							fetcher.state === 'submitting'
 						}
 						user={{

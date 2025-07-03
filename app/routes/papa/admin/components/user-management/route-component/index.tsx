@@ -86,7 +86,7 @@ export const UserManagementRoute = ({
 			{ ids: JSON.stringify(idsToDelete) },
 			{
 				method: 'DELETE',
-				action: '/admin/users/resource?bulk=true',
+				action: '/admin/user/resource?bulk=true',
 			},
 		)
 	}
@@ -174,7 +174,7 @@ export const UserManagementRoute = ({
 						id="invite-user"
 						className="flex flex-col gap-1.5 md:flex-row items-baseline"
 						method="POST"
-						action="/admin/users/resource"
+						action="/admin/user/resource"
 					>
 						<div className="w-full">
 							<Label htmlFor="email">Email</Label>
