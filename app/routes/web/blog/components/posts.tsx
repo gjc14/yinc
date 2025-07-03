@@ -6,6 +6,7 @@ import { ExternalLink } from 'lucide-react'
 
 import { Input } from '~/components/ui/input'
 import type { PostWithRelations } from '~/lib/db/post.server'
+import { SimpleSortHeader } from '~/routes/papa/admin/components/data-table/simple-sort-header'
 
 import { DataTable } from './post-data-table'
 
@@ -108,7 +109,7 @@ export const columns: ColumnDef<PostWithRelations>[] = [
 	{
 		accessorKey: 'title',
 		header: ({ column }) => {
-			return 'Title'
+			return <SimpleSortHeader column={column}>Title</SimpleSortHeader>
 		},
 		cell: ({ row }) => {
 			const title = row.original.title

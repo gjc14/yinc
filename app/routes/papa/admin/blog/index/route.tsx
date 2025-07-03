@@ -20,6 +20,8 @@ import {
 	DataTable,
 } from '~/routes/papa/admin/components/data-table'
 
+import { SimpleSortHeader } from '../../components/data-table/simple-sort-header'
+
 export default function AdminPost({ matches }: Route.ComponentProps) {
 	const match = matches[2]
 	const { posts, tags, categories } = match.data
@@ -88,7 +90,9 @@ export const columns: ColumnDef<
 >[] = [
 	{
 		accessorKey: 'title',
-		header: 'Title',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Title</SimpleSortHeader>
+		},
 	},
 	{
 		accessorKey: 'excerpt',
@@ -96,26 +100,22 @@ export const columns: ColumnDef<
 	},
 	{
 		accessorKey: 'status',
-		header: 'Status',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Status</SimpleSortHeader>
+		},
 	},
 	{
 		accessorKey: 'author',
-		header: 'Author',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Author</SimpleSortHeader>
+		},
 		accessorFn: row => row.author?.name || 'author',
 	},
 	{
 		id: 'Updated At',
 		accessorKey: 'updatedAt',
 		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-				>
-					Last Update
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			)
+			return <SimpleSortHeader column={column}>Updated At</SimpleSortHeader>
 		},
 		accessorFn: row => new Date(row.updatedAt).toLocaleString('zh-TW'),
 	},

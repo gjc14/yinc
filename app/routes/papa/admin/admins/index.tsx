@@ -32,6 +32,8 @@ import {
 } from '~/routes/papa/admin/components/data-table'
 import { UserContent } from '~/routes/papa/admin/components/user-content'
 
+import { SimpleSortHeader } from '../components/data-table/simple-sort-header'
+
 export const loader = async () => {
 	return await getUsers({
 		role: 'admin',
@@ -146,7 +148,7 @@ export const columns: ColumnDef<
 >[] = [
 	{
 		accessorKey: 'image',
-		header: 'Avatar',
+		header: '🙂',
 		cell: ({ row }) => {
 			return (
 				<img
@@ -159,11 +161,15 @@ export const columns: ColumnDef<
 	},
 	{
 		accessorKey: 'email',
-		header: 'Email',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Email</SimpleSortHeader>
+		},
 	},
 	{
 		accessorKey: 'name',
-		header: 'Name',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Name</SimpleSortHeader>
+		},
 	},
 	{
 		accessorKey: 'role',
@@ -171,7 +177,9 @@ export const columns: ColumnDef<
 	},
 	{
 		accessorKey: 'emailVerified',
-		header: 'Verified',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Email Verified</SimpleSortHeader>
+		},
 		cell: ({ row }) => {
 			return (
 				<Badge
@@ -184,7 +192,9 @@ export const columns: ColumnDef<
 	},
 	{
 		accessorKey: 'banned',
-		header: 'Banned',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Banned</SimpleSortHeader>
+		},
 		cell: ({ row }) => {
 			return (
 				<Badge variant={row.original.banned ? 'destructive' : 'secondary'}>
@@ -195,7 +205,9 @@ export const columns: ColumnDef<
 	},
 	{
 		accessorKey: 'updatedAt',
-		header: 'Last update',
+		header: ({ column }) => {
+			return <SimpleSortHeader column={column}>Updated At</SimpleSortHeader>
+		},
 		accessorFn: row => new Date(row.updatedAt).toLocaleString('zh-TW'),
 	},
 	{
