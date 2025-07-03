@@ -1,3 +1,4 @@
+import type { Route } from './+types'
 import { useMemo, useState } from 'react'
 
 import {
@@ -7,7 +8,6 @@ import {
 	AdminTitle,
 } from '~/routes/papa/admin/components/admin-wrapper'
 
-import type { Route } from './+types'
 import {
 	CategoriesSection,
 	CategoryHierarchySection,
