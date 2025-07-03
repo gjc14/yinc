@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFetcher } from 'react-router'
 
 import { type RowSelectionState } from '@tanstack/react-table'
@@ -43,6 +43,7 @@ import {
 } from '~/routes/papa/admin/components/admin-wrapper'
 import { DataTable } from '~/routes/papa/admin/components/data-table'
 
+import { UserBulkEditDialog } from '../user-content'
 import { columns } from './columns'
 
 type User = typeof userTable.$inferSelect
@@ -55,12 +56,14 @@ export const UserManagementRoute = ({
 	role: 'admin' | 'user'
 }) => {
 	const fetcher = useFetcher()
+	const isSubmitting = fetcher.state === 'submitting'
 
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
 	// The ids selected returned by setRowSelection
 	// are the same as index of the raw data passed in to the table
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 	const [openInviteDialog, setOpenInviteDialog] = useState(false)
+	const [openBulkEdit, setOpenBulkEdit] = useState(false)
 	const [openBulkDeleteAlert, setOpenBulkDeleteAlert] = useState(false)
 
 	const selectedUsers = useMemo(() => {
@@ -70,26 +73,47 @@ export const UserManagementRoute = ({
 		return users.filter((_, i) => selectedRows.includes(i.toString()))
 	}, [rowSelection, users])
 
-	const isSubmitting = fetcher.state === 'submitting'
-
 	const tableData = useMemo(() => {
-		return users.map(u => ({
-			...u,
-			setRowsDeleting,
-		}))
+		return users.map(u => ({ ...u, setRowsDeleting }))
 	}, [users])
 
 	const onBulkDelete = () => {
 		if (selectedUsers.length === 0) return
 		const idsToDelete = selectedUsers.map(user => user.id)
 		fetcher.submit(
-			{ ids: JSON.stringify(idsToDelete) },
+			{ id: idsToDelete },
 			{
 				method: 'DELETE',
-				action: '/admin/user/resource?bulk=true',
+				action: '/admin/user/resource',
 			},
 		)
 	}
+
+	const onBulkEdit = (formData: FormData) => {
+		if (selectedUsers.length === 0) return
+		const idsToEdit = selectedUsers.map(user => user.id).join(',')
+		formData.set('id', idsToEdit)
+		fetcher.submit(formData, {
+			method: 'PUT',
+			action: '/admin/user/resource',
+		})
+	}
+
+	useEffect(() => {
+		if (fetcher.state === 'loading') {
+			switch (fetcher.formMethod) {
+				case 'DELETE':
+					setOpenBulkDeleteAlert(false)
+					break
+				case 'PUT':
+					setOpenBulkEdit(false)
+					break
+				case 'POST':
+					setOpenInviteDialog(false)
+					break
+			}
+		}
+	}, [fetcher.state, fetcher.formMethod])
 
 	return (
 		<AdminSectionWrapper>
@@ -98,13 +122,13 @@ export const UserManagementRoute = ({
 				<AdminActions>
 					<Button
 						size={'sm'}
-						disabled={isSubmitting}
+						disabled={isSubmitting && fetcher.formMethod === 'POST'}
 						onClick={() => setOpenInviteDialog(true)}
 					>
 						{isSubmitting && fetcher.formMethod === 'POST' ? (
-							<Loader2 size={16} className="animate-spin" />
+							<Loader2 className="animate-spin" />
 						) : (
-							<PlusCircle size={16} />
+							<PlusCircle />
 						)}
 						<p className="text-xs">
 							Invite {role === 'admin' ? 'admin' : 'user'}
@@ -130,6 +154,7 @@ export const UserManagementRoute = ({
 						<Input
 							placeholder="Filter email..."
 							type="email"
+							autoComplete="off"
 							value={
 								(table.getColumn('email')?.getFilterValue() as string) ?? ''
 							}
@@ -145,9 +170,12 @@ export const UserManagementRoute = ({
 									<ChevronDown />
 								</Button>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent>
+							<DropdownMenuContent className="space-y-1">
 								<DropdownMenuLabel>Bulk Operations</DropdownMenuLabel>
 								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={() => setOpenBulkEdit(true)}>
+									Edit
+								</DropdownMenuItem>
 								<DropdownMenuItem
 									onClick={() => setOpenBulkDeleteAlert(true)}
 									className="bg-destructive text-white"
@@ -176,6 +204,7 @@ export const UserManagementRoute = ({
 						method="POST"
 						action="/admin/user/resource"
 					>
+						<input type="hidden" name="role" value={role} />
 						<div className="w-full">
 							<Label htmlFor="email">Email</Label>
 							<Input id="email" placeholder="Email" type="email" name="email" />
@@ -191,14 +220,32 @@ export const UserManagementRoute = ({
 						</div>
 					</fetcher.Form>
 					<DialogFooter>
-						<DialogClose asChild>
-							<Button form="invite-user" type="submit">
-								Invite
-							</Button>
-						</DialogClose>
+						<Button
+							form="invite-user"
+							type="submit"
+							disabled={isSubmitting && fetcher.formMethod === 'POST'}
+						>
+							{isSubmitting && fetcher.formMethod === 'POST' ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<PlusCircle />
+							)}
+							Invite
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			{selectedUsers.length > 0 && (
+				<UserBulkEditDialog
+					user={selectedUsers[0]}
+					open={openBulkEdit}
+					onOpenChange={setOpenBulkEdit}
+					role={role}
+					onSubmit={formData => onBulkEdit(formData)}
+					isSubmitting={isSubmitting && fetcher.formMethod === 'PUT'}
+				/>
+			)}
 
 			<AlertDialog
 				open={openBulkDeleteAlert}
@@ -219,8 +266,15 @@ export const UserManagementRoute = ({
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
 							className="bg-destructive text-white hover:bg-destructive/90"
-							onClick={onBulkDelete}
+							onClick={e => {
+								e.preventDefault()
+								onBulkDelete()
+							}}
+							disabled={isSubmitting && fetcher.formMethod === 'DELETE'}
 						>
+							{isSubmitting && fetcher.formMethod === 'DELETE' && (
+								<Loader2 className="animate-spin" />
+							)}
 							Delete
 						</AlertDialogAction>
 					</AlertDialogFooter>

@@ -98,7 +98,7 @@ export const AdminDataTableMoreMenu = ({
 							className="bg-destructive text-white hover:bg-destructive/90"
 							onClick={onDelete}
 						>
-							Continue
+							Continue to delete
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
