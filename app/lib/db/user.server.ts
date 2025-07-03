@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, lt } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, lt } from 'drizzle-orm'
 
 import { user as userTable } from '~/lib/db/schema'
 
@@ -78,8 +78,8 @@ export const getUsers = async ({
 
 export const getUser = async (
 	email: string,
-): Promise<{ user: User | null }> => {
-	const [user] = await db
+): Promise<{ user: User[] | null }> => {
+	const user = await db
 		.select()
 		.from(userTable)
 		.where(eq(userTable.email, email))
@@ -88,29 +88,37 @@ export const getUser = async (
 
 export const getUserById = async (
 	id: string,
-): Promise<{ user: User | null }> => {
-	const [user] = await db.select().from(userTable).where(eq(userTable.id, id))
+): Promise<{ user: User[] | null }> => {
+	const user = await db.select().from(userTable).where(eq(userTable.id, id))
 	return { user }
 }
 
 export const updateUser = async (props: {
-	id: string
+	id: string | string[]
 	data: Partial<
 		Omit<typeof userTable.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
 	>
-}): Promise<{ user: User }> => {
-	const [user] = await db
+}): Promise<{ user: User[] }> => {
+	const user = await db
 		.update(userTable)
 		.set(props.data)
-		.where(eq(userTable.id, props.id))
+		.where(
+			Array.isArray(props.id)
+				? inArray(userTable.id, props.id)
+				: eq(userTable.id, props.id),
+		)
 		.returning()
 	return { user }
 }
 
-export const deleteUser = async (id: string): Promise<{ user: User }> => {
-	const [user] = await db
+export const deleteUser = async (
+	ids: string | string[],
+): Promise<{ user: User[] }> => {
+	const user = await db
 		.delete(userTable)
-		.where(eq(userTable.id, id))
+		.where(
+			Array.isArray(ids) ? inArray(userTable.id, ids) : eq(userTable.id, ids),
+		)
 		.returning()
 	return { user }
 }

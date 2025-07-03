@@ -85,7 +85,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				})
 
 				return {
-					msg: 'Success update ' + (userUpdated.name || userUpdated.email),
+					msg:
+						'Success update ' + (userUpdated[0]?.name || userUpdated[0]?.email),
 				} satisfies ConventionalActionResponse
 			} catch (error) {
 				return handleError(error, request)
@@ -99,7 +100,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			try {
 				const { user } = await deleteUser(userId)
 				return {
-					msg: `${user.email} deleted successfully`,
+					msg: `${user[0]?.email} deleted successfully`,
 				} satisfies ConventionalActionResponse
 			} catch (error) {
 				return handleError(error, request)
