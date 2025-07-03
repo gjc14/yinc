@@ -6,7 +6,6 @@ import {
 	Outlet,
 	redirect,
 	useRouteError,
-	type MetaFunction,
 } from 'react-router'
 
 import { Undo2 } from 'lucide-react'
@@ -22,9 +21,15 @@ import { validateAdminSession } from '../../auth/utils'
 import { AdminSidebar } from './components/admin-sidebar'
 import { HeaderWithBreadcrumbs } from './components/header-breadcrumbs'
 
-export const meta: MetaFunction = ({ error }) => {
+export const meta = ({ error }: Route.MetaArgs) => {
 	if (!error) {
-		return [{ title: 'Admin' }, { name: 'description', content: 'Admin page' }]
+		return [
+			{ title: 'Papa Open Source CMS' },
+			{
+				name: 'description',
+				content: 'This is the admin page of Papa Open Source CMS',
+			},
+		]
 	}
 }
 
@@ -91,7 +96,7 @@ export function ErrorBoundary() {
 
 	// Route throw new Response (404, etc.)
 	if (isRouteErrorResponse(error)) {
-		console.error('Route Error Response:', error)
+		console.error('Admin Route Error Response:', error)
 
 		const statusMessage = statusCodeMap[error.status]
 		const errorMessage = error.data || statusMessage.text || 'Error Response'

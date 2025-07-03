@@ -14,6 +14,16 @@ import { fade } from '~/components/motions'
 import { statusCodeMap } from '~/lib/utils/status-code'
 
 export const meta: MetaFunction = ({ error }) => {
+	if (!error) {
+		return [
+			{ title: 'Papa Open Source CMS' },
+			{
+				name: 'description',
+				content: 'This is Website for Papa Open Source CMS',
+			},
+		]
+	}
+
 	if (isRouteErrorResponse(error)) {
 		const statusMessage = statusCodeMap[error.status]
 		const errorMessage = error.data || statusMessage.text || 'Error Response'
@@ -46,7 +56,7 @@ export function ErrorBoundary() {
 
 	// Route throw new Response (404, etc.)
 	if (isRouteErrorResponse(error)) {
-		console.error('Route Error Response:', error)
+		console.error('Web Route Error Response:', error)
 
 		switch (error.status) {
 			case 404:

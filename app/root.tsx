@@ -1,5 +1,6 @@
 import './app.css'
 
+import type { Route } from './+types/root'
 import { useEffect, useRef } from 'react'
 import {
 	data,
@@ -31,6 +32,18 @@ import { ClientHintCheck, getHints } from './lib/client-hints/client-hints'
 import { subscribeToSchemeChange } from './lib/client-hints/color-schema'
 import { commitFlashSession, getFlashSession } from './lib/sessions.server'
 import { isConventionalError, isConventionalSuccess } from './lib/utils'
+
+export const meta = ({ error }: Route.MetaArgs) => {
+	if (!error) {
+		return [
+			{ title: 'Papa Open Source CMS' },
+			{
+				name: 'description',
+				content: 'MIT Open Source Personal CMS.',
+			},
+		]
+	}
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	const theme = useCookieTheme()
@@ -206,7 +219,7 @@ export function ErrorBoundary() {
 
 	// Route throw new Response (404, etc.)
 	if (isRouteErrorResponse(error)) {
-		console.error('Route Error Response:', error)
+		console.error('Root Route Error Response:', error)
 
 		return (
 			<main className="w-screen h-svh flex flex-col items-center justify-center">
