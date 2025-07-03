@@ -324,7 +324,7 @@ function createSelectColumn<T>(): ColumnDef<T> {
 				}
 				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
 				aria-label="Select all"
-				className="mr-1 rounded-none"
+				className="mr-1"
 			/>
 		),
 		cell: ({ row }) => (
@@ -332,7 +332,7 @@ function createSelectColumn<T>(): ColumnDef<T> {
 				checked={row.getIsSelected()}
 				onCheckedChange={value => row.toggleSelected(!!value)}
 				aria-label="Select row"
-				className="mr-1 rounded-none"
+				className="mr-1"
 			/>
 		),
 		enableSorting: false,
