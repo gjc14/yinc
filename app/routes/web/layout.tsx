@@ -6,8 +6,8 @@ import {
 	type MetaFunction,
 } from 'react-router'
 
-import { motion } from 'framer-motion'
 import { AlertCircle, ArrowLeft } from 'lucide-react'
+import { motion } from 'motion/react'
 
 import { Button } from '~/components/ui/button'
 import { fade } from '~/components/motions'

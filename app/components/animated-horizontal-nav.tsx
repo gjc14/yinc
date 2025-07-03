@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router'
 
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 import { Button } from '~/components/ui/button'
 

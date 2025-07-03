@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router'
 
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 import { ThemeToggle } from '~/components/theme-toggle'
 

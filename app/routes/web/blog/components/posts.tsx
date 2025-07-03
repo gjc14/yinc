@@ -1,8 +1,8 @@
 import { Link } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
-import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
+import { motion } from 'motion/react'
 
 import { Input } from '~/components/ui/input'
 import type { PostWithRelations } from '~/lib/db/post.server'
