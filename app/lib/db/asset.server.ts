@@ -28,7 +28,7 @@ export const getUploadUrl = async ({
 		const presignedUrl = await getSignedUrl(
 			S3,
 			new PutObjectCommand({
-				Bucket: process.env.BUCKET_NAME ?? 'papa',
+				Bucket: process.env.BUCKET_NAME || 'papa',
 				Key: key,
 				ContentLength: size,
 				ContentType: type,
@@ -47,7 +47,7 @@ export const getFileUrl = async (key: string) => {
 
 	try {
 		const command = new GetObjectCommand({
-			Bucket: process.env.BUCKET_NAME ?? 'papa',
+			Bucket: process.env.BUCKET_NAME || 'papa',
 			Key: key,
 		})
 		const presignedUrl = await getSignedUrl(S3, command, { expiresIn: 300 })
@@ -67,7 +67,7 @@ export const deleteFile = async (key: string) => {
 
 	await S3.send(
 		new DeleteObjectCommand({
-			Bucket: process.env.BUCKET_NAME ?? 'papa',
+			Bucket: process.env.BUCKET_NAME || 'papa',
 			Key: key,
 		}),
 	)

@@ -17,7 +17,7 @@ export const sendMagicLink = async ({
 	token: string
 	emailService: EmailService
 }): Promise<void> => {
-	const appName = process.env.APP_NAME ?? 'PAPA'
+	const appName = process.env.APP_NAME || 'PAPA'
 	const from = `🪄${appName} Magic Link <${getEmailAddressFromENV()}>`
 
 	try {
@@ -44,7 +44,7 @@ export const sendVerifyLink = async ({
 	token: string
 	emailService: EmailService
 }): Promise<void> => {
-	const appName = process.env.APP_NAME ?? 'PAPA'
+	const appName = process.env.APP_NAME || 'PAPA'
 	const from = `🔓${appName} Verify <${getEmailAddressFromENV()}>`
 
 	try {
@@ -83,7 +83,7 @@ export const sendVerifyChangeEmailLink = async ({
 	token: string
 	emailService: EmailService
 }): Promise<void> => {
-	const appName = process.env.APP_NAME ?? 'PAPA'
+	const appName = process.env.APP_NAME || 'PAPA'
 	const from = `🔓${appName} Verify <${getEmailAddressFromENV()}>`
 
 	try {
@@ -119,7 +119,7 @@ export const sendSignInOTP = async ({
 	expireIn: number
 	emailService: EmailService
 }): Promise<void> => {
-	const appName = process.env.APP_NAME ?? 'PAPA'
+	const appName = process.env.APP_NAME || 'PAPA'
 	const from = `${appName} <${getEmailAddressFromENV()}>`
 
 	try {
