@@ -34,9 +34,11 @@ export const generateSlug = (
 		// For multi-language support, convert to lowercase and handle Unicode characters
 		slug = slug
 			.toLowerCase()
-			// Replace spaces and special punctuation with hyphens
+			// Replace spaces and CJK ideographic space with hyphens
 			.replace(/[\s\u3000]+/g, '-') // \u3000 is CJK ideographic space
-			// Remove or replace problematic characters but keep Unicode letters/numbers
+			// Replace common CJK punctuation with hyphens for better URL readability
+			.replace(/[，。！？；：""''（）【】「」『』〈〉《》、]/g, '-')
+			// Remove or replace other problematic characters but keep Unicode letters/numbers
 			.replace(/[^\p{L}\p{N}\-_.~]/gu, '')
 			// Handle multiple consecutive hyphens
 			.replace(/-+/g, '-')
