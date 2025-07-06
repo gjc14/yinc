@@ -75,7 +75,7 @@ export const generateBreadcrumbs = (pathname: string) => {
 						}
 						end
 					>
-						{path
+						{decodeURIComponent(path)
 							.replace(/[-_]/g, ' ')
 							.split(' ')
 							.map(word => capitalize(word))
