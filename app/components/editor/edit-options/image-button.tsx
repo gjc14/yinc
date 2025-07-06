@@ -15,8 +15,8 @@ import {
 } from '~/components/ui/popover'
 import { SeparatorWithText } from '~/components/separator-with-text'
 import type { FileMetadata } from '~/lib/db/schema'
-import { FileGrid } from '~/routes/papa/admin/assets/components/file-grid'
-import type { loader } from '~/routes/papa/admin/assets/resource'
+import { FileGrid } from '~/routes/papa/dashboard/assets/components/file-grid'
+import type { loader } from '~/routes/papa/dashboard/assets/resource'
 
 import { ToggleButton } from '../components/toggle-button'
 
@@ -71,7 +71,7 @@ export const ImageButton = ({ editor }: { editor: Editor }) => {
 		<Popover
 			open={open}
 			onOpenChange={open => {
-				!fileLoadedRef.current && fetcher.load('/admin/assets/resource')
+				!fileLoadedRef.current && fetcher.load('/dashboard/assets/resource')
 				setOpen(open)
 			}}
 		>

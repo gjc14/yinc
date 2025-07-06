@@ -46,17 +46,17 @@ const iconOptions = Object.keys(dynamicIconImports) as Array<
 const PapaConfigSchema = z.object({
 	pluginName: z.string(),
 	/**
-	 * Used to generate button for `Admin` nav bar
+	 * Used to generate button for `Dashboard` nav bar
 	 */
-	adminRoutes: z
+	dashboardRoutes: z
 		.array(
 			z.object({
 				/**
-				 * Which will show in the `Admin` nav bar
+				 * Which will show in the `Dashboard` nav bar
 				 */
 				title: z.string(),
 				/**
-				 * Start with `/`, relative path to `/admin` route
+				 * Start with `/`, relative path to `/dashboard` route
 				 */
 				url: z.string(),
 				/**
@@ -84,4 +84,6 @@ const PapaConfigSchema = z.object({
 	dependencies: z.array(z.string()).optional(),
 })
 export type PapaConfig = z.infer<typeof PapaConfigSchema>
-export type PapaAdminMenuItem = NonNullable<PapaConfig['adminRoutes']>[number]
+export type PapaDashboardMenuItem = NonNullable<
+	PapaConfig['dashboardRoutes']
+>[number]

@@ -189,9 +189,9 @@ async function setupBucketWithCors(
 }
 
 /**
- * Main function: Initialize admin storage
+ * Main function: Initialize storage
  */
-async function initAdminStorage() {
+async function initStorage() {
 	console.log(
 		'\n–––––\n\n🚀 初始化 R2 物件存儲... (Initializing R2 object storage...)',
 	)
@@ -220,7 +220,7 @@ async function initAdminStorage() {
 }
 
 // Run the initialization
-initAdminStorage().catch(error => {
+initStorage().catch(error => {
 	console.error('❌ 初始化過程中發生錯誤 (Error during initialization):', error)
 	process.exit(1)
 })

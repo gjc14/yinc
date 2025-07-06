@@ -1,5 +1,5 @@
 /**
- * This auth module is dedicated to the admin panel.
+ * This auth module is dedicated to the dashboard.
  */
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'

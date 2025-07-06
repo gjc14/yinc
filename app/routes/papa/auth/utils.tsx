@@ -7,7 +7,7 @@ export async function validateAdminSession(
 ): Promise<NonNullable<typeof session>> {
 	const session = await auth.api.getSession(request)
 	if (!session || session.user.role !== 'admin') {
-		throw redirect('/admin/portal')
+		throw redirect('/dashboard/portal')
 	}
 	return session
 }

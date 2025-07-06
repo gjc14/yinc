@@ -6,7 +6,7 @@ import { motion } from 'motion/react'
 
 import { Input } from '~/components/ui/input'
 import type { PostWithRelations } from '~/lib/db/post.server'
-import { SimpleSortHeader } from '~/routes/papa/admin/components/data-table/simple-sort-header'
+import { SimpleSortHeader } from '~/routes/papa/dashboard/components/data-table/simple-sort-header'
 
 import { DataTable } from './post-data-table'
 

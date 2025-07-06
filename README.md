@@ -176,7 +176,7 @@ cd ./papa && cp .env.example .env
 11. `BUCKET_NAME`,`OBJECT_STORAGE_ACCESS_KEY_ID`,
     `OBJECT_STORAGE_SECRET_ACCESS_KEY`, `OBJECT_STORAGE_ACCOUNT_ID`: Where you
     save your objects, accept S3 compatible services. Using in route
-    `/admin/assets/resource`
+    `/dashboard/assets/resource`
 
 ### 3. Install and push database schema
 
@@ -187,7 +187,7 @@ pnpm install
 
 ### 4. Initialize the project
 
-This command will start the project by adding an admin with default posts.
+This command will start the project by adding an admin user with default posts.
 
 You will be asked for **Email** and your **Name**. Enter them in the teminal.
 
@@ -205,8 +205,8 @@ pnpm run init
 
 🎉 Now your project should be running on
 [http://localhost:5173](http://localhost:5173). Go to
-[http://localhost:5173/admin](http://localhost:5173/admin), sign in to see the
-admin panel.
+[http://localhost:5173/dashboard](http://localhost:5173/dashboard), sign in to
+see the dashboard.
 
 ---
 
@@ -259,7 +259,7 @@ ffmpeg -i logo.png -vf "scale=32:32:force_original_aspect_ratio=decrease,pad=32:
 
 **Config files:**
 
-1. Admin routes are configured in `/app/routes/papa/admin/routes.ts`
+1. Dashboard routes are configured in `/app/routes/papa/dashboard/routes.ts`
 2. Web routes are configured in `/app/routes/web/routes.ts`
 
 ### Web Route
@@ -268,32 +268,32 @@ TODO
 
 ### Admin Route
 
-You may run `pnpm run create-plugin:admin` to generate the example routes.
+You may run `pnpm run create-plugin:dashboard` to generate the example routes.
 
 These actions will be done:
 
-1. Generate example admin route
-2. Generate example admin sub route
+1. Generate example dashboard route
+2. Generate example dashboard sub route
 3. Generate papa config file for nav
 4. Generate example routes config
-5. Modify `/app/routes/papa/admin/routes.ts` file
+5. Modify `/app/routes/papa/dashboard/routes.ts` file
 
 ```tsx
 // /app/routes/plugins/example-plugin/routes.ts
 import { type RouteConfig } from '@react-router/dev/routes'
 
-// This should be imported and used as `...customizedAdminRoutes` in `customizedRoutes` of `/app/routes/papa/admin/routes.ts`
+// This should be imported and used as `...customizedAdminRoutes` in `customizedRoutes` of `/app/routes/papa/dashboard/routes.ts`
 export const customizedAdminRoutes = [
-	// write your admin routes here, route should either:
-	// 1. relative path: `route('custom-route', './where/your/file.tsx')` , which will automatically render under `/admin/custom-route`.
-	// 2. direct path start with `/admin`: `route('/admin/custom-route', './where/your/file.tsx')`
+	// write your dashboard routes here, route should either:
+	// 1. relative path: `route('custom-route', './where/your/file.tsx')` , which will automatically render under `/dashboard/custom-route`.
+	// 2. direct path start with `/dashboard`: `route('/dashboard/custom-route', './where/your/file.tsx')`
 ] satisfies RouteConfig
 ```
 
-In `/app/routes/papa/admin/routes.ts` for example:
+In `/app/routes/papa/dashboard/routes.ts` for example:
 
 ```tsx
-// /app/routes/papa/admin/routes.ts
+// /app/routes/papa/dashboard/routes.ts
 import { customizedAdminRoutes } from '../../plugins/example-plugin/routes.ts'
 
 // Configure your customized routes here
@@ -401,7 +401,7 @@ Organization
 ```tsx
 import { type ColumnDef } from '@tanstack/react-table'
 
-import { DataTable } from '~/routes/papa/admin/components/data-table'
+import { DataTable } from '~/routes/papa/dashboard/components/data-table'
 
 type TagType = {
     name: string
@@ -447,7 +447,7 @@ const tagColumns: ColumnDef<TagType>[] = [
             <div className="w-full flex">
                 <DeleteTaxonomyButton
                     id={row.original.id}
-                    actionRoute={'/admin/blog/taxonomy/resource'}
+                    actionRoute={'/dashboard/blog/taxonomy/resource'}
                     intent={'tag'}
                 />
             </div>
@@ -498,14 +498,14 @@ export function MyComponent() {
 }
 ```
 
-### Admin Wrapper
+### Dashboard Wrapper
 
 ```tsx
-export default function AdminExample() {
+export default function DashboardExample() {
 	return (
 		<AdminSectionWrapper>
 			<AdminHeader>
-				<AdminTitle title="Your admin title"></AdminTitle>
+				<AdminTitle title="Your dashboard title"></AdminTitle>
 				<AdminActions>{/* You may put some buttons here */}</AdminActions>
 			</AdminHeader>
 			{/* Your main content goes here */}

@@ -1,6 +1,6 @@
 import { route, type RouteConfig } from '@react-router/dev/routes'
 
-import { adminPage } from './routes/papa/admin/routes'
+import { dashboardPage } from './routes/papa/dashboard/routes'
 import { webPage } from './routes/web/routes'
 
 const systemRoutes = [
@@ -13,10 +13,10 @@ const systemRoutes = [
 	route('assets/:assetId', './routes/papa/assets/route.tsx'),
 
 	// Auth Page
-	route('/admin/portal', './routes/papa/auth/portal.tsx'),
+	route('/dashboard/portal', './routes/papa/auth/portal.tsx'),
 
-	// Admin route
-	...adminPage(),
+	// Dashboard route
+	...dashboardPage(),
 
 	// SEO
 	route('/robots.txt', './routes/_robots.txt.ts'),

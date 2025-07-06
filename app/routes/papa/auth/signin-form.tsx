@@ -102,7 +102,7 @@ export const SignInForm = () => {
 			{
 				onSuccess: () => {
 					toast.success('Successfully signed in!')
-					navigate('/admin')
+					navigate('/dashboard')
 				},
 				onError: ctx => {
 					alert('Error verifying OTP: ' + ctx.error.message)
@@ -126,7 +126,7 @@ export const SignInForm = () => {
 							<strong>{email}</strong>
 						</>
 					) : (
-						'Enter your email below to access admin dashboard.'
+						'Enter your email below to access dashboard.'
 					)}
 				</CardDescription>
 			</CardHeader>

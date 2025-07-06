@@ -9,12 +9,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await auth.api.getSession(request)
 
 	if (session && session.user.role === 'admin') {
-		return redirect('/admin')
+		return redirect('/dashboard')
 	}
 	return null
 }
 
-export default function AdminPortal() {
+export default function DashboardPortal() {
 	return (
 		<MainWrapper className="justify-center">
 			<SignInForm />

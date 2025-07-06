@@ -44,7 +44,7 @@ export function FloatingToolkit() {
 							<span>View Website</span>
 						</DropdownMenuItem>
 
-						<DropdownMenuItem onClick={() => navigate('/admin')}>
+						<DropdownMenuItem onClick={() => navigate('/dashboard')}>
 							<DashboardIcon className="mr-2 size-4" />
 							<span>Go to Dashboard</span>
 						</DropdownMenuItem>
