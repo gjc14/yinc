@@ -7,7 +7,7 @@ export default defineConfig({
 	schema: [
 		'./app/lib/db/schema/**/*',
 		'./app/routes/**/lib/db/schema/**/*',
-		'./app/routes/plugins/**/lib/db/schema/**/*',
+		'./app/routes/services/**/lib/db/schema/**/*',
 	],
 	dbCredentials: {
 		url: process.env.DATABASE_URL!,

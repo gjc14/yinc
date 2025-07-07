@@ -252,82 +252,65 @@ ffmpeg -i logo.png -vf "scale=32:32:force_original_aspect_ratio=decrease,pad=32:
 
 ## Routes
 
-<!-- prettier-ignore -->
-> [!IMPORTANT]
-> All `routes.ts` will runs at the same level of your `vite.config.ts` and is not part of bundle. Therefore, please use relative paths to import your routes, avoiding `~/your/route/config/path`.
-> More details please refer to this [react router issue](https://github.com/remix-run/react-router/issues/12706).
-
 **Config files:**
 
-1. Dashboard routes are configured in `/app/routes/papa/dashboard/routes.ts`
-2. Web routes are configured in `/app/routes/web/routes.ts`
+### Route
 
-### Web Route
+Run `pnpm run generate:service` to generate example routes, including
+independent routes and those under dashboard.
 
-TODO
+The following 8 files will be created:
 
-### Admin Route
+1. /services/example-service/config.tsx
+2. /services/example-service/dashboard/index.tsx
+3. /services/example-service/dashboard/layout.tsx
+4. /services/example-service/dashboard/product/route.tsx
+5. /services/example-service/shop/index.tsx
+6. /services/example-service/shop/layout.tsx
+7. /services/example-service/shop/data.ts
+8. /services/example-service/shop/product/route.tsx
 
-You may run `pnpm run create-plugin:dashboard` to generate the example routes.
+In `/app/routes/services` create a new folder to host your new service. Under
+each service, there should be one `config.tsx` file to configure **routes**,
+**dashboard**, and **sidebar** details.
 
-These actions will be done:
+For example:
 
-1. Generate example dashboard route
-2. Generate example dashboard sub route
-3. Generate papa config file for nav
-4. Generate example routes config
-5. Modify `/app/routes/papa/dashboard/routes.ts` file
+```ts
+// /app/routes/services
+import { index, route, type RouteConfig } from '@react-router/dev/routes'
 
-```tsx
-// /app/routes/plugins/example-plugin/routes.ts
-import { type RouteConfig } from '@react-router/dev/routes'
+import type { Service } from '../../papa/utils/get-service-configs'
 
-// This should be imported and used as `...customizedAdminRoutes` in `customizedRoutes` of `/app/routes/papa/dashboard/routes.ts`
-export const customizedAdminRoutes = [
-	// write your dashboard routes here, route should either:
-	// 1. relative path: `route('custom-route', './where/your/file.tsx')` , which will automatically render under `/dashboard/custom-route`.
-	// 2. direct path start with `/dashboard`: `route('/dashboard/custom-route', './where/your/file.tsx')`
-] satisfies RouteConfig
-```
-
-In `/app/routes/papa/dashboard/routes.ts` for example:
-
-```tsx
-// /app/routes/papa/dashboard/routes.ts
-import { customizedAdminRoutes } from '../../plugins/example-plugin/routes.ts'
-
-// Configure your customized routes here
-const customizedRoutes = [
-	// Add your customized routes here
-	...customizedAdminRoutes,
-] satisfies RouteConfig
-
-// ... other codes
-```
-
-### Advanced
-
-To add customized routes in this project, just defines a `routes.ts` in the
-top-level of your plugin folder. Defines with
-[React Router Routes](https://reactrouter.com/start/framework/routing)
-
-```tsx
-// /app/routes.ts
-import { route, type RouteConfig } from '@react-router/dev/routes'
-
-// 1. Define your routes
-const myRoutes = [
-	// route('the-parent', './path/to/route.tsx', [
-	//      // children routes will be rendered if parent route has <Outlet />
-	//      index('./path/to/index-route.tsx')
-	//      route('the-child', './path/to/child-route.tsx', [
-	//          // It is also able to add children in children
-	//      ])
-	// ])
-] satisfies RouteConfig
-
-// 2. Add it to default
-export default [...systemRoutes, ...myRoutes]
+export const config = {
+	dashboard: {
+		// The name displayed in the dropdown menu in `/dashboard`
+		name: 'Example Service',
+		logo: 'https://placecats.com/64/64',
+		url: '/dashboard/example-service', // dashboard route to your service
+		routes: [
+			route(
+				'/dashboard/example-service', // should be under `/dashboard` route, only given `example-service` as relative route will also work
+				'./routes/services/example-service/dashboard/layout.tsx',
+				[index('./routes/services/example-service/dashboard/index.tsx')],
+			),
+		],
+	},
+	// Routes independent from any route, but should be careful conflix with `/dashboard`
+	routes: [
+		route(
+			'/example-shop',
+			'./routes/services/example-service/shop/layout.tsx',
+			[
+				index('./routes/services/example-service/shop/index.tsx'),
+				route(
+					':productId',
+					'./routes/services/example-service/shop/product/route.tsx',
+				),
+			],
+		),
+	],
+} satisfies Service
 ```
 
 ## Action

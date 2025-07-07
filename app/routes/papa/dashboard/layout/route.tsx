@@ -1,10 +1,11 @@
 import type { Route } from './+types/route'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import {
 	isRouteErrorResponse,
 	Link,
 	Outlet,
 	redirect,
+	useLocation,
 	useRouteError,
 } from 'react-router'
 
@@ -12,13 +13,17 @@ import { Undo2 } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
-import { FullScreenLoader } from '~/components/loading'
-import { authClient } from '~/lib/auth/auth-client'
 import { statusCodeMap } from '~/lib/utils/status-code'
-import { getPluginConfigs } from '~/routes/plugins/utils/get-plugin-configs.server'
 
 import { validateAdminSession } from '../../auth/utils'
+import { getServiceDashboardConfigs } from '../../utils/get-service-configs'
+import type { ServiceDashboardConfig } from '../components/service-swicher'
 import { DashboardSidebar } from './components/dashboard-sidebar'
+import {
+	DEFAULT_MAIN_NAV_ITEMS,
+	DEFAULT_SECONDARY_NAV_ITEMS,
+	DEFAULT_SERVICE,
+} from './components/data'
 import { HeaderWithBreadcrumbs } from './components/header-breadcrumbs'
 
 export const meta = ({ error }: Route.MetaArgs) => {
@@ -43,21 +48,17 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 		throw redirect('/dashboard/portal')
 	}
 
-	const pluginConfigs = await getPluginConfigs()
-	const pluginRoutes = pluginConfigs
-		.flatMap(config => config.dashboardRoutes)
-		.filter(routeItem => !!routeItem)
-
 	return {
 		admin: usesrSession.user,
-		pluginRoutes: pluginRoutes,
 	}
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
-	const { admin, pluginRoutes } = loaderData
-	const { isPending } = authClient.useSession()
-	const [isMounted, setIsMounted] = useState(false)
+	const { admin } = loaderData
+	const location = useLocation()
+	const [isDashboard, setIsDashboard] = useState(true)
+	const [currentService, setCurrentService] =
+		useState<ServiceDashboardConfig>(DEFAULT_SERVICE)
 
 	const memoizedUser = useMemo(
 		() => ({
@@ -69,20 +70,48 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 		[admin],
 	)
 
-	const memoizedPluginRoutes = useMemo(() => pluginRoutes, [pluginRoutes])
+	const serviceDashboardConfigs = useMemo(
+		() => getServiceDashboardConfigs(),
+		[],
+	)
 
-	useEffect(() => {
-		setIsMounted(true)
-	}, [])
+	const availableServices = useMemo(() => {
+		const services: ServiceDashboardConfig[] = [
+			DEFAULT_SERVICE,
+			...serviceDashboardConfigs,
+		]
+		return services
+	}, [serviceDashboardConfigs])
+
+	const currentSidebarItems = useMemo(() => {
+		const currentService = serviceDashboardConfigs.find(service =>
+			location.pathname.startsWith(service.pathname),
+		)
+
+		if (currentService?.sidebar) {
+			setIsDashboard(false)
+			setCurrentService(currentService)
+			return currentService.sidebar
+		}
+
+		setIsDashboard(true)
+		setCurrentService(DEFAULT_SERVICE)
+		return DEFAULT_MAIN_NAV_ITEMS
+	}, [location.pathname, serviceDashboardConfigs])
 
 	return (
-		<SidebarProvider className="">
+		<SidebarProvider>
 			<MemoDashboardSidebar
 				user={memoizedUser}
-				pluginRoutes={memoizedPluginRoutes}
+				services={availableServices}
+				currentService={currentService}
+				mainNavItems={currentSidebarItems}
+				secondaryNavItems={
+					isDashboard ? DEFAULT_SECONDARY_NAV_ITEMS : undefined
+				}
 			/>
+
 			<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
-				{isMounted && isPending && <FullScreenLoader />}
 				<MemoHeaderWithBreadcrumb />
 
 				<Outlet />

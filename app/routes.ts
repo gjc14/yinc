@@ -1,6 +1,7 @@
 import { route, type RouteConfig } from '@react-router/dev/routes'
 
 import { dashboardPage } from './routes/papa/dashboard/routes'
+import { servicesRoutes } from './routes/papa/utils/get-service-configs'
 import { webPage } from './routes/web/routes'
 
 const systemRoutes = [
@@ -21,7 +22,9 @@ const systemRoutes = [
 	// SEO
 	route('/robots.txt', './routes/_robots.txt.ts'),
 	route('/sitemap.xml', './routes/_sitemap.xml.ts'),
+
+	// Service routes (dynamically loaded)
+	...servicesRoutes(),
 ] satisfies RouteConfig
 
 export default [...systemRoutes]
-// export default [...systemRoutes, ...otherPluginRoutes]

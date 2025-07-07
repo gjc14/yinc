@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 
 import { DashboardIcon } from '@radix-ui/react-icons'
-import { ChevronUp, HelpCircle, Loader, LogOut, PanelTop } from 'lucide-react'
+import { ChevronUp, HelpCircle, LogOut, PanelTop } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -16,15 +16,7 @@ import { authClient } from '~/lib/auth/auth-client'
 
 export function FloatingToolkit() {
 	const navigate = useNavigate()
-	const { data, isPending } = authClient.useSession()
-
-	if (isPending) {
-		return (
-			<div className="fixed bottom-6 right-6 z-99999 flex items-center justify-center w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-lg">
-				<Loader className="size-8 animate-spin text-white dark:text-black" />
-			</div>
-		)
-	}
+	const { data } = authClient.useSession()
 
 	if (data?.user.role === 'admin') {
 		return (
