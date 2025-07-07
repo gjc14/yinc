@@ -12,6 +12,7 @@
 		"init": "tsx scripts/init.ts && pnpm run db:push && tsx scripts/init-object-storage.ts && tsx scripts/init-admin.ts && tsx scripts/init-fin.ts && pnpm run dev",
 		"format": "prettier --write .",
 		"add:service": "tsx scripts/add-service.ts",
+		"add:website": "tsx scripts/add-website.ts",
 		"db:push": "pnpm exec drizzle-kit push",
 		"auth:generate": "pnpm exec @better-auth/cli generate --config app/lib/auth/auth.server.ts --output app/lib/db/schema/auth.ts",
 		"convert:logo": "cd ./public && bash -c 'for size in 512 300 100 32; do ffmpeg -i logo.png -vf scale=$size:-1 logo-$size.png; done'",
