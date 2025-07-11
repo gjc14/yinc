@@ -5,15 +5,14 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
-
-import type { PostLoaderType } from '../route'
+import type { PostWithRelations } from '~/lib/db/post.server'
 
 export const PostFooter = ({
 	post,
 	prev,
 	next,
 }: {
-	post: PostLoaderType['post']
+	post: PostWithRelations
 	prev: { title: string; slug: string } | null
 	next: { title: string; slug: string } | null
 }) => {
@@ -28,7 +27,7 @@ export const PostFooter = ({
 						<li key={tag.id}>
 							<Badge
 								className="px-2.5 py-1 rounded-full md:text-sm cursor-pointer"
-								onClick={() => navigate(`/blog/tag?q=${tag.slug}`)}
+								onClick={() => navigate(`/blog?tag=${tag.slug}`)}
 							>
 								{tag.name}
 							</Badge>

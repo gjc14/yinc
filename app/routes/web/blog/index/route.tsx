@@ -1,61 +1,24 @@
-import {
-	useLoaderData,
-	type ClientLoaderFunctionArgs,
-	type LoaderFunctionArgs,
-	type MetaFunction,
-} from 'react-router'
-
-import { getPosts } from '~/lib/db/post.server'
-import { getSEO } from '~/lib/db/seo.server'
-import { createMeta } from '~/lib/utils/seo'
+import type { Route } from './+types/route'
 
 import { SectionWrapper } from '../components/max-width-wrapper'
 import { PostCollection } from '../components/posts'
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data || !data.meta) {
-		return []
-	}
+export default function Index({ matches }: Route.ComponentProps) {
+	const { meta, posts, categoriesFilter, tagsFilter } = matches[2].data
 
-	return data.meta.metaTags
-}
-
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-	const { seo } = await getSEO(new URL(request.url).pathname)
-	const meta = seo ? createMeta(seo, new URL(request.url)) : null
-
-	try {
-		const { posts } = await getPosts({ status: 'PUBLISHED' })
-		return { meta, posts }
-	} catch (error) {
-		console.error(error)
-		return { meta, posts: [] }
-	}
-}
-
-let cache: Awaited<ReturnType<typeof loader>>
-export const clientLoader = async ({
-	serverLoader,
-}: ClientLoaderFunctionArgs) => {
-	if (cache) {
-		return cache
-	}
-
-	cache = await serverLoader()
-	return cache
-}
-
-clientLoader.hydrate = true
-
-export default function Index() {
-	const { meta, posts } = useLoaderData<typeof loader>()
+	const isCategoryFiltering = categoriesFilter && categoriesFilter.length > 0
+	const isTagFiltering = tagsFilter && tagsFilter.length > 0
+	const title =
+		isCategoryFiltering || isTagFiltering
+			? `Blog - Filtered by ${isCategoryFiltering ? `category: ${categoriesFilter.map(cat => cat.name).join(', ')}` : ''}${isTagFiltering ? ` & tag: ${tagsFilter.map(tag => tag.name).join(', ')}` : ''}`
+			: 'Blog - All Posts'
 
 	return (
 		<>
 			<h1 className="visually-hidden">{meta?.seo.metaTitle}</h1>
 			<SectionWrapper className="mt-28">
 				<PostCollection
-					title="All posts"
+					title={title}
 					posts={posts.map(post => {
 						return {
 							...post,

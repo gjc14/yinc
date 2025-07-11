@@ -1,98 +1,48 @@
 import 'highlight.js/styles/base16/atelier-dune.min.css'
 
+import type { Route } from './+types/route'
 import { useEffect } from 'react'
-import {
-	useLoaderData,
-	type ClientLoaderFunctionArgs,
-	type LoaderFunctionArgs,
-	type MetaFunction,
-} from 'react-router'
 
 import { common, createLowlight } from 'lowlight'
-
-import { getPostBySlug } from '~/lib/db/post.server'
-import { getSEO } from '~/lib/db/seo.server'
-import { createMeta } from '~/lib/utils/seo'
-import { validateAdminSession } from '~/routes/papa/auth/utils'
 
 import { MainPost } from './components/main-post'
 import { PostFooter } from './components/post-footer'
 import { hilightInnerHTML } from './highlight-inner-html'
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data || !data.meta) {
-		return []
-	}
+// export type PostLoaderType = Awaited<ReturnType<typeof loader>>
 
-	return data.meta.metaTags
-}
-
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-	const { seo } = await getSEO(new URL(request.url).pathname)
-	const meta = seo ? createMeta(seo, new URL(request.url)) : null
-
-	if (!params.postSlug) {
-		throw new Response('', { status: 404 })
-	}
-
-	const { searchParams } = new URL(request.url)
-	const preview = searchParams.get('preview')
-
-	if (preview) {
-		await validateAdminSession(request)
-	}
-
-	try {
-		const { post, prevPost, nextPost } = await getPostBySlug(params.postSlug)
-		if (!post || (!preview && post.status !== 'PUBLISHED')) {
-			throw new Response('', { status: 404 })
-		}
-		return { post, prevPost, nextPost, meta }
-	} catch (error) {
-		console.error(error)
-		throw new Response('', { status: 404 })
-	}
-}
-
-export type PostLoaderType = Awaited<ReturnType<typeof loader>>
-
-let cache: Record<string, Awaited<ReturnType<typeof loader>> | undefined> = {}
-export const clientLoader = async ({
-	serverLoader,
-	params,
-}: ClientLoaderFunctionArgs) => {
-	const postSlug = params.postSlug
-	if (!postSlug) throw new Response('', { status: 404 })
-
-	const cachedPost = cache[postSlug]
-
-	if (cache && cachedPost) {
-		return cachedPost
-	}
-
-	const postData = await serverLoader<typeof loader>()
-	cache = { ...cache, [postSlug]: postData }
-	return postData
-}
-
-clientLoader.hydrate = true
-
-export default function BlogPost() {
-	const { post, prevPost, nextPost } = useLoaderData<typeof loader>()
+export default function BlogPost({ matches, params }: Route.ComponentProps) {
+	const { posts } = matches[2].data
 	const lowlight = createLowlight(common)
 	const languages = lowlight.listLanguages()
+
+	const currentPostIndex = posts.findIndex(
+		post => post.slug === params.postSlug,
+	)
+	const currentPost = currentPostIndex !== -1 ? posts[currentPostIndex] : null
+	const nextPost =
+		currentPostIndex < posts.length - 1 ? posts[currentPostIndex + 1] : null
+	const prevPost = currentPostIndex > 0 ? posts[currentPostIndex - 1] : null
 
 	useEffect(() => {
 		document.querySelectorAll('pre code').forEach(block => {
 			hilightInnerHTML(block, lowlight, languages)
 		})
-	}, [post])
+	}, [currentPost])
+
+	if (!currentPost) {
+		return (
+			<div className="w-full max-w-prose min-h-svh px-5 mt-32 xl:px-0">
+				<h1 className="text-3xl font-bold">Post not found</h1>
+			</div>
+		)
+	}
 
 	return (
 		<div className="w-full max-w-prose min-h-svh px-5 mt-32 xl:px-0">
-			<MainPost post={post} />
+			<MainPost post={currentPost} />
 
-			<PostFooter post={post} next={nextPost} prev={prevPost} />
+			<PostFooter post={currentPost} next={nextPost} prev={prevPost} />
 		</div>
 	)
 }

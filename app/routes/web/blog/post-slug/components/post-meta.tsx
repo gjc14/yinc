@@ -8,10 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
+import type { PostWithRelations } from '~/lib/db/post.server'
 
-import type { PostLoaderType } from '../route'
-
-export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
+export function PostMeta({ post }: { post: PostWithRelations }) {
 	return (
 		<div className="w-full mx-auto py-2">
 			<div className="flex items-center justify-between">
@@ -58,11 +57,9 @@ export function PostMeta({ post }: { post: PostLoaderType['post'] }) {
 						<div className="mr-auto">
 							{post.categories.map((c, i) => (
 								<Fragment key={i}>
-									<Link to={`/blog/category?q=${c.slug}`}>
-										<Button variant={'link'} className="h-fit p-0">
-											{c.name}
-										</Button>
-									</Link>
+									<Button variant={'link'} className="h-fit p-0" asChild>
+										<Link to={`/blog?category=${c.slug}`}>{c.name}</Link>
+									</Button>
 									{i < post.categories.length - 1 && (
 										<span className="px-1.5">&</span>
 									)}

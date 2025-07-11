@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
 import { ExternalLink } from 'lucide-react'
@@ -115,6 +115,7 @@ export const columns: ColumnDef<PostWithRelations>[] = [
 			const title = row.original.title
 			const url = `/blog/${row.original.slug}`
 			const excerpt = row.original.excerpt
+			const { search } = useLocation()
 
 			const author =
 				row.original.author?.name ?? row.original.author?.email ?? 'P'
@@ -122,7 +123,7 @@ export const columns: ColumnDef<PostWithRelations>[] = [
 			return (
 				<div className="mx-2 my-3 flex flex-col">
 					<h2 className="text-2xl">
-						<Link to={url}>{title}</Link>
+						<Link to={url + search}>{title}</Link>
 					</h2>
 					<p className="mt-1 text-base text-muted-foreground">{excerpt}</p>
 
