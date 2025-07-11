@@ -4,7 +4,10 @@
  */
 import type { LoaderFunctionArgs } from 'react-router'
 
-import { toXmlUrlTagss } from '../papa/utils/to-xml-url-tags'
+import { db } from '~/lib/db/db.server'
+
+import { getWebFallbackRoutes } from '../papa/utils/get-service-configs'
+import { toXmlUrlTagss, type SitemapURL } from '../papa/utils/to-xml-url-tags'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const origin = new URL(request.url).origin
@@ -14,6 +17,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			loc: origin,
 			lastmod: new Date(),
 		},
+		...(await getBlogSitemapUrls(origin)),
 	])
 
 	try {
@@ -37,4 +41,32 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		console.error('Error generating sitemap:', e)
 		throw new Response('', { status: 500 })
 	}
+}
+
+async function getBlogSitemapUrls(origin: string): Promise<SitemapURL[]> {
+	const urls: SitemapURL[] = []
+
+	const { shouldIncludeBlog } = getWebFallbackRoutes()
+
+	if (shouldIncludeBlog) {
+		const posts = await db.query.postsTable.findMany({
+			where(fields, { eq }) {
+				return eq(fields.status, 'PUBLISHED')
+			},
+			columns: {
+				slug: true,
+				updatedAt: true,
+			},
+		})
+
+		urls.push({ loc: `${origin}/blog`, lastmod: new Date() })
+		for (const post of posts) {
+			urls.push({
+				loc: `${origin}/blog/${post.slug}`,
+				lastmod: post.updatedAt,
+			})
+		}
+	}
+
+	return urls
 }
