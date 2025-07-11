@@ -7,15 +7,16 @@ import type { LoaderFunctionArgs } from 'react-router'
 export const loader = ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url)
 	const robotText = `
-        User-agent: Googlebot
-        Disallow: /nogooglebot/
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /auth/
 
-        User-agent: *
-        Allow: /
+Crawl-delay: 30
 
-        Sitemap: ${url.origin}/sitemap.xml`
-		.replace(/^[ \t]+(?=\S)/gm, '')
-		.trim()
+Sitemap: ${url.origin}/sitemap.xml
+`.trim()
 
 	return new Response(robotText, {
 		status: 200,
