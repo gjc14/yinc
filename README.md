@@ -250,11 +250,9 @@ ffmpeg -i logo.png -vf "scale=32:32:force_original_aspect_ratio=decrease,pad=32:
 
 # Documentation
 
-## Routes
+## Service
 
 **Config files:**
-
-### Route
 
 Run `pnpm run generate:service` to generate example routes, including
 independent routes and those under dashboard.
@@ -286,6 +284,7 @@ export const config = {
 	dashboard: {
 		// The name displayed in the dropdown menu in `/dashboard`
 		name: 'Example Service',
+		description: 'This is an example service for demonstration purposes.',
 		logo: 'https://placecats.com/64/64',
 		url: '/dashboard/example-service', // dashboard route to your service
 		routes: [
