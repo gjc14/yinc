@@ -10,6 +10,7 @@ import type { Service } from '../../papa/utils/get-service-configs'
 export const config = {
 	dashboard: {
 		name: 'Example Service',
+		description: 'This is an example service for demonstration purposes.',
 		logo: Command,
 		pathname: '/dashboard/example-service',
 		routes: [

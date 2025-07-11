@@ -46,6 +46,10 @@ export interface ServiceDashboardConfig {
 	 * The URL path for the service, e.g., '/my-service'
 	 */
 	pathname: string
+	/**
+	 * Optional description of the service.
+	 */
+	description?: string
 }
 
 export function ServiceSwitcher({

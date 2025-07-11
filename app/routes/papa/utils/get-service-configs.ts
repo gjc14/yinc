@@ -123,6 +123,10 @@ const parseDashboardConfigs = (
 		throw new Error('Invalid config name, expected a string')
 	}
 
+	if (config.description && typeof config.description !== 'string') {
+		throw new Error('Invalid config description, expected a string')
+	}
+
 	if (typeof config.logo !== 'string' && !config.logo) {
 		throw new Error(
 			'Invalid config logo, expected a string or a React ElementType',
@@ -146,6 +150,7 @@ const parseDashboardConfigs = (
 
 	return {
 		name: config.name,
+		description: config.description,
 		logo: config.logo,
 		pathname: config.pathname,
 		sidebar: config.sidebar,
