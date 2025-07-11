@@ -104,7 +104,20 @@ const getServiceRoutesModules = () => {
 		import: 'config', // Import the named export 'config'
 	}) as Record<string, Service>
 
-	return modules
+	// Filter out undefined modules (files that don't have proper config export)
+	const validModules: Record<string, Service> = {}
+
+	for (const [path, module] of Object.entries(modules)) {
+		if (module !== undefined && module !== null) {
+			validModules[path] = module
+		} else {
+			console.warn(
+				`Skipping invalid service config at ${path}: config export is undefined`,
+			)
+		}
+	}
+
+	return validModules
 }
 
 /**
