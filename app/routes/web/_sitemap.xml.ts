@@ -4,7 +4,7 @@
  */
 import type { LoaderFunctionArgs } from 'react-router'
 
-import { toXmlUrlTagss } from './papa/utils/to-xml-url-tags'
+import { toXmlUrlTagss } from '../papa/utils/to-xml-url-tags'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const origin = new URL(request.url).origin

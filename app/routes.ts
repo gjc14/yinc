@@ -5,7 +5,13 @@ import {
 	getWebFallbackRoutes,
 	servicesRoutes,
 } from './routes/papa/utils/get-service-configs'
-import { blogRoute, indexRoute, splatRoute } from './routes/web/papa.routes'
+import {
+	blogRoute,
+	indexRoute,
+	robotsRoute,
+	sitemapRoute,
+	splatRoute,
+} from './routes/web/papa.routes'
 
 // Check what web routes need fallbacks
 const webFallbacks = getWebFallbackRoutes()
@@ -25,6 +31,14 @@ if (webFallbacks.shouldIncludeSplat) {
 	webRoutes.push(splatRoute())
 }
 
+if (webFallbacks.shouldIncludeRobots) {
+	webRoutes.push(robotsRoute())
+}
+
+if (webFallbacks.shouldIncludeSitemap) {
+	webRoutes.push(sitemapRoute())
+}
+
 export default [
 	// Only add layout with web routes if we have any fallback routes needed
 	...(webRoutes.length > 0
@@ -42,10 +56,6 @@ export default [
 
 	// Dashboard route
 	...dashboardPage(),
-
-	// SEO
-	route('/robots.txt', './routes/_robots.txt.ts'),
-	route('/sitemap.xml', './routes/_sitemap.xml.ts'),
 
 	// Service routes (dynamically loaded)
 	...servicesRoutes(),

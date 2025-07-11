@@ -262,6 +262,11 @@ const isWebFallbackRoute = (routePath: string): boolean => {
 		return true
 	}
 
+	// Check for SEO specific routes
+	if (normalizedPath === 'robots.txt' || normalizedPath === 'sitemap.xml') {
+		return true
+	}
+
 	return false
 }
 
@@ -303,12 +308,14 @@ const extractRoutePaths = (routes: RouteConfig): string[] => {
 /**
  * Check if services have defined web fallback routes (index, blog, splat)
  */
-export const hasServiceWebRoutes = () => {
+export const hasWebRoutes = () => {
 	const modules = getServiceRoutesModules()
 	const webRouteTypes = {
 		hasIndex: false,
 		hasBlog: false,
 		hasSplat: false,
+		hasRobots: false,
+		hasSitemap: false,
 	}
 
 	for (const [, service] of Object.entries(modules)) {
@@ -330,10 +337,16 @@ export const hasServiceWebRoutes = () => {
 					webRouteTypes.hasBlog = true
 				} else if (normalizedPath.includes('*') || normalizedPath === '$') {
 					webRouteTypes.hasSplat = true
+				} else if (normalizedPath === 'robots.txt') {
+					webRouteTypes.hasRobots = true
+				} else if (normalizedPath === 'sitemap.xml') {
+					webRouteTypes.hasSitemap = true
 				}
 			}
 		}
 	}
+
+	console.log(`Web route types: ${JSON.stringify(webRouteTypes, null, 2)}`)
 
 	return webRouteTypes
 }
@@ -344,12 +357,14 @@ export const hasServiceWebRoutes = () => {
  * by services and returns the appropriate fallback routes
  */
 export const getWebFallbackRoutes = () => {
-	const webRouteStatus = hasServiceWebRoutes()
+	const webRouteStatus = hasWebRoutes()
 
 	return {
 		shouldIncludeIndex: !webRouteStatus.hasIndex,
 		shouldIncludeBlog: !webRouteStatus.hasBlog,
 		shouldIncludeSplat: !webRouteStatus.hasSplat,
+		shouldIncludeRobots: !webRouteStatus.hasRobots,
+		shouldIncludeSitemap: !webRouteStatus.hasSitemap,
 		status: webRouteStatus,
 	}
 }
