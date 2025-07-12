@@ -15,7 +15,10 @@ if (!process.env.DATABASE_URL) {
 	throw new Error('DATABASE_URL is not defined')
 }
 
-export const db = drizzle(process.env.DATABASE_URL, { schema })
+export const db = drizzle(process.env.DATABASE_URL, {
+	schema,
+	casing: 'snake_case',
+})
 
 export type TransactionType = Parameters<
 	Parameters<(typeof db)['transaction']>[0]

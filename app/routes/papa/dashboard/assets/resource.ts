@@ -7,14 +7,14 @@ import { z } from 'zod'
 import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { db, S3 } from '~/lib/db/db.server'
 import type { FileMetadata } from '~/lib/db/schema'
-import { filesTable } from '~/lib/db/schema'
+import { file as fileTable } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
 import { presignUrlRequestSchema, type PresignResponse } from './schema'
 
-const fileMetadataInsertUpdateSchema = createInsertSchema(filesTable)
+const fileMetadataInsertUpdateSchema = createInsertSchema(fileTable)
 	.required({
 		id: true,
 	})
@@ -58,7 +58,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 				// Store file metadata in DB
 				const fileMetadatas = await db
-					.insert(filesTable)
+					.insert(fileTable)
 					.values(
 						presignUrlRequests.map(
 							file =>
@@ -68,7 +68,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 									size: file.size,
 									name: file.filename,
 									ownerId: adminSession.user.id,
-								}) satisfies typeof filesTable.$inferInsert,
+								}) satisfies typeof fileTable.$inferInsert,
 						),
 					)
 					.returning()
@@ -100,12 +100,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				const fileMetadata = fileMetadataInsertUpdateSchema.parse(jsonData)
 
 				const [newFileMetadata] = await db
-					.update(filesTable)
+					.update(fileTable)
 					.set({
 						name: fileMetadata.name,
 						description: fileMetadata.description,
 					})
-					.where(eq(filesTable.id, fileMetadata.id))
+					.where(eq(fileTable.id, fileMetadata.id))
 					.returning()
 				return {
 					msg: 'File updated',
@@ -123,7 +123,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					'key' in jsonData &&
 					typeof jsonData.key === 'string'
 				) {
-					const fileMetadata = await db.query.filesTable.findFirst({
+					const fileMetadata = await db.query.file.findFirst({
 						where: (t, { eq }) => eq(t.key, jsonData.key),
 					})
 
@@ -137,11 +137,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					await deleteFile(jsonData.key)
 
 					await db
-						.delete(filesTable)
+						.delete(fileTable)
 						.where(
 							and(
-								eq(filesTable.key, jsonData.key),
-								eq(filesTable.ownerId, adminSession.user.id),
+								eq(fileTable.key, jsonData.key),
+								eq(fileTable.ownerId, adminSession.user.id),
 							),
 						)
 
@@ -172,7 +172,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			origin: request.url,
 		}
 
-	const fileMetadata = await db.query.filesTable.findMany({
+	const fileMetadata = await db.query.file.findMany({
 		where: (t, { eq }) => eq(t.ownerId, adminSession.user.id),
 	})
 

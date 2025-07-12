@@ -1,4 +1,8 @@
-import { timestamp } from 'drizzle-orm/pg-core'
+import { pgSchema, timestamp } from 'drizzle-orm/pg-core'
+
+export const papaSchema = pgSchema('papa')
+export const pgTable = papaSchema.table
+export const pgEnum = papaSchema.enum
 
 export const timestampAttribute = {
 	timestamp: timestamp({ withTimezone: true }).notNull().defaultNow(),

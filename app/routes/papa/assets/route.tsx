@@ -41,7 +41,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	} else {
 		console.log(`asset ${assetId} from database`)
 		metadata =
-			(await db.query.filesTable.findFirst({
+			(await db.query.file.findFirst({
 				where: (t, { eq, and }) => and(eq(t.id, assetId)),
 				columns: {
 					key: true,

@@ -9,20 +9,20 @@ import {
 	updatePost,
 	type PostWithRelations,
 } from '~/lib/db/post.server'
-import { categoriesTable, postsTable, tagsTable } from '~/lib/db/schema'
+import { category, post, tag } from '~/lib/db/schema'
 import { type ConventionalActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
 
 /**
- * createInsertSchema(postsTable) is used for create and update
+ * createInsertSchema(post) is used for create and update
  * Because the updatePost() also requires complete date to update
  */
-const postInsertUpdateSchema = createInsertSchema(postsTable)
+const postInsertUpdateSchema = createInsertSchema(post)
 const taxonomyInsertUpdateSchema = z.object({
-	tags: createSelectSchema(tagsTable).array(),
-	categories: createSelectSchema(categoriesTable).array(),
+	tags: createSelectSchema(tag).array(),
+	categories: createSelectSchema(category).array(),
 })
 const seoInsertUpdateSchema = z.object({
 	seo: z.object({

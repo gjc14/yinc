@@ -1,20 +1,13 @@
 import { relations, type InferSelectModel } from 'drizzle-orm'
-import {
-	index,
-	integer,
-	pgTable,
-	text,
-	uuid,
-	varchar,
-} from 'drizzle-orm/pg-core'
+import { index, integer, text, uuid, varchar } from 'drizzle-orm/pg-core'
 
 import { user } from './auth'
-import { timestampAttributes } from './helpers'
+import { pgTable, timestampAttributes } from './helpers'
 
-export type FileMetadata = InferSelectModel<typeof filesTable>
+export type FileMetadata = InferSelectModel<typeof file>
 
-export const filesTable = pgTable(
-	'files',
+export const file = pgTable(
+	'file',
 	{
 		id: uuid('id').defaultRandom().primaryKey(),
 		key: varchar('key', { length: 255 }).unique().notNull(),
@@ -33,14 +26,14 @@ export const filesTable = pgTable(
 		...timestampAttributes,
 	},
 	t => [
-		index('files_owner_id_idx').on(t.ownerId),
-		index('files_key_idx').on(t.key),
+		index('file_owner_id_idx').on(t.ownerId),
+		index('file_key_idx').on(t.key),
 	],
 )
 
-export const filesRelations = relations(filesTable, ({ one }) => ({
+export const filesRelations = relations(file, ({ one }) => ({
 	user: one(user, {
-		fields: [filesTable.ownerId],
+		fields: [file.ownerId],
 		references: [user.id],
 	}),
 }))

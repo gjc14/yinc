@@ -1,7 +1,7 @@
 import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-import { filesTable } from '~/lib/db/schema'
+import { file } from '~/lib/db/schema'
 
 // Request schemas
 const inputSchema = z.object({
@@ -14,7 +14,7 @@ const inputSchema = z.object({
 export const presignUrlRequestSchema = z.array(inputSchema)
 export type PresignRequest = z.infer<typeof presignUrlRequestSchema>
 
-const fileMetadataSchama = createSelectSchema(filesTable).extend({
+const fileMetadataSchama = createSelectSchema(file).extend({
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
 })

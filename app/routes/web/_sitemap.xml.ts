@@ -49,7 +49,7 @@ async function getBlogSitemapUrls(origin: string): Promise<SitemapURL[]> {
 	const { shouldIncludeBlog } = getWebFallbackRoutes()
 
 	if (shouldIncludeBlog) {
-		const posts = await db.query.postsTable.findMany({
+		const posts = await db.query.post.findMany({
 			where(fields, { eq }) {
 				return eq(fields.status, 'PUBLISHED')
 			},
