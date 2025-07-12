@@ -24,28 +24,48 @@ export const LINKS: { [key in SocialMedia]: Link } = {
 	github: {
 		title: 'Github',
 		icon: <GITHUB />,
-		link: 'https://github.com/gjc14/papa.git',
-		text: '@papa',
-	},
-
-	instagram: {
-		title: 'Instagram',
-		icon: <INSTAGRAM />,
-		link: 'https://www.instagram.com/papa.erp/',
-		text: '@papa.erp',
+		link: 'https://github.com/gjc14',
+		text: '@gjc14',
 	},
 
 	linkedin: {
 		title: 'Linkedin',
 		icon: <LINKEDIN />,
-		link: 'https://www.linkedin.com/in/papaerp/',
-		text: '@papa.erp',
+		link: 'https://www.linkedin.com/in/yinctw/',
+		text: '@yinctw',
 	},
+
+	instagram: {
+		title: 'Instagram',
+		icon: <INSTAGRAM />,
+		link: 'https://www.instagram.com/gnielcyc/',
+		text: '@gnielcyc',
+	},
+
+	// readcv: {
+	// 	title: 'Read CV',
+	// 	icon: <NotepadText className="w-full h-full" />, // Changed to ReadcvIcon
+	// 	link: '/cv/resume_chiu_yin_chen_dev.pdf',
+	// 	text: '@developer',
+	// },
+	// readcv2: {
+	// 	title: 'Read CV',
+	// 	icon: <NotepadText className="w-full h-full" />, // Changed to ReadcvIcon
+	// 	link: '/cv/resume_chiu_yin_chen_mngr.pdf',
+	// 	text: '@manager',
+	// },
 
 	blog: {
 		title: 'Blog',
 		icon: <PenBox className="h-full w-full" />, // Changed to BlogIcon
 		link: '/blog',
-		text: 'papa.erp',
+		text: 'yinc.me',
+	},
+
+	bubu: {
+		title: 'BUBU E-Scooter',
+		icon: <Plane className="h-full w-full" />, // Changed to BlogIcon
+		link: 'https://ridebubu.com',
+		text: '#share #nccu',
 	},
 }
