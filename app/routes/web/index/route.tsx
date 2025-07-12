@@ -11,28 +11,24 @@ export default function Index() {
 			<div className="mb-12 w-full xl:mb-0 xl:w-[500px]">
 				<img
 					className="border-border h-28 w-28 rounded-full border-2 object-contain xl:h-[184px] xl:w-[184px]"
-					src={'/logo.png'}
+					src={'https://avatars.githubusercontent.com/u/136115556?v=4&size=256'}
 					alt="profile picture"
 				/>
 
 				<div className="mt-8">
 					<h2 className="font-heading text-3xl sm:text-[44px]">
-						Papa Modern ERP
+						CHIU YIN CHEN
 					</h2>
 					<p className="font-base mt-6 text-base sm:text-xl">
-						PAPA is a modern, AI-native, customizable ERP system designed for
-						startups and SMEs across Asia-Pacific. Built in rigorous accounting
-						system, with table builder to design your own workflow. Checkout the
-						code in{' '}
+						Hi I'm Yin Chen, I build enterprise software for Asian SMEs.
+						Checkout my{' '}
 						<a
 							className="font-heading underline"
-							href="https://github.com/gjc14/papa.git"
-							target="_blank"
-							rel="noopener noreferrer"
+							href="https://github.com/gjc14"
 						>
 							GitHub
-						</a>
-						.
+						</a>{' '}
+						for more info.
 					</p>
 				</div>
 
