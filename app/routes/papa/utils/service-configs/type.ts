@@ -49,16 +49,27 @@ export interface Service {
 	 */
 	routes?: RouteConfig
 	/**
-	 * Sitemap URLs for the service, **please include relative path only**, origin will be provided
+	 * Sitemap URLs for the service, you may use url to **form absolute URLs**.
+	 *
+	 * If relative URLs are provided, they will be prefixed with the origin.
+	 *
 	 * @example
 	 * ```ts
-	 * sitemap: [
-	 * 	{
-	 * 		loc: '/new-shop',
-	 * 		lastmod: new Date(),
-	 * 		changefreq: 'daily',
-	 * 		priority: 0.8,
-	 * 	},
+	 * sitemap: url => [
+	 *		{
+	 *			loc: `${url.origin}/example-shop`,
+	 *			lastmod: new Date(),
+	 *			changefreq: 'daily',
+	 *			priority: 0.8,
+	 *		},
+	 *		{
+	 *			loc: '/example-shop/123',
+	 *			lastmod: new Date(),
+	 *			changefreq: 'weekly',
+	 *			priority: 0.5,
+	 *		},
+	 *	],
+	 *	```
 	 */
-	sitemap?: SitemapURL[]
+	sitemap?: ((url: URL) => SitemapURL[]) | SitemapURL[]
 }

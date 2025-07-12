@@ -53,6 +53,20 @@ export const config = {
 			],
 		),
 	],
+	sitemap: url => [
+		{
+			loc: \`\${url.origin}/example-shop\`,
+			lastmod: new Date(),
+			changefreq: 'daily',
+			priority: 0.8,
+		},
+		{
+			loc: '/example-shop/123',
+			lastmod: new Date(),
+			changefreq: 'weekly',
+			priority: 0.5,
+		},
+	],
 } satisfies Service
 `
 

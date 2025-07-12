@@ -132,7 +132,7 @@ export const getWebFallbackRoutes = () => {
 	}
 }
 
-export const getSitemapUrls = (): SitemapURL[] => {
+export const getSitemapUrls = (url: URL): SitemapURL[] => {
 	const modules = getServiceRoutesModules()
 	let urls: SitemapURL[] = []
 
@@ -148,7 +148,7 @@ export const getSitemapUrls = (): SitemapURL[] => {
 		try {
 			if (!service.sitemap) continue
 
-			urls = urls.concat(service.sitemap)
+			urls = urls.concat(service.sitemap(url))
 		} catch (error) {
 			console.error(`Failed to load sitemap config from ${path}:`, error)
 		}
