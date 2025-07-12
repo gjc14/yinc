@@ -1,4 +1,5 @@
 import type { RouteConfig } from '@react-router/dev/routes'
+import { index, layout, prefix, route } from '@react-router/dev/routes'
 
 import { getServiceRoutesModules } from './helpers'
 
@@ -70,7 +71,7 @@ const extractRoutePaths = (routes: RouteConfig): string[] => {
 /**
  * Check if services have defined web fallback routes (index, blog, splat)
  */
-export const hasWebRoutes = () => {
+const hasWebRoutes = () => {
 	const modules = getServiceRoutesModules()
 	const webRouteTypes = {
 		hasIndex: false,
@@ -83,7 +84,14 @@ export const hasWebRoutes = () => {
 	for (const [, service] of Object.entries(modules)) {
 		if (!service.routes) continue
 
-		const routePaths = extractRoutePaths(service.routes)
+		const routePaths = extractRoutePaths(
+			service.routes({
+				index,
+				layout,
+				prefix,
+				route,
+			}),
+		)
 		console.log(`Service routes: ${JSON.stringify(routePaths, null, 2)}`)
 
 		for (const path of routePaths) {
