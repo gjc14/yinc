@@ -21,7 +21,7 @@ export const tag = pgTable('tag', {
 	description: varchar('description', { length: 255 }),
 })
 
-export const tagsRelations = relations(tag, ({ many }) => ({
+export const tagRelations = relations(tag, ({ many }) => ({
 	postToTag: many(postToTag),
 }))
 
@@ -47,7 +47,7 @@ export const category = pgTable(
 	],
 )
 
-export const categoriesRelations = relations(category, ({ one, many }) => ({
+export const categoryRelations = relations(category, ({ one, many }) => ({
 	postToCategory: many(postToCategory),
 	parent: one(category, {
 		fields: [category.parentId],
@@ -63,7 +63,7 @@ export const categoriesRelations = relations(category, ({ one, many }) => ({
 
 // posts <-> tags
 
-export type PostsToTag = InferSelectModel<typeof postToTag>
+export type PostToTag = InferSelectModel<typeof postToTag>
 
 export const postToTag = pgTable(
 	'post_to_tag',
@@ -81,7 +81,7 @@ export const postToTag = pgTable(
 	],
 )
 
-export const postsToTagsRelations = relations(postToTag, ({ one }) => ({
+export const postToTagRelation = relations(postToTag, ({ one }) => ({
 	post: one(post, {
 		fields: [postToTag.postId],
 		references: [post.id],
@@ -112,16 +112,13 @@ export const postToCategory = pgTable(
 	],
 )
 
-export const postsToCategoriesRelations = relations(
-	postToCategory,
-	({ one }) => ({
-		post: one(post, {
-			fields: [postToCategory.postId],
-			references: [post.id],
-		}),
-		category: one(category, {
-			fields: [postToCategory.categoryId],
-			references: [category.id],
-		}),
+export const postToCategoryRelations = relations(postToCategory, ({ one }) => ({
+	post: one(post, {
+		fields: [postToCategory.postId],
+		references: [post.id],
 	}),
-)
+	category: one(category, {
+		fields: [postToCategory.categoryId],
+		references: [category.id],
+	}),
+}))

@@ -31,7 +31,7 @@ export const file = pgTable(
 	],
 )
 
-export const filesRelations = relations(file, ({ one }) => ({
+export const fileRelations = relations(file, ({ one }) => ({
 	user: one(user, {
 		fields: [file.ownerId],
 		references: [user.id],

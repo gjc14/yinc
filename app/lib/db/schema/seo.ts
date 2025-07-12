@@ -22,7 +22,7 @@ export const seo = pgTable('seo', {
 	...timestampAttributes,
 })
 
-export const seosRelations = relations(seo, ({ one }) => ({
+export const seoRelations = relations(seo, ({ one }) => ({
 	post: one(post, {
 		fields: [seo.postId],
 		references: [post.id],

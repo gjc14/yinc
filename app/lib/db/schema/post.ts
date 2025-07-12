@@ -33,7 +33,7 @@ export const post = pgTable('post', {
 	...timestampAttributes,
 })
 
-export const postsRelations = relations(post, ({ one, many }) => ({
+export const postRelations = relations(post, ({ one, many }) => ({
 	author: one(user, {
 		fields: [post.authorId],
 		references: [user.id],
