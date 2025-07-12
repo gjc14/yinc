@@ -4,11 +4,11 @@
  */
 import type { LoaderFunctionArgs } from 'react-router'
 
-import { db } from '~/lib/db/db.server'
+// import { db } from '~/lib/db/db.server'
 
 import {
 	getSitemapUrls,
-	getWebFallbackRoutes,
+	// getWebFallbackRoutes,
 } from '../papa/utils/service-configs'
 import { toXmlUrlTagss, type SitemapURL } from '../papa/utils/to-xml-url-tags'
 
@@ -28,7 +28,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			loc: url.loc.startsWith('/') ? `${origin}${url.loc}` : url.loc,
 			lastmod: url.lastmod ?? new Date(),
 		})),
-		...(await getBlogSitemapUrls(origin)),
+		// ...(await getBlogSitemapUrls(origin)),
 	])
 
 	try {
@@ -54,30 +54,30 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 }
 
-async function getBlogSitemapUrls(origin: string): Promise<SitemapURL[]> {
-	const urls: SitemapURL[] = []
+// async function getBlogSitemapUrls(origin: string): Promise<SitemapURL[]> {
+// 	const urls: SitemapURL[] = []
 
-	const { shouldIncludeBlog } = getWebFallbackRoutes()
+// 	const { shouldIncludeBlog } = getWebFallbackRoutes()
 
-	if (shouldIncludeBlog) {
-		const posts = await db.query.post.findMany({
-			where(fields, { eq }) {
-				return eq(fields.status, 'PUBLISHED')
-			},
-			columns: {
-				slug: true,
-				updatedAt: true,
-			},
-		})
+// 	if (shouldIncludeBlog) {
+// 		const posts = await db.query.post.findMany({
+// 			where(fields, { eq }) {
+// 				return eq(fields.status, 'PUBLISHED')
+// 			},
+// 			columns: {
+// 				slug: true,
+// 				updatedAt: true,
+// 			},
+// 		})
 
-		urls.push({ loc: `${origin}/blog`, lastmod: new Date() })
-		for (const post of posts) {
-			urls.push({
-				loc: `${origin}/blog/${post.slug}`,
-				lastmod: post.updatedAt,
-			})
-		}
-	}
+// 		urls.push({ loc: `${origin}/blog`, lastmod: new Date() })
+// 		for (const post of posts) {
+// 			urls.push({
+// 				loc: `${origin}/blog/${post.slug}`,
+// 				lastmod: post.updatedAt,
+// 			})
+// 		}
+// 	}
 
-	return urls
-}
+// 	return urls
+// }

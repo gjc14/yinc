@@ -59,6 +59,8 @@ export const toXmlUrlTagss = (urls: SitemapURL[]): string[] => {
             <url>
                 <loc>${url.loc}</loc>
                 ${url.lastmod ? `<lastmod>${url.lastmod.toISOString()}</lastmod>` : ''}
+				${url.changefreq ? `<changefreq>${url.changefreq}</changefreq>` : ''}
+				${url.priority ? `<priority>${url.priority}</priority>` : ''}
             </url>
         `
 			.trim()
