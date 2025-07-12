@@ -15,12 +15,18 @@ import { toXmlUrlTagss, type SitemapURL } from '../papa/utils/to-xml-url-tags'
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const origin = new URL(request.url).origin
 
+	const configRelativeUrls = getSitemapUrls()
+
 	const urlTags = toXmlUrlTagss([
 		{
 			loc: origin,
 			lastmod: new Date(),
 		},
-		...getSitemapUrls(),
+		...configRelativeUrls.map(url => ({
+			...url,
+			loc: `${origin}${url.loc}`,
+			lastmod: url.lastmod ?? new Date(),
+		})),
 		...(await getBlogSitemapUrls(origin)),
 	])
 

@@ -49,13 +49,12 @@ export interface Service {
 	 */
 	routes?: RouteConfig
 	/**
-	 * Sitemap URLs for the service, **please include origin in the loc**
+	 * Sitemap URLs for the service, **please include relative path only**, origin will be provided
 	 * @example
 	 * ```ts
-	 * const url = new URL('https://example.com')
 	 * sitemap: [
 	 * 	{
-	 * 		loc: url.origin + '/new-shop',
+	 * 		loc: '/new-shop',
 	 * 		lastmod: new Date(),
 	 * 		changefreq: 'daily',
 	 * 		priority: 0.8,
