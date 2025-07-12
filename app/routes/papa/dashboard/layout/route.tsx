@@ -16,7 +16,7 @@ import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
 import { statusCodeMap } from '~/lib/utils/status-code'
 
 import { validateAdminSession } from '../../auth/utils'
-import { getServiceDashboardConfigs } from '../../utils/get-service-configs'
+import { getServiceDashboardConfigs } from '../../utils/service-configs'
 import type { ServiceDashboardConfig } from '../components/service-swicher'
 import { DashboardSidebar } from './components/dashboard-sidebar'
 import {

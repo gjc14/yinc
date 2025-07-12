@@ -4,7 +4,7 @@ import { join } from 'path'
 const websiteServiceConfig = `
 import { index, route } from '@react-router/dev/routes'
 
-import type { Service } from '../../papa/utils/get-service-configs'
+import type { Service } from '../../papa/utils/service-configs'
 
 export const config = {
 	routes: [

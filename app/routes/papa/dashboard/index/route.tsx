@@ -14,8 +14,8 @@ import {
 	DashboardTitle,
 } from '~/routes/papa/dashboard/components/dashboard-wrapper'
 
-import { getServiceDashboardConfigs } from '../../utils/get-service-configs'
 import { renderServiceLogo } from '../../utils/render-service-logo'
+import { getServiceDashboardConfigs } from '../../utils/service-configs'
 
 export default function DashboardIndex() {
 	const services = getServiceDashboardConfigs()

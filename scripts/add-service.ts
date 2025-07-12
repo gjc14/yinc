@@ -5,7 +5,7 @@ const exampleServiceConfig = `
 import { index, route } from '@react-router/dev/routes'
 import { Apple, Command } from 'lucide-react'
 
-import type { Service } from '../../papa/utils/get-service-configs'
+import type { Service } from '../../papa/utils/service-configs'
 
 export const config = {
 	dashboard: {

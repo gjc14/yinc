@@ -4,7 +4,7 @@ import { dashboardPage } from './routes/papa/dashboard/routes'
 import {
 	getWebFallbackRoutes,
 	servicesRoutes,
-} from './routes/papa/utils/get-service-configs'
+} from './routes/papa/utils/service-configs'
 import {
 	blogRoute,
 	indexRoute,

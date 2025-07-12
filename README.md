@@ -278,7 +278,7 @@ For example:
 // /app/routes/services
 import { index, route, type RouteConfig } from '@react-router/dev/routes'
 
-import type { Service } from '../../papa/utils/get-service-configs'
+import type { Service } from '../../papa/utils/service-configs'
 
 export const config = {
 	dashboard: {
