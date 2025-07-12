@@ -155,8 +155,6 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 				editor={editor}
 				className={cn('grow cursor-text', props.editorContentClassName)}
 			/>
-
-			<footer className="flex pt-2 px-1 border-t" />
 		</div>
 	)
 })

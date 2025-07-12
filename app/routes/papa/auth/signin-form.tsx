@@ -46,13 +46,6 @@ export const SignInForm = () => {
 		}
 	}, [countDown])
 
-	// Auto signin when OTP is complete
-	useEffect(() => {
-		if (otp.length === otpLength && showOtpInput && !isSubmitting) {
-			handleSignIn()
-		}
-	}, [otp, showOtpInput, isSubmitting])
-
 	const handleSendOTP = async () => {
 		if (sendDisabled) return
 
@@ -170,6 +163,9 @@ export const SignInForm = () => {
 							pattern={REGEXP_ONLY_DIGITS}
 							value={otp}
 							onChange={value => setOtp(value)}
+							onComplete={() => {
+								handleSignIn()
+							}}
 						>
 							<InputOTPGroup>
 								<InputOTPSlot index={0} />

@@ -6,7 +6,7 @@ export default function Index() {
 		<div className="relative min-h-svh w-full flex flex-col lg:flex-row mx-auto p-8 xl:p-24 gap-12 xl:gap-28 bg-brand text-foreground overflow-auto">
 			<div className="mb-12 w-full xl:mb-0 xl:w-[500px]">
 				<img
-					className="border-border h-28 w-28 rounded-full border-2 xl:h-[184px] xl:w-[184px]"
+					className="border-border h-28 w-28 rounded-full border-2 object-contain xl:h-[184px] xl:w-[184px]"
 					src={'/logo.png'}
 					alt="profile picture"
 				/>

@@ -37,6 +37,7 @@ import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import { useDebounce } from '~/lib/utils/debounce'
 import { MainPost } from '~/routes/web/blog/post-slug/components/main-post'
+import { PostFooter } from '~/routes/web/blog/post-slug/components/post-footer'
 
 import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
 import { PostSettings } from './post-settings'
@@ -249,6 +250,8 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 							onSave={onSave}
 						/>
 					</MainPost>
+
+					<PostFooter post={postState} next={null} prev={null} />
 				</div>
 
 				{isMobile ? (
