@@ -254,8 +254,8 @@ ffmpeg -i logo.png -vf "scale=32:32:force_original_aspect_ratio=decrease,pad=32:
 
 **Config files:**
 
-Run `pnpm run generate:service` to generate example routes, including
-independent routes and those under dashboard.
+Run `pnpm run add:service` to generate example routes, including independent
+routes and those under dashboard.
 
 The following 8 files will be created:
 
@@ -274,7 +274,7 @@ each service, there should be one `config.tsx` file to configure **routes**,
 
 For example:
 
-```ts
+```tsx
 // /app/routes/services
 import { index, route, type RouteConfig } from '@react-router/dev/routes'
 
@@ -287,7 +287,7 @@ export const config = {
 		description: 'This is an example service for demonstration purposes.',
 		logo: 'https://placecats.com/64/64',
 		url: '/dashboard/example-service', // dashboard route to your service
-		routes: [
+		routes: ({ route, index }) => [
 			route(
 				'/dashboard/example-service', // should be under `/dashboard` route, only given `example-service` as relative route will also work
 				'./routes/services/example-service/dashboard/layout.tsx',
@@ -296,7 +296,7 @@ export const config = {
 		],
 	},
 	// Routes independent from any route, but should be careful conflix with `/dashboard`
-	routes: [
+	routes: ({ route, index }) => [
 		route(
 			'/example-shop',
 			'./routes/services/example-service/shop/layout.tsx',

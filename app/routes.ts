@@ -1,6 +1,6 @@
 import { layout, route, type RouteConfig } from '@react-router/dev/routes'
 
-import { dashboardPage } from './routes/papa/dashboard/routes'
+import { dashboardRoutes } from './routes/papa/dashboard/routes'
 import {
 	getWebFallbackRoutes,
 	servicesRoutes,
@@ -39,11 +39,12 @@ if (webFallbacks.shouldIncludeSitemap) {
 	webRoutes.push(sitemapRoute())
 }
 
+const webRoutesConfig =
+	webRoutes.length > 0 ? [layout('./routes/web/layout.tsx', webRoutes)] : []
+
 export default [
 	// Only add layout with web routes if we have any fallback routes needed
-	...(webRoutes.length > 0
-		? [layout('./routes/web/layout.tsx', webRoutes)]
-		: []),
+	...webRoutesConfig,
 
 	// Auth API
 	route('/api/auth/*', './routes/auth.ts'),
@@ -55,7 +56,7 @@ export default [
 	route('/dashboard/portal', './routes/papa/auth/portal.tsx'),
 
 	// Dashboard route
-	...dashboardPage(),
+	...dashboardRoutes(),
 
 	// Service routes (dynamically loaded)
 	...servicesRoutes(),

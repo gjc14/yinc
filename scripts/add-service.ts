@@ -2,7 +2,6 @@ import { mkdir, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 const exampleServiceConfig = `
-import { index, route } from '@react-router/dev/routes'
 import { Apple, Command } from 'lucide-react'
 
 import type { Service } from '../../papa/utils/service-configs'
@@ -13,7 +12,7 @@ export const config = {
 		description: 'This is an example service for demonstration purposes.',
 		logo: Command,
 		pathname: '/dashboard/example-service',
-		routes: [
+		routes: ({ route, index }) => [
 			route(
 				'example-service',
 				'./routes/services/example-service/dashboard/layout.tsx',
@@ -40,7 +39,7 @@ export const config = {
 			},
 		],
 	},
-	routes: [
+	routes: ({ route, index }) => [
 		route(
 			'/example-shop',
 			'./routes/services/example-service/shop/layout.tsx',

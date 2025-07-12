@@ -7,7 +7,7 @@ import {
 
 import { servicesDashboardRoutes } from '../utils/service-configs'
 
-export const dashboardPage = () =>
+export const dashboardRoutes = () =>
 	[
 		route('/dashboard', './routes/papa/dashboard/layout/route.tsx', [
 			index('./routes/papa/dashboard/index/route.tsx'),

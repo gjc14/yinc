@@ -1,4 +1,10 @@
-import type { RouteConfig } from '@react-router/dev/routes'
+import {
+	index,
+	layout,
+	prefix,
+	route,
+	type RouteConfig,
+} from '@react-router/dev/routes'
 
 import { getServiceRoutesModules } from './helpers'
 
@@ -13,8 +19,15 @@ export const servicesRoutes = () => {
 		try {
 			if (!service.routes) continue
 
-			if (Array.isArray(service.routes)) {
-				servicesRoutes.push(...service.routes)
+			const routes = service.routes({
+				index,
+				route,
+				prefix,
+				layout,
+			})
+
+			if (Array.isArray(routes)) {
+				servicesRoutes.push(...routes)
 			}
 		} catch (error) {
 			console.error(`Failed to load routes from ${path}:`, error)
@@ -33,10 +46,17 @@ export const servicesDashboardRoutes = () => {
 	 */
 	for (const [path, service] of Object.entries(modules)) {
 		try {
-			if (!service.dashboard) continue
+			if (!service.dashboard?.routes) continue
 
-			if (Array.isArray(service.dashboard.routes)) {
-				servicesRoutes.push(...service.dashboard.routes)
+			const routes = service.dashboard.routes({
+				index,
+				route,
+				prefix,
+				layout,
+			})
+
+			if (Array.isArray(routes)) {
+				servicesRoutes.push(...routes)
 			}
 		} catch (error) {
 			console.error(`Failed to load routes from ${path}:`, error)

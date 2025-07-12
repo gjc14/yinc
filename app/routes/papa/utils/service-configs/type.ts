@@ -1,9 +1,22 @@
-import type { RouteConfig } from '@react-router/dev/routes'
+import type {
+	index,
+	layout,
+	prefix,
+	route,
+	RouteConfig,
+} from '@react-router/dev/routes'
 
 import type { ServiceDashboardConfig } from '~/routes/papa/dashboard/components/service-swicher'
 
 import type { DashboardMenuItem } from '../../dashboard/layout/components/dashboard-sidebar/nav-menu'
 import type { SitemapURL } from '../to-xml-url-tags'
+
+type RouteHelper = {
+	index: typeof index
+	route: typeof route
+	layout: typeof layout
+	prefix: typeof prefix
+}
 
 export interface Service {
 	dashboard?: ServiceDashboardConfig & {
@@ -11,7 +24,7 @@ export interface Service {
 		 * Routes specific to the service dashboard
 		 * @example
 		 * ```
-		 * routes: [
+		 * routes: ({ route }) => [
 		 *   // Absolute path but under /dashboard
 		 *   route('/dashboard/your-service-dashboard', './routes/services/example/dashboard/route.tsx'),
 		 *
@@ -20,7 +33,7 @@ export interface Service {
 		 * ]
 		 * ```
 		 */
-		routes: RouteConfig
+		routes?: (helper: RouteHelper) => RouteConfig
 		/**
 		 * @example
 		 * ```ts
@@ -36,7 +49,7 @@ export interface Service {
 	 * Routes specific to the service
 	 * @example
 	 * ```
-	 * routes: [
+	 * routes: ({ route, index }) => [
 	 * 		route('/new-shop', './routes/services/new-service/shop/layout.tsx', [
 	 * 		index('./routes/services/new-service/shop/index.tsx'),
 	 * 		route(
@@ -47,7 +60,7 @@ export interface Service {
 	 * ]
 	 * ```
 	 */
-	routes?: RouteConfig
+	routes?: (helper: RouteHelper) => RouteConfig
 	/**
 	 * Sitemap URLs for the service, you may use url to **form absolute URLs**.
 	 *
