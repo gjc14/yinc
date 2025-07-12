@@ -6,7 +6,10 @@ import type { LoaderFunctionArgs } from 'react-router'
 
 import { db } from '~/lib/db/db.server'
 
-import { getWebFallbackRoutes } from '../papa/utils/service-configs'
+import {
+	getSitemapUrls,
+	getWebFallbackRoutes,
+} from '../papa/utils/service-configs'
 import { toXmlUrlTagss, type SitemapURL } from '../papa/utils/to-xml-url-tags'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -17,6 +20,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 			loc: origin,
 			lastmod: new Date(),
 		},
+		...getSitemapUrls(),
 		...(await getBlogSitemapUrls(origin)),
 	])
 

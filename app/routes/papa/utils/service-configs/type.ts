@@ -3,6 +3,7 @@ import type { RouteConfig } from '@react-router/dev/routes'
 import type { ServiceDashboardConfig } from '~/routes/papa/dashboard/components/service-swicher'
 
 import type { DashboardMenuItem } from '../../dashboard/layout/components/dashboard-sidebar/nav-menu'
+import type { SitemapURL } from '../to-xml-url-tags'
 
 export interface Service {
 	dashboard?: ServiceDashboardConfig & {
@@ -47,4 +48,18 @@ export interface Service {
 	 * ```
 	 */
 	routes?: RouteConfig
+	/**
+	 * Sitemap URLs for the service, **please include origin in the loc**
+	 * @example
+	 * ```ts
+	 * const url = new URL('https://example.com')
+	 * sitemap: [
+	 * 	{
+	 * 		loc: url.origin + '/new-shop',
+	 * 		lastmod: new Date(),
+	 * 		changefreq: 'daily',
+	 * 		priority: 0.8,
+	 * 	},
+	 */
+	sitemap?: SitemapURL[]
 }
