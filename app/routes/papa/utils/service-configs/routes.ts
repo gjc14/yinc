@@ -23,3 +23,25 @@ export const servicesRoutes = () => {
 
 	return servicesRoutes
 }
+
+export const servicesDashboardRoutes = () => {
+	const modules = getServiceRoutesModules()
+	const servicesRoutes: RouteConfig = []
+
+	/**
+	 * Automatically includes all service routes without manual imports
+	 */
+	for (const [path, service] of Object.entries(modules)) {
+		try {
+			if (!service.dashboard) continue
+
+			if (Array.isArray(service.dashboard.routes)) {
+				servicesRoutes.push(...service.dashboard.routes)
+			}
+		} catch (error) {
+			console.error(`Failed to load routes from ${path}:`, error)
+		}
+	}
+
+	return servicesRoutes
+}

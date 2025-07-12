@@ -1,5 +1,3 @@
-import type { RouteConfig } from '@react-router/dev/routes'
-
 import type { ServiceDashboardConfig } from '../../dashboard/components/service-swicher'
 import type { DashboardMenuItem } from '../../dashboard/layout/components/dashboard-sidebar/nav-menu'
 import { getServiceRoutesModules } from './helpers'
@@ -116,26 +114,4 @@ export const getServiceDashboardConfigs = () => {
 	}
 
 	return dashboardConfigs
-}
-
-export const servicesDashboardRoutes = () => {
-	const modules = getServiceRoutesModules()
-	const servicesRoutes: RouteConfig = []
-
-	/**
-	 * Automatically includes all service routes without manual imports
-	 */
-	for (const [path, service] of Object.entries(modules)) {
-		try {
-			if (!service.dashboard) continue
-
-			if (Array.isArray(service.dashboard.routes)) {
-				servicesRoutes.push(...service.dashboard.routes)
-			}
-		} catch (error) {
-			console.error(`Failed to load routes from ${path}:`, error)
-		}
-	}
-
-	return servicesRoutes
 }
