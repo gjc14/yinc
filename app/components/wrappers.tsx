@@ -14,7 +14,7 @@ export const MainWrapper = ({
 	return (
 		<main
 			className={cn(
-				'w-full h-full min-h-svh flex flex-col items-center',
+				'flex h-full min-h-svh w-full flex-col items-center',
 				className,
 			)}
 		>

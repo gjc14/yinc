@@ -22,11 +22,11 @@ export const PostFooter = ({
 		<footer className="py-9 md:py-12">
 			{/* Tags area */}
 			{post.tags.length > 0 && (
-				<ul className="flex flex-wrap items-center gap-1.5 my-8 md:my-12 md:gap-2">
+				<ul className="my-8 flex flex-wrap items-center gap-1.5 md:my-12 md:gap-2">
 					{post.tags.map(tag => (
 						<li key={tag.id}>
 							<Badge
-								className="px-2.5 py-1 rounded-full md:text-sm cursor-pointer"
+								className="cursor-pointer rounded-full px-2.5 py-1 md:text-sm"
 								onClick={() => navigate(`/blog?tag=${tag.slug}`)}
 							>
 								{tag.name}
@@ -39,17 +39,17 @@ export const PostFooter = ({
 			<Separator />
 
 			{/* Navigation area */}
-			<div className="grid grid-cols-2 gap-4 my-8">
+			<div className="my-8 grid grid-cols-2 gap-4">
 				{prev ? (
 					<Button
 						variant="ghost"
-						className="h-auto p-4 flex items-center justify-start gap-3 text-left group hover:bg-muted/50 transition-colors"
+						className="group hover:bg-muted/50 flex h-auto items-center justify-start gap-3 p-4 text-left transition-colors"
 						onClick={() => navigate(`/blog/${prev.slug}`)}
 					>
-						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
+						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 transition-transform group-hover:-translate-x-1" />
 						<div className="min-w-0 flex-1">
-							<div className="text-xs text-muted-foreground mb-1">Previous</div>
-							<p className="font-medium line-clamp-2 text-wrap">{prev.title}</p>
+							<div className="text-muted-foreground mb-1 text-xs">Previous</div>
+							<p className="line-clamp-2 font-medium text-wrap">{prev.title}</p>
 						</div>
 					</Button>
 				) : (
@@ -59,14 +59,14 @@ export const PostFooter = ({
 				{next ? (
 					<Button
 						variant="ghost"
-						className="whitespace-break-spaces  h-auto p-4 flex items-center justify-end gap-3 text-right group hover:bg-muted/50 transition-colors"
+						className="group hover:bg-muted/50 flex h-auto items-center justify-end gap-3 p-4 text-right whitespace-break-spaces transition-colors"
 						onClick={() => navigate(`/blog/${next.slug}`)}
 					>
 						<div className="min-w-0 flex-1 overflow-visible">
-							<div className="text-xs text-muted-foreground mb-1">Next</div>
-							<p className="font-medium line-clamp-2 text-wrap">{next.title}</p>
+							<div className="text-muted-foreground mb-1 text-xs">Next</div>
+							<p className="line-clamp-2 font-medium text-wrap">{next.title}</p>
 						</div>
-						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 rotate-180 group-hover:translate-x-1 transition-transform" />
+						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 rotate-180 transition-transform group-hover:translate-x-1" />
 					</Button>
 				) : (
 					<div />

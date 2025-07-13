@@ -14,14 +14,14 @@ export const LatestPosts = ({ posts }: { posts: PostWithRelations[] }) => {
 	return (
 		<div
 			id="latest-post"
-			className="mx-auto max-w-5xl px-5 py-8 text-primary md:px-9"
+			className="text-primary mx-auto max-w-5xl px-5 py-8 md:px-9"
 		>
-			<div className="flex flex-wrap justify-between items-end mb-12 gap-5">
+			<div className="mb-12 flex flex-wrap items-end justify-between gap-5">
 				<motion.h2
 					initial={{ y: 48, opacity: 0 }}
 					whileInView={{ y: 0, opacity: 1 }}
 					transition={{ ease: 'easeInOut', duration: 0.5 }}
-					className="text-4xl font-black uppercase text-primary"
+					className="text-primary text-4xl font-black uppercase"
 				>
 					Latest Posts
 				</motion.h2>
@@ -30,7 +30,7 @@ export const LatestPosts = ({ posts }: { posts: PostWithRelations[] }) => {
 						initial={{ y: 48, opacity: 0 }}
 						whileInView={{ y: 0, opacity: 1 }}
 						transition={{ ease: 'easeInOut', duration: 0.5 }}
-						className="flex items-center gap-1.5 underline-offset-4 cursor-pointer hover:underline"
+						className="flex cursor-pointer items-center gap-1.5 underline-offset-4 hover:underline"
 					>
 						See more posts
 						<ExternalLink size={16} />
@@ -53,14 +53,14 @@ export const PostCollection = ({
 	return (
 		<div
 			id="category-post"
-			className="mx-auto max-w-5xl px-5 py-8 text-primary md:px-9"
+			className="text-primary mx-auto max-w-5xl px-5 py-8 md:px-9"
 		>
-			<div className="flex flex-wrap justify-between items-end mb-12 gap-5">
+			<div className="mb-12 flex flex-wrap items-end justify-between gap-5">
 				<motion.h2
 					initial={{ y: 48, opacity: 0 }}
 					whileInView={{ y: 0, opacity: 1 }}
 					transition={{ ease: 'easeInOut', duration: 0.5 }}
-					className="text-4xl font-black uppercase text-primary"
+					className="text-primary text-4xl font-black uppercase"
 				>
 					{title}
 				</motion.h2>
@@ -125,11 +125,11 @@ export const columns: ColumnDef<PostWithRelations>[] = [
 					<h2 className="text-2xl">
 						<Link to={url + search}>{title}</Link>
 					</h2>
-					<p className="mt-1 text-base text-muted-foreground">{excerpt}</p>
+					<p className="text-muted-foreground mt-1 text-base">{excerpt}</p>
 
-					<div className="ml-1 pl-2 mt-3.5 md:mt-5 border-l-2 flex flex-col items-start justify-center gap-1">
-						<p className="text-sm text-muted-foreground">Written by {author}</p>
-						<p className="text-sm text-muted-foreground">
+					<div className="mt-3.5 ml-1 flex flex-col items-start justify-center gap-1 border-l-2 pl-2 md:mt-5">
+						<p className="text-muted-foreground text-sm">Written by {author}</p>
+						<p className="text-muted-foreground text-sm">
 							{updatedAt.toLocaleDateString('zh-TW')}
 						</p>
 					</div>

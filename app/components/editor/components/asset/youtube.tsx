@@ -4,7 +4,7 @@ const Youtube = () => {
 			role="img"
 			viewBox="0 0 24 24"
 			xmlns="http://www.w3.org/2000/svg"
-			className="w-3.5 h-3.5"
+			className="h-3.5 w-3.5"
 			fill="currentColor"
 		>
 			<title>YouTube</title>

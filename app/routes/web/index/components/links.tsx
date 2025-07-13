@@ -44,7 +44,7 @@ export const LINKS: { [key in SocialMedia]: Link } = {
 
 	blog: {
 		title: 'Blog',
-		icon: <PenBox className="w-full h-full" />, // Changed to BlogIcon
+		icon: <PenBox className="h-full w-full" />, // Changed to BlogIcon
 		link: '/blog',
 		text: 'papa.erp',
 	},

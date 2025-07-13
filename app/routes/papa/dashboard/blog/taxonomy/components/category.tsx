@@ -37,7 +37,7 @@ const CategoryComponent = ({
 	return (
 		<div
 			className={cn(
-				`flex justify-between items-center p-3 rounded-md bg-muted transition-colors`,
+				`bg-muted flex items-center justify-between rounded-md p-3 transition-colors`,
 				isDeleting ? 'opacity-50' : '',
 				cat._isPending ? 'cursor-not-allowed' : 'cursor-pointer',
 				selectedCategoryId === cat.id
@@ -48,7 +48,7 @@ const CategoryComponent = ({
 		>
 			<div className="font-medium">
 				{cat.name}
-				<p className="text-sm text-muted-foreground">
+				<p className="text-muted-foreground text-sm">
 					{cat.children?.length || 0} 個子類別
 				</p>
 			</div>
@@ -56,8 +56,8 @@ const CategoryComponent = ({
 				className={
 					'h-5 w-5' +
 					(isDeleting || cat._isPending
-						? ' opacity-50 cursor-not-allowed'
-						: ' cursor-pointer hover:text-destructive')
+						? ' cursor-not-allowed opacity-50'
+						: ' hover:text-destructive cursor-pointer')
 				}
 				onClick={e => {
 					e.stopPropagation()
@@ -91,7 +91,7 @@ const ChildCategoryComponent = ({
 	return (
 		<div
 			className={cn(
-				`flex justify-between items-center p-3 rounded-md bg-muted transition-colors`,
+				`bg-muted flex items-center justify-between rounded-md p-3 transition-colors`,
 				isDeleting ? 'opacity-50' : '',
 				category._isPending ? 'cursor-not-allowed' : 'cursor-pointer',
 			)}
@@ -101,8 +101,8 @@ const ChildCategoryComponent = ({
 				className={
 					'h-5 w-5' +
 					(isDeleting || category._isPending
-						? ' opacity-50 cursor-not-allowed'
-						: ' cursor-pointer hover:text-destructive')
+						? ' cursor-not-allowed opacity-50'
+						: ' hover:text-destructive cursor-pointer')
 				}
 				onClick={() => {
 					if (isDeleting || category._isPending) return
@@ -169,8 +169,8 @@ export const CategoriesSection = ({
 	)
 
 	return (
-		<div className="border rounded-lg p-4 shadow-xs flex flex-col h-full">
-			<div className="flex justify-between items-center mb-4">
+		<div className="flex h-full flex-col rounded-lg border p-4 shadow-xs">
+			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">類別</h2>
 				<Dialog>
 					<DialogTrigger className="cursor-pointer">
@@ -213,7 +213,7 @@ export const CategoriesSection = ({
 				className="mb-4"
 			/>
 
-			<ScrollArea className="flex-1 min-h-0">
+			<ScrollArea className="min-h-0 flex-1">
 				<div className="space-y-2">
 					{filteredCategories.length > 0 ? (
 						filteredCategories.map(category => (
@@ -227,7 +227,7 @@ export const CategoriesSection = ({
 							/>
 						))
 					) : (
-						<div className="text-center py-8 text-muted-foreground">
+						<div className="text-muted-foreground py-8 text-center">
 							{filter ? '查無類別' : '尚無類別'}
 						</div>
 					)}
@@ -287,14 +287,14 @@ export const CategoryHierarchySection = ({
 		) || []
 
 	return (
-		<div className="border rounded-lg p-4 shadow-xs flex flex-col h-full">
-			<div className="flex justify-between items-center mb-4">
+		<div className="flex h-full flex-col rounded-lg border p-4 shadow-xs">
+			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">
 					{category ? `${category?.name} 的子類別` : '子類別'}
 				</h2>
 				<Dialog>
 					<DialogTrigger
-						className={`${category ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+						className={`${category ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
 						disabled={!category}
 					>
 						<PlusCircle size={20} />
@@ -309,7 +309,7 @@ export const CategoryHierarchySection = ({
 								e.preventDefault()
 								addChildCategory()
 							}}
-							className="flex items-center gap-2 mb-4"
+							className="mb-4 flex items-center gap-2"
 						>
 							<Input
 								placeholder="新增子類別名稱"
@@ -337,7 +337,7 @@ export const CategoryHierarchySection = ({
 						className="mb-4"
 					/>
 
-					<ScrollArea className="flex-1 min-h-0">
+					<ScrollArea className="min-h-0 flex-1">
 						<div className="space-y-2">
 							{filteredChildren && filteredChildren.length > 0 ? (
 								filteredChildren.map(childCategory => (
@@ -347,7 +347,7 @@ export const CategoryHierarchySection = ({
 									/>
 								))
 							) : (
-								<div className="text-center py-8 text-muted-foreground">
+								<div className="text-muted-foreground py-8 text-center">
 									{filter ? '查無子類別' : '尚無子類別'}
 								</div>
 							)}
@@ -355,7 +355,7 @@ export const CategoryHierarchySection = ({
 					</ScrollArea>
 				</>
 			) : (
-				<div className="flex items-center justify-center h-[400px] text-muted-foreground">
+				<div className="text-muted-foreground flex h-[400px] items-center justify-center">
 					請選擇一個類別以查看或新增子類別
 				</div>
 			)}

@@ -42,7 +42,7 @@ export const UserContent = ({
 }) => {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-scroll">
+			<DialogContent className="max-h-[90vh] overflow-scroll sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Edit profile</DialogTitle>
 					<DialogDescription>
@@ -120,7 +120,7 @@ function BulkEditableFields({
 	return (
 		<>
 			<div className="grid grid-cols-4 items-center gap-4">
-				<div className="flex items-center gap-2 col-span-1">
+				<div className="col-span-1 flex items-center gap-2">
 					{isBulkEdit && (
 						<Checkbox
 							name="bulk_name"
@@ -149,7 +149,7 @@ function BulkEditableFields({
 				/>
 			</div>
 			<div className="grid grid-cols-4 items-center gap-4">
-				<div className="flex items-center gap-2 col-span-1">
+				<div className="col-span-1 flex items-center gap-2">
 					{isBulkEdit && (
 						<Checkbox
 							name="bulk_image"
@@ -178,7 +178,7 @@ function BulkEditableFields({
 				/>
 			</div>
 			<div className="grid grid-cols-4 items-center gap-4">
-				<div className="flex items-center gap-2 col-span-1">
+				<div className="col-span-1 flex items-center gap-2">
 					{isBulkEdit && (
 						<Checkbox
 							name="bulk_role"
@@ -214,7 +214,7 @@ function BulkEditableFields({
 				</Select>
 			</div>
 			<div className="grid grid-cols-4 items-center gap-4">
-				<div className="flex items-center gap-2 col-span-1">
+				<div className="col-span-1 flex items-center gap-2">
 					{isBulkEdit && (
 						<Checkbox
 							name="bulk_emailVerified"
@@ -244,7 +244,7 @@ function BulkEditableFields({
 				/>
 			</div>
 			<div className="grid grid-cols-4 items-center gap-4">
-				<div className="flex items-center gap-2 col-span-1">
+				<div className="col-span-1 flex items-center gap-2">
 					{isBulkEdit && (
 						<Checkbox
 							name="bulk_banned"
@@ -274,7 +274,7 @@ function BulkEditableFields({
 				/>
 			</div>
 			<div className="grid grid-cols-4 items-center gap-4">
-				<div className="flex items-center gap-2 col-span-1">
+				<div className="col-span-1 flex items-center gap-2">
 					{isBulkEdit && (
 						<Checkbox
 							name="bulk_banReason"

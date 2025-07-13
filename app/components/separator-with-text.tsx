@@ -13,7 +13,7 @@ export const SeparatorWithText = ({
 	return (
 		<div
 			className={cn(
-				'flex items-center text-muted-foreground/75 text-xs py-1',
+				'text-muted-foreground/75 flex items-center py-1 text-xs',
 				className,
 			)}
 		>

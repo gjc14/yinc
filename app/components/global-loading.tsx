@@ -30,12 +30,12 @@ export function GlobalLoading() {
 			role="progressbar"
 			aria-hidden={!active}
 			aria-valuetext={active ? 'Loading' : undefined}
-			className="fixed inset-x-0 left-0 top-0 z-50 h-1 animate-pulse"
+			className="fixed inset-x-0 top-0 left-0 z-50 h-1 animate-pulse"
 		>
 			<div
 				ref={ref}
 				className={cx(
-					'h-full bg-linear-to-r from-indigo-800 to-sky-500 dark:from-indigo-600 dark:to-sky-200 transition-all duration-500 ease-in-out',
+					'h-full bg-linear-to-r from-indigo-800 to-sky-500 transition-all duration-500 ease-in-out dark:from-indigo-600 dark:to-sky-200',
 					navigation.state === 'idle' &&
 						(animating ? 'w-full' : 'w-0 opacity-0 transition-none'),
 					navigation.state === 'submitting' && 'w-4/12',

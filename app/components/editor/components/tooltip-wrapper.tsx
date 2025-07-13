@@ -70,7 +70,7 @@ export const TooltipWrapper = ({
 						{tooltip}
 
 						{processedTooltip && (
-							<kbd className="flex items-center py-0.5 px-1 border rounded shadow-lg">
+							<kbd className="flex items-center rounded border px-1 py-0.5 shadow-lg">
 								{processedTooltip}
 							</kbd>
 						)}

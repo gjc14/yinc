@@ -26,7 +26,7 @@ export function SimpleSortHeader<T>({
 					column.toggleSorting(false)
 				}
 			}}
-			className="w-full flex items-center justify-between gap-2 cursor-pointer"
+			className="flex w-full cursor-pointer items-center justify-between gap-2"
 		>
 			{children || column.id.charAt(0).toUpperCase() + column.id.slice(1)}
 			{currentSorting &&

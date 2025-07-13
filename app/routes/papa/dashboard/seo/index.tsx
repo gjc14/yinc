@@ -110,7 +110,7 @@ export const columns: ColumnDef<
 		header: 'Description',
 		cell: ({ row }) => {
 			return (
-				<span className="block w-28 md:w-60 truncate">
+				<span className="block w-28 truncate md:w-60">
 					{row.original.metaDescription}
 				</span>
 			)

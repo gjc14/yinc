@@ -27,7 +27,7 @@ const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {
 
 	return (
 		<div
-			className={`flex justify-between items-center p-3 rounded-md bg-muted ${
+			className={`bg-muted flex items-center justify-between rounded-md p-3 ${
 				isDeleting ? 'opacity-50' : ''
 			}`}
 		>
@@ -36,8 +36,8 @@ const TagComponent = ({ tag }: { tag: TagType & { _isPending?: true } }) => {
 				className={
 					'h-5 w-5' +
 					(isDeleting || tag._isPending
-						? ' opacity-50 cursor-not-allowed'
-						: ' cursor-pointer hover:text-destructive')
+						? ' cursor-not-allowed opacity-50'
+						: ' hover:text-destructive cursor-pointer')
 				}
 				onClick={() => {
 					if (isDeleting || tag._isPending) return
@@ -89,8 +89,8 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 	)
 
 	return (
-		<div className="border rounded-lg p-4 shadow-xs col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col h-full">
-			<div className="flex justify-between items-center mb-4">
+		<div className="col-span-1 flex h-full flex-col rounded-lg border p-4 shadow-xs sm:col-span-2 lg:col-span-1">
+			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">標籤</h2>
 				<Dialog>
 					<DialogTrigger className="cursor-pointer">
@@ -132,12 +132,12 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 				className="mb-4"
 			/>
 
-			<ScrollArea className="flex-1 min-h-0">
+			<ScrollArea className="min-h-0 flex-1">
 				<div className="space-y-2">
 					{filteredTags.length > 0 ? (
 						filteredTags.map(tag => <TagComponent tag={tag} key={tag.id} />)
 					) : (
-						<div className="text-center py-8 text-muted-foreground">
+						<div className="text-muted-foreground py-8 text-center">
 							{filter ? '查無標籤' : '尚無標籤'}
 						</div>
 					)}

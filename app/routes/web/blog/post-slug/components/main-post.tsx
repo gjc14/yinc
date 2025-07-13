@@ -27,10 +27,10 @@ export const MainPost = ({
 						placeholder="Give a sensational title..."
 						value={post.title}
 						onChange={e => onTitleChange?.(e.target.value)}
-						className="text-3xl font-bold tracking-tight leading-normal md:text-4xl md:leading-tight bg-transparent border-none outline-none w-full"
+						className="w-full border-none bg-transparent text-3xl leading-normal font-bold tracking-tight outline-none md:text-4xl md:leading-tight"
 					/>
 				) : (
-					<h1 className="text-3xl font-bold tracking-tight leading-normal md:text-4xl md:leading-tight">
+					<h1 className="text-3xl leading-normal font-bold tracking-tight md:text-4xl md:leading-tight">
 						{post.title}
 					</h1>
 				)}

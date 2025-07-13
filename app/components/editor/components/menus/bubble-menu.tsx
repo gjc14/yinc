@@ -47,13 +47,13 @@ export const DefaultBubbleMenu = ({ editor }: { editor: Editor }) => {
 				zIndex: 45, // Lower than the tooltip z-50
 			}}
 			editor={editor}
-			className="flex items-center p-1 gap-0.5 bg-primary-foreground border border-border rounded-md shadow-md"
+			className="bg-primary-foreground border-border flex items-center gap-0.5 rounded-md border p-1 shadow-md"
 		>
 			{/* Paragraph options */}
 			<PopoverMenuOptions
 				editor={editor}
 				activeIcon={
-					<span className="flex gap-1 items-center text-xs">
+					<span className="flex items-center gap-1 text-xs">
 						{activeParagraphOption?.icon(16)}
 						{activeParagraphOption?.tooltip}
 					</span>

@@ -7,7 +7,10 @@
 	"tabWidth": 2,
 	"useTabs": true,
 	"objectWrap": "preserve",
-	"plugins": ["@ianvs/prettier-plugin-sort-imports"],
+	"plugins": [
+		"@ianvs/prettier-plugin-sort-imports",
+		"prettier-plugin-tailwindcss"
+	],
 	"importOrder": [
 		"^\\./\\+types(/.*)?$",
 		"^(react(-.*)?$)|(react/(.*)$)|^(react$)",

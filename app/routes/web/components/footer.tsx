@@ -6,8 +6,8 @@ export interface Page {
 
 export const Footer = () => {
 	return (
-		<footer className="w-full py-3 px-6 mt-auto flex flex-col-reverse items-center justify-center gap-2 lg:flex-row lg:gap-8 border-t">
-			<p className="text-sm text-primary">
+		<footer className="mt-auto flex w-full flex-col-reverse items-center justify-center gap-2 border-t px-6 py-3 lg:flex-row lg:gap-8">
+			<p className="text-primary text-sm">
 				Built somewhere on the 🌏. © {new Date().getFullYear()}{' '}
 				<a
 					href="https://papa.cloud"

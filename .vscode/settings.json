@@ -1,6 +1,15 @@
 {
-	// For Tailwind CSS Intellisense to support class attribute in Tiptap Editor
+	// == tailwind settings ==
 	"tailwindCSS.experimental.classRegex": ["class:\\s*?[\"'`]([^\"'`]*).*?,"],
+	"files.associations": {
+		"*.css": "tailwindcss",
+		"*.scss": "tailwindcss"
+	},
+	"editor.quickSuggestions": {
+		"strings": "on"
+	},
+	"tailwindCSS.classFunctions": ["tw", "clsx", "tw\\.[a-z-]+", "cva", "cx"],
+	// == prettier settings ==
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"[jsonc]": {

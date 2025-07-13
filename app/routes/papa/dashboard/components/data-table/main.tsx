@@ -257,14 +257,14 @@ export function DataTable<TData, TValue>({
 			</Table>
 			<div className="flex items-center justify-between space-x-2 pt-4">
 				{selectable && (
-					<div className="flex-1 text-sm text-muted-foreground pl-2.5">
+					<div className="text-muted-foreground flex-1 pl-2.5 text-sm">
 						{table.getFilteredSelectedRowModel().rows.length} of{' '}
 						{table.getFilteredRowModel().rows.length} row(s) selected.
 					</div>
 				)}
 
 				<div className="ml-auto flex items-center space-x-2">
-					<span className="text-xs text-muted-foreground">
+					<span className="text-muted-foreground text-xs">
 						Page {table.getState().pagination.pageIndex + 1} of{' '}
 						{table.getPageCount()}
 					</span>
@@ -277,7 +277,7 @@ export function DataTable<TData, TValue>({
 						}
 						defaultValue={pagination.pageSize.toString()}
 					>
-						<SelectTrigger className="w-[80px] h-8">
+						<SelectTrigger className="h-8 w-[80px]">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>

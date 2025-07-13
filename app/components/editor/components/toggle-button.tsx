@@ -18,7 +18,7 @@ export const ToggleButton = React.forwardRef<
 			<Button
 				type="button"
 				variant={'ghost'}
-				className={cn('px-2 py-1 h-7', className)}
+				className={cn('h-7 px-2 py-1', className)}
 				ref={ref}
 				{...props}
 			/>

@@ -172,10 +172,10 @@ const ErrorTemplate = ({
 	returnTo: string
 }) => {
 	return (
-		<main className="w-screen h-svh flex flex-col items-center justify-center">
+		<main className="flex h-svh w-screen flex-col items-center justify-center">
 			<div className="fixed text-center">
-				<div className="flex items-center justify-center mb-3">
-					<h1 className="inline-block mr-5 pr-5 text-3xl font-normal border-r">
+				<div className="mb-3 flex items-center justify-center">
+					<h1 className="mr-5 inline-block border-r pr-5 text-3xl font-normal">
 						{status}
 					</h1>
 					<h2 className="text-base font-light">{statusText || 'Error Page'}</h2>
@@ -191,12 +191,12 @@ const ErrorTemplate = ({
 				</Link>
 			</div>
 
-			<div className="fixed bottom-8 flex items-center font-open-sans">
-				<p className="inline-block mr-3 pr-5 text-lg font-normal border-r">
+			<div className="font-open-sans fixed bottom-8 flex items-center">
+				<p className="mr-3 inline-block border-r pr-5 text-lg font-normal">
 					Papa
 				</p>
 				<div className="inline-block">
-					<p className="text-xs font-light text-left">
+					<p className="text-left text-xs font-light">
 						© {new Date().getFullYear()} CHIU YIN CHEN @Taipei
 					</p>
 				</div>

@@ -27,7 +27,7 @@ export const MenuBar = ({
 		<div
 			id="menu-bar"
 			className={cn(
-				'py-1.5 border border-muted-foreground rounded-lg',
+				'border-muted-foreground rounded-lg border py-1.5',
 				className,
 			)}
 		>

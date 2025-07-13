@@ -58,10 +58,10 @@ export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
 	}
 
 	return (
-		<nav ref={navRef} className="relative w-full flex gap-[-0.125rem] border-b">
+		<nav ref={navRef} className="relative flex w-full gap-[-0.125rem] border-b">
 			{/* Hover background */}
 			<motion.div
-				className="absolute h-8 bg-muted/80 rounded-sm"
+				className="bg-muted/80 absolute h-8 rounded-sm"
 				initial={false}
 				animate={{
 					x: hoverTabBounds.left,
@@ -79,7 +79,7 @@ export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
 
 			{/* Active tab underline */}
 			<motion.div
-				className="absolute bottom-0 h-0.5 bg-primary"
+				className="bg-primary absolute bottom-0 h-0.5"
 				initial={false}
 				animate={{
 					x: activeTabBounds.left,
@@ -147,7 +147,7 @@ const AnimatedLink = ({
 							variant={'ghost'}
 							data-index={index}
 							className={
-								'mb-2 rounded-sm h-8 px-3 hover:bg-transparent' +
+								'mb-2 h-8 rounded-sm px-3 hover:bg-transparent' +
 								' ' +
 								(isActive ? 'text-primary' : 'text-muted-foreground') +
 								' ' +

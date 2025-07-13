@@ -21,9 +21,9 @@ export const DangerZone = ({
 		<>
 			<Separator />
 
-			<div className="w-full flex flex-col p-3 border rounded-lg space-y-3">
+			<div className="flex w-full flex-col space-y-3 rounded-lg border p-3">
 				<h4>⚠️ Danger Zone</h4>
-				<div className="flex items-center justify-between border rounded-md py-1 px-2">
+				<div className="flex items-center justify-between rounded-md border px-2 py-1">
 					<div className="flex flex-col gap-0.5">
 						<strong className="text-lg">Delete this post</strong>
 						<p className="">This action cannot be undone.</p>

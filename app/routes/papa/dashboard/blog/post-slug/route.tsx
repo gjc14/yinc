@@ -57,7 +57,7 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 	}, [fetcher])
 
 	if (!post) {
-		return <h2 className="grow flex items-center justify-center">Not found</h2>
+		return <h2 className="flex grow items-center justify-center">Not found</h2>
 	}
 
 	// Handle db save
@@ -139,7 +139,7 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 				isNavigating={isNavigating}
 			/>
 
-			<div className="w-full z-10 sticky top-0 flex items-center justify-end gap-2 border-y border-primary backdrop-blur-xs px-2 py-1">
+			<div className="border-primary sticky top-0 z-10 flex w-full items-center justify-end gap-2 border-y px-2 py-1 backdrop-blur-xs">
 				{/* Preview */}
 				{post.status !== 'PUBLISHED' ? (
 					!isDirty ? (
@@ -230,7 +230,7 @@ const PostDeleteAlert = ({
 					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 					<AlertDialogDescription>
 						This action cannot be undone. This will permanently delete{' '}
-						<span className="font-bold text-primary">{post.title}</span> (id:{' '}
+						<span className="text-primary font-bold">{post.title}</span> (id:{' '}
 						{post.id}).
 					</AlertDialogDescription>
 				</AlertDialogHeader>

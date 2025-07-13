@@ -20,8 +20,8 @@ export const CTA = ({
 	const isSubmitting = fetcher.formAction === subscribeRoute
 
 	return (
-		<section className="max-w-2xl flex flex-col py-20 px-6 my-12 mx-auto md:px-12 lg:px-18">
-			<Card className="py-2 px-3 sm:py-6 sm:px-8">
+		<section className="mx-auto my-12 flex max-w-2xl flex-col px-6 py-20 md:px-12 lg:px-18">
+			<Card className="px-3 py-2 sm:px-8 sm:py-6">
 				<CardHeader>
 					<CardTitle>Subscribe to new posts!</CardTitle>
 					<CardDescription>
@@ -32,7 +32,7 @@ export const CTA = ({
 				</CardHeader>
 				<CardContent>
 					<fetcher.Form
-						className="w-full flex items-center gap-3"
+						className="flex w-full items-center gap-3"
 						method="POST"
 						action={subscribeRoute}
 					>

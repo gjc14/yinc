@@ -66,7 +66,7 @@ export const LinkUnlinkButtons = ({ editor }: { editor: Editor }) => {
 						value={linkInput}
 						onChange={e => setLinkInput(e.target.value ?? '')}
 					/>
-					<PopoverClose asChild className="w-full mt-2">
+					<PopoverClose asChild className="mt-2 w-full">
 						<Button onClick={() => setLink()}>Set Link</Button>
 					</PopoverClose>
 				</PopoverContent>

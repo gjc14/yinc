@@ -88,14 +88,14 @@ export const DashboardDataTableMoreMenu = ({
 						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 						<AlertDialogDescription>
 							This action cannot be undone. This will permanently delete{' '}
-							<span className="font-bold text-primary">{deleteTarget}</span>
+							<span className="text-primary font-bold">{deleteTarget}</span>
 							(id: {id}).
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
-							className="bg-destructive text-white hover:bg-destructive/90"
+							className="bg-destructive hover:bg-destructive/90 text-white"
 							onClick={onDelete}
 						>
 							Continue to delete

@@ -115,7 +115,7 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 
 	return (
 		<DashboardSectionWrapper className="items-center pt-16 md:pt-12">
-			<div className="z-10 fixed top-16 right-6 flex items-center gap-2">
+			<div className="fixed top-16 right-6 z-10 flex items-center gap-2">
 				{/* Discard */}
 				<AlertDialog>
 					{isDirty ||

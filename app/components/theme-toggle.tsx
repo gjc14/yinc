@@ -36,10 +36,10 @@ export const CurrentThemeIcon = ({
 			className={cn('relative flex items-center justify-center', className)}
 		>
 			<Sun
-				className={`${iconSizes[size]} rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0`}
+				className={`${iconSizes[size]} scale-100 rotate-0 transition-transform dark:scale-0 dark:-rotate-90`}
 			/>
 			<Moon
-				className={`absolute ${iconSizes[size]} rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100`}
+				className={`absolute ${iconSizes[size]} scale-0 rotate-90 transition-transform dark:scale-100 dark:rotate-0`}
 			/>
 			<span className="sr-only">Toggle theme</span>
 		</span>

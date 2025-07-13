@@ -192,7 +192,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		}))
 
 		return (
-			<div className="w-full flex flex-col items-center lg:flex-row lg:items-start lg:justify-around">
+			<div className="flex w-full flex-col items-center lg:flex-row lg:items-start lg:justify-around">
 				<AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
 					<AlertDialogContent>
 						<AlertDialogHeader>
@@ -227,7 +227,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					</AlertDialogContent>
 				</AlertDialog>
 
-				<div className="w-full max-w-prose flex flex-col px-5 xl:px-0">
+				<div className="flex w-full max-w-prose flex-col px-5 xl:px-0">
 					<MainPost
 						post={postState}
 						editable

@@ -151,7 +151,7 @@ export const SignInForm = () => {
 				) : (
 					<Form
 						id="sign-in"
-						className="grid gap-4 items-center justify-center"
+						className="grid items-center justify-center gap-4"
 						onSubmit={e => {
 							e.preventDefault()
 							handleSignIn()

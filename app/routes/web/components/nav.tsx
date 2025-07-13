@@ -6,7 +6,7 @@ import { ThemeToggle } from '~/components/theme-toggle'
 
 export const Nav = () => {
 	return (
-		<nav className="fixed z-10 w-max flex top-8 left-[50%] -translate-x-[50%] items-center gap-6 rounded-lg border-[1px] border-muted-foreground py-2 px-3.5 text-sm text-muted-foreground bg-primary-foreground/50 backdrop-blur-xs shadow-lg">
+		<nav className="border-muted-foreground text-muted-foreground bg-primary-foreground/50 fixed top-8 left-[50%] z-10 flex w-max -translate-x-[50%] items-center gap-6 rounded-lg border-[1px] px-3.5 py-2 text-sm shadow-lg backdrop-blur-xs">
 			<NavLink
 				to="/"
 				className="flex items-center gap-2"
@@ -21,7 +21,7 @@ export const Nav = () => {
 			{/* Add your own routes here */}
 			<CustomNav to="/blog">Blog</CustomNav>
 			<CustomNav to="/store">Store</CustomNav>
-			<ThemeToggle className="border-0 rounded-full p-0" />
+			<ThemeToggle className="rounded-full border-0 p-0" />
 		</nav>
 	)
 }
@@ -55,7 +55,7 @@ const CustomNav = ({
 							{children}
 						</span>
 						<span
-							className={`flex h-[20px] items-center text-primary ${
+							className={`text-primary flex h-[20px] items-center ${
 								isActive ? 'text-primary' : ''
 							}`}
 						>

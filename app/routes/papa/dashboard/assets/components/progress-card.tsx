@@ -32,7 +32,7 @@ export const ProgressCard = ({
 	}
 	return (
 		<Collapsible
-			className="absolute right-3 bottom-3 md:w-[300px] space-y-2"
+			className="absolute right-3 bottom-3 space-y-2 md:w-[300px]"
 			defaultOpen
 			onClick={e => e.stopPropagation()}
 		>
@@ -41,7 +41,7 @@ export const ProgressCard = ({
 				<Button
 					variant="ghost"
 					size="sm"
-					className="w-full flex items-center justify-between space-x-4 py-0 px-4 border bg-muted"
+					className="bg-muted flex w-full items-center justify-between space-x-4 border px-4 py-0"
 					onClick={e => e.stopPropagation()}
 				>
 					<h4 className="text-sm font-semibold">
@@ -59,18 +59,18 @@ export const ProgressCard = ({
 					return (
 						<div
 							key={key}
-							className="flex items-center px-5 py-3.5 border rounded-md bg-muted"
+							className="bg-muted flex items-center rounded-md border px-5 py-3.5"
 						>
-							<div className="flex-1 min-w-0 pr-3">
+							<div className="min-w-0 flex-1 pr-3">
 								{/* File name */}
 								<div
 									className="flex items-center justify-start gap-0"
 									title={`${file}`}
 								>
-									<span className="text-sm font-medium truncate mr-1">
+									<span className="mr-1 truncate text-sm font-medium">
 										{file.name.split('.')[0]}
 									</span>
-									<span className="text-sm font-medium shrink-0">
+									<span className="shrink-0 text-sm font-medium">
 										.{file.name.split('.')[1]}
 									</span>
 								</div>
@@ -88,7 +88,7 @@ export const ProgressCard = ({
 									<Button
 										variant="outline"
 										size="icon"
-										className="w-5 h-5 p-0 rounded-full bg-lime-500 dark:bg-lime-600 hover:bg-transparent dark:hover:bg-transparent hover:border border-0 border-primary transition-colors duration-200 group"
+										className="border-primary group h-5 w-5 rounded-full border-0 bg-lime-500 p-0 transition-colors duration-200 hover:border hover:bg-transparent dark:bg-lime-600 dark:hover:bg-transparent"
 										onClick={e => {
 											e.stopPropagation()
 											setHiddenProgressCards(prev => {
@@ -99,7 +99,7 @@ export const ProgressCard = ({
 										}}
 									>
 										<Check className="h-3 w-3 group-hover:hidden" />
-										<X className="h-3 w-3 hidden group-hover:block" />
+										<X className="hidden h-3 w-3 group-hover:block" />
 										<span className="sr-only">
 											{status === 'completed'
 												? 'Mark as incomplete'
@@ -110,7 +110,7 @@ export const ProgressCard = ({
 									<Button
 										variant="outline"
 										size="icon"
-										className="w-5 h-5 p-0 rounded-full bg-red-500 dark:bg-red-600 hover:bg-transparent dark:hover:bg-transparent hover:border border-0 border-primary transition-colors duration-200 group"
+										className="border-primary group h-5 w-5 rounded-full border-0 bg-red-500 p-0 transition-colors duration-200 hover:border hover:bg-transparent dark:bg-red-600 dark:hover:bg-transparent"
 										onClick={e => {
 											e.stopPropagation()
 											setHiddenProgressCards(prev => {
@@ -124,9 +124,9 @@ export const ProgressCard = ({
 										<span className="sr-only">{status}</span>
 									</Button>
 								) : (
-									<div className="w-5 h-5 rounded-full border-2 border-muted relative">
+									<div className="border-muted relative h-5 w-5 rounded-full border-2">
 										<AnimatedCircularProgressBar
-											className="w-full h-full flex items-center justify-center text-xs animate-pulse"
+											className="flex h-full w-full animate-pulse items-center justify-center text-xs"
 											max={105}
 											min={0}
 											value={progress}

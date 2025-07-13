@@ -32,14 +32,14 @@ export default function BlogPost({ matches, params }: Route.ComponentProps) {
 
 	if (!currentPost) {
 		return (
-			<div className="w-full max-w-prose min-h-svh px-5 mt-32 xl:px-0">
+			<div className="mt-32 min-h-svh w-full max-w-prose px-5 xl:px-0">
 				<h1 className="text-3xl font-bold">Post not found</h1>
 			</div>
 		)
 	}
 
 	return (
-		<div className="w-full max-w-prose min-h-svh px-5 mt-32 xl:px-0">
+		<div className="mt-32 min-h-svh w-full max-w-prose px-5 xl:px-0">
 			<MainPost post={currentPost} />
 
 			<PostFooter post={currentPost} next={nextPost} prev={prevPost} />

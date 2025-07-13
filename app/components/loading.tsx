@@ -16,7 +16,7 @@ export const FullScreenLoader = ({ className }: { className?: string }) => {
 	return (
 		<div
 			className={cn(
-				`z-9999 fixed inset-0 flex justify-center items-center backdrop-blur-md`,
+				`fixed inset-0 z-9999 flex items-center justify-center backdrop-blur-md`,
 				className,
 			)}
 		>
@@ -35,7 +35,7 @@ export const SymmetrySpinner = ({
 	return (
 		<div
 			className={cn(
-				'w-16 h-16 z-50 border-4 border-y-primary border-x-transparent rounded-full animate-spin ease-in-out',
+				'border-y-primary z-50 h-16 w-16 animate-spin rounded-full border-4 border-x-transparent ease-in-out',
 				white && 'border-y-primary-foreground',
 				className,
 			)}

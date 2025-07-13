@@ -120,7 +120,7 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 
 	if (!editor) {
 		return (
-			<div className={cn('grow flex justify-center', props.className)}>
+			<div className={cn('flex grow justify-center', props.className)}>
 				<Loading className="m-3" />
 			</div>
 		)
@@ -129,7 +129,7 @@ export default forwardRef<EditorRef, EditorProps>((props, ref) => {
 	return (
 		<div
 			className={cn(
-				'relative max-w-prose grow flex flex-col gap-3',
+				'relative flex max-w-prose grow flex-col gap-3',
 				props.className,
 			)}
 		>

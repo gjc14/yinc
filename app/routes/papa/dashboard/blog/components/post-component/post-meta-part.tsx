@@ -66,7 +66,7 @@ export const PostMetaPart = ({
 				<img
 					src={postState.featuredImage || '/logo.png'}
 					alt="featured image"
-					className="w-full h-40 object-cover rounded-md mb-2"
+					className="mb-2 h-40 w-full rounded-md object-cover"
 				/>
 				<Label htmlFor="image">Image</Label>
 				<Input
@@ -90,7 +90,7 @@ export const PostMetaPart = ({
 					<Button
 						size={'sm'}
 						variant={'secondary'}
-						className="w-full mt-2"
+						className="mt-2 w-full"
 						disabled
 					>
 						<Loader className="animate-spin" /> Select from Gallery
@@ -100,7 +100,7 @@ export const PostMetaPart = ({
 						files={files}
 						origin={origin}
 						dialogTrigger={
-							<Button size={'sm'} variant={'secondary'} className="w-full mt-2">
+							<Button size={'sm'} variant={'secondary'} className="mt-2 w-full">
 								Select from Gallery
 							</Button>
 						}
@@ -115,9 +115,9 @@ export const PostMetaPart = ({
 						}}
 					/>
 				) : (
-					<div className="border rounded-xl w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3">
+					<div className="flex h-full min-h-60 w-full grow flex-col items-center justify-center gap-3 rounded-xl border">
 						<CloudAlert size={50} />
-						<p className="text-center max-w-sm">
+						<p className="max-w-sm text-center">
 							Please setup your S3 Object Storage to start uploading assets
 						</p>
 					</div>

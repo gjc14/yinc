@@ -27,10 +27,10 @@ export default function DashboardIndex() {
 			</DashboardHeader>
 			<DashboardContent>
 				{services.length === 0 ? (
-					<div className="flex flex-col items-center justify-center h-64 m-auto text-center space-y-6">
-						<div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center">
+					<div className="m-auto flex h-64 flex-col items-center justify-center space-y-6 text-center">
+						<div className="bg-primary flex h-24 w-24 items-center justify-center rounded-full">
 							<svg
-								className="w-12 h-12 text-primary-foreground"
+								className="text-primary-foreground h-12 w-12"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -45,7 +45,7 @@ export default function DashboardIndex() {
 						</div>
 
 						<div className="space-y-2">
-							<h3 className="text-xl font-semibold text-primary">
+							<h3 className="text-primary text-xl font-semibold">
 								No Services Available
 							</h3>
 							<p className="text-muted-foreground max-w-md">
@@ -70,20 +70,20 @@ export default function DashboardIndex() {
 					</div>
 				) : (
 					<TooltipProvider>
-						<div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 overflow-auto w-full h-fit">
+						<div className="grid h-fit w-full grid-cols-2 gap-3 overflow-auto md:grid-cols-3 xl:grid-cols-4">
 							{services.map((service, index) => (
 								<Link
 									key={index}
 									to={service.pathname}
-									className="border rounded-xl w-full h-40 p-5 grid grid-rows-5 items-center gap-2 hover:bg-accent transition-colors cursor-pointer"
+									className="hover:bg-accent grid h-40 w-full cursor-pointer grid-rows-5 items-center gap-2 rounded-xl border p-5 transition-colors"
 								>
-									<div className="row-span-2 m-auto rounded-lg overflow-hidden">
+									<div className="row-span-2 m-auto overflow-hidden rounded-lg">
 										{renderServiceLogo(service.logo, 'lg')}
 									</div>
-									<div className="row-span-3 flex flex-col justify-start gap-1 min-h-0 overflow-hidden">
+									<div className="row-span-3 flex min-h-0 flex-col justify-start gap-1 overflow-hidden">
 										<Tooltip>
 											<TooltipTrigger asChild>
-												<p className="truncate font-semibold text-center">
+												<p className="truncate text-center font-semibold">
 													{service.name}
 												</p>
 											</TooltipTrigger>
@@ -94,7 +94,7 @@ export default function DashboardIndex() {
 										{service.description && (
 											<Tooltip>
 												<TooltipTrigger asChild>
-													<p className="text-sm text-muted-foreground line-clamp-3 text-start text-pretty flex-1">
+													<p className="text-muted-foreground line-clamp-3 flex-1 text-start text-sm text-pretty">
 														{service.description}
 													</p>
 												</TooltipTrigger>

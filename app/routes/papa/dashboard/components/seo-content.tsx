@@ -43,7 +43,7 @@ export const SeoContent = ({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-scroll">
+			<DialogContent className="max-h-[90vh] overflow-scroll sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>{seo ? 'Edit' : 'Create'} seo</DialogTitle>
 					<DialogDescription>

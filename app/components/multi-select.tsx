@@ -153,14 +153,14 @@ export const MultiSelect = ({
 			className="overflow-visible bg-transparent"
 		>
 			<GetCommandState ref={getCommandStateRef} />
-			<div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset">
+			<div className="group border-input ring-offset-background focus-within:ring-ring focus-within:ring-offset rounded-md border px-3 py-2 text-sm focus-within:ring-1">
 				<div className="flex flex-wrap gap-1">
 					{selected.map(option => {
 						return (
 							<Badge key={option.value} variant="secondary">
 								{option.label}
 								<button
-									className="ml-1 rounded-full outline-hidden ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+									className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-hidden focus:ring-2 focus:ring-offset-2"
 									onKeyDown={e => {
 										if (e.key === 'Enter') {
 											handleUnselect(option)
@@ -172,7 +172,7 @@ export const MultiSelect = ({
 									}}
 									onClick={() => handleUnselect(option)}
 								>
-									<X className="h-3 w-3 -mr-0.5 text-muted-foreground hover:text-foreground" />
+									<X className="text-muted-foreground hover:text-foreground -mr-0.5 h-3 w-3" />
 								</button>
 							</Badge>
 						)
@@ -191,7 +191,7 @@ export const MultiSelect = ({
 							setIsComposing(false)
 						}}
 						placeholder={placeholder ?? 'Select...'}
-						className={`flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground ${
+						className={`placeholder:text-muted-foreground flex-1 bg-transparent outline-hidden ${
 							selected.length > 0 ? 'ml-2' : ''
 						}`}
 					/>
@@ -201,7 +201,7 @@ export const MultiSelect = ({
 				<CommandList>
 					{open &&
 						(selectables.length > 0 ? (
-							<div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in">
+							<div className="bg-popover text-popover-foreground animate-in absolute top-0 z-10 w-full rounded-md border shadow-md outline-hidden">
 								<CommandEmpty>
 									Press Enter to create "{inputValue}"
 								</CommandEmpty>
@@ -228,7 +228,7 @@ export const MultiSelect = ({
 								</CommandGroup>
 							</div>
 						) : inputValue !== '' ? (
-							<div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in">
+							<div className="bg-popover text-popover-foreground animate-in absolute top-0 z-10 w-full rounded-md border shadow-md outline-hidden">
 								<CommandEmpty>
 									Press Enter to create "{inputValue}"
 								</CommandEmpty>

@@ -63,7 +63,7 @@ function NavMenuItem({ item }: { item: DashboardMenuItem }) {
 				{item.sub?.length ? (
 					<>
 						<CollapsibleTrigger asChild>
-							<SidebarMenuAction className="data-[state=open]:rotate-90 cursor-pointer">
+							<SidebarMenuAction className="cursor-pointer data-[state=open]:rotate-90">
 								<ChevronRight />
 								<span className="sr-only">Toggle</span>
 							</SidebarMenuAction>

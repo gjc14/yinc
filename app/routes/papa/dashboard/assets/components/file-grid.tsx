@@ -50,10 +50,10 @@ export const FileGrid = (props: FileGridProps) => {
 		return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>{props.dialogTrigger}</DialogTrigger>
-				<DialogContent className="max-h-[90vh] min-w-[50vw] max-w-xl overflow-scroll">
+				<DialogContent className="max-h-[90vh] max-w-xl min-w-[50vw] overflow-scroll">
 					<DialogHeader className="h-fit">
 						<DialogTitle>Assets</DialogTitle>
-						<DialogDescription className="w-full grow flex items-center">
+						<DialogDescription className="flex w-full grow items-center">
 							Manage gallery, select or upload assets here.
 							<Button
 								className="ml-auto"
@@ -205,7 +205,7 @@ export const FileGridMain = ({
 	return (
 		<div
 			className={cn(
-				'relative h-auto grow p-3 border-4 border-dashed rounded-xl',
+				'relative h-auto grow rounded-xl border-4 border-dashed p-3',
 				isDragActive ? 'border-4 border-sky-600 dark:border-sky-600' : '',
 			)}
 			{...getRootProps()}
@@ -213,11 +213,11 @@ export const FileGridMain = ({
 			<input {...getInputProps()} />
 			<div
 				className={cn(
-					'z-10 absolute h-full w-full inset-0 flex justify-center items-center bg-muted rounded-lg',
+					'bg-muted absolute inset-0 z-10 flex h-full w-full items-center justify-center rounded-lg',
 					isDragActive ? '' : 'hidden',
 				)}
 			>
-				<CloudUploadIcon className="w-12 h-12 text-primary" />
+				<CloudUploadIcon className="text-primary h-12 w-12" />
 			</div>
 			{fileState.length > 0 ? (
 				<div
@@ -247,9 +247,9 @@ export const FileGridMain = ({
 					})}
 				</div>
 			) : (
-				<div className="w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3 text-muted-foreground">
+				<div className="text-muted-foreground flex h-full min-h-60 w-full grow flex-col items-center justify-center gap-3">
 					<CupSoda size={50} />
-					<p className="text-center max-w-sm">
+					<p className="max-w-sm text-center">
 						No file found, drag and drop, or click to select files now
 					</p>
 				</div>

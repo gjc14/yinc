@@ -61,7 +61,7 @@ export function ErrorBoundary() {
 		switch (error.status) {
 			case 404:
 				return (
-					<main className="w-screen h-svh flex flex-col items-center justify-center">
+					<main className="flex h-svh w-screen flex-col items-center justify-center">
 						<motion.h1
 							className="mb-2 text-[8rem] leading-none tracking-tight sm:text-[10rem] md:text-[15rem]"
 							{...fade()}
@@ -73,7 +73,7 @@ export function ErrorBoundary() {
 							Page Not Found
 						</h2>
 
-						<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center">
+						<p className="text-primary/80 mx-3 mb-8 max-w-md text-center text-lg">
 							Sorry, we couldn’t find the page you’re looking for.
 						</p>
 
@@ -90,7 +90,7 @@ export function ErrorBoundary() {
 					error.data || statusMessage.text || 'Error Response'
 
 				return (
-					<main className="w-screen h-svh flex flex-col items-center justify-center">
+					<main className="flex h-svh w-screen flex-col items-center justify-center">
 						<a
 							className="z-10 text-sm underline underline-offset-4"
 							href={`https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${error.status}`}
@@ -127,7 +127,7 @@ export function ErrorBoundary() {
 		console.error('Error:', error)
 
 		return (
-			<main className="w-screen h-svh flex flex-col items-center justify-center">
+			<main className="flex h-svh w-screen flex-col items-center justify-center">
 				<motion.h1
 					className="mb-2 text-[8rem] leading-none tracking-tight sm:text-[10rem] md:text-[15rem]"
 					{...fade()}
@@ -139,14 +139,14 @@ export function ErrorBoundary() {
 					Internal Server Error
 				</h2>
 
-				<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center">
+				<p className="text-primary/80 mx-3 mb-8 max-w-md text-center text-lg">
 					Something went wrong on our servers.
 				</p>
 
-				<div className="flex flex-col sm:flex-row gap-4">
+				<div className="flex flex-col gap-4 sm:flex-row">
 					<Link to={'/'}>
 						<Button variant="outline" className="rounded-full">
-							<ArrowLeft className="w-4 h-4" /> Back to Home
+							<ArrowLeft className="h-4 w-4" /> Back to Home
 						</Button>
 					</Link>
 
@@ -165,7 +165,7 @@ export function ErrorBoundary() {
 
 	return (
 		// Unknown error
-		<main className="w-screen h-svh flex flex-col items-center justify-center">
+		<main className="flex h-svh w-screen flex-col items-center justify-center">
 			<motion.h1
 				className="mb-2 text-[8rem] leading-none tracking-tight sm:text-[10rem] md:text-[15rem]"
 				{...fade()}
@@ -175,14 +175,14 @@ export function ErrorBoundary() {
 
 			<h2 className="mb-8 text-2xl font-semibold md:text-3xl">Unknown Error</h2>
 
-			<p className="mb-8 mx-3 max-w-md text-lg text-primary/80 text-center">
+			<p className="text-primary/80 mx-3 mb-8 max-w-md text-center text-lg">
 				Ops! Something went wrong.
 			</p>
 
-			<div className="flex flex-col sm:flex-row gap-4">
+			<div className="flex flex-col gap-4 sm:flex-row">
 				<Link to={'/'}>
 					<Button variant="outline" className="rounded-full">
-						<ArrowLeft className="w-4 h-4" /> Back to Home
+						<ArrowLeft className="h-4 w-4" /> Back to Home
 					</Button>
 				</Link>
 

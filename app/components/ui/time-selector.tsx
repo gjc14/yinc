@@ -94,7 +94,7 @@ export const TimeSelector = ({
 						value={displayHour.toString()}
 						onValueChange={handleHourChange}
 					>
-						<SelectTrigger className="w-16 h-8 text-center">
+						<SelectTrigger className="h-8 w-16 text-center">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent className="max-h-[200px]">
@@ -137,7 +137,7 @@ export const TimeSelector = ({
 						value={currentMinute.toString()}
 						onValueChange={handleMinuteChange}
 					>
-						<SelectTrigger className="w-16 h-8 text-center">
+						<SelectTrigger className="h-8 w-16 text-center">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent className="max-h-[200px]">
@@ -166,7 +166,7 @@ export const TimeSelector = ({
 							variant={'ghost'}
 							size="sm"
 							onClick={togglePeriod}
-							className="w-12 h-8 text-xs"
+							className="h-8 w-12 text-xs"
 						>
 							{isPM ? 'PM' : 'AM'}
 						</Button>

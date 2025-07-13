@@ -38,14 +38,14 @@ export const PopoverMenuOptions = ({
 				<Button
 					type="button"
 					variant={'ghost'}
-					className={'px-2 py-1 h-7 space-x-1'}
+					className={'h-7 space-x-1 px-2 py-1'}
 				>
 					{activeIcon ? activeIcon : defaultIcon}
 					{!hideIndicator && <ChevronDown size={12} />}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent
-				className="w-fit max-h-[50vh] flex flex-col p-1 gap-0.5 overflow-scroll"
+				className="flex max-h-[50vh] w-fit flex-col gap-0.5 overflow-scroll p-1"
 				sideOffset={8}
 			>
 				{options.map((option, index) => {
@@ -54,7 +54,7 @@ export const PopoverMenuOptions = ({
 							<div className="my-0.5 space-y-0.5" key={index}>
 								<p
 									key={index}
-									className="text-xs text-muted-foreground font-bold uppercase mx-1"
+									className="text-muted-foreground mx-1 text-xs font-bold uppercase"
 								>
 									{option.label}
 								</p>
@@ -66,7 +66,7 @@ export const PopoverMenuOptions = ({
 							<Button
 								key={index}
 								variant={'ghost'}
-								className={`justify-start space-x-2 h-fit py-1 px-2 rounded-sm ${
+								className={`h-fit justify-start space-x-2 rounded-sm px-2 py-1 ${
 									option.isActive?.(editor)
 										? 'bg-accent text-accent-foreground'
 										: ''

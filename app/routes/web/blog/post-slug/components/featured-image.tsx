@@ -8,9 +8,9 @@ export const FeaturedImage = ({
 	description: string
 }) => {
 	return (
-		<div className="w-full flex flex-col mb-10">
+		<div className="mb-10 flex w-full flex-col">
 			<img src={src || 'https://placehold.co/600x400'} alt={alt} />
-			<p className="text-center text-muted-foreground pt-3">{description}</p>
+			<p className="text-muted-foreground pt-3 text-center">{description}</p>
 		</div>
 	)
 }

@@ -71,7 +71,7 @@ export function ServiceSwitcher({
 								size="lg"
 								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
-								<div className="flex aspect-square size-8 items-center justify-center rounded-lg border text-sidebar-primary-foreground overflow-hidden">
+								<div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg border">
 									{renderServiceLogo(currentService.logo, 'lg')}
 								</div>
 								<div className="grid flex-1 text-left text-sm leading-tight">
@@ -90,13 +90,13 @@ export function ServiceSwitcher({
 						side={isMobile ? 'bottom' : 'right'}
 						sideOffset={4}
 					>
-						<DropdownMenuLabel className="text-xs text-muted-foreground">
+						<DropdownMenuLabel className="text-muted-foreground text-xs">
 							Services
 						</DropdownMenuLabel>
 						{services.map(service => (
 							<Link key={service.name} to={service.pathname}>
 								<DropdownMenuItem className="gap-2 p-2">
-									<div className="flex size-6 items-center justify-center rounded-sm border overflow-hidden">
+									<div className="flex size-6 items-center justify-center overflow-hidden rounded-sm border">
 										{renderServiceLogo(service.logo, 'sm')}
 									</div>
 									{service.name}

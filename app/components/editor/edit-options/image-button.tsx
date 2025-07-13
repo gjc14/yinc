@@ -85,7 +85,7 @@ export const ImageButton = ({ editor }: { editor: Editor }) => {
 				<div className="grid gap-3">
 					<div className="space-y-2">
 						<h4>Insert Image</h4>
-						<p className="text-sm text-muted-foreground">
+						<p className="text-muted-foreground text-sm">
 							Select an image from gallery or paste a URL to insert an image
 						</p>
 					</div>
@@ -109,9 +109,9 @@ export const ImageButton = ({ editor }: { editor: Editor }) => {
 							}}
 						/>
 					) : (
-						<div className="border rounded-xl w-full h-full min-h-60 grow flex flex-col items-center justify-center gap-3">
+						<div className="flex h-full min-h-60 w-full grow flex-col items-center justify-center gap-3 rounded-xl border">
 							<CloudAlert size={50} />
-							<p className="text-center max-w-sm">
+							<p className="max-w-sm text-center">
 								Please setup your S3 Object Storage to start uploading assets
 							</p>
 						</div>

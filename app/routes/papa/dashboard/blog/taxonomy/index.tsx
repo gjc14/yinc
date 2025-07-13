@@ -106,7 +106,7 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 				<DashboardActions></DashboardActions>
 			</DashboardHeader>
 
-			<DashboardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 grid-rows-1">
+			<DashboardContent className="grid grid-cols-1 grid-rows-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 				{/* Tags Section (Left) */}
 				<TagsSection tags={tags} />
 

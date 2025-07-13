@@ -25,7 +25,7 @@ function Calendar({
 		<DayPicker
 			showOutsideDays={showOutsideDays}
 			className={cn(
-				'p-3 inline-flex flex-col items-center justify-center',
+				'inline-flex flex-col items-center justify-center p-3',
 				className,
 			)}
 			classNames={{
@@ -116,7 +116,7 @@ function SelectDropdown(props: DropdownProps) {
 		<Select value={value?.toString()} onValueChange={handleValueChange}>
 			<SelectTrigger className="flex items-center gap-1 text-sm">
 				<SelectValue />
-				<ChevronsUpDown className="size-3 text-muted-foreground" />
+				<ChevronsUpDown className="text-muted-foreground size-3" />
 			</SelectTrigger>
 			<SelectContent>
 				{options?.map(option => (

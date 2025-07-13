@@ -20,17 +20,17 @@ export function FloatingToolkit() {
 
 	if (data?.user.role === 'admin') {
 		return (
-			<div className="fixed bottom-6 right-6 z-99999">
+			<div className="fixed right-6 bottom-6 z-99999">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button
 							size="icon"
-							className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-lg hover:bg-gray-800 hover:dark:bg-gray-200"
+							className="h-12 w-12 rounded-full bg-black text-white shadow-lg hover:bg-gray-800 dark:bg-white dark:text-black hover:dark:bg-gray-200"
 						>
 							<ChevronUp size={20} />
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end" side="top" className="w-56 mb-2">
+					<DropdownMenuContent align="end" side="top" className="mb-2 w-56">
 						<DropdownMenuItem onClick={() => navigate('/')}>
 							<PanelTop className="mr-2 size-4" />
 							<span>View Website</span>

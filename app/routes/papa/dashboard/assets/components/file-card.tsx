@@ -127,11 +127,11 @@ export const FileCard = ({
 	return (
 		<div
 			className={cn(
-				'group relative flex flex-col items-center justify-center border rounded-lg aspect-square overflow-hidden',
+				'group relative flex aspect-square flex-col items-center justify-center overflow-hidden rounded-lg border',
 				className,
 				onSelect ? 'cursor-pointer' : 'cursor-default',
 				visuallySelected?.id === file.id
-					? 'border-2 border-primary border-dashed'
+					? 'border-primary border-2 border-dashed'
 					: '',
 			)}
 			onClick={e => {
@@ -156,17 +156,17 @@ export const FileCard = ({
 				<File />
 			)}
 			{deleteAlert && (
-				<div className="absolute w-full h-full flex flex-col justify-center items-center rounded-lg backdrop-blur-xs gap-1.5 pt-3">
+				<div className="absolute flex h-full w-full flex-col items-center justify-center gap-1.5 rounded-lg pt-3 backdrop-blur-xs">
 					<Button
 						variant={'destructive'}
 						size={'sm'}
-						className="min-h-6 text-[10px] cursor-pointer"
+						className="min-h-6 cursor-pointer text-[10px]"
 						onClick={handleDelete}
 					>
 						Delete
 					</Button>
 					<button
-						className="text-[10px] underline-offset-2 hover:underline cursor-pointer"
+						className="cursor-pointer text-[10px] underline-offset-2 hover:underline"
 						onClick={() => setDeleteAlert(false)}
 					>
 						Cancel
@@ -177,13 +177,13 @@ export const FileCard = ({
 			<div
 				className={cn(
 					`hidden ${deleteAlert ? '' : 'group-hover:flex'}`,
-					'absolute bottom-3 left-[50%] translate-x-[-50%] bg-primary-foreground',
-					'border rounded-lg items-center justify-center px-1 py-0.5 gap-1',
+					'bg-primary-foreground absolute bottom-3 left-[50%] translate-x-[-50%]',
+					'items-center justify-center gap-1 rounded-lg border px-1 py-0.5',
 				)}
 			>
 				<ToolBarButton
 					onClick={() => setDeleteAlert(true)}
-					className="hover:text-white hover:bg-destructive"
+					className="hover:bg-destructive hover:text-white"
 				>
 					<Trash2 />
 				</ToolBarButton>
@@ -202,7 +202,7 @@ export const FileCard = ({
 						<DialogTitle className="flex grid-cols-3 items-center gap-1.5">
 							{file.name}
 						</DialogTitle>
-						<DialogDescription className="min-h-36 flex flex-col justify-center items-center gap-2 border rounded-lg overflow-hidden">
+						<DialogDescription className="flex min-h-36 flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border">
 							{fileGeneralType === 'image' ? (
 								<img className="max-h-[50vh]" src={url} alt={file.name} />
 							) : fileGeneralType === 'video' ? (
@@ -230,7 +230,7 @@ export const FileCard = ({
 							</Label>
 							<p
 								id="id"
-								className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
+								className="min-h-0 flex-1 cursor-copy overflow-y-auto rounded-lg border px-1.5 py-1 text-sm shadow-xs"
 								onClick={() => {
 									navigator.clipboard.writeText(String(file.id))
 									toast.success('Copied to clipboard')
@@ -243,10 +243,10 @@ export const FileCard = ({
 							<Label htmlFor="url" className="px-1">
 								URL
 							</Label>
-							<div className="flex gap-2 items-center">
+							<div className="flex items-center gap-2">
 								<p
 									id="url"
-									className="shadow-xs flex-1 min-h-0 text-sm border rounded-lg py-1 px-1.5 overflow-y-auto cursor-copy"
+									className="min-h-0 flex-1 cursor-copy overflow-y-auto rounded-lg border px-1.5 py-1 text-sm shadow-xs"
 									onClick={() => {
 										navigator.clipboard.writeText(origin + url)
 										toast.success('Copied to clipboard')
@@ -256,7 +256,7 @@ export const FileCard = ({
 								</p>
 								<a href={url} target="_blank" rel="noopener noreferrer">
 									<Button variant={'ghost'} size={'icon'}>
-										<ExternalLink className="w-5 h-5" />
+										<ExternalLink className="h-5 w-5" />
 									</Button>
 								</a>
 							</div>
@@ -285,7 +285,7 @@ export const FileCard = ({
 							/>
 						</div>
 
-						<div id="file-details" className="w-full my-2 px-1">
+						<div id="file-details" className="my-2 w-full px-1">
 							<p className="text-sm">
 								<strong>File Type:</strong> {file.type}
 							</p>
@@ -320,7 +320,7 @@ export const FileCard = ({
 
 						<AlertDialog>
 							<AlertDialogTrigger asChild>
-								<Button variant={'link'} className="p-0 h-fit w-fit">
+								<Button variant={'link'} className="h-fit w-fit p-0">
 									Delete permanently
 								</Button>
 							</AlertDialogTrigger>
@@ -358,7 +358,7 @@ const ToolBarButton = forwardRef<
 			ref={ref}
 			type={type || 'button'}
 			className={cn(
-				'inline-flex items-center justify-center gap-2 whitespace-nowrap p-1 size-6 cursor-pointer transition-colors rounded-full hover:bg-accent',
+				'hover:bg-accent inline-flex size-6 cursor-pointer items-center justify-center gap-2 rounded-full p-1 whitespace-nowrap transition-colors',
 				className,
 			)}
 			{...props}

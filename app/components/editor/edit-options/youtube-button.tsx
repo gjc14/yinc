@@ -31,7 +31,7 @@ export const YoutubeButton = ({ editor }: { editor: Editor }) => {
 				<div className="grid gap-3">
 					<div className="space-y-2">
 						<h4>Youtube Link</h4>
-						<p className="text-sm text-muted-foreground">
+						<p className="text-muted-foreground text-sm">
 							Copy and paste the Youtube link you want to embed.
 						</p>
 					</div>

@@ -151,7 +151,7 @@ export const UserManagementRoute = ({
 				hideColumnFilter
 			>
 				{table => (
-					<div className="w-full flex items-center justify-between gap-2">
+					<div className="flex w-full items-center justify-between gap-2">
 						<Input
 							placeholder="Filter email..."
 							type="email"
@@ -201,7 +201,7 @@ export const UserManagementRoute = ({
 					</DialogHeader>
 					<fetcher.Form
 						id="invite-user"
-						className="flex flex-col gap-1.5 md:flex-row items-baseline"
+						className="flex flex-col items-baseline gap-1.5 md:flex-row"
 						method="POST"
 						action="/dashboard/user/resource"
 					>
@@ -257,7 +257,7 @@ export const UserManagementRoute = ({
 						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 						<AlertDialogDescription>
 							This action cannot be undone. This will permanently delete{' '}
-							<span className="font-bold text-primary">
+							<span className="text-primary font-bold">
 								{selectedUsers.length}
 							</span>{' '}
 							{role === 'admin' ? 'admins' : 'users'}.
@@ -266,7 +266,7 @@ export const UserManagementRoute = ({
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
-							className="bg-destructive text-white hover:bg-destructive/90"
+							className="bg-destructive hover:bg-destructive/90 text-white"
 							onClick={e => {
 								e.preventDefault()
 								onBulkDelete()

@@ -12,7 +12,7 @@ import type { PostWithRelations } from '~/lib/db/post.server'
 
 export function PostMeta({ post }: { post: PostWithRelations }) {
 	return (
-		<div className="w-full mx-auto py-2">
+		<div className="mx-auto w-full py-2">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<Avatar className="h-10 w-10">
@@ -26,12 +26,12 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 					</Avatar>
 					<div className="flex flex-col">
 						<Button
-							className="w-fit h-6 flex items-center font-medium text-base px-0"
+							className="flex h-6 w-fit items-center px-0 text-base font-medium"
 							variant={'link'}
 						>
 							{post.author?.name || post.author?.email}
 						</Button>
-						<div className="flex items-center gap-1 text-sm text-muted-foreground text-wrap">
+						<div className="text-muted-foreground flex items-center gap-1 text-sm text-wrap">
 							<span>{post.updatedAt.toDateString()}</span>
 							<span className="px-1">·</span>
 							<span>
@@ -52,7 +52,7 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 
 			{post.categories.length > 0 && (
 				<>
-					<div className="flex items-center text-base my-3 px-2">
+					<div className="my-3 flex items-center px-2 text-base">
 						<LibraryBig size={16} className="mr-2 shrink-0" />
 						<div className="mr-auto">
 							{post.categories.map((c, i) => (
