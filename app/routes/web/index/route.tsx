@@ -37,7 +37,7 @@ export default function Index() {
 
 			<div
 				id="grid-container"
-				className="text-foreground xs:grid-cols-2 grid h-fit w-full grid-cols-1 gap-7 pb-8 sm:gap-10 md:grid-cols-3 lg:grid-cols-2 xl:w-1/2 xl:grid-cols-3 xl:pb-16"
+				className="text-foreground grid h-fit w-full grid-cols-1 gap-7 pb-8 sm:grid-cols-2 sm:gap-10 md:grid-cols-3 lg:grid-cols-2 xl:w-1/2 xl:grid-cols-3 xl:pb-16"
 			>
 				{/* Edit your links in ./components/links.tsx */}
 				{Object.keys(LINKS).map(key => {

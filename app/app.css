@@ -181,7 +181,7 @@
 	}
 
 	.prose-article p {
-		@apply font-serif-tw text-base md:text-lg;
+		@apply text-base md:text-lg;
 	}
 
 	.prose-article pre {

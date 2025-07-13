@@ -139,26 +139,19 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 				isNavigating={isNavigating}
 			/>
 
-			<div className="border-primary sticky top-0 z-10 flex w-full items-center justify-end gap-2 border-y px-2 py-1 backdrop-blur-xs">
+			<div className="fixed bottom-8 z-10 flex items-center gap-2 rounded-full border bg-white/10 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
 				{/* Preview */}
 				{post.status !== 'PUBLISHED' ? (
-					!isDirty ? (
+					<Button variant={'link'} asChild disabled={isDirty}>
 						<Link to={`/blog/${post.slug}?preview=true`} target="_blank">
-							<Button variant={'link'}>
-								Preview post
-								<ExternalLink size={12} />
-							</Button>
-						</Link>
-					) : (
-						<Button variant={'link'} className="px-2" disabled>
 							Preview post
 							<ExternalLink size={12} />
-						</Button>
-					)
+						</Link>
+					</Button>
 				) : (
 					<Link to={`/blog/${post.slug}`} target="_blank">
 						<Button variant={'link'}>
-							See post
+							View post
 							<ExternalLink className="!size-3.5" />
 						</Button>
 					</Link>
