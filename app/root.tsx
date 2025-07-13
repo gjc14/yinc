@@ -12,24 +12,15 @@ import {
 	ScrollRestoration,
 	useFetchers,
 	useLoaderData,
-	useRevalidator,
 	useRouteError,
 	type LoaderFunctionArgs,
 } from 'react-router'
 
+import { ThemeProvider } from 'next-themes'
 import { toast, Toaster } from 'sonner'
 
 import { FloatingToolkit } from './components/floating-toolkit'
 import { GlobalLoading } from './components/global-loading'
-import {
-	getCustomTheme,
-	parsedCustomTheme,
-	ThemeProvider,
-	useTheme,
-} from './hooks/theme-provider'
-import { useCookieTheme } from './hooks/use-cookie-theme'
-import { ClientHintCheck, getHints } from './lib/client-hints/client-hints'
-import { subscribeToSchemeChange } from './lib/client-hints/color-schema'
 import { commitFlashSession, getFlashSession } from './lib/sessions.server'
 import { isConventionalError, isConventionalSuccess } from './lib/utils'
 
@@ -46,19 +37,16 @@ export const meta = ({ error }: Route.MetaArgs) => {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-	const theme = useCookieTheme()
-
 	return (
-		<html lang="en" className={theme}>
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<Meta />
 				<Links />
-				<ClientHintCheck />
 			</head>
 			<body>
-				<ThemeProvider cookieTheme={theme}>
+				<ThemeProvider attribute="class">
 					<GlobalLoading />
 					<FloatingToolkit />
 					{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
@@ -80,10 +68,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		return {
 			successes,
 			errors,
-			requestInfo: {
-				hints: getHints(request),
-				customTheme: getCustomTheme(request),
-			},
 		}
 	}
 
@@ -91,10 +75,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		{
 			successes,
 			errors,
-			requestInfo: {
-				hints: getHints(request),
-				customTheme: getCustomTheme(request),
-			},
 		},
 		{
 			headers: {
@@ -107,8 +87,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function App() {
 	const { successes, errors } = useLoaderData<typeof loader>()
 	const fetchers = useFetchers()
-	const { revalidate } = useRevalidator()
-	const { setTheme } = useTheme()
 
 	const toastKeysRef = useRef<Map<string, number>>(new Map())
 	const prevFetchersRef = useRef(fetchers)
@@ -181,21 +159,6 @@ export default function App() {
 			toast.error(errors)
 		}
 	}, [successes, errors])
-
-	// Subscribe to (prefers-color-scheme: dark), set cookie and revalidate when it changes
-	useEffect(() => {
-		subscribeToSchemeChange(theme => {
-			// Do not set theme if custom theme is set
-			const cookieHeader = document.cookie
-
-			const customTheme = parsedCustomTheme(cookieHeader)
-
-			if (customTheme) return revalidate()
-
-			// Set theme to system theme
-			setTheme(theme)
-		})
-	}, [])
 
 	return (
 		<>

@@ -1,6 +1,7 @@
 import { forwardRef } from 'react'
 
 import { Moon, Sun, SunMoon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 
 import {
 	DropdownMenu,
@@ -8,7 +9,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
-import { setCustomTheme, useTheme } from '~/hooks/theme-provider'
 import { cn } from '~/lib/utils'
 
 import { Button } from './ui/button'
@@ -72,7 +72,6 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
 					<DropdownMenuItem
 						onClick={() => {
 							setTheme('light')
-							setCustomTheme('light')
 						}}
 					>
 						Light
@@ -80,15 +79,13 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
 					<DropdownMenuItem
 						onClick={() => {
 							setTheme('dark')
-							setCustomTheme('dark')
 						}}
 					>
 						Dark
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={() => {
-							setTheme(undefined)
-							setCustomTheme(undefined)
+							setTheme('system')
 						}}
 					>
 						System
@@ -121,7 +118,6 @@ export const ThemeDropDownMenu = ({
 				<DropdownMenuItem
 					onClick={() => {
 						setTheme('light')
-						setCustomTheme('light')
 					}}
 				>
 					<Sun size={16} className="mr-2" />
@@ -130,7 +126,6 @@ export const ThemeDropDownMenu = ({
 				<DropdownMenuItem
 					onClick={() => {
 						setTheme('dark')
-						setCustomTheme('dark')
 					}}
 				>
 					<Moon size={16} className="mr-2" />
@@ -138,8 +133,7 @@ export const ThemeDropDownMenu = ({
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={() => {
-						setTheme(undefined)
-						setCustomTheme(undefined)
+						setTheme('system')
 					}}
 				>
 					<SunMoon size={16} className="mr-2" />
