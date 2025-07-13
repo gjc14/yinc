@@ -7,9 +7,9 @@ import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
 
-import { Footer } from '../components/footer'
-import { Nav } from '../components/nav'
 import { CTA } from './components/cta'
+import { Footer } from './components/footer'
+import { Nav } from './components/nav'
 
 export const meta = ({ data, location }: Route.MetaArgs) => {
 	if (!data || !data.meta) {

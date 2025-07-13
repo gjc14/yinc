@@ -1,140 +1,100 @@
 import { Link, useLocation } from 'react-router'
 
-import { type ColumnDef } from '@tanstack/react-table'
-import { ExternalLink } from 'lucide-react'
+import { AvatarImage } from '@radix-ui/react-avatar'
+import { CircleCheckIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 
-import { Input } from '~/components/ui/input'
+import { Avatar, AvatarFallback } from '~/components/ui/avatar'
+import { Badge } from '~/components/ui/badge'
 import type { PostWithRelations } from '~/lib/db/post.server'
-import { SimpleSortHeader } from '~/routes/papa/dashboard/components/data-table/simple-sort-header'
-
-import { DataTable } from './post-data-table'
-
-export const LatestPosts = ({ posts }: { posts: PostWithRelations[] }) => {
-	return (
-		<div
-			id="latest-post"
-			className="text-primary mx-auto max-w-5xl px-5 py-8 md:px-9"
-		>
-			<div className="mb-12 flex flex-wrap items-end justify-between gap-5">
-				<motion.h2
-					initial={{ y: 48, opacity: 0 }}
-					whileInView={{ y: 0, opacity: 1 }}
-					transition={{ ease: 'easeInOut', duration: 0.5 }}
-					className="text-primary text-4xl font-black uppercase"
-				>
-					Latest Posts
-				</motion.h2>
-				<Link to={'/blog'} aria-label="link to blog">
-					<motion.button
-						initial={{ y: 48, opacity: 0 }}
-						whileInView={{ y: 0, opacity: 1 }}
-						transition={{ ease: 'easeInOut', duration: 0.5 }}
-						className="flex cursor-pointer items-center gap-1.5 underline-offset-4 hover:underline"
-					>
-						See more posts
-						<ExternalLink size={16} />
-					</motion.button>
-				</Link>
-			</div>
-
-			<Posts posts={posts} hidePagination hideSearch />
-		</div>
-	)
-}
 
 export const PostCollection = ({
 	title,
 	posts,
+	description,
 }: {
 	title: string
 	posts: PostWithRelations[]
+	description?: React.ReactNode
 }) => {
 	return (
-		<div
-			id="category-post"
-			className="text-primary mx-auto max-w-5xl px-5 py-8 md:px-9"
-		>
-			<div className="mb-12 flex flex-wrap items-end justify-between gap-5">
+		<div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-3 md:px-9">
+			<div className="mb-12 flex flex-col px-6">
 				<motion.h2
 					initial={{ y: 48, opacity: 0 }}
 					whileInView={{ y: 0, opacity: 1 }}
 					transition={{ ease: 'easeInOut', duration: 0.5 }}
-					className="text-primary text-4xl font-black uppercase"
+					className="text-8xl font-black md:text-9xl"
 				>
 					{title}
 				</motion.h2>
+				{description && (
+					<div className="mt-8 rounded-md border border-emerald-500/50 px-4 py-3 text-emerald-600">
+						<p className="text-sm">
+							<CircleCheckIcon
+								className="me-3 -mt-0.5 inline-flex opacity-60"
+								size={16}
+								aria-hidden="true"
+							/>
+							{description}
+						</p>
+					</div>
+				)}
 			</div>
 
-			<Posts posts={posts} />
+			{posts.map(post => (
+				<Post key={post.id} post={post} />
+			))}
 		</div>
 	)
 }
 
-const Posts = ({
-	posts,
-	hidePagination,
-	hideSearch,
-}: {
-	posts: PostWithRelations[]
-	hidePagination?: boolean
-	hideSearch?: boolean
-}) => {
+const Post = ({ post }: { post: PostWithRelations }) => {
+	const { search } = useLocation()
+	const url = `/blog/${post.slug}`
+
 	return (
-		<>
-			<DataTable columns={columns} data={posts} hidePagination={hidePagination}>
-				{table => (
-					<>
-						{!hideSearch && (
-							<Input
-								placeholder="I'm looking for..."
-								value={
-									(table.getColumn('title')?.getFilterValue() as string) ?? ''
-								}
-								onChange={event =>
-									table.getColumn('title')?.setFilterValue(event.target.value)
-								}
-								className="max-w-sm"
-								aria-label="search for post"
-							/>
-						)}
-					</>
-				)}
-			</DataTable>
-		</>
-	)
-}
+		<Link to={url + search} className="group hover:bg-accent py-4 md:py-5">
+			<div className="flex flex-col px-5 md:px-6">
+				<div className="mb-3 flex gap-1.5">
+					{post.categories.map(category => (
+						<Link key={category.id} to={`/blog?category=${category.slug}`}>
+							<Badge
+								className="bg-brand text-brand-foreground rounded-full"
+								onClick={e => {
+									e.stopPropagation()
+								}}
+							>
+								{category.name}
+							</Badge>
+						</Link>
+					))}
+				</div>
 
-export const columns: ColumnDef<PostWithRelations>[] = [
-	{
-		accessorKey: 'title',
-		header: ({ column }) => {
-			return <SimpleSortHeader column={column}>Title</SimpleSortHeader>
-		},
-		cell: ({ row }) => {
-			const title = row.original.title
-			const url = `/blog/${row.original.slug}`
-			const excerpt = row.original.excerpt
-			const { search } = useLocation()
+				<h2 className="text-xl underline-offset-4 group-hover:underline md:text-2xl">
+					{post.title}
+				</h2>
 
-			const author =
-				row.original.author?.name ?? row.original.author?.email ?? 'P'
-			const updatedAt = row.original.updatedAt
-			return (
-				<div className="mx-2 my-3 flex flex-col">
-					<h2 className="text-2xl">
-						<Link to={url + search}>{title}</Link>
-					</h2>
-					<p className="text-muted-foreground mt-1 text-base">{excerpt}</p>
+				<p className="text-muted-foreground mt-3 text-sm">{post.excerpt}</p>
 
-					<div className="mt-3.5 ml-1 flex flex-col items-start justify-center gap-1 border-l-2 pl-2 md:mt-5">
-						<p className="text-muted-foreground text-sm">Written by {author}</p>
-						<p className="text-muted-foreground text-sm">
-							{updatedAt.toLocaleDateString('zh-TW')}
-						</p>
+				<div className="mt-8 flex items-center justify-start gap-3.5">
+					<Avatar className="size-8">
+						<AvatarImage
+							src={post.author?.image || undefined}
+							alt={post.author?.name || '🍟'}
+						/>
+						<AvatarFallback>{post.author?.name?.[0] || '🍟'}</AvatarFallback>
+					</Avatar>
+					<div className="flex flex-col">
+						<span className="text-sm font-semibold">
+							{post.author?.name || 'Anonymous'}
+						</span>
+						<span className="text-muted-foreground text-xs">
+							{post.updatedAt.toLocaleDateString('zh-TW')}
+						</span>
 					</div>
 				</div>
-			)
-		},
-	},
-]
+			</div>
+		</Link>
+	)
+}

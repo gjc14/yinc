@@ -20,8 +20,8 @@ export const CTA = ({
 	const isSubmitting = fetcher.formAction === subscribeRoute
 
 	return (
-		<section className="mx-auto my-12 flex max-w-2xl flex-col px-6 py-20 md:px-12 lg:px-18">
-			<Card className="px-3 py-2 sm:px-8 sm:py-6">
+		<section className="my-12 flex max-w-3xl flex-col py-20 md:px-12 lg:px-18">
+			<div className="mx-1 border px-3 py-2 sm:px-8 sm:py-6">
 				<CardHeader>
 					<CardTitle>Subscribe to new posts!</CardTitle>
 					<CardDescription>
@@ -54,7 +54,7 @@ export const CTA = ({
 						{/* <TurnstileWidget /> */}
 					</fetcher.Form>
 				</CardContent>
-			</Card>
+			</div>
 		</section>
 	)
 }
