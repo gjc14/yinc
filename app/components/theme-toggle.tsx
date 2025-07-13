@@ -25,6 +25,8 @@ export const CurrentThemeIcon = ({
 	size?: 'sm' | 'md' | 'lg'
 	className?: string
 }) => {
+	const { theme } = useTheme()
+
 	const iconSizes = {
 		sm: 'size-4',
 		md: 'size-5',
@@ -36,10 +38,22 @@ export const CurrentThemeIcon = ({
 			className={cn('relative flex items-center justify-center', className)}
 		>
 			<Sun
-				className={`${iconSizes[size]} scale-100 rotate-0 transition-transform dark:scale-0 dark:-rotate-90`}
+				suppressHydrationWarning
+				className={`absolute ${iconSizes[size]} ${theme === 'light' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
 			/>
+
 			<Moon
-				className={`absolute ${iconSizes[size]} scale-0 rotate-90 transition-transform dark:scale-100 dark:rotate-0`}
+				suppressHydrationWarning
+				className={`absolute ${iconSizes[size]} ${theme === 'dark' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
+			/>
+
+			<SunMoon
+				suppressHydrationWarning
+				className={`absolute ${iconSizes[size]} ${theme === 'system' || theme === undefined ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
+			/>
+			<div
+				suppressHydrationWarning
+				className={`absolute ${iconSizes[size]} ${![undefined, 'light', 'dark', 'system'].includes(theme) ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} bg-background size-4 rounded border transition-transform`}
 			/>
 			<span className="sr-only">Toggle theme</span>
 		</span>
