@@ -1,7 +1,11 @@
+import { useIsMobile } from '~/hooks/use-mobile'
+
 import { LINKS } from './components/links'
 import { ThemeSwitcher } from './components/theme-switcher'
 
 export default function Index() {
+	const isMobile = useIsMobile()
+
 	return (
 		<div className="bg-brand text-foreground relative mx-auto flex min-h-svh w-full flex-col gap-12 overflow-auto p-8 lg:flex-row xl:gap-28 xl:p-24">
 			<div className="mb-12 w-full xl:mb-0 xl:w-[500px]">
@@ -32,7 +36,7 @@ export default function Index() {
 					</p>
 				</div>
 
-				<ThemeSwitcher />
+				<ThemeSwitcher start={isMobile ? 'top left' : 'bottom left'} />
 			</div>
 
 			<div

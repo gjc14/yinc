@@ -12,7 +12,7 @@ export const Nav = () => {
 			>
 				Home
 			</NavLink>
-			<ThemeToggle className="rounded-full border-0 p-0" />
+			<ThemeToggle className="rounded-full border-0 p-0" start="top right" />
 		</nav>
 	)
 }

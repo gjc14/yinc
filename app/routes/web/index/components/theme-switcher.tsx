@@ -1,21 +1,30 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
-export function ThemeSwitcher() {
+import {
+	useViewTransitionTheme,
+	type ViewTransitionThemeOptions,
+} from '~/hooks/use-view-transition-theme'
+
+export function ThemeSwitcher(props: ViewTransitionThemeOptions) {
 	const { setTheme, theme } = useTheme()
 
+	const { styles, transition } = useViewTransitionTheme(props)
+
+	const switchTheme = () => {
+		setTheme(theme === 'dark' ? 'light' : 'dark')
+	}
+
 	return (
-		<>
-			<button
-				className="border-primary/80 bg-brand/30 mt-6 size-11 border-2 p-0"
-				onClick={() => {
-					setTheme(theme === 'dark' ? 'light' : 'dark')
-				}}
-			>
-				<Sun className="stroke-foreground hidden size-6 dark:inline" />
-				<Moon className="stroke-foreground inline size-6 dark:hidden" />
-				<span className="sr-only">Toggle theme</span>
-			</button>
-		</>
+		<button
+			onClick={() => transition(switchTheme)}
+			{...props}
+			className="border-primary/80 bg-brand/30 mt-6 size-11 border-2 p-0 transition-transform"
+		>
+			<style>{styles}</style>
+			<Sun className="stroke-foreground hidden size-6 dark:inline" />
+			<Moon className="stroke-foreground inline size-6 dark:hidden" />
+			<span className="sr-only">Toggle theme</span>
+		</button>
 	)
 }

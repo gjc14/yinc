@@ -9,6 +9,10 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import {
+	useViewTransitionTheme,
+	type ViewTransitionThemeOptions,
+} from '~/hooks/use-view-transition-theme'
 import { cn } from '~/lib/utils'
 
 import { Button } from './ui/button'
@@ -60,55 +64,64 @@ export const CurrentThemeIcon = ({
 	)
 }
 
-export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
-	({ size = 'sm', className }, ref) => {
-		const { setTheme } = useTheme()
+export const ThemeToggle = forwardRef<
+	HTMLButtonElement,
+	ThemeToggleProps & ViewTransitionThemeOptions
+>(({ size = 'sm', className, start, variant, duration }, ref) => {
+	const { setTheme } = useTheme()
+	const { styles, transition } = useViewTransitionTheme({
+		start,
+		variant,
+		duration,
+	})
 
-		const buttonSizes = {
-			sm: 'size-7',
-			md: 'size-9',
-			lg: 'size-11',
-		}
+	const buttonSizes = {
+		sm: 'size-7',
+		md: 'size-9',
+		lg: 'size-11',
+	}
 
-		return (
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						ref={ref}
-						variant="outline"
-						size="icon"
-						className={cn(buttonSizes[size], className)}
-					>
-						<CurrentThemeIcon size={size} />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuItem
-						onClick={() => {
-							setTheme('light')
-						}}
-					>
-						Light
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={() => {
-							setTheme('dark')
-						}}
-					>
-						Dark
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={() => {
-							setTheme('system')
-						}}
-					>
-						System
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		)
-	},
-)
+	return (
+		<DropdownMenu>
+			<style>{styles}</style>
+			<DropdownMenuTrigger asChild>
+				<Button
+					ref={ref}
+					variant="outline"
+					size="icon"
+					className={cn(buttonSizes[size], className)}
+				>
+					<CurrentThemeIcon size={size} />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end">
+				<DropdownMenuItem
+					onClick={() => {
+						transition(() => setTheme('light'))
+					}}
+				>
+					Light
+				</DropdownMenuItem>
+
+				<DropdownMenuItem
+					onClick={() => {
+						transition(() => setTheme('dark'))
+					}}
+				>
+					Dark
+				</DropdownMenuItem>
+
+				<DropdownMenuItem
+					onClick={() => {
+						transition(() => setTheme('system'))
+					}}
+				>
+					System
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	)
+})
 
 // DropdownMenu
 export const ThemeDropDownMenu = ({
