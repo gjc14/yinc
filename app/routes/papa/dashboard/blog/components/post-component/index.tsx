@@ -7,6 +7,9 @@ import {
 	useState,
 } from 'react'
 
+import debounce from 'lodash/debounce'
+import isEqual from 'lodash/isEqual'
+
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -35,7 +38,6 @@ import RichTextEditor, { type EditorRef } from '~/components/editor'
 import { useIsMobile } from '~/hooks/use-mobile'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
-import { useDebounce } from '~/lib/utils/debounce'
 import { MainPost } from '~/routes/web/blog/post-slug/components/main-post'
 import { PostFooter } from '~/routes/web/blog/post-slug/components/post-footer'
 
@@ -107,7 +109,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 			isDirtyPostInitialized.current = true
 		}
 
-		const debouncedContentUpdate = useDebounce(
+		const debouncedContentUpdate = debounce(
 			(content: string) => {
 				setPostState(prev => ({
 					...prev,
@@ -115,16 +117,16 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 				}))
 			},
 			300,
-			[],
+			{},
 		)
 
-		const debouncedLocalStorageUpdate = useDebounce(
+		const debouncedLocalStorageUpdate = debounce(
 			(post: PostWithRelations) => {
 				if (!window) return
 				window.localStorage.setItem(postLocalStorageKey, JSON.stringify(post))
 			},
 			200,
-			[],
+			{},
 		)
 
 		const handleDiscard = () => {
@@ -145,6 +147,18 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 				if (dirtyPost) {
 					if (areDifferentPosts(postState, JSON.parse(dirtyPost))) {
 						setOpenAlert(true)
+						console.log(
+							'[init] areDifferentPosts: true',
+							'isEqual',
+							isEqual(postState, JSON.parse(dirtyPost)),
+						)
+					} else {
+						// Object.is should always return false here
+						console.log(
+							'[init] areDifferentPosts: false',
+							'isEqual',
+							isEqual(postState, JSON.parse(dirtyPost)),
+						)
 					}
 				} else {
 					isDirtyPostInitialized.current = true
@@ -157,7 +171,21 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 			const diff = areDifferentPosts(postState, post)
 			if (diff) {
 				setIsDirty(true)
+				console.log(
+					'[source reload] areDifferentPosts: true',
+					'isEqual',
+					isEqual(postState, post),
+					'Object.is',
+					Object.is(postState, post),
+				)
 			} else {
+				console.log(
+					'[source reload] areDifferentPosts: false',
+					'isEqual',
+					isEqual(postState, post),
+					'Object.is',
+					Object.is(postState, post),
+				)
 				setIsDirty(false)
 			}
 		}, [post])
@@ -173,10 +201,24 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					setIsDirty(true)
 				}
 				debouncedLocalStorageUpdate(postState)
+				console.log(
+					'[dirty] areDifferentPosts: true',
+					'isEqual',
+					isEqual(postState, post),
+					'Object.is',
+					Object.is(postState, post),
+				)
 			} else {
 				if (isDirty) {
 					setIsDirty(false)
 				}
+				console.log(
+					'[dirty] areDifferentPosts: false',
+					'isEqual',
+					isEqual(postState, post),
+					'Object.is',
+					Object.is(postState, post),
+				)
 				window.localStorage.removeItem(postLocalStorageKey)
 			}
 		}, [postState])
