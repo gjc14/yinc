@@ -115,18 +115,22 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 
 	return (
 		<DashboardSectionWrapper className="items-center pt-16 md:pt-12">
-			<div className="fixed top-16 right-6 z-10 flex items-center gap-2">
+			<div className="fixed bottom-8 z-10 flex items-center rounded-full border bg-white/10 p-1 pl-2 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
 				{/* Discard */}
 				<AlertDialog>
-					{isDirty ||
-						(false && (
-							<AlertDialogTrigger asChild>
-								<Button size={'sm'} variant={'destructive'}>
-									<Trash height={16} width={16} />
-									<p className="text-xs">Discard</p>
-								</Button>
-							</AlertDialogTrigger>
-						))}
+					{isDirty && (
+						<AlertDialogTrigger asChild>
+							<Button
+								size={'sm'}
+								variant={'ghost'}
+								className="text-destructive hover:bg-destructive rounded-full"
+								disabled={isSubmitting || isNavigating}
+							>
+								<Trash height={16} width={16} />
+								<p className="text-xs">Discard</p>
+							</Button>
+						</AlertDialogTrigger>
+					)}
 					<AlertDialogContent>
 						<AlertDialogHeader>
 							<AlertDialogTitle>Discard Post</AlertDialogTitle>
@@ -147,6 +151,8 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 				<Button
 					type="submit"
 					size={'sm'}
+					variant={'ghost'}
+					className="rounded-full"
 					disabled={!isDirty || isSubmitting || isNavigating}
 					onClick={handleCreate}
 				>
@@ -166,7 +172,7 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 
 				{/* Open settings */}
 				<Button
-					className="rounded-full"
+					className="ml-1 rounded-full"
 					size={'icon'}
 					variant={'outline'}
 					onClick={toggleSettings}

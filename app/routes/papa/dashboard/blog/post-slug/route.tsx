@@ -139,7 +139,7 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 				isNavigating={isNavigating}
 			/>
 
-			<div className="fixed bottom-8 z-10 flex items-center gap-2 rounded-full border bg-white/10 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
+			<div className="fixed bottom-8 z-10 flex items-center rounded-full border bg-white/10 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
 				{/* Preview */}
 				{post.status !== 'PUBLISHED' ? (
 					<Button variant={'link'} asChild disabled={isDirty}>
@@ -150,16 +150,21 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 					</Button>
 				) : (
 					<Link to={`/blog/${post.slug}`} target="_blank">
-						<Button variant={'link'}>
+						<Button variant={'link'} size={'sm'}>
 							View post
-							<ExternalLink className="!size-3.5" />
+							<ExternalLink className="!size-3" />
 						</Button>
 					</Link>
 				)}
 
 				{/* Discard */}
 				{isDirty && (
-					<Button size={'sm'} variant={'destructive'} onClick={handleDiscard}>
+					<Button
+						size={'sm'}
+						variant={'ghost'}
+						className="text-destructive hover:bg-destructive rounded-full"
+						onClick={handleDiscard}
+					>
 						<Trash height={16} width={16} />
 						<p className="text-xs">Discard</p>
 					</Button>
@@ -169,6 +174,8 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 				<Button
 					type="submit"
 					size={'sm'}
+					variant={'ghost'}
+					className="rounded-full"
 					disabled={!isDirty || isSubmitting}
 					onClick={handleSave}
 				>
@@ -178,7 +185,7 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 
 				{/* Open settings */}
 				<Button
-					className="rounded-full"
+					className="ml-1 rounded-full"
 					size={'icon'}
 					variant={'outline'}
 					onClick={toggleSettings}
