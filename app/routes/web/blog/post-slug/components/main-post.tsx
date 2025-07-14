@@ -20,14 +20,13 @@ export const MainPost = ({
 		<>
 			<div className="space-y-5">
 				{editable ? (
-					<input
+					<textarea
 						id="title"
 						name="title"
-						type="text"
 						placeholder="Give a sensational title..."
 						value={post.title}
 						onChange={e => onTitleChange?.(e.target.value)}
-						className="w-full border-none bg-transparent text-3xl leading-normal font-bold tracking-tight outline-none md:text-4xl md:leading-tight"
+						className="field-sizing-content h-auto min-h-0 w-full resize-none border-none bg-transparent text-3xl leading-normal font-bold tracking-tight outline-none md:text-4xl md:leading-tight"
 					/>
 				) : (
 					<h1 className="text-3xl leading-normal font-bold tracking-tight md:text-4xl md:leading-tight">

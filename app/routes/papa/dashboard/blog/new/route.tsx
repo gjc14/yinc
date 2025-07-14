@@ -117,35 +117,18 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 		<DashboardSectionWrapper className="items-center pt-16 md:pt-12">
 			<div className="fixed bottom-8 z-10 flex items-center rounded-full border bg-white/10 p-1 pl-2 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
 				{/* Discard */}
-				<AlertDialog>
-					{isDirty && (
-						<AlertDialogTrigger asChild>
-							<Button
-								size={'sm'}
-								variant={'ghost'}
-								className="text-destructive hover:bg-destructive rounded-full"
-								disabled={isSubmitting || isNavigating}
-							>
-								<Trash height={16} width={16} />
-								<p className="text-xs">Discard</p>
-							</Button>
-						</AlertDialogTrigger>
-					)}
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Discard Post</AlertDialogTitle>
-							<AlertDialogDescription>
-								Are you sure you want to discard this post?
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDiscard}>
-								Discard
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
+				{isDirty && (
+					<Button
+						size={'sm'}
+						variant={'ghost'}
+						className="text-destructive hover:bg-destructive rounded-full"
+						disabled={isSubmitting || isNavigating}
+						onClick={handleDiscard}
+					>
+						<Trash height={16} width={16} />
+						<p className="text-xs">Discard</p>
+					</Button>
+				)}
 
 				{/* Create */}
 				<Button

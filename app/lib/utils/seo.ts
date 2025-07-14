@@ -198,6 +198,12 @@ export function generateSeoDescription(
 		i++
 	}
 
+	// If no sentences were added, means the first sentence is too long.
+	// Use the first sentence and split it as a fallback.
+	if (!description && sentences.length > 0) {
+		description = sentences[0].substring(0, settings.maxLength - 3)
+	}
+
 	// Trim the description and ensure it doesn't cut off mid-word.
 	if (description.length > settings.maxLength) {
 		description = description.substring(0, settings.maxLength - 3)
