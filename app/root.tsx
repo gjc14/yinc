@@ -46,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				<ThemeProvider attribute="class">
+				<ThemeProvider>
 					<GlobalLoading />
 					<FloatingToolkit />
 					{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
