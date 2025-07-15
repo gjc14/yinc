@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 
 import { AvatarImage } from '@radix-ui/react-avatar'
 import { CircleCheckIcon } from 'lucide-react'
@@ -50,6 +50,7 @@ export const PostCollection = ({
 }
 
 const Post = ({ post }: { post: PostWithRelations }) => {
+	const navigate = useNavigate()
 	const { search } = useLocation()
 	const url = `/blog/${post.slug}`
 
@@ -58,16 +59,16 @@ const Post = ({ post }: { post: PostWithRelations }) => {
 			<div className="flex flex-col px-5 md:px-6">
 				<div className="mb-3 flex gap-1.5">
 					{post.categories.map(category => (
-						<Link key={category.id} to={`/blog?category=${category.slug}`}>
-							<Badge
-								className="bg-brand text-brand-foreground rounded-full"
-								onClick={e => {
-									e.stopPropagation()
-								}}
-							>
-								{category.name}
-							</Badge>
-						</Link>
+						<Badge
+							key={category.id}
+							className="bg-brand text-brand-foreground rounded-full"
+							onClick={e => {
+								e.stopPropagation()
+								navigate(`/blog?category=${category.slug}`)
+							}}
+						>
+							{category.name}
+						</Badge>
 					))}
 				</div>
 

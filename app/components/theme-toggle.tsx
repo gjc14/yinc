@@ -1,6 +1,6 @@
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 
-import { Moon, Sun, SunMoon } from 'lucide-react'
+import { Loader, Moon, Sun, SunMoon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import {
@@ -30,6 +30,11 @@ export const CurrentThemeIcon = ({
 	className?: string
 }) => {
 	const { theme } = useTheme()
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const iconSizes = {
 		sm: 'size-4',
@@ -39,27 +44,29 @@ export const CurrentThemeIcon = ({
 
 	return (
 		<span
-			className={cn('relative flex items-center justify-center', className)}
+			className={cn(
+				'relative flex items-center justify-center transition-opacity duration-300',
+				isMounted ? 'opacity-100' : 'opacity-0',
+				className,
+			)}
 		>
-			<Sun
-				suppressHydrationWarning
-				className={`absolute ${iconSizes[size]} ${theme === 'light' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
-			/>
+			{isMounted && (
+				<>
+					<Sun
+						className={`absolute ${iconSizes[size]} ${theme === 'light' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
+					/>
 
-			<Moon
-				suppressHydrationWarning
-				className={`absolute ${iconSizes[size]} ${theme === 'dark' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
-			/>
+					<Moon
+						className={`absolute ${iconSizes[size]} ${theme === 'dark' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
+					/>
 
-			<SunMoon
-				suppressHydrationWarning
-				className={`absolute ${iconSizes[size]} ${theme === 'system' || theme === undefined ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
-			/>
-			<div
-				suppressHydrationWarning
-				className={`absolute ${iconSizes[size]} ${![undefined, 'light', 'dark', 'system'].includes(theme) ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} bg-background size-4 rounded border transition-transform`}
-			/>
-			<span className="sr-only">Toggle theme</span>
+					<SunMoon
+						className={`absolute ${iconSizes[size]} ${theme === 'system' || theme === undefined ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'} transition-transform`}
+					/>
+
+					<span className="sr-only">Toggle theme</span>
+				</>
+			)}
 		</span>
 	)
 }
