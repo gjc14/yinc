@@ -2,7 +2,6 @@ import { useFetcher } from 'react-router'
 
 import { Button } from '~/components/ui/button'
 import {
-	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
@@ -16,6 +15,9 @@ export const CTA = ({
 }: {
 	subscribeRoute?: string
 }) => {
+	return null
+
+	// TODO: Implement CSRF protection
 	const fetcher = useFetcher()
 	const isSubmitting = fetcher.formAction === subscribeRoute
 
