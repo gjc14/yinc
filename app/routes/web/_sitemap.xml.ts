@@ -4,31 +4,33 @@
  */
 import type { LoaderFunctionArgs } from 'react-router'
 
-// import { db } from '~/lib/db/db.server'
+import * as serverBuild from 'virtual:react-router/server-build'
 
-import {
-	getSitemapUrls,
-	// getWebFallbackRoutes,
-} from '../papa/utils/service-configs'
+import { db } from '~/lib/db/db.server'
+
+import { getBlogPrefixes, getSitemapUrls } from '../papa/utils/service-configs'
 import { toXmlUrlTagss, type SitemapURL } from '../papa/utils/to-xml-url-tags'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url)
 	const origin = url.origin
 
-	const configRelativeUrls = getSitemapUrls(url)
+	const systemSitemaps = sitemapUrlsFromServerBuild(origin, serverBuild.routes)
+	const serviceSitemapUrls = getSitemapUrls(url)
+	const serviceBlogPrefix = await getBlogSitemapUrls(origin, getBlogPrefixes())
 
 	const urlTags = toXmlUrlTagss([
 		{
 			loc: origin,
 			lastmod: new Date(),
 		},
-		...configRelativeUrls.map(url => ({
+		...systemSitemaps,
+		...serviceSitemapUrls.map(url => ({
 			...url,
 			loc: url.loc.startsWith('/') ? `${origin}${url.loc}` : url.loc,
 			lastmod: url.lastmod ?? new Date(),
 		})),
-		// ...(await getBlogSitemapUrls(origin)),
+		...serviceBlogPrefix,
 	])
 
 	try {
@@ -54,30 +56,102 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 }
 
-// async function getBlogSitemapUrls(origin: string): Promise<SitemapURL[]> {
-// 	const urls: SitemapURL[] = []
+/**
+ * Generate sitemap URLs from server build routes
+ */
+function sitemapUrlsFromServerBuild(
+	origin: string,
+	routes: typeof serverBuild.routes,
+): SitemapURL[] {
+	const urls: SitemapURL[] = []
+	const now = new Date()
 
-// 	const { shouldIncludeBlog } = getWebFallbackRoutes()
+	for (const key in routes) {
+		/**
+		 * 'routes/papa/dashboard/assets/resource': {
+		 *   id: 'routes/papa/dashboard/assets/resource',
+		 *   parentId: 'routes/papa/dashboard/layout/route',
+		 *   path: 'assets/resource',
+		 *   index: undefined,
+		 *   caseSensitive: undefined,
+		 *   module: [Object: null prototype] [Module] {
+		 *     action: [Getter],
+		 *     loader: [Getter]
+		 *   }
+		 * },
+		 */
+		const route = routes[key]
+		if (!route || !route.path) continue
+		const path = route.path
 
-// 	if (shouldIncludeBlog) {
-// 		const posts = await db.query.post.findMany({
-// 			where(fields, { eq }) {
-// 				return eq(fields.status, 'PUBLISHED')
-// 			},
-// 			columns: {
-// 				slug: true,
-// 				updatedAt: true,
-// 			},
-// 		})
+		if (
+			!path.includes(':') && // exclude dynamic segments
+			!path.includes('*') // exclude catch-all segments
+		) {
+			let parentRoute = route.parentId ? routes[route.parentId] : undefined
+			let fullPath = path
 
-// 		urls.push({ loc: `${origin}/blog`, lastmod: new Date() })
-// 		for (const post of posts) {
-// 			urls.push({
-// 				loc: `${origin}/blog/${post.slug}`,
-// 				lastmod: post.updatedAt,
-// 			})
-// 		}
-// 	}
+			while (parentRoute) {
+				if (parentRoute?.path) {
+					fullPath = `${parentRoute.path}/${fullPath}`
+				}
+				parentRoute = parentRoute.parentId
+					? routes[parentRoute.parentId]
+					: undefined
+			}
 
-// 	return urls
-// }
+			// filter
+			if (
+				fullPath.startsWith('/dashboard') ||
+				fullPath.startsWith('/api') ||
+				['/sitemap.xml', '/robots.txt'].includes(fullPath)
+			) {
+				continue
+			}
+
+			urls.push({
+				loc: `${origin}${fullPath}`,
+				lastmod: now,
+			})
+		}
+	}
+
+	return urls
+}
+
+/**
+ * Generate blog sitemap URLs using posts from the database
+ */
+async function getBlogSitemapUrls(
+	origin: string,
+	blogUrls: string[],
+): Promise<SitemapURL[]> {
+	const urls: SitemapURL[] = []
+	const now = new Date()
+
+	const posts = await db.query.post.findMany({
+		where(fields, { eq }) {
+			return eq(fields.status, 'PUBLISHED')
+		},
+		columns: {
+			slug: true,
+			updatedAt: true,
+		},
+	})
+
+	for (const blogUrl of blogUrls) {
+		urls.push({
+			loc: `${origin}${blogUrl}`,
+			lastmod: now,
+		})
+
+		for (const post of posts) {
+			urls.push({
+				loc: `${origin}${blogUrl}/${post.slug}`,
+				lastmod: post.updatedAt,
+			})
+		}
+	}
+
+	return urls
+}

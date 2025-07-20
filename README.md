@@ -309,6 +309,8 @@ export const config = {
 			],
 		),
 	],
+	// sitemap: url => []
+	// blogUrls: ['/blog']
 } satisfies Service
 ```
 

@@ -85,4 +85,6 @@ export interface Service {
 	 *	```
 	 */
 	sitemap?: ((url: URL) => SitemapURL[]) | SitemapURL[]
+	/** Routes that posts prefix, using absolute route @default ["/blog"] // if not set. e.g. /blog/:postId */
+	blogUrls?: string[]
 }
