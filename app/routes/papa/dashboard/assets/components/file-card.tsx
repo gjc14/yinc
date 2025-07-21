@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFetcher } from 'react-router'
 
+import { toast } from '@gjc14/sonner'
 import {
 	AudioWaveform,
 	Expand,
@@ -10,7 +11,6 @@ import {
 	Loader2,
 	Trash2,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import {
 	AlertDialog,

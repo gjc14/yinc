@@ -2,7 +2,7 @@
  * Contains the SEO part of the post editor.
  * It includes the SEO title and SEO description fields.
  */
-import { toast } from 'sonner'
+import { toast } from '@gjc14/sonner'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'

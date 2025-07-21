@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router'
 
+import { toast } from '@gjc14/sonner'
 import {
 	BadgeCheck,
 	Bell,
@@ -10,7 +11,6 @@ import {
 	Sparkles,
 	type LucideIcon,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import {

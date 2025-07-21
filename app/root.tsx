@@ -1,4 +1,5 @@
 import './app.css'
+import '@gjc14/sonner/dist/styles.css'
 
 import { randomBytes } from 'node:crypto'
 import type { Route } from './+types/root'
@@ -15,10 +16,10 @@ import {
 } from 'react-router'
 
 import { ThemeProvider } from 'next-themes'
-import { Toaster } from 'sonner'
 
 import { FloatingToolkit } from './components/floating-toolkit'
 import { GlobalLoading } from './components/global-loading'
+import { Toaster } from './components/ui/sonner'
 
 export function links() {
 	return [{ rel: 'icon', href: '/favicon.ico' }]

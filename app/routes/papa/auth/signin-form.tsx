@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Form, useNavigate } from 'react-router'
 
+import { toast } from '@gjc14/sonner'
 import { REGEXP_ONLY_DIGITS } from 'input-otp'
-import { toast } from 'sonner'
 
 import { Button } from '~/components/ui/button'
 import {
