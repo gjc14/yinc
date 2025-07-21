@@ -1,6 +1,6 @@
 import './app.css'
 
-import * as crypto from 'node:crypto'
+import { randomBytes } from 'node:crypto'
 import type { Route } from './+types/root'
 import {
 	data,
@@ -53,7 +53,7 @@ export function headers({ loaderHeaders }: Route.HeadersArgs) {
 }
 
 export const loader = () => {
-	const scriptNonce = crypto.randomUUID()
+	const nonce = randomBytes(16).toString('base64')
 
 	/**
 	 * @see https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
@@ -76,7 +76,7 @@ export const loader = () => {
 		'X-Content-Type-Options': 'nosniff', // Prevent MIME type sniffing
 	}
 
-	return data({ scriptNonce }, { headers })
+	return data({ nonce }, { headers })
 }
 
 /**
@@ -88,13 +88,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	const loaderData: unknown = useRouteLoaderData('root')
 	const error = useRouteError()
 
-	const scriptNonce =
+	const nonce =
 		!error &&
 		loaderData &&
 		typeof loaderData === 'object' &&
-		'scriptNonce' in loaderData &&
-		typeof loaderData.scriptNonce === 'string'
-			? loaderData.scriptNonce
+		'nonce' in loaderData &&
+		typeof loaderData.nonce === 'string'
+			? loaderData.nonce
 			: undefined
 
 	return (
@@ -106,14 +106,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				<ThemeProvider nonce={scriptNonce}>
+				<ThemeProvider nonce={nonce}>
 					<GlobalLoading />
 					<FloatingToolkit />
 					{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
 					{children}
 				</ThemeProvider>
-				<ScrollRestoration nonce={scriptNonce} />
-				<Scripts nonce={scriptNonce} />
+				<ScrollRestoration nonce={nonce} />
+				<Scripts nonce={nonce} />
 			</body>
 		</html>
 	)
