@@ -2,14 +2,16 @@ import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import {
-	useViewTransitionTheme,
+	getViewTransitionStyles,
 	type ViewTransitionThemeOptions,
-} from '~/hooks/use-view-transition-theme'
+} from '~/components/theme-toggle'
+import { useViewTransition } from '~/hooks/use-view-transition'
 
 export function ThemeSwitcher(props: ViewTransitionThemeOptions) {
 	const { setTheme, theme } = useTheme()
+	const { startViewTransition } = useViewTransition()
 
-	const { styles, transition } = useViewTransitionTheme(props)
+	const { styles } = getViewTransitionStyles(props)
 
 	const switchTheme = () => {
 		setTheme(theme === 'dark' ? 'light' : 'dark')
@@ -17,7 +19,7 @@ export function ThemeSwitcher(props: ViewTransitionThemeOptions) {
 
 	return (
 		<button
-			onClick={() => transition(switchTheme)}
+			onClick={() => startViewTransition(switchTheme)}
 			{...props}
 			className="border-primary/80 bg-brand/30 mt-6 size-11 border-2 p-0 transition-transform"
 		>
