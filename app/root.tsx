@@ -12,7 +12,6 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useRouteError,
-	useRouteLoaderData,
 } from 'react-router'
 
 import { ThemeProvider } from 'next-themes'
@@ -20,6 +19,7 @@ import { ThemeProvider } from 'next-themes'
 import { FloatingToolkit } from './components/floating-toolkit'
 import { GlobalLoading } from './components/global-loading'
 import { Toaster } from './components/ui/sonner'
+import { useNonce } from './hooks/use-nonce'
 
 export function links() {
 	return [{ rel: 'icon', href: '/favicon.ico' }]
@@ -86,17 +86,7 @@ export const loader = () => {
  * you should be very defensive to ensure that you can render your ErrorBoundary without encountering any render errors.
  */
 export function Layout({ children }: { children: React.ReactNode }) {
-	const loaderData: unknown = useRouteLoaderData('root')
-	const error = useRouteError()
-
-	const nonce =
-		!error &&
-		loaderData &&
-		typeof loaderData === 'object' &&
-		'nonce' in loaderData &&
-		typeof loaderData.nonce === 'string'
-			? loaderData.nonce
-			: undefined
+	const nonce = useNonce()
 
 	return (
 		<html lang="en" suppressHydrationWarning>

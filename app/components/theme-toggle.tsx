@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef } from 'react'
 
 import { Moon, Sun, SunMoon } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -9,6 +9,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import { useIsMounted } from '~/hooks/use-is-mounted'
+import { useNonce } from '~/hooks/use-nonce'
 import { useViewTransition } from '~/hooks/use-view-transition'
 import { cn } from '~/lib/utils'
 
@@ -27,11 +29,7 @@ export const CurrentThemeIcon = ({
 	className?: string
 }) => {
 	const { theme } = useTheme()
-	const [isMounted, setIsMounted] = useState(false)
-
-	useEffect(() => {
-		setIsMounted(true)
-	}, [])
+	const isMounted = useIsMounted()
 
 	const iconSizes = {
 		sm: 'size-4',
@@ -72,6 +70,8 @@ export const ThemeToggle = forwardRef<
 	HTMLButtonElement,
 	ThemeToggleProps & ViewTransitionThemeOptions
 >(({ size = 'sm', className, start, variant, duration }, ref) => {
+	const isMounted = useIsMounted()
+	const nonce = useNonce()
 	const { setTheme } = useTheme()
 	const { startViewTransition } = useViewTransition()
 	const { styles } = getViewTransitionStyles({
@@ -88,8 +88,8 @@ export const ThemeToggle = forwardRef<
 
 	return (
 		<DropdownMenu>
-			<style>{styles}</style>
-			<DropdownMenuTrigger asChild>
+			{isMounted && <style nonce={nonce}>{styles}</style>}
+			<DropdownMenuTrigger asChild nonce={nonce}>
 				<Button
 					ref={ref}
 					variant="outline"
@@ -99,8 +99,9 @@ export const ThemeToggle = forwardRef<
 					<CurrentThemeIcon size={size} />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
+			<DropdownMenuContent align="end" nonce={nonce}>
 				<DropdownMenuItem
+					nonce={nonce}
 					onClick={() => {
 						startViewTransition(() => setTheme('light'))
 					}}
@@ -109,6 +110,7 @@ export const ThemeToggle = forwardRef<
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
+					nonce={nonce}
 					onClick={() => {
 						startViewTransition(() => setTheme('dark'))
 					}}
@@ -117,6 +119,7 @@ export const ThemeToggle = forwardRef<
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
+					nonce={nonce}
 					onClick={() => {
 						startViewTransition(() => setTheme('system'))
 					}}
@@ -139,15 +142,20 @@ export const ThemeDropDownMenu = ({
 	className?: string
 }) => {
 	const { setTheme } = useTheme()
+	const nonce = useNonce()
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild={asChild}>{children}</DropdownMenuTrigger>
+			<DropdownMenuTrigger asChild={asChild} nonce={nonce}>
+				{children}
+			</DropdownMenuTrigger>
 			<DropdownMenuContent
+				nonce={nonce}
 				align="end"
 				className={cn('bg-secondary', className)}
 			>
 				<DropdownMenuItem
+					nonce={nonce}
 					onClick={() => {
 						setTheme('light')
 					}}
@@ -156,6 +164,7 @@ export const ThemeDropDownMenu = ({
 					Light
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					nonce={nonce}
 					onClick={() => {
 						setTheme('dark')
 					}}
@@ -164,6 +173,7 @@ export const ThemeDropDownMenu = ({
 					Dark
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					nonce={nonce}
 					onClick={() => {
 						setTheme('system')
 					}}
