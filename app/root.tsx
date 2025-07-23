@@ -1,10 +1,8 @@
 import './app.css'
 import '@gjc14/sonner/dist/styles.css'
 
-import { randomBytes } from 'node:crypto'
 import type { Route } from './+types/root'
 import {
-	data,
 	isRouteErrorResponse,
 	Links,
 	Meta,
@@ -20,6 +18,41 @@ import { FloatingToolkit } from './components/floating-toolkit'
 import { GlobalLoading } from './components/global-loading'
 import { Toaster } from './components/ui/sonner'
 import { useNonce } from './hooks/use-nonce'
+import {
+	generateNonce,
+	getContentSecurityPolicy,
+	nonceContext,
+} from './middleware/csp'
+
+const headersMiddleware: Route.unstable_MiddlewareFunction = async (
+	{ context, request },
+	next,
+) => {
+	const nonce = generateNonce()
+
+	const headers = {
+		[process.env.NODE_ENV === 'production'
+			? 'Content-Security-Policy'
+			: 'Content-Security-Policy-Report-Only']: getContentSecurityPolicy(nonce),
+		/** @see https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security */
+		'Strict-Transport-Security': 'max-age=3600', // 1 hour. HTTPS only
+		'X-Frame-Options': 'SAMEORIGIN', // Prevent clickjacking
+		'X-Content-Type-Options': 'nosniff', // Prevent MIME type sniffing
+	}
+
+	context.set(nonceContext, nonce)
+
+	const response = await next()
+	for (const [key, value] of Object.entries(headers)) {
+		response.headers.set(key, value)
+	}
+
+	return response
+}
+
+export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+	headersMiddleware,
+]
 
 export function links() {
 	return [{ rel: 'icon', href: '/favicon.ico' }]
@@ -49,35 +82,8 @@ export const meta = ({ error }: Route.MetaArgs) => {
 	}
 }
 
-export function headers({ loaderHeaders }: Route.HeadersArgs) {
-	return loaderHeaders
-}
-
-export const loader = () => {
-	const nonce = randomBytes(16).toString('base64')
-
-	/**
-	 * @see https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
-	 * TODO: script-src & style-src best practice
-	 */
-	const headers = {
-		/** @see https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html */
-		'Content-Security-Policy': [
-			"default-src 'self'",
-			`script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com`,
-			`style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-			"font-src 'self' https://fonts.gstatic.com",
-			"img-src 'self' data: https://images.unsplash.com https://placecats.com",
-			"frame-ancestors 'none'",
-			"form-action 'self'",
-		].join('; '),
-		/** @see https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html */
-		'Strict-Transport-Security': 'max-age=3600', // 1 hour. HTTPS only
-		'X-Frame-Options': 'SAMEORIGIN', // Prevent clickjacking
-		'X-Content-Type-Options': 'nosniff', // Prevent MIME type sniffing
-	}
-
-	return data({ nonce }, { headers })
+export const loader = ({ context }: Route.LoaderArgs) => {
+	return { nonce: context.get(nonceContext) }
 }
 
 /**
@@ -93,6 +99,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				{
+					/** Vite looks for this meta tag to inject the nonce @see https://vite.dev/guide/features.html#nonce-random */
+					import.meta.env.DEV && <meta property="csp-nonce" nonce={nonce} />
+				}
 				<Meta />
 				<Links />
 			</head>

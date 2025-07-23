@@ -7,6 +7,8 @@ import { ServerRouter } from 'react-router'
 import { createReadableStreamFromReadable } from '@react-router/node'
 import { isbot } from 'isbot'
 
+import { generateNonce, nonceContext } from './middleware/csp'
+
 export const streamTimeout = 5_000
 
 export default function handleRequest(
@@ -18,6 +20,16 @@ export default function handleRequest(
 	// If you have middleware enabled:
 	loadContext: unstable_RouterContextProvider,
 ) {
+	let nonce: string
+
+	try {
+		// If root headers does not set, there will not be a nonce
+		nonce = loadContext.get(nonceContext)
+	} catch (error) {
+		nonce = generateNonce()
+		console.warn('No nonce found in context, generating a fallback.')
+	}
+
 	return new Promise((resolve, reject) => {
 		let shellRendered = false
 		let userAgent = request.headers.get('user-agent')
@@ -30,8 +42,9 @@ export default function handleRequest(
 				: 'onShellReady'
 
 		const { pipe, abort } = renderToPipeableStream(
-			<ServerRouter context={routerContext} url={request.url} />,
+			<ServerRouter context={routerContext} url={request.url} nonce={nonce} />,
 			{
+				nonce,
 				[readyOption]() {
 					shellRendered = true
 					const body = new PassThrough()
