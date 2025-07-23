@@ -19,11 +19,11 @@ export function SimpleSortHeader<T>({
 		<button
 			onClick={() => {
 				if (currentSorting === 'asc') {
-					column.toggleSorting(true)
-				} else if (currentSorting === 'desc') {
 					column.clearSorting()
-				} else {
+				} else if (currentSorting === 'desc') {
 					column.toggleSorting(false)
+				} else {
+					column.toggleSorting(true)
 				}
 			}}
 			className="flex w-full cursor-pointer items-center justify-between gap-2"
