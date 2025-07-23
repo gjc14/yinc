@@ -13,8 +13,8 @@ export const PostFooter = ({
 	next,
 }: {
 	post: PostWithRelations
-	prev: { title: string; slug: string } | null
-	next: { title: string; slug: string } | null
+	prev?: { title: string; slug: string } | null
+	next?: { title: string; slug: string } | null
 }) => {
 	const navigate = useNavigate()
 

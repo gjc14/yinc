@@ -38,8 +38,7 @@ import RichTextEditor, { type EditorRef } from '~/components/editor'
 import { useIsMobile } from '~/hooks/use-mobile'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
-import { MainPost } from '~/routes/web/blog/post-slug/components/main-post'
-import { PostFooter } from '~/routes/web/blog/post-slug/components/post-footer'
+import { Post } from '~/routes/web/blog/components/post'
 
 import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
 import { PostSettings } from './post-settings'
@@ -270,7 +269,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 				</AlertDialog>
 
 				<div className="flex w-full max-w-prose flex-col px-5 xl:px-0">
-					<MainPost
+					<Post
 						post={postState}
 						editable
 						onTitleChange={v => {
@@ -291,9 +290,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 							}}
 							onSave={onSave}
 						/>
-					</MainPost>
-
-					<PostFooter post={postState} next={null} prev={null} />
+					</Post>
 				</div>
 
 				{isMobile ? (

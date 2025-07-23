@@ -5,8 +5,7 @@ import { useEffect } from 'react'
 
 import { common, createLowlight } from 'lowlight'
 
-import { MainPost } from './components/main-post'
-import { PostFooter } from './components/post-footer'
+import { Post } from '../components/post'
 import { hilightInnerHTML } from './highlight-inner-html'
 
 // export type PostLoaderType = Awaited<ReturnType<typeof loader>>
@@ -40,9 +39,7 @@ export default function BlogPost({ matches, params }: Route.ComponentProps) {
 
 	return (
 		<div className="min-h-svh w-full max-w-prose px-5 xl:px-0">
-			<MainPost post={currentPost} />
-
-			<PostFooter post={currentPost} next={nextPost} prev={prevPost} />
+			<Post post={currentPost} next={nextPost} prev={prevPost} />
 		</div>
 	)
 }

@@ -1,20 +1,29 @@
+/**
+ * This is a post display component for a blog post.
+ * It make the page layout, including the title, meta information, and content.
+ */
 import { generateHTML } from '@tiptap/html'
 
-import ExtensionKit from '~/components/editor/extensions/extension-kit'
+import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
 import type { PostWithRelations } from '~/lib/db/post.server'
 
+import { PostFooter } from './post-footer'
 import { PostMeta } from './post-meta'
 
-export const MainPost = ({
+export const Post = ({
 	post,
 	editable = false,
 	onTitleChange,
 	children,
+	prev,
+	next,
 }: {
 	post: PostWithRelations
 	editable?: boolean
 	onTitleChange?: (title: string) => void
 	children?: React.ReactNode
+	prev?: { title: string; slug: string } | null
+	next?: { title: string; slug: string } | null
 }) => {
 	return (
 		<>
@@ -55,6 +64,8 @@ export const MainPost = ({
 					}
 				></article>
 			)}
+
+			<PostFooter post={post} next={next} prev={prev} />
 		</>
 	)
 }
