@@ -1,6 +1,8 @@
 import type { Route } from './+types/layout'
 import { Outlet } from 'react-router'
 
+import { Provider } from 'jotai'
+
 import { getPosts } from '~/lib/db/post.server'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'
 
@@ -40,5 +42,9 @@ export const clientLoader = async ({
 clientLoader.hydrate = true
 
 export default function DashboardBlog() {
-	return <Outlet />
+	return (
+		<Provider>
+			<Outlet />
+		</Provider>
+	)
 }
