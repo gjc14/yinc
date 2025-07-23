@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useFetcher } from 'react-router'
 
 import { type ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, PlusCircle } from 'lucide-react'
+import { PlusCircle } from 'lucide-react'
 
+import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { DropdownMenuItem } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
@@ -93,6 +94,15 @@ export const columns: ColumnDef<
 		header: ({ column }) => {
 			return <SimpleSortHeader column={column}>Title</SimpleSortHeader>
 		},
+		cell(props) {
+			const slug = props.row.original.slug
+			const title = props.row.original.title
+			return (
+				<Link to={slug} className="cursor-pointer hover:underline">
+					{title}
+				</Link>
+			)
+		},
 	},
 	{
 		accessorKey: 'excerpt',
@@ -102,6 +112,36 @@ export const columns: ColumnDef<
 		accessorKey: 'status',
 		header: ({ column }) => {
 			return <SimpleSortHeader column={column}>Status</SimpleSortHeader>
+		},
+		cell(props) {
+			const status = props.row.original.status
+			let variant: 'default' | 'secondary' | 'destructive' | 'outline' =
+				'default'
+			switch (status.toLowerCase()) {
+				case 'draft':
+					variant = 'secondary'
+					break
+				case 'published':
+					variant = 'default'
+					break
+				case 'trashed':
+					variant = 'destructive'
+					break
+				case 'archived':
+					variant = 'secondary'
+					break
+				case 'policy':
+					variant = 'outline'
+					break
+				default:
+					variant = 'default'
+					break
+			}
+			return (
+				<Badge className="rounded-full" variant={variant}>
+					{status}
+				</Badge>
+			)
 		},
 	},
 	{
@@ -117,12 +157,15 @@ export const columns: ColumnDef<
 		header: ({ column }) => {
 			return <SimpleSortHeader column={column}>Updated At</SimpleSortHeader>
 		},
-		accessorFn: row => new Date(row.updatedAt).toLocaleString('zh-TW'),
+		cell: info => info.getValue<Date>().toLocaleString('zh-TW'),
+		accessorFn: row => new Date(row.updatedAt),
 	},
 	{
 		accessorKey: 'id',
 		header: 'Edit',
-		cell: ({ row }) => {
+		cell: props => {
+			const row = props.row
+			const hi = props.row
 			const fetcher = useFetcher()
 
 			const rowId = row.id
