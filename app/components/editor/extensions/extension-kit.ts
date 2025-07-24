@@ -1,21 +1,16 @@
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import { Color } from '@tiptap/extension-color'
-import Highlight from '@tiptap/extension-highlight'
-import ImageBlock from '@tiptap/extension-image'
-import Link from '@tiptap/extension-link'
-import Placeholder from '@tiptap/extension-placeholder'
-import Subscript from '@tiptap/extension-subscript'
-import Superscript from '@tiptap/extension-superscript'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
-import TextAlign from '@tiptap/extension-text-align'
-import TextStyle from '@tiptap/extension-text-style'
-import Typography from '@tiptap/extension-typography'
-import Underline from '@tiptap/extension-underline'
-import StarterKit from '@tiptap/starter-kit'
+import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
+import { Highlight } from '@tiptap/extension-highlight'
+import { Image } from '@tiptap/extension-image'
+import { TaskItem, TaskList } from '@tiptap/extension-list'
+import { Subscript } from '@tiptap/extension-subscript'
+import { Superscript } from '@tiptap/extension-superscript'
+import { TextAlign } from '@tiptap/extension-text-align'
+import { TextStyleKit } from '@tiptap/extension-text-style'
+import { Typography } from '@tiptap/extension-typography'
+import { Placeholder } from '@tiptap/extensions'
+import { StarterKit } from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
 
-// import { SlashCommand } from './slash-command'
 import { ColorHighlighter } from './color-highlighter'
 import { Youtube } from './responseive-youtube'
 import { SmilieReplacer } from './smilie-replacer'
@@ -39,22 +34,20 @@ export const ExtensionKit = ({
 				width: 2,
 				class: 'ProseMirror-dropcursor border-black',
 			},
+			link: {
+				openOnClick: openOnClick,
+				autolink: true,
+				defaultProtocol: 'https',
+				validate: href => /^https?:\/\//.test(href),
+			},
 		}),
 
 		// Marks
-		Underline,
 		Highlight.configure({
 			multicolor: true,
 		}),
-		Color,
 		Superscript,
 		Subscript,
-		Link.configure({
-			openOnClick: openOnClick,
-			autolink: true,
-			defaultProtocol: 'https',
-			validate: href => /^https?:\/\//.test(href),
-		}),
 		Typography, // Input rules, such as (c) -> © or >> -> »
 
 		// Nodes
@@ -64,9 +57,9 @@ export const ExtensionKit = ({
 			// },
 		}),
 		TextAlign.configure({ types: ['heading', 'paragraph'] }),
-		TextStyle.configure({}),
+		TextStyleKit.configure({}),
 		CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
-		ImageBlock.configure({
+		Image.configure({
 			inline: true,
 			HTMLAttributes: {
 				class: 'inline-block',

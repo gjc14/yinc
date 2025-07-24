@@ -1,4 +1,6 @@
-import { BubbleMenu, Editor } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
+
+import { Editor } from '@tiptap/react'
 import { AlignLeft, MoreVertical, Pilcrow, WandSparkles } from 'lucide-react'
 
 import { Separator } from '~/components/ui/separator'
@@ -41,8 +43,7 @@ export const DefaultBubbleMenu = ({ editor }: { editor: Editor }) => {
 
 	return (
 		<BubbleMenu
-			tippyOptions={{
-				duration: 100,
+			style={{
 				maxWidth: '90vw',
 				zIndex: 45, // Lower than the tooltip z-50
 			}}

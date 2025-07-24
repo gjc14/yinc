@@ -8,9 +8,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import ExtensionKit from '~/components/editor/extensions/extension-kit'
+import { useHydrated } from '~/hooks/use-hydrated'
 import type { PostWithRelations } from '~/lib/db/post.server'
 
 export function PostMeta({ post }: { post: PostWithRelations }) {
+	const isHydrated = useHydrated()
 	return (
 		<div className="mx-auto w-full py-2">
 			<div className="flex items-center justify-between">
@@ -35,7 +37,7 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 							<span>{post.updatedAt.toDateString()}</span>
 							<span className="px-1">·</span>
 							<span>
-								{post.content
+								{isHydrated && post.content
 									? `${Math.ceil(
 											generateHTML(JSON.parse(post.content), [
 												...ExtensionKit({ openOnClick: true }),

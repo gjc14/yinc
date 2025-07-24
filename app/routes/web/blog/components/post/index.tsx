@@ -5,6 +5,7 @@
 import { generateHTML } from '@tiptap/html'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
+import { useHydrated } from '~/hooks/use-hydrated'
 import type { PostWithRelations } from '~/lib/db/post.server'
 
 import { PostFooter } from './post-footer'
@@ -25,6 +26,7 @@ export const Post = ({
 	prev?: { title: string; slug: string } | null
 	next?: { title: string; slug: string } | null
 }) => {
+	const isHydrated = useHydrated()
 	return (
 		<>
 			<div className="space-y-5">
@@ -46,24 +48,24 @@ export const Post = ({
 				<PostMeta post={post} />
 			</div>
 
-			{editable ? (
-				children
-			) : (
-				<article
-					className="prose-article"
-					dangerouslySetInnerHTML={
-						editable
-							? undefined
-							: {
-									__html: post.content
-										? generateHTML(JSON.parse(post.content), [
-												...ExtensionKit({ openOnClick: true }),
-											])
-										: '<p>This is an empty post</p>',
-								}
-					}
-				></article>
-			)}
+			{editable
+				? children
+				: isHydrated && (
+						<article
+							className="prose-article"
+							dangerouslySetInnerHTML={
+								editable
+									? undefined
+									: {
+											__html: post.content
+												? generateHTML(JSON.parse(post.content), [
+														...ExtensionKit({ openOnClick: true }),
+													])
+												: '<p>This is an empty post</p>',
+										}
+							}
+						></article>
+					)}
 
 			<PostFooter post={post} next={next} prev={prev} />
 		</>
