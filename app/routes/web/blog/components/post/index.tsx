@@ -2,9 +2,15 @@
  * This is a post display component for a blog post.
  * It make the page layout, including the title, meta information, and content.
  */
+import 'highlight.js/styles/base16/framer.min.css'
+
+import { useEffect, useState } from 'react'
+
 import { generateHTML } from '@tiptap/html'
+import hljs from 'highlight.js'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
+import { Loading } from '~/components/loading'
 import { useHydrated } from '~/hooks/use-hydrated'
 import type { PostWithRelations } from '~/lib/db/post.server'
 
@@ -27,6 +33,31 @@ export const Post = ({
 	next?: { title: string; slug: string } | null
 }) => {
 	const isHydrated = useHydrated()
+	const [html, setHtml] = useState<string | null>(null)
+
+	useEffect(() => {
+		const prepareHtml = async () => {
+			if (!post.content || !isHydrated) return
+
+			let generatedHtml = generateHTML(JSON.parse(post.content), [
+				...ExtensionKit({ openOnClick: true }),
+			])
+
+			const tempDiv = document.createElement('div')
+			tempDiv.innerHTML = generatedHtml
+
+			const codeBlocks = tempDiv.querySelectorAll('pre code')
+			codeBlocks.forEach(block => {
+				hljs.highlightElement(block as HTMLElement)
+				block.classList.remove('hljs') // Remove the default hljs class to remove background-color
+			})
+
+			setHtml(tempDiv.innerHTML)
+		}
+
+		prepareHtml()
+	}, [isHydrated])
+
 	return (
 		<>
 			<div className="space-y-5">
@@ -48,24 +79,18 @@ export const Post = ({
 				<PostMeta post={post} />
 			</div>
 
-			{editable
-				? children
-				: isHydrated && (
-						<article
-							className="prose-article"
-							dangerouslySetInnerHTML={
-								editable
-									? undefined
-									: {
-											__html: post.content
-												? generateHTML(JSON.parse(post.content), [
-														...ExtensionKit({ openOnClick: true }),
-													])
-												: '<p>This is an empty post</p>',
-										}
-							}
-						></article>
-					)}
+			{editable ? (
+				children
+			) : html ? (
+				<article
+					className="prose-article"
+					dangerouslySetInnerHTML={{
+						__html: html,
+					}}
+				/>
+			) : (
+				<Loading className="mx-auto my-28" />
+			)}
 
 			<PostFooter post={post} next={next} prev={prev} />
 		</>
