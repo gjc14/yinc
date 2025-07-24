@@ -68,7 +68,7 @@ export const Post = ({
 						placeholder="Give a sensational title..."
 						value={post.title}
 						onChange={e => onTitleChange?.(e.target.value)}
-						className="field-sizing-content h-auto min-h-0 w-full resize-none border-none bg-transparent text-3xl leading-normal font-bold tracking-tight outline-none md:text-4xl md:leading-tight"
+						className="block field-sizing-content min-h-0 w-full resize-none border-none bg-transparent text-3xl leading-normal font-bold tracking-tight outline-none md:text-4xl md:leading-tight"
 					/>
 				) : (
 					<h1 className="text-3xl leading-normal font-bold tracking-tight md:text-4xl md:leading-tight">
