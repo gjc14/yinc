@@ -1,0 +1,29 @@
+@reference "../../../../../../../app.css";
+
+.tiptap.ProseMirror {
+	img {
+		@apply block h-auto max-w-full;
+	}
+
+	img:not([data-type='emoji'] img) {
+		margin: 2rem 0;
+		outline: 0.125rem solid transparent;
+	}
+
+	img:not([data-type='emoji'] img).ProseMirror-selectednode {
+		@apply outline-yellow-500;
+	}
+
+	/* Thread image handling */
+	.tiptap-thread:has(> img) {
+		margin: 2rem 0;
+
+		img {
+			outline: 0.125rem solid transparent;
+		}
+	}
+
+	.tiptap-thread img {
+		margin: 0;
+	}
+}

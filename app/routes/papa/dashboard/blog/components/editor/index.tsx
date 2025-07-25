@@ -2,6 +2,7 @@
  * PostEditor uses Jotai, should be placed in <Provider> context.
  */
 import './styles.css'
+import './styles/image-node.css'
 
 import { useCallback } from 'react'
 

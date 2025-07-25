@@ -51,20 +51,10 @@ export const ExtensionKit = ({
 		Typography, // Input rules, such as (c) -> © or >> -> »
 
 		// Nodes
-		Placeholder.configure({
-			// placeholder: () => {
-			// 	return 'Press "/" to open commands, "/ai" for continue writing'
-			// },
-		}),
 		TextAlign.configure({ types: ['heading', 'paragraph'] }),
 		TextStyleKit.configure({}),
 		CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
-		Image.configure({
-			inline: true,
-			HTMLAttributes: {
-				class: 'inline-block',
-			},
-		}),
+		Image,
 		Youtube.configure({
 			inline: true,
 		}),
@@ -77,6 +67,13 @@ export const ExtensionKit = ({
 		// SlashCommand,
 		SmilieReplacer,
 		ColorHighlighter,
+
+		// Extensions
+		Placeholder.configure({
+			// placeholder: () => {
+			// 	return 'Type "/" to open menu...'
+			// },
+		}),
 	]
 }
 
