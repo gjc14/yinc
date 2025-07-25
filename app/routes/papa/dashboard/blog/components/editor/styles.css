@@ -1,0 +1,171 @@
+/* Basic editor styles */
+.tiptap {
+	p.is-empty::before {
+		content: attr(data-placeholder);
+		position: absolute;
+		color: hsl(var(--muted-foreground));
+		font-size: var(--text-base);
+		float: left;
+		height: calc(var(--spacing) * 0);
+		opacity: 0.8;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	/* Task list specific styles */
+	/* https://tiptap.dev/docs/editor/extensions/nodes/task-list */
+	/* https://github.com/tailwindlabs/tailwindcss-typography/blob/main/src/styles.js#L124-L126 */
+	ul[data-type='taskList'] {
+		list-style-type: none;
+		padding-inline-start: 0.2em;
+
+		li {
+			display: flex;
+			align-items: flex-start;
+
+			> label {
+				flex: 0 0 auto;
+				margin-right: 1rem;
+				user-select: none;
+			}
+
+			> div {
+				flex: 1 1 auto;
+				padding-inline-start: em(6, 14);
+
+				> p {
+					margin-top: 0;
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		input[type='checkbox'] {
+			cursor: pointer;
+		}
+
+		ul[data-type='taskList'] {
+			margin: 0;
+		}
+	}
+
+	/* For ColorHighlighter Extension */
+	/* https://tiptap.dev/docs/examples/advanced/clever-editor */
+	.color {
+		white-space: nowrap;
+
+		&::before {
+			background-color: var(--color);
+			border: 1px solid hsl(var(--muted-foreground));
+			border-radius: 1px;
+			content: ' ';
+			display: inline-block;
+			height: 0.8em;
+			margin-bottom: 0.15em;
+			margin-right: 0.1em;
+			vertical-align: middle;
+			width: 0.8em;
+		}
+	}
+}
+
+/**
+ * Highlight and text color variables for Tiptap editor, using built-in tailwind colors.
+ * This is not for syntax highlighting, but for text highlighting.
+ *
+ * Generating static CSS variables for all selectable colors
+ * reference: https://tailwindcss.com/docs/theme#generating-all-css-variables 
+ */
+@theme static {
+	--highlight-red: var(--highlight-red);
+	--highlight-orange: var(--highlight-orange);
+	--highlight-amber: var(--highlight-amber);
+	--highlight-yellow: var(--highlight-yellow);
+	--highlight-lime: var(--highlight-lime);
+	--highlight-green: var(--highlight-green);
+	--highlight-emerald: var(--highlight-emerald);
+	--highlight-teal: var(--highlight-teal);
+	--highlight-cyan: var(--highlight-cyan);
+	--highlight-sky: var(--highlight-sky);
+	--highlight-blue: var(--highlight-blue);
+	--highlight-indigo: var(--highlight-indigo);
+	--highlight-violet: var(--highlight-violet);
+	--highlight-purple: var(--highlight-purple);
+	--highlight-fuchsia: var(--highlight-fuchsia);
+	--highlight-pink: var(--highlight-pink);
+	--highlight-rose: var(--highlight-rose);
+	--text-red: var(--text-red);
+	--text-orange: var(--text-orange);
+	--text-amber: var(--text-amber);
+	--text-yellow: var(--text-yellow);
+	--text-lime: var(--text-lime);
+	--text-green: var(--text-green);
+	--text-emerald: var(--text-emerald);
+	--text-teal: var(--text-teal);
+	--text-cyan: var(--text-cyan);
+	--text-sky: var(--text-sky);
+	--text-blue: var(--text-blue);
+	--text-indigo: var(--text-indigo);
+	--text-violet: var(--text-violet);
+	--text-purple: var(--text-purple);
+	--text-fuchsia: var(--text-fuchsia);
+	--text-pink: var(--text-pink);
+	--text-rose: var(--text-rose);
+}
+
+:root {
+	--highlight-red: var(--color-red-200);
+	--highlight-orange: var(--color-orange-200);
+	--highlight-amber: var(--color-amber-200);
+	--highlight-yellow: var(--color-yellow-200);
+	--highlight-lime: var(--color-lime-200);
+	--highlight-green: var(--color-green-200);
+	--highlight-emerald: var(--color-emerald-200);
+	--highlight-teal: var(--color-teal-200);
+	--highlight-cyan: var(--color-cyan-200);
+	--highlight-sky: var(--color-sky-200);
+	--highlight-blue: var(--color-blue-200);
+	--highlight-indigo: var(--color-indigo-200);
+	--highlight-violet: var(--color-violet-200);
+	--highlight-purple: var(--color-purple-200);
+	--highlight-fuchsia: var(--color-fuchsia-200);
+	--highlight-pink: var(--color-pink-200);
+	--highlight-rose: var(--color-rose-200);
+	--text-red: var(--color-red-500);
+	--text-orange: var(--color-orange-500);
+	--text-amber: var(--color-amber-500);
+	--text-yellow: var(--color-yellow-500);
+	--text-lime: var(--color-lime-500);
+	--text-green: var(--color-green-500);
+	--text-emerald: var(--color-emerald-500);
+	--text-teal: var(--color-teal-500);
+	--text-cyan: var(--color-cyan-500);
+	--text-sky: var(--color-sky-500);
+	--text-blue: var(--color-blue-500);
+	--text-indigo: var(--color-indigo-500);
+	--text-violet: var(--color-violet-500);
+	--text-purple: var(--color-purple-500);
+	--text-fuchsia: var(--color-fuchsia-500);
+	--text-pink: var(--color-pink-500);
+	--text-rose: var(--color-rose-500);
+}
+
+[data-theme='dark'] {
+	--highlight-red: var(--color-red-800);
+	--highlight-orange: var(--color-orange-800);
+	--highlight-amber: var(--color-amber-800);
+	--highlight-yellow: var(--color-yellow-800);
+	--highlight-lime: var(--color-lime-800);
+	--highlight-green: var(--color-green-800);
+	--highlight-emerald: var(--color-emerald-800);
+	--highlight-teal: var(--color-teal-800);
+	--highlight-cyan: var(--color-cyan-800);
+	--highlight-sky: var(--color-sky-800);
+	--highlight-blue: var(--color-blue-800);
+	--highlight-indigo: var(--color-indigo-800);
+	--highlight-violet: var(--color-violet-800);
+	--highlight-purple: var(--color-purple-800);
+	--highlight-fuchsia: var(--color-fuchsia-800);
+	--highlight-pink: var(--color-pink-800);
+	--highlight-rose: var(--color-rose-800);
+}

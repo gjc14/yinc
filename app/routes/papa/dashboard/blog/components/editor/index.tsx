@@ -1,7 +1,7 @@
 /**
  * PostEditor uses Jotai, should be placed in <Provider> context.
  */
-import './styles.scss'
+import './styles.css'
 
 import { useCallback } from 'react'
 
