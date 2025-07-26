@@ -39,7 +39,7 @@ export const generateSlug = (
 			// Replace common CJK punctuation with hyphens for better URL readability
 			.replace(/[，。！？；：""''（）【】「」『』〈〉《》、]/g, '-')
 			// Remove or replace other problematic characters but keep Unicode letters/numbers
-			.replace(/[^\p{L}\p{N}\-_.~]/gu, '')
+			.replace(/[^\p{L}\p{N}\-_.~]/gu, '-')
 			// Handle multiple consecutive hyphens
 			.replace(/-+/g, '-')
 			// Remove leading/trailing hyphens
