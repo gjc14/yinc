@@ -10,7 +10,7 @@ export const Footer = () => {
 			<p className="text-primary text-sm">
 				Built somewhere on the 🌏. © {new Date().getFullYear()}{' '}
 				<a
-					href="https://papa.cloud"
+					href="https://yinc.me"
 					aria-label="Go to papa"
 					target="_blank"
 					rel="noopener noreferrer"

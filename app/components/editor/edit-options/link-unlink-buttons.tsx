@@ -62,7 +62,7 @@ export const LinkUnlinkButtons = ({ editor }: { editor: Editor }) => {
 					<Label htmlFor="link">URL</Label>
 					<Input
 						id="link"
-						placeholder="https://papa.cloud"
+						placeholder="https://yinc.me"
 						value={linkInput}
 						onChange={e => setLinkInput(e.target.value ?? '')}
 					/>

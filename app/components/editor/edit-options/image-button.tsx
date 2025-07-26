@@ -125,7 +125,7 @@ export const ImageButton = ({ editor }: { editor: Editor }) => {
 							<Input
 								ref={urlInputRef}
 								id="url"
-								placeholder="https://papa.cloud/logo.png"
+								placeholder="https://yinc.me/logo.png"
 								className="col-span-2 h-8"
 							/>
 						</div>

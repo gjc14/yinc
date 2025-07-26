@@ -9,7 +9,7 @@ import { db } from '~/lib/db/db.server'
 import { metadataCache, type MetadataCache } from './cache'
 import { isValidUUID, presignedUrlRes } from './helpers'
 
-// Usage: papa.cloud/assets/{assetId}
+// Usage: yinc.me/assets/{assetId}
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const assetId = params.assetId
 
