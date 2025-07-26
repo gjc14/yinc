@@ -13,6 +13,18 @@ import type { PostWithRelations } from '~/lib/db/post.server'
 
 export function PostMeta({ post }: { post: PostWithRelations }) {
 	const isHydrated = useHydrated()
+
+	const readTime =
+		isHydrated &&
+		(post.content
+			? Math.ceil(
+					generateHTML(
+						JSON.parse(post.content),
+						ExtensionKit({ openOnClick: true }),
+					).length / 300,
+				)
+			: 0) + ` minutes read`
+
 	return (
 		<div className="mx-auto w-full py-2">
 			<div className="flex items-center justify-between">
@@ -36,15 +48,7 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 						<div className="text-muted-foreground flex items-center gap-1 text-sm text-wrap">
 							<span>{post.updatedAt.toDateString()}</span>
 							<span className="px-1">·</span>
-							<span>
-								{isHydrated && post.content
-									? `${Math.ceil(
-											generateHTML(JSON.parse(post.content), [
-												...ExtensionKit({ openOnClick: true }),
-											]).length / 250,
-										)} min read`
-									: '0 min read'}
-							</span>
+							<span>{readTime}</span>
 						</div>
 					</div>
 				</div>
@@ -68,34 +72,6 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 								</Fragment>
 							))}
 						</div>
-
-						{/* TODO: Add functions */}
-						{/* <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full"
-                    >
-                        <ShareIcon className="h-5 w-5" />
-                        <span className="sr-only">Share</span>
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full"
-                    >
-                        <BookmarkIcon className="h-5 w-5" />
-                        <span className="sr-only">Bookmark</span>
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full"
-                    >
-                        <MoreHorizontalIcon className="h-5 w-5" />
-                        <span className="sr-only">More options</span>
-                    </Button>
-                </div> */}
 					</div>
 
 					<Separator className="mb-3" />
