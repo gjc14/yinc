@@ -1,47 +1,86 @@
-import type { Route } from './+types/route'
-import { useEffect, useRef, useState } from 'react'
-import { Link, useFetcher, useNavigate, useParams } from 'react-router'
+import { useEffect } from 'react'
+import { useFetcher, useNavigate, useNavigation } from 'react-router'
 
-import { ExternalLink, Loader2, Settings, Trash } from 'lucide-react'
+import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
+import { HeartCrack } from 'lucide-react'
 
+import { Loading } from '~/components/loading'
+import { useIsMobile } from '~/hooks/use-mobile'
+import { Post } from '~/routes/web/blog/components/post'
+
+import type { Route } from '../+types/layout'
+import { ContentEditor } from '../components/editor'
+import { PostDeleteAlert } from '../components/post-component/delete-alert'
+import { PostResetAlert } from '../components/post-component/reset-alert'
 import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from '~/components/ui/alert-dialog'
-import { Button } from '~/components/ui/button'
-import type { PostWithRelations } from '~/lib/db/post.server'
-import { generateSlug } from '~/lib/utils/seo'
-import { DashboardSectionWrapper } from '~/routes/papa/dashboard/components/dashboard-wrapper'
-
-import { PostComponent, type PostHandle } from '../components/post-component'
+	categoriesAtom,
+	editorAtom,
+	isDeleteAlertOpenAtom,
+	isDeletingAtom,
+	isDirtyAtom,
+	isResetAlertOpenAtom,
+	isRestoreAlertOpenAtom,
+	isSavingAtom,
+	isSettingsOpenAtom,
+	postAtom,
+	tagsAtom,
+} from '../context'
 import type { action } from '../resource'
+import { isToolbarOpenAtom, Toolbar } from './editor-toolbar'
 
-export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
-	const fetcher = useFetcher<typeof action>()
-	const navigate = useNavigate()
-	const params = useParams()
-
+export default function DashboardSlugPost({
+	matches,
+	params,
+}: Route.ComponentProps) {
 	const blogMatch = matches[2]
 	const { tags, categories, posts } = blogMatch.data
+	const currentPost = posts.find(p => p.slug === params.postSlug)
 
-	const postContentRef = useRef<PostHandle>(null)
-	const [isDirty, setIsDirty] = useState(false)
-	const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
+	useHydrateAtoms([
+		[postAtom, currentPost],
+		[tagsAtom, tags],
+		[categoriesAtom, categories],
 
-	const post = posts.find(p => p.slug === params.postSlug)
+		[isSettingsOpenAtom, false],
+
+		[isDirtyAtom, false],
+
+		[isRestoreAlertOpenAtom, false],
+		[isResetAlertOpenAtom, false],
+		[isDeleteAlertOpenAtom, false],
+
+		[isSavingAtom, false],
+		[isDeletingAtom, false],
+	])
+
+	const [editor, setEditor] = useAtom(editorAtom)
+
+	const isMobile = useIsMobile()
+	const fetcher = useFetcher<typeof action>()
+	const navigate = useNavigate()
+	const navigation = useNavigation()
 
 	const isSubmitting = fetcher.state === 'submitting'
-	const isSaving = isSubmitting && fetcher.formMethod === 'PUT'
-	const isDeleting = isSubmitting && fetcher.formMethod === 'DELETE'
-	const isNavigating = fetcher.state === 'loading'
+	const isNavigating = navigation.state === 'loading'
+
+	// const postContentRef = useRef<PostHandle>(null)
+	const [isDirty, setIsDirty] = useAtom(isDirtyAtom)
+	const [post, setPost] = useAtom(postAtom)
+
+	const [isSaving, setIsSaving] = useAtom(isSavingAtom)
+	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
+
+	const [isToolbarOpen, setIsToolbarOpen] = useAtom(isToolbarOpenAtom)
 
 	useEffect(() => {
+		setPost(currentPost)
+	}, [currentPost])
+
+	useEffect(() => {
+		setIsSaving(isSubmitting && fetcher.formMethod === 'PUT')
+		setIsDeleting(isSubmitting && fetcher.formMethod === 'DELETE')
+
 		if (fetcher.state === 'loading' && fetcher.data) {
 			if (fetcher.formMethod === 'DELETE') {
 				fetcher.data.data && navigate('/dashboard/blog')
@@ -54,55 +93,67 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 				}
 			}
 		}
-	}, [fetcher])
+	}, [fetcher.state, fetcher.formMethod, isSubmitting])
+
+	if (isNavigating) {
+		return (
+			<div className="mx-auto flex h-full flex-1 flex-col items-center justify-center space-y-6">
+				<Loading />
+			</div>
+		)
+	}
 
 	if (!post) {
-		return <h2 className="flex grow items-center justify-center">Not found</h2>
+		return (
+			<div className="mx-auto flex h-full flex-1 flex-col items-center justify-center space-y-6">
+				<HeartCrack className="size-36" />
+				<h2>Post Not found</h2>
+			</div>
+		)
 	}
 
-	// Handle db save
-	const handleSave = () => {
-		const postState = postContentRef.current?.getPostState()
-		if (!postState || !isDirty || isSubmitting) return
+	// // Handle database save
+	// const handleSave = () => {
+	// 	if (
+	// 		!post ||
+	// 		!isDirty ||
+	// 		!isSaving ||
+	// 		!isDeleting ||
+	// 		isSubmitting ||
+	// 		isNavigating
+	// 	)
+	// 		return
 
-		const date = new Date()
-		const now = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(
-			2,
-			'0',
-		)}/${String(date.getDate()).padStart(
-			2,
-			'0',
-		)}@${String(date.getHours()).padStart(2, '0')}:${String(
-			date.getMinutes(),
-		).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-		// Remove date fields and set default values
-		const postReady = {
-			...postState,
-			title: postState.title || `Post-${now}`,
-			slug:
-				postState.slug ||
-				generateSlug(postState.title || `Post-${now}`, {
-					fallbackPrefix: 'post',
-				}),
-			createdAt: undefined,
-			updatedAt: undefined,
-			seo: {
-				...postState.seo,
-				createdAt: undefined,
-				updatedAt: undefined,
-			},
-		}
+	// 	const now = new Date().toISOString().replace(/T/, '@').split('.')[0]
 
-		fetcher.submit(JSON.stringify(postReady), {
-			method: 'PUT', // Update
-			encType: 'application/json',
-			action: '/dashboard/blog/resource',
-		})
+	// 	// Remove date fields and set default values
+	// 	const postReady = {
+	// 		...post,
+	// 		title: post.title || `p-${now}`,
+	// 		slug:
+	// 			post.slug ||
+	// 			generateSlug(post.title || `p-${now}`, {
+	// 				fallbackPrefix: 'post',
+	// 			}),
+	// 		createdAt: undefined,
+	// 		updatedAt: undefined,
+	// 		seo: {
+	// 			...post.seo,
+	// 			createdAt: undefined,
+	// 			updatedAt: undefined,
+	// 		},
+	// 	}
 
-		setIsDirty(false)
-	}
+	// 	fetcher.submit(JSON.stringify(postReady), {
+	// 		method: 'PUT', // Update
+	// 		encType: 'application/json',
+	// 		action: '/dashboard/blog/resource',
+	// 	})
 
-	// Handle db delete
+	// 	setIsDirty(false)
+	// }
+
+	// Handle database delete
 	const handleDelete = async () => {
 		if (!post || isSubmitting) return
 
@@ -118,138 +169,45 @@ export default function DashboardSlugPost({ matches }: Route.ComponentProps) {
 		)
 	}
 
-	// Handle post change
-	const handleDiscard = () => {
-		postContentRef.current?.discardRequest()
-	}
-
-	const toggleSettings = () => {
-		postContentRef.current?.toggleSettings()
+	// Handle post reset
+	const handleReset = () => {
+		setPost(currentPost)
+		console.log('Editor:', editor)
+		editor?.commands.setContent(
+			currentPost?.content ? JSON.parse(currentPost.content) : undefined,
+		)
 	}
 
 	return (
-		<DashboardSectionWrapper className="items-center">
-			{/* Delete post alert */}
-			<PostDeleteAlert
-				open={deleteAlertOpen}
-				onOpenChange={setDeleteAlertOpen}
-				post={post}
-				handleDelete={handleDelete}
-				isDeleting={isDeleting}
-				isNavigating={isNavigating}
-			/>
+		<div className="relative h-full overflow-hidden">
+			{/* Editor toolbar self positioning */}
+			<Toolbar isMobile={isMobile} />
 
-			<div className="fixed bottom-8 z-10 flex items-center rounded-full border bg-white/10 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
-				{/* Preview */}
-				{post.status !== 'PUBLISHED' ? (
-					<Button variant={'link'} asChild disabled={isDirty}>
-						<Link to={`/blog/${post.slug}?preview=true`} target="_blank">
-							Preview post
-							<ExternalLink size={12} />
-						</Link>
-					</Button>
-				) : (
-					<Link to={`/blog/${post.slug}`} target="_blank">
-						<Button variant={'link'} size={'sm'}>
-							View post
-							<ExternalLink className="!size-3" />
-						</Button>
-					</Link>
-				)}
+			{/* Main Content Section - Full height with bottom padding for toolbar */}
+			<section
+				className={`h-full overflow-y-auto py-6 ${isMobile ? 'pb-16' : 'pt-16'}`}
+			>
+				<div className="mx-auto w-full max-w-prose px-3">
+					{/* <PostLocalStorageInitialize /> */}
+					<PostResetAlert onReset={handleReset} />
+					<PostDeleteAlert onDelete={handleDelete} />
 
-				{/* Discard */}
-				{isDirty && (
-					<Button
-						size={'sm'}
-						variant={'ghost'}
-						className="text-destructive hover:bg-destructive rounded-full"
-						onClick={handleDiscard}
-					>
-						<Trash height={16} width={16} />
-						<p className="text-xs">Discard</p>
-					</Button>
-				)}
+					{/* <PostSettings /> */}
 
-				{/* Save */}
-				<Button
-					type="submit"
-					size={'sm'}
-					variant={'ghost'}
-					className="rounded-full"
-					disabled={!isDirty || isSubmitting}
-					onClick={handleSave}
-				>
-					{isSaving && <Loader2 size={16} className="animate-spin" />}
-					<p className="text-xs">Save</p>
-				</Button>
-
-				{/* Open settings */}
-				<Button
-					className="ml-1 rounded-full"
-					size={'icon'}
-					variant={'outline'}
-					onClick={toggleSettings}
-				>
-					<Settings />
-				</Button>
-			</div>
-
-			<PostComponent
-				ref={postContentRef}
-				post={post}
-				tags={tags}
-				categories={categories.filter(c => !c.parentId)}
-				isDirty={isDirty}
-				setIsDirty={setIsDirty}
-				onSave={handleSave}
-				onDeleteRequest={() => setDeleteAlertOpen(true)}
-			/>
-		</DashboardSectionWrapper>
-	)
-}
-
-const PostDeleteAlert = ({
-	post,
-	handleDelete,
-	open,
-	onOpenChange,
-	isDeleting,
-	isNavigating,
-}: {
-	post: PostWithRelations
-	handleDelete: () => void
-	open: boolean
-	onOpenChange: (open: boolean) => void
-	isDeleting: boolean
-	isNavigating: boolean
-}) => {
-	return (
-		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
-				<AlertDialogHeader>
-					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-					<AlertDialogDescription>
-						This action cannot be undone. This will permanently delete{' '}
-						<span className="text-primary font-bold">{post.title}</span> (id:{' '}
-						{post.id}).
-					</AlertDialogDescription>
-				</AlertDialogHeader>
-				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction
-						disabled={isDeleting || isNavigating}
-						onClick={e => {
-							e.preventDefault()
-							handleDelete()
+					<Post
+						post={post}
+						editable
+						onTitleChange={title => {
+							setPost({
+								...post,
+								title,
+							})
 						}}
 					>
-						{(isDeleting || isNavigating) && (
-							<Loader2 className="animate-spin" />
-						)}
-						{isNavigating ? 'Redirecting...' : 'Delete permanently'}
-					</AlertDialogAction>
-				</AlertDialogFooter>
-			</AlertDialogContent>
-		</AlertDialog>
+						<ContentEditor />
+					</Post>
+				</div>
+			</section>
+		</div>
 	)
 }
