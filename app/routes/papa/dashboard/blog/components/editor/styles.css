@@ -69,6 +69,14 @@
 	}
 }
 
+/* Selection color when editor blur */
+.tiptap .selection {
+	outline: 2px solid var(--color-teal-800);
+}
+[data-theme='dark'] .tiptap .selection {
+	outline: 2px solid var(--color-teal-200);
+}
+
 /**
  * Highlight and text color variables for Tiptap editor, using built-in tailwind colors.
  * This is not for syntax highlighting, but for text highlighting.

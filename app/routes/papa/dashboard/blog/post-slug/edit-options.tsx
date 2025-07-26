@@ -15,6 +15,7 @@ import {
 	Heading5,
 	Highlighter,
 	Italic,
+	Link,
 	List,
 	ListOrdered,
 	ListTodoIcon,
@@ -324,6 +325,27 @@ const UndoRedoOptions: EditOptionProps[] = [
 	},
 ]
 
+// LinkUnlink Image Video
+const createLinkOption = (href?: string) => ({
+	name: 'Link/Unlink',
+	shortcut: 'ctrl-k',
+	icon: Link,
+	isActive: (editor: Editor) => editor.isActive('link'),
+	run: (editor: Editor) =>
+		editor
+			.chain()
+			.focus()
+			.toggleLink(href ? { href } : undefined)
+			.run(),
+	canRun: (editor: Editor) =>
+		editor
+			.can()
+			.chain()
+			.focus()
+			.toggleLink(href ? { href } : undefined)
+			.run(),
+})
+
 export {
 	AdvancedParagraphOptions,
 	AlignOptions,
@@ -337,4 +359,5 @@ export {
 	RemoveFormattingOption,
 	SubSuperScriptOptions,
 	UndoRedoOptions,
+	createLinkOption,
 }

@@ -7,7 +7,7 @@ import { Superscript } from '@tiptap/extension-superscript'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import { Typography } from '@tiptap/extension-typography'
-import { Placeholder } from '@tiptap/extensions'
+import { Placeholder, Selection } from '@tiptap/extensions'
 import { StarterKit } from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
 
@@ -38,7 +38,7 @@ export const ExtensionKit = ({
 				openOnClick: openOnClick,
 				autolink: true,
 				defaultProtocol: 'https',
-				validate: href => /^https?:\/\//.test(href),
+				protocols: ['https', 'http', 'mailto', 'tel'],
 			},
 		}),
 
@@ -74,6 +74,7 @@ export const ExtensionKit = ({
 			// 	return 'Type "/" to open menu...'
 			// },
 		}),
+		Selection, // Keep selection on editor blur
 	]
 }
 
