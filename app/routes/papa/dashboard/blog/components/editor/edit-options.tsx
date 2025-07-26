@@ -34,7 +34,7 @@ import {
 
 export interface EditOptionProps {
 	name: string
-	/** e.g. ctrl-alt-shift */
+	/** e.g. ctrl+alt+shift */
 	shortcut?: string
 	icon: LucideIcon
 	isActive?: (editor: Editor) => boolean
@@ -45,7 +45,7 @@ export interface EditOptionProps {
 const MarkOptions: EditOptionProps[] = [
 	{
 		name: 'Bold',
-		shortcut: 'ctrl-b',
+		shortcut: 'ctrl+b',
 		icon: Bold,
 		isActive: (editor: Editor) => editor.isActive('bold'),
 		run: (editor: Editor) => editor.chain().focus().toggleBold().run(),
@@ -53,7 +53,7 @@ const MarkOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Italic',
-		shortcut: 'ctrl-i',
+		shortcut: 'ctrl+i',
 		icon: Italic,
 		isActive: (editor: Editor) => editor.isActive('italic'),
 		run: (editor: Editor) => editor.chain().focus().toggleItalic().run(),
@@ -62,7 +62,7 @@ const MarkOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Underline',
-		shortcut: 'ctrl-u',
+		shortcut: 'ctrl+u',
 		icon: UnderlineIcon,
 		isActive: (editor: Editor) => editor.isActive('underline'),
 		run: (editor: Editor) => editor.chain().focus().toggleUnderline().run(),
@@ -71,7 +71,7 @@ const MarkOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Strikethrough',
-		shortcut: 'ctrl-shift-s',
+		shortcut: 'ctrl+shift+s',
 		icon: Strikethrough,
 		isActive: (editor: Editor) => editor.isActive('strike'),
 		run: (editor: Editor) => editor.chain().focus().toggleStrike().run(),
@@ -80,7 +80,7 @@ const MarkOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Code',
-		shortcut: 'ctrl-e',
+		shortcut: 'ctrl+e',
 		icon: Code,
 		isActive: (editor: Editor) => editor.isActive('code'),
 		run: (editor: Editor) => editor.chain().focus().toggleCode().run(),
@@ -91,7 +91,7 @@ const MarkOptions: EditOptionProps[] = [
 const SubSuperScriptOptions: EditOptionProps[] = [
 	{
 		name: 'Superscript',
-		shortcut: 'ctrl-.',
+		shortcut: 'ctrl+.',
 		icon: Superscript,
 		isActive: (editor: Editor) => editor.isActive('superscript'),
 		run: (editor: Editor) => editor.chain().focus().toggleSuperscript().run(),
@@ -100,7 +100,7 @@ const SubSuperScriptOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Subscript',
-		shortcut: 'ctrl-,',
+		shortcut: 'ctrl+,',
 		icon: Subscript,
 		isActive: (editor: Editor) => editor.isActive('subscript'),
 		run: (editor: Editor) => editor.chain().focus().toggleSubscript().run(),
@@ -117,7 +117,7 @@ const createHighlightOption = ({
 	color: string
 }): EditOptionProps & { color: string } => ({
 	name: name,
-	shortcut: 'ctrl-shift-h',
+	shortcut: 'ctrl+shift+h',
 	icon: Highlighter,
 	isActive: editor => editor.isActive('highlight', { color }),
 	run: (editor: Editor) => editor.chain().focus().setHighlight({ color }).run(),
@@ -161,7 +161,7 @@ const RemoveFormattingOption: EditOptionProps = {
 const ParagraphOptions: EditOptionProps[] = [
 	{
 		name: 'Paragraph',
-		shortcut: 'ctrl-alt-0',
+		shortcut: 'ctrl+alt+0',
 		icon: Pilcrow,
 		isActive: (editor: Editor) => editor.isActive('paragraph'),
 		run: (editor: Editor) => editor.chain().focus().setParagraph().run(),
@@ -169,7 +169,7 @@ const ParagraphOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Heading 2',
-		shortcut: 'ctrl-alt-2',
+		shortcut: 'ctrl+alt+2',
 		icon: Heading2,
 		isActive: (editor: Editor) => editor.isActive('heading', { level: 2 }),
 		run: (editor: Editor) =>
@@ -178,7 +178,7 @@ const ParagraphOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Heading 3',
-		shortcut: 'ctrl-alt-3',
+		shortcut: 'ctrl+alt+3',
 		icon: Heading3,
 		isActive: (editor: Editor) => editor.isActive('heading', { level: 3 }),
 		run: (editor: Editor) =>
@@ -187,7 +187,7 @@ const ParagraphOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Heading 4',
-		shortcut: 'ctrl-alt-4',
+		shortcut: 'ctrl+alt+4',
 		icon: Heading4,
 		isActive: (editor: Editor) => editor.isActive('heading', { level: 4 }),
 		run: (editor: Editor) =>
@@ -196,7 +196,7 @@ const ParagraphOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Heading 5',
-		shortcut: 'ctrl-alt-5',
+		shortcut: 'ctrl+alt+5',
 		icon: Heading5,
 		isActive: (editor: Editor) => editor.isActive('heading', { level: 5 }),
 		run: (editor: Editor) =>
@@ -208,7 +208,7 @@ const ParagraphOptions: EditOptionProps[] = [
 const AdvancedParagraphOptions: EditOptionProps[] = [
 	{
 		name: 'Blockquote',
-		shortcut: 'ctrl-shift-b',
+		shortcut: 'ctrl+shift+b',
 		icon: Quote,
 		isActive: (editor: Editor) => editor.isActive('blockquote'),
 		run: (editor: Editor) => editor.chain().focus().toggleBlockquote().run(),
@@ -217,7 +217,7 @@ const AdvancedParagraphOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Code Block',
-		shortcut: 'ctrl-alt-c',
+		shortcut: 'ctrl+alt+c',
 		icon: Braces,
 		isActive: (editor: Editor) => editor.isActive('codeBlock'),
 		run: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run(),
@@ -229,7 +229,7 @@ const AdvancedParagraphOptions: EditOptionProps[] = [
 const ListOptions: EditOptionProps[] = [
 	{
 		name: 'Ordered List',
-		shortcut: 'ctrl-shift-7',
+		shortcut: 'ctrl+shift+7',
 		icon: ListOrdered,
 		isActive: (editor: Editor) => editor.isActive('orderedList'),
 		run: (editor: Editor) => editor.chain().focus().toggleOrderedList().run(),
@@ -237,7 +237,7 @@ const ListOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Bullet List',
-		shortcut: 'ctrl-shift-8',
+		shortcut: 'ctrl+shift+8',
 		icon: List,
 		isActive: (editor: Editor) => editor.isActive('bulletList'),
 		run: (editor: Editor) => editor.chain().focus().toggleBulletList().run(),
@@ -245,7 +245,7 @@ const ListOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Check List',
-		shortcut: 'ctrl-shift-9',
+		shortcut: 'ctrl+shift+9',
 		icon: ListTodoIcon,
 		isActive: (editor: Editor) => editor.isActive('taskList'),
 		run: (editor: Editor) => editor.chain().focus().toggleTaskList().run(),
@@ -256,7 +256,7 @@ const ListOptions: EditOptionProps[] = [
 const AlignOptions: EditOptionProps[] = [
 	{
 		name: 'Align Left',
-		shortcut: 'ctrl-shift-i',
+		shortcut: 'ctrl+shift+i',
 		icon: AlignLeft,
 		isActive: (editor: Editor) => editor.isActive({ textAlign: 'left' }),
 		run: (editor: Editor) =>
@@ -265,7 +265,7 @@ const AlignOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Align Center',
-		shortcut: 'ctrl-shift-e',
+		shortcut: 'ctrl+shift+e',
 		icon: AlignCenter,
 		isActive: (editor: Editor) => editor.isActive({ textAlign: 'center' }),
 		run: (editor: Editor) =>
@@ -274,7 +274,7 @@ const AlignOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Align Right',
-		shortcut: 'ctrl-shift-r',
+		shortcut: 'ctrl+shift+r',
 		icon: AlignRight,
 		isActive: (editor: Editor) => editor.isActive({ textAlign: 'right' }),
 		run: (editor: Editor) =>
@@ -283,7 +283,7 @@ const AlignOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Justify',
-		shortcut: 'ctrl-shift-j',
+		shortcut: 'ctrl+shift+j',
 		icon: AlignJustify,
 		isActive: (editor: Editor) => editor.isActive({ textAlign: 'justify' }),
 		run: (editor: Editor) =>
@@ -301,7 +301,7 @@ const MiscOptions: EditOptionProps[] = [
 	},
 	{
 		name: 'Hard Break',
-		shortcut: 'ctrl/shift-enter',
+		shortcut: 'ctrl/shift+enter',
 		icon: CornerDownLeft,
 		run: (editor: Editor) => editor.chain().focus().setHardBreak().run(),
 		canRun: () => true,
@@ -311,14 +311,14 @@ const MiscOptions: EditOptionProps[] = [
 const UndoRedoOptions: EditOptionProps[] = [
 	{
 		name: 'Undo',
-		shortcut: 'ctrl-z',
+		shortcut: 'ctrl+z',
 		icon: Undo,
 		run: (editor: Editor) => editor.chain().focus().undo().run(),
 		canRun: (editor: Editor) => editor.can().chain().focus().undo().run(),
 	},
 	{
 		name: 'Redo',
-		shortcut: 'ctrl-shift-z',
+		shortcut: 'ctrl+shift+z',
 		icon: Redo,
 		run: (editor: Editor) => editor.chain().focus().redo().run(),
 		canRun: (editor: Editor) => editor.can().chain().focus().redo().run(),
@@ -328,7 +328,7 @@ const UndoRedoOptions: EditOptionProps[] = [
 // LinkUnlink Image Video
 const createLinkOption = (href?: string) => ({
 	name: 'Link/Unlink',
-	shortcut: 'ctrl-k',
+	shortcut: 'ctrl+k',
 	icon: Link,
 	isActive: (editor: Editor) => editor.isActive('link'),
 	run: (editor: Editor) =>

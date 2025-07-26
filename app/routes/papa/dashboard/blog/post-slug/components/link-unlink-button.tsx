@@ -15,8 +15,8 @@ import {
 	PopoverTrigger,
 } from '~/components/ui/popover'
 
+import { createLinkOption } from '../../components/editor/edit-options'
 import { editorAtom } from '../../context'
-import { createLinkOption } from '../edit-options'
 import { TooltipWrapper } from './tooltip-wrapper'
 
 export const isLinkUnlinkOpenAtom = atom(false)

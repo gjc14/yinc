@@ -51,7 +51,7 @@ export const parseShortcutKeys = (props: {
 	delimiter?: string
 	capitalize?: boolean
 }) => {
-	const { shortcutKeys, delimiter = '-', capitalize = true } = props
+	const { shortcutKeys, delimiter = '+', capitalize = true } = props
 
 	if (!shortcutKeys) return []
 
