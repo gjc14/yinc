@@ -84,5 +84,11 @@ export function ContentEditor() {
 		[imageBlobMap, editor],
 	)
 
-	return <EditorContent editor={editor} />
+	// Handle shortcut keys
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		e.stopPropagation() // prevent passing e out e.g. mod+b will only bold rather than toggle sidebar as well
+		// e.preventDefault() // TBD. prevent like mod+s save, mod+p print, or mod+r refres
+	}
+
+	return <EditorContent editor={editor} onKeyDown={handleKeyDown} />
 }

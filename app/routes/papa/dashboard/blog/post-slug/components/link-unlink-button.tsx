@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { PopoverClose } from '@radix-ui/react-popover'
 import { useEditorState } from '@tiptap/react'
@@ -19,6 +20,8 @@ import { createLinkOption } from '../edit-options'
 import { TooltipWrapper } from './tooltip-wrapper'
 
 export const isLinkUnlinkOpenAtom = atom(false)
+
+export const LINK_UNKINK_SHORTCUT = 'mod+k'
 
 export const LinkUnlinkButtons = () => {
 	const [linkInput, setLinkInput] = useState('')
@@ -46,6 +49,20 @@ export const LinkUnlinkButtons = () => {
 
 	const isActive = linkStates?.isActive
 	const canRun = linkStates?.canRun
+
+	// Open link/unlink input
+	useHotkeys(
+		LINK_UNKINK_SHORTCUT,
+		e => {
+			setIsLinkUnlinkOpen(prev => !prev)
+			e.preventDefault()
+		},
+		{
+			enabled: canRun,
+			enableOnContentEditable: true,
+			enableOnFormTags: true,
+		},
+	)
 
 	const onOpen = () => {
 		if (!editor) return
@@ -83,17 +100,17 @@ export const LinkUnlinkButtons = () => {
 		}
 	}
 
+	useEffect(() => {
+		if (!editor) return
+
+		!isLinkUnlinkOpen && editor.commands.focus()
+	}, [isLinkUnlinkOpen])
+
 	if (!editor) return null
 
 	return (
-		<Popover
-			open={isLinkUnlinkOpen}
-			onOpenChange={o => {
-				!o && editor.commands.focus()
-				setIsLinkUnlinkOpen(o)
-			}}
-		>
-			<TooltipWrapper tooltip="Link / Unlink">
+		<Popover open={isLinkUnlinkOpen} onOpenChange={setIsLinkUnlinkOpen}>
+			<TooltipWrapper tooltip="Link / Unlink" shortcut={LINK_UNKINK_SHORTCUT}>
 				<PopoverTrigger asChild>
 					<Button
 						size={'icon'}
