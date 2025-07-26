@@ -10,9 +10,9 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 
-import { type EditOptionProps } from '../../components/editor/edit-options'
-import { editorAtom } from '../../context'
+import { editorAtom } from '../../../context'
 import { TooltipWrapper } from '../components/tooltip-wrapper'
+import { type EditOptionProps } from '../edit-options'
 
 export function MoreDropdownMenu({ options }: { options: EditOptionProps[] }) {
 	const [editor] = useAtom(editorAtom)

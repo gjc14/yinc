@@ -4,7 +4,7 @@ import { useAtom } from 'jotai'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
 
-import { editorAtom } from '../../context'
+import { editorAtom } from '../../../context'
 import { TooltipWrapper } from './tooltip-wrapper'
 
 interface ToggleButtonProps {

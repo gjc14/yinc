@@ -4,24 +4,13 @@ import { useFetcher, useNavigate, useNavigation } from 'react-router'
 
 import { Loader2, PlusCircle, Settings, Trash } from 'lucide-react'
 
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, user as userTable } from '~/lib/db/schema'
 import { generateSlug } from '~/lib/utils/seo'
 import { DashboardSectionWrapper } from '~/routes/papa/dashboard/components/dashboard-wrapper'
 
-import { PostComponent, type PostHandle } from '../components/post-component'
+import { PostComponent, type PostHandle } from '../components/post'
 import type { action } from '../resource'
 
 export default function DashboardNewPost({ matches }: Route.ComponentProps) {

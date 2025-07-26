@@ -23,9 +23,10 @@ import { Post } from '~/routes/web/blog/components/post'
 
 import type { Route } from '../+types/layout'
 import { ContentEditor } from '../components/editor'
-import { PostDeleteAlert } from '../components/post-component/delete-alert'
-import { PostSettings } from '../components/post-component/post-settings'
-import { PostResetAlert } from '../components/post-component/reset-alert'
+import { isToolbarOpenAtom, Toolbar } from '../components/editor/editor-toolbar'
+import { PostDeleteAlert } from '../components/post/delete-alert'
+import { PostSettings } from '../components/post/post-settings'
+import { PostResetAlert } from '../components/post/reset-alert'
 import {
 	categoriesAtom,
 	editorAtom,
@@ -38,7 +39,6 @@ import {
 	tagsAtom,
 } from '../context'
 import type { action } from '../resource'
-import { isToolbarOpenAtom, Toolbar } from './editor-toolbar'
 
 export default function DashboardSlugPost({
 	matches,

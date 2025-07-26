@@ -4,6 +4,11 @@ import tailwindColors from 'tailwindcss/colors.js'
 
 import { TooltipProvider } from '~/components/ui/tooltip'
 
+import { ColorDropdownMenu } from './components/color-dropdown'
+import { LinkUnlinkButtons } from './components/link-unlink-button'
+import { MoreDropdownMenu } from './components/more-dropdown'
+import { SelectDropdownMenu } from './components/select-dropdown'
+import { ToggleButton } from './components/toggle-button'
 import {
 	AdvancedParagraphOptions,
 	AlignOptions,
@@ -16,12 +21,7 @@ import {
 	RemoveFormattingOption,
 	SubSuperScriptOptions,
 	UndoRedoOptions,
-} from '../components/editor/edit-options'
-import { ColorDropdownMenu } from './components/color-dropdown'
-import { LinkUnlinkButtons } from './components/link-unlink-button'
-import { MoreDropdownMenu } from './components/more-dropdown'
-import { SelectDropdownMenu } from './components/select-dropdown'
-import { ToggleButton } from './components/toggle-button'
+} from './edit-options'
 
 export const isToolbarOpenAtom = atom(true)
 
