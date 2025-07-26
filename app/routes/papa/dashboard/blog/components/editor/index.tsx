@@ -10,12 +10,14 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import { useAtom } from 'jotai'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
+import { useNonce } from '~/hooks/use-nonce'
 
 import { editorAtom, postAtom } from '../../context'
 
 export function ContentEditor() {
 	const [post] = useAtom(postAtom)
 	const [_, setEditor] = useAtom(editorAtom)
+	const nonce = useNonce()
 
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -56,6 +58,7 @@ export function ContentEditor() {
 				await Promise.all(awaitHandleFiles)
 			}
 		},
+		injectNonce: nonce,
 	})
 
 	/////////////////////////////
