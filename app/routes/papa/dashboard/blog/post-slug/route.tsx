@@ -1,26 +1,37 @@
 import { useEffect } from 'react'
-import { useFetcher, useNavigate, useNavigation } from 'react-router'
+import { Link, useFetcher, useNavigate, useNavigation } from 'react-router'
 
 import { useAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
-import { HeartCrack } from 'lucide-react'
+import {
+	ExternalLink,
+	HeartCrack,
+	Loader2,
+	RotateCcw,
+	Settings,
+	Trash,
+} from 'lucide-react'
+import type { isDirty } from 'zod'
 
+import { Button } from '~/components/ui/button'
 import { Loading } from '~/components/loading'
 import { useIsMobile } from '~/hooks/use-mobile'
+import type { PostWithRelations } from '~/lib/db/post.server'
+import type { post } from '~/lib/db/schema'
+import { generateSlug } from '~/lib/utils/seo'
 import { Post } from '~/routes/web/blog/components/post'
 
 import type { Route } from '../+types/layout'
 import { ContentEditor } from '../components/editor'
 import { PostDeleteAlert } from '../components/post-component/delete-alert'
+import { PostSettings } from '../components/post-component/post-settings'
 import { PostResetAlert } from '../components/post-component/reset-alert'
 import {
 	categoriesAtom,
 	editorAtom,
-	isDeleteAlertOpenAtom,
 	isDeletingAtom,
 	isDirtyAtom,
 	isResetAlertOpenAtom,
-	isRestoreAlertOpenAtom,
 	isSavingAtom,
 	isSettingsOpenAtom,
 	postAtom,
@@ -42,19 +53,13 @@ export default function DashboardSlugPost({
 		[tagsAtom, tags],
 		[categoriesAtom, categories],
 
-		[isSettingsOpenAtom, false],
-
 		[isDirtyAtom, false],
-
-		[isRestoreAlertOpenAtom, false],
-		[isResetAlertOpenAtom, false],
-		[isDeleteAlertOpenAtom, false],
 
 		[isSavingAtom, false],
 		[isDeletingAtom, false],
 	])
 
-	const [editor, setEditor] = useAtom(editorAtom)
+	const [editor] = useAtom(editorAtom)
 
 	const isMobile = useIsMobile()
 	const fetcher = useFetcher<typeof action>()
@@ -71,6 +76,7 @@ export default function DashboardSlugPost({
 	const [isSaving, setIsSaving] = useAtom(isSavingAtom)
 	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
 
+	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
 	const [isToolbarOpen, setIsToolbarOpen] = useAtom(isToolbarOpenAtom)
 
 	useEffect(() => {
@@ -112,46 +118,48 @@ export default function DashboardSlugPost({
 		)
 	}
 
-	// // Handle database save
-	// const handleSave = () => {
-	// 	if (
-	// 		!post ||
-	// 		!isDirty ||
-	// 		!isSaving ||
-	// 		!isDeleting ||
-	// 		isSubmitting ||
-	// 		isNavigating
-	// 	)
-	// 		return
+	// Handle database save
+	const handleSave = () => {
+		if (
+			!post ||
+			!isDirty ||
+			isSaving ||
+			isDeleting ||
+			isSubmitting ||
+			isNavigating
+		)
+			return
 
-	// 	const now = new Date().toISOString().replace(/T/, '@').split('.')[0]
+		const now = new Date().toISOString().replace(/T/, '@').split('.')[0]
 
-	// 	// Remove date fields and set default values
-	// 	const postReady = {
-	// 		...post,
-	// 		title: post.title || `p-${now}`,
-	// 		slug:
-	// 			post.slug ||
-	// 			generateSlug(post.title || `p-${now}`, {
-	// 				fallbackPrefix: 'post',
-	// 			}),
-	// 		createdAt: undefined,
-	// 		updatedAt: undefined,
-	// 		seo: {
-	// 			...post.seo,
-	// 			createdAt: undefined,
-	// 			updatedAt: undefined,
-	// 		},
-	// 	}
+		// Remove date fields and set default values
+		const postReady = {
+			...post,
+			title: post.title || `p-${now}`,
+			slug:
+				post.slug ||
+				generateSlug(post.title || `p-${now}`, {
+					fallbackPrefix: 'post',
+				}),
+			createdAt: undefined,
+			updatedAt: undefined,
+			seo: {
+				...post.seo,
+				createdAt: undefined,
+				updatedAt: undefined,
+			},
+		}
 
-	// 	fetcher.submit(JSON.stringify(postReady), {
-	// 		method: 'PUT', // Update
-	// 		encType: 'application/json',
-	// 		action: '/dashboard/blog/resource',
-	// 	})
+		console.log('Editor:', postReady)
 
-	// 	setIsDirty(false)
-	// }
+		fetcher.submit(JSON.stringify(postReady), {
+			method: 'PUT', // Update
+			encType: 'application/json',
+			action: '/dashboard/blog/resource',
+		})
+
+		setIsDirty(false)
+	}
 
 	// Handle database delete
 	const handleDelete = async () => {
@@ -182,18 +190,19 @@ export default function DashboardSlugPost({
 		<div className="relative h-full overflow-hidden">
 			{/* Editor toolbar self positioning */}
 			<Toolbar isMobile={isMobile} />
+			<FloatingTools onSave={handleSave} />
 
-			{/* Main Content Section - Full height with bottom padding for toolbar */}
+			{/* <PostLocalStorageInitialize /> */}
+			<PostResetAlert onReset={handleReset} />
+			<PostDeleteAlert onDelete={handleDelete} />
+
+			<PostSettings />
+
+			{/* Main Content Section */}
 			<section
-				className={`h-full overflow-y-auto py-6 ${isMobile ? 'pb-16' : 'pt-16'}`}
+				className={`relative h-full overflow-y-auto py-6 ${isMobile ? 'pb-16' : 'pt-16'}`}
 			>
 				<div className="mx-auto w-full max-w-prose px-3">
-					{/* <PostLocalStorageInitialize /> */}
-					<PostResetAlert onReset={handleReset} />
-					<PostDeleteAlert onDelete={handleDelete} />
-
-					{/* <PostSettings /> */}
-
 					<Post
 						post={post}
 						editable
@@ -208,6 +217,78 @@ export default function DashboardSlugPost({
 					</Post>
 				</div>
 			</section>
+		</div>
+	)
+}
+
+const FloatingTools = ({ onSave }: { onSave: () => void }) => {
+	const isDirty = true
+
+	const [post] = useAtom(postAtom)
+	const [isSaving] = useAtom(isSavingAtom)
+	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
+	const [, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
+
+	if (!post) return null
+
+	return (
+		<div className="absolute bottom-8 left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center rounded-full border bg-white/50 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
+			{/* Preview */}
+			{post.status !== 'PUBLISHED' ? (
+				<Button variant={'link'} asChild disabled={isDirty}>
+					<Link
+						to={`/blog/${post.slug}?preview=true`}
+						target="_blank"
+						className="text-xs"
+					>
+						Preview post
+						<ExternalLink size={12} />
+					</Link>
+				</Button>
+			) : (
+				<Button variant={'link'} size={'sm'} asChild>
+					<Link to={`/blog/${post.slug}`} target="_blank" className="text-xs">
+						View post
+						<ExternalLink className="!size-3" />
+					</Link>
+				</Button>
+			)}
+
+			{/* Discard */}
+			{isDirty && (
+				<Button
+					size={'sm'}
+					variant={'ghost'}
+					className="text-destructive hover:bg-destructive rounded-full hover:text-white"
+					onClick={() => setIsResetAlertOpen(true)}
+				>
+					<RotateCcw className="size-4" />
+					<p className="text-xs">Reset</p>
+				</Button>
+			)}
+
+			{/* Save */}
+			<Button
+				type="submit"
+				size={'sm'}
+				variant={'ghost'}
+				className="hover:bg-primary hover:text-primary-foreground rounded-full"
+				disabled={!isDirty || isSaving}
+				onClick={onSave}
+			>
+				{isSaving && <Loader2 size={16} className="animate-spin" />}
+				<p className="text-xs">Save</p>
+			</Button>
+
+			{/* Open settings */}
+			<Button
+				className="ml-1 rounded-full"
+				size={'icon'}
+				variant={'outline'}
+				onClick={() => setIsSettingsOpen(p => !p)}
+			>
+				<Settings />
+			</Button>
 		</div>
 	)
 }

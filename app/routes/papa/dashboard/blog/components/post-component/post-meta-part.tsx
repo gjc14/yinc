@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useFetcher } from 'react-router'
 
 import { toast } from '@gjc14/sonner'
+import { useAtom } from 'jotai'
 import { CloudAlert, Loader } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
@@ -19,24 +20,19 @@ import {
 	SelectValue,
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
-import { type EditorRef } from '~/components/editor'
+import { Loading } from '~/components/loading'
 import { SeparatorWithText } from '~/components/separator-with-text'
-import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, type FileMetadata } from '~/lib/db/schema'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
 import type { loader } from '~/routes/papa/dashboard/assets/resource'
 
 import { FileGrid } from '../../../assets/components/file-grid'
+import { editorAtom, postAtom } from '../../context'
+import { TinyLinkButton } from './tiny-link-button'
 
-export const PostMetaPart = ({
-	postState,
-	setPostState,
-	editorRef,
-}: {
-	postState: PostWithRelations
-	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
-	editorRef: React.RefObject<EditorRef | null>
-}) => {
+export const PostMetaPart = () => {
+	const [post, setPost] = useAtom(postAtom)
+	const [editor] = useAtom(editorAtom)
 	const fetcher = useFetcher<typeof loader>()
 
 	const fileLoadedRef = useRef(false)
@@ -60,11 +56,44 @@ export const PostMetaPart = ({
 		}
 	}, [fetcher])
 
+	if (!editor || !post) return <Loading />
+
+	const handleSlug = () => {
+		const slug = generateSlug(post.title, {
+			fallbackPrefix: 'post',
+		})
+
+		setPost(prev => {
+			if (!prev) return prev
+			const newPost = {
+				...prev,
+				slug,
+			}
+			return newPost
+		})
+	}
+
+	const handleExcerpt = () => {
+		setPost(prev => {
+			if (!prev) return prev
+			const text = editor.getText() || ''
+			if (!text) {
+				toast.error('No content to generate excerpt')
+				return prev
+			}
+			const newPost = {
+				...prev,
+				excerpt: generateSeoDescription(text),
+			}
+			return newPost
+		})
+	}
+
 	return (
 		<>
 			<div>
 				<img
-					src={postState.featuredImage || '/logo.png'}
+					src={post.featuredImage || '/logo.png'}
 					alt="featured image"
 					className="mb-2 h-40 w-full rounded-md object-cover"
 				/>
@@ -74,9 +103,10 @@ export const PostMetaPart = ({
 					name="imageUrl"
 					type="text"
 					placeholder="Featured image URL?"
-					value={postState.featuredImage || ''}
+					value={post.featuredImage || ''}
 					onChange={e => {
-						setPostState(prev => {
+						setPost(prev => {
+							if (!prev) return prev
 							const newPost = {
 								...prev,
 								featuredImage: e.target.value,
@@ -105,7 +135,8 @@ export const PostMetaPart = ({
 							</Button>
 						}
 						onFileSelect={file => {
-							setPostState(prev => {
+							setPost(prev => {
+								if (!prev) return prev
 								const newPost = {
 									...prev,
 									featuredImage: `/assets/${file.id}`,
@@ -126,10 +157,11 @@ export const PostMetaPart = ({
 			<div>
 				<Label htmlFor="status">Status</Label>
 				<Select
-					value={postState.status}
+					value={post.status}
 					name="status"
 					onValueChange={v => {
-						setPostState(prev => {
+						setPost(prev => {
+							if (!prev) return prev
 							const newPost = {
 								...prev,
 								status: v,
@@ -152,16 +184,20 @@ export const PostMetaPart = ({
 			</div>
 
 			<div>
-				<Label htmlFor="slug">Slug</Label>
+				<Label htmlFor="slug">
+					Slug
+					<TinyLinkButton title="Generate Slug" onClick={handleSlug} />
+				</Label>
 				<div className="flex items-center gap-1.5">
 					<Input
 						id="slug"
 						name="slug"
 						type="text"
 						placeholder="How to display your post in the URL?"
-						value={postState.slug}
+						value={post.slug}
 						onChange={e => {
-							setPostState(prev => {
+							setPost(prev => {
+								if (!prev) return prev
 								const newPost = {
 									...prev,
 									slug: e.target.value,
@@ -170,39 +206,24 @@ export const PostMetaPart = ({
 							})
 						}}
 					/>
-					<Button
-						type="button"
-						variant={'secondary'}
-						onClick={() => {
-							const slug = generateSlug(postState.title, {
-								fallbackPrefix: 'post',
-							})
-
-							setPostState(prev => {
-								const newPost = {
-									...prev,
-									slug,
-								}
-								return newPost
-							})
-						}}
-					>
-						Generate
-					</Button>
 				</div>
-				{/* 這邊加上 preview */}
+				{/* Add preview */}
 			</div>
 
 			<div>
-				<Label htmlFor="excerpt">Excerpt</Label>
+				<Label htmlFor="excerpt">
+					Excerpt
+					<TinyLinkButton title="Generate from post" onClick={handleExcerpt} />
+				</Label>
 				<Textarea
 					id="excerpt"
 					name="excerpt"
 					rows={3}
 					placeholder="Short description about your post..."
-					value={postState.excerpt || ''}
+					value={post.excerpt || ''}
 					onChange={e => {
-						setPostState(prev => {
+						setPost(prev => {
+							if (!prev) return prev
 							const newPost = {
 								...prev,
 								excerpt: e.target.value,
@@ -211,27 +232,6 @@ export const PostMetaPart = ({
 						})
 					}}
 				/>
-				<Button
-					type="button"
-					variant={'secondary'}
-					className="mt-2"
-					onClick={() => {
-						setPostState(prev => {
-							const text = editorRef.current?.editor?.getText() || ''
-							if (!text) {
-								toast.error('No content to generate excerpt')
-								return prev
-							}
-							const newPost = {
-								...prev,
-								excerpt: generateSeoDescription(text),
-							}
-							return newPost
-						})
-					}}
-				>
-					Generate Excerpt
-				</Button>
 			</div>
 		</>
 	)

@@ -109,9 +109,9 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 		postContentRef.current?.discardRequest()
 	}
 
-	const toggleSettings = () => {
-		postContentRef.current?.toggleSettings()
-	}
+	// const toggleSettings = () => {
+	// 	postContentRef.current?.toggleSettings()
+	// }
 
 	return (
 		<DashboardSectionWrapper className="items-center pt-16 md:pt-12">
@@ -158,7 +158,7 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 					className="ml-1 rounded-full"
 					size={'icon'}
 					variant={'outline'}
-					onClick={toggleSettings}
+					// onClick={toggleSettings}
 				>
 					<Settings />
 				</Button>

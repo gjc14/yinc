@@ -1,19 +1,18 @@
 /**
  * Danger zone for post editer
  */
+import { useAtom } from 'jotai'
 
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
-import type { PostWithRelations } from '~/lib/db/post.server'
 
-export const DangerZone = ({
-	postState,
-	onDeleteRequest,
-}: {
-	postState: PostWithRelations
-	onDeleteRequest: () => void
-}) => {
-	if (postState.id === -1) {
+import { isDeleteAlertOpenAtom, postAtom } from '../../context'
+
+export const DangerZone = () => {
+	const [post] = useAtom(postAtom)
+	const [, setIsDeleteAlertOpen] = useAtom(isDeleteAlertOpenAtom)
+
+	if (!post || post.id === -1) {
 		return null
 	}
 
@@ -21,17 +20,16 @@ export const DangerZone = ({
 		<>
 			<Separator />
 
-			<div className="flex w-full flex-col space-y-3 rounded-lg border p-3">
-				<h4>⚠️ Danger Zone</h4>
-				<div className="flex items-center justify-between rounded-md border px-2 py-1">
-					<div className="flex flex-col gap-0.5">
-						<strong className="text-lg">Delete this post</strong>
-						<p className="">This action cannot be undone.</p>
-					</div>
-					<Button onClick={onDeleteRequest} variant={'destructive'}>
-						Delete Post
-					</Button>
-				</div>
+			<div className="flex w-full flex-col rounded-lg border p-3">
+				<h3>Delete this post</h3>
+				<p className="my-2">This action cannot be undone. new value</p>
+
+				<Button
+					onClick={() => setIsDeleteAlertOpen(true)}
+					variant={'destructive'}
+				>
+					Delete Post
+				</Button>
 			</div>
 		</>
 	)

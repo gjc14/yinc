@@ -57,7 +57,6 @@ interface PostContentProps {
 export interface PostHandle {
 	getPostState: () => PostWithRelations
 	discardRequest: () => void
-	toggleSettings: () => void
 }
 
 // TODO: Add featured image; edit author; publish schedule
@@ -67,14 +66,11 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		{ post, tags, categories, isDirty, setIsDirty, onSave, onDeleteRequest },
 		ref,
 	) => {
-		const isMobile = useIsMobile()
-
 		const editorRef = useRef<EditorRef>(null)
 		const editor = editorRef.current?.editor ?? null
 		const isDirtyPostInitialized = useRef(false)
 
 		const [openAlert, setOpenAlert] = useState(false) // AlertDialog
-		const [openSettings, setOpenSettings] = useState(false) // PostSettings
 		const [postState, setPostState] = useState<PostWithRelations>(post)
 
 		const postLocalStorageKey = `dirty-post-${postState.id}`
@@ -227,9 +223,6 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 			discardRequest: () => {
 				setOpenAlert(true)
 			},
-			toggleSettings: () => {
-				setOpenSettings(prev => !prev)
-			},
 		}))
 
 		return (
@@ -293,53 +286,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					</Post>
 				</div>
 
-				{isMobile ? (
-					<Dialog open={openSettings} onOpenChange={setOpenSettings}>
-						<DialogContent className="max-h-[90vh] overflow-y-auto">
-							<DialogHeader>
-								<DialogTitle>Post Settings</DialogTitle>
-								<DialogDescription>
-									Post metadata, categories, tags, and SEO settings. You could
-									also delete post here.
-								</DialogDescription>
-							</DialogHeader>
-
-							<div className="py-3.5">
-								<PostSettings
-									postState={postState}
-									setPostState={setPostState}
-									tags={tags}
-									categories={categories}
-									editorRef={editorRef}
-									onDeleteRequest={onDeleteRequest}
-								/>
-							</div>
-						</DialogContent>
-					</Dialog>
-				) : (
-					<Sheet open={openSettings} onOpenChange={setOpenSettings}>
-						<SheetContent className="overflow-y-auto">
-							<SheetHeader>
-								<SheetTitle>Post Settings</SheetTitle>
-								<SheetDescription>
-									Post metadata, categories, tags, and SEO settings. You could
-									also delete post here.
-								</SheetDescription>
-							</SheetHeader>
-
-							<div className="py-3.5">
-								<PostSettings
-									postState={postState}
-									setPostState={setPostState}
-									tags={tags}
-									categories={categories}
-									editorRef={editorRef}
-									onDeleteRequest={onDeleteRequest}
-								/>
-							</div>
-						</SheetContent>
-					</Sheet>
-				)}
+				<PostSettings />
 			</div>
 		)
 	},

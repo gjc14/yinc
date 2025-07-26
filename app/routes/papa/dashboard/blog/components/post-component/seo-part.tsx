@@ -3,38 +3,75 @@
  * It includes the SEO title and SEO description fields.
  */
 import { toast } from '@gjc14/sonner'
+import { useAtom } from 'jotai'
 
-import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
-import { type EditorRef } from '~/components/editor'
+import { Loading } from '~/components/loading'
 import { MultiSelect } from '~/components/multi-select'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { generateSeoDescription } from '~/lib/utils/seo'
 
-export const SeoPart = ({
-	postState,
-	setPostState,
-	editorRef,
-}: {
-	postState: PostWithRelations
-	setPostState: React.Dispatch<React.SetStateAction<PostWithRelations>>
-	editorRef: React.RefObject<EditorRef | null>
-}) => {
+import { editorAtom, postAtom } from '../../context'
+import { TinyLinkButton } from './tiny-link-button'
+
+export const SeoPart = () => {
+	const [post, setPost] = useAtom(postAtom)
+	const [editor] = useAtom(editorAtom)
+
+	if (!editor || !post) return <Loading />
+
+	const handleTitle = () => {
+		setPost(prev => {
+			if (!prev) return prev
+			const newPost = {
+				...prev,
+				seo: {
+					...prev.seo,
+					metaTitle: post.title,
+				},
+			} satisfies PostWithRelations
+			return newPost
+		})
+	}
+
+	const handleDesc = () => {
+		setPost(prev => {
+			if (!prev) return prev
+			const text = editor.getText() || ''
+			if (!text) {
+				toast.error('No content to generate SEO description')
+				return prev
+			}
+			const newPost = {
+				...prev,
+				seo: {
+					...prev.seo,
+					metaDescription: generateSeoDescription(text),
+				},
+			} satisfies PostWithRelations
+			return newPost
+		})
+	}
+
 	return (
 		<>
 			<div>
-				<Label htmlFor="seo-title">SEO Title</Label>
+				<Label htmlFor="seo-title">
+					SEO Title
+					<TinyLinkButton title="Copy Title" onClick={handleTitle} />
+				</Label>
 				<div className="flex items-center gap-1.5">
 					<Input
 						id="seo-title"
 						name="seo-title"
 						type="text"
 						placeholder="Meta tilte should match Title (H1) for SEO."
-						value={postState.seo.metaTitle ?? ''}
+						value={post.seo.metaTitle || ''}
 						onChange={e => {
-							setPostState(prev => {
+							setPost(prev => {
+								if (!prev) return prev
 								const newPost = {
 									...prev,
 									seo: {
@@ -46,37 +83,23 @@ export const SeoPart = ({
 							})
 						}}
 					/>
-					<Button
-						type="button"
-						variant={'secondary'}
-						onClick={() => {
-							setPostState(prev => {
-								const newPost = {
-									...prev,
-									seo: {
-										...prev.seo,
-										metaTitle: postState.title,
-									},
-								} satisfies PostWithRelations
-								return newPost
-							})
-						}}
-					>
-						Copy Title
-					</Button>
 				</div>
 			</div>
 
 			<div>
-				<Label htmlFor="seo-description">SEO Description</Label>
+				<Label htmlFor="seo-description">
+					SEO Description
+					<TinyLinkButton title="Copy from post" onClick={handleDesc} />
+				</Label>
 				<Textarea
 					id="seo-description"
 					name="seo-description"
 					rows={3}
 					placeholder="Short description about your post..."
-					value={postState.seo.metaDescription ?? ''}
+					value={post.seo.metaDescription ?? ''}
 					onChange={e => {
-						setPostState(prev => {
+						setPost(prev => {
+							if (!prev) return prev
 							const newPost = {
 								...prev,
 								seo: {
@@ -88,50 +111,29 @@ export const SeoPart = ({
 						})
 					}}
 				/>
-				<Button
-					type="button"
-					variant={'secondary'}
-					className="mt-2"
-					onClick={() => {
-						setPostState(prev => {
-							const text = editorRef.current?.editor?.getText() || ''
-							if (!text) {
-								toast.error('No content to generate SEO description')
-								return prev
-							}
-							const newPost = {
-								...prev,
-								seo: {
-									...prev.seo,
-									metaDescription: generateSeoDescription(text),
-								},
-							} satisfies PostWithRelations
-							return newPost
-						})
-					}}
-				>
-					Generate SEO Description
-				</Button>
 			</div>
 
 			<div>
 				<Label htmlFor="seo-keywords">SEO Keywords</Label>
 				<MultiSelect
 					options={[]}
-					selected={(postState.seo.keywords ?? '')
+					selected={(post.seo.keywords ?? '')
 						.split(',')
 						.map(k => k.trim())
 						.filter(k => k !== '')
 						.map(k => ({ label: k, value: k }))}
 					onSelectedChange={selectedArr => {
 						const keywords = selectedArr.map(s => s.label).join(', ')
-						setPostState(prev => ({
-							...prev,
-							seo: {
-								...prev.seo,
-								keywords,
-							},
-						}))
+						setPost(prev => {
+							if (!prev) return prev
+							return {
+								...prev,
+								seo: {
+									...prev.seo,
+									keywords,
+								},
+							}
+						})
 					}}
 				/>
 			</div>
