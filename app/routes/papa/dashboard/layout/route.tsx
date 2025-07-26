@@ -12,7 +12,11 @@ import {
 import { Undo2 } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
-import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
+import {
+	SIDEBAR_COOKIE_NAME,
+	SidebarInset,
+	SidebarProvider,
+} from '~/components/ui/sidebar'
 import { statusCodeMap } from '~/lib/utils/status-code'
 
 import { validateAdminSession } from '../../auth/utils'
@@ -44,17 +48,22 @@ const MemoHeaderWithBreadcrumb = memo(HeaderWithBreadcrumbs)
 export const loader = async ({ request }: Route.LoaderArgs) => {
 	const usesrSession = await validateAdminSession(request)
 
+	const defaultSidebarOpen = new RegExp(`${SIDEBAR_COOKIE_NAME}=true`).test(
+		request.headers.get('cookie') || '',
+	)
+
 	if (!usesrSession) {
 		throw redirect('/dashboard/portal')
 	}
 
 	return {
 		admin: usesrSession.user,
+		defaultSidebarOpen,
 	}
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
-	const { admin } = loaderData
+	const { admin, defaultSidebarOpen } = loaderData
 	const location = useLocation()
 	const [isDashboard, setIsDashboard] = useState(true)
 	const [currentService, setCurrentService] =
@@ -100,7 +109,7 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 	}, [location.pathname, serviceDashboardConfigs])
 
 	return (
-		<SidebarProvider>
+		<SidebarProvider defaultOpen={defaultSidebarOpen}>
 			<MemoDashboardSidebar
 				user={memoizedUser}
 				services={availableServices}

@@ -36,7 +36,7 @@ function NavMenuItem({ item }: { item: DashboardMenuItem }) {
 
 	return (
 		<Collapsible key={item.title} asChild open={open} onOpenChange={setOpen}>
-			<SidebarMenuItem className="cursor-pointer">
+			<SidebarMenuItem>
 				<NavLink
 					to={
 						'/dashboard' +
@@ -45,6 +45,7 @@ function NavMenuItem({ item }: { item: DashboardMenuItem }) {
 							: `/${item.pathname}`)
 					}
 					end
+					tabIndex={-1}
 				>
 					{({ isActive }) => (
 						<SidebarMenuButton
@@ -83,6 +84,7 @@ function NavMenuItem({ item }: { item: DashboardMenuItem }) {
 													: `/${subItem.pathname}`)
 											}
 											end
+											tabIndex={-1}
 										>
 											{({ isActive }) => (
 												<SidebarMenuSubButton
