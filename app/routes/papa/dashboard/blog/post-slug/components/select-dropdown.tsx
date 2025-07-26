@@ -61,7 +61,7 @@ export function SelectDropdownMenu({
 					<Button
 						variant="ghost"
 						size={'sm'}
-						className="cursor-pointer gap-0 has-[>svg]:pr-0.5 has-[>svg]:pl-1.5"
+						className="gap-0 has-[>svg]:pr-0.5 has-[>svg]:pl-1.5"
 					>
 						{ActiveIcon && <ActiveIcon />} <ChevronDown className="scale-75" />
 					</Button>
@@ -83,7 +83,7 @@ export function SelectDropdownMenu({
 										size={'sm'}
 										disabled={!canRun(editor)}
 										onClick={() => run(editor)}
-										className={`cursor-pointer justify-start ${isActive?.(editor) ? 'bg-accent' : ''}`}
+										className={`justify-start ${isActive?.(editor) ? 'bg-accent' : ''}`}
 									>
 										<Icon className="size-4" />
 										{name}

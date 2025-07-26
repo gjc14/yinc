@@ -115,9 +115,7 @@ export const LinkUnlinkButtons = () => {
 					<Button
 						size={'icon'}
 						variant={'ghost'}
-						className={`cursor-pointer ${
-							isActive ? 'bg-accent text-accent-foreground' : ''
-						}`}
+						className={`${isActive ? 'bg-accent text-accent-foreground' : ''}`}
 						disabled={!canRun}
 						onClick={onOpen}
 					>
@@ -140,7 +138,7 @@ export const LinkUnlinkButtons = () => {
 						<Button
 							variant="ghost"
 							size="icon"
-							className="absolute top-1/2 right-1 size-7 -translate-y-1/2 cursor-pointer rounded-full"
+							className="absolute top-1/2 right-1 size-7 -translate-y-1/2 rounded-full"
 							onClick={setLink}
 						>
 							<Circle />
@@ -155,7 +153,7 @@ export const LinkUnlinkButtons = () => {
 					<Button
 						variant="ghost"
 						size={'icon'}
-						className="cursor-pointer rounded-full"
+						className="rounded-full"
 						onClick={unsetLink}
 					>
 						<Trash />
@@ -165,7 +163,7 @@ export const LinkUnlinkButtons = () => {
 					<Button
 						variant="ghost"
 						size={'icon'}
-						className="cursor-pointer rounded-full"
+						className="rounded-full"
 						onClick={handleOpenLink}
 					>
 						<ExternalLink />

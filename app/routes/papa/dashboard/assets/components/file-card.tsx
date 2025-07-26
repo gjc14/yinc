@@ -160,7 +160,7 @@ export const FileCard = ({
 					<Button
 						variant={'destructive'}
 						size={'sm'}
-						className="min-h-6 cursor-pointer text-[10px]"
+						className="min-h-6 text-[10px]"
 						onClick={handleDelete}
 					>
 						Delete

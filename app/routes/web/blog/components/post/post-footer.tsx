@@ -44,7 +44,7 @@ export const PostFooter = ({
 				{prev ? (
 					<Button
 						variant="ghost"
-						className="group hover:bg-muted/50 flex h-auto cursor-pointer items-center justify-start gap-3 p-4 text-left transition-colors"
+						className="group hover:bg-muted/50 flex h-auto items-center justify-start gap-3 p-4 text-left transition-colors"
 						onClick={() => navigate(`/blog/${prev.slug}${search}`)}
 					>
 						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 transition-transform group-hover:-translate-x-1" />
@@ -60,7 +60,7 @@ export const PostFooter = ({
 				{next ? (
 					<Button
 						variant="ghost"
-						className="group hover:bg-muted/50 flex h-auto cursor-pointer items-center justify-end gap-3 p-4 text-right whitespace-break-spaces transition-colors"
+						className="group hover:bg-muted/50 flex h-auto items-center justify-end gap-3 p-4 text-right whitespace-break-spaces transition-colors"
 						onClick={() => navigate(`/blog/${next.slug}${search}`)}
 					>
 						<div className="min-w-0 flex-1 overflow-visible">

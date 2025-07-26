@@ -84,7 +84,7 @@ export function ColorDropdownMenu({
 					<Button
 						variant="ghost"
 						size={'sm'}
-						className="cursor-pointer gap-0 has-[>svg]:pr-0.5 has-[>svg]:pl-1.5"
+						className="gap-0 has-[>svg]:pr-0.5 has-[>svg]:pl-1.5"
 						style={
 							activeColor
 								? activeIndicatorStyles(activeIndicator)(activeColor.color)

@@ -40,7 +40,6 @@ export function MoreDropdownMenu({ options }: { options: EditOptionProps[] }) {
 					<Button
 						variant="ghost"
 						size={'sm'}
-						className="cursor-pointer"
 						onClick={e => e.isDefaultPrevented()}
 					>
 						<MoreVertical />
@@ -62,7 +61,7 @@ export function MoreDropdownMenu({ options }: { options: EditOptionProps[] }) {
 									size={'sm'}
 									disabled={!canRun(editor)}
 									onClick={() => run(editor)}
-									className={`w-full cursor-pointer justify-start ${isActive?.(editor) ? 'bg-accent' : ''}`}
+									className={`w-full justify-start ${isActive?.(editor) ? 'bg-accent' : ''}`}
 								>
 									<Icon className="size-4" />
 									{name}

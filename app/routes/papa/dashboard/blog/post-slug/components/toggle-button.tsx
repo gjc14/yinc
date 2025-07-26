@@ -41,7 +41,7 @@ export function ToggleButton(props: ToggleButtonProps) {
 				size="icon"
 				aria-label={props.tooltip}
 				className={cn(
-					'size-8 cursor-pointer',
+					'size-8',
 					isActive ? 'bg-accent text-accent-foreground' : '',
 					props.className,
 				)}
