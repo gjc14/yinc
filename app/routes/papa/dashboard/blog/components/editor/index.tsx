@@ -4,10 +4,11 @@
 import './styles.css'
 import './styles/image-node.css'
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import { EditorContent, useEditor } from '@tiptap/react'
 import { useAtom } from 'jotai'
+import debounce from 'lodash/debounce'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
 import { useNonce } from '~/hooks/use-nonce'
@@ -19,6 +20,20 @@ export function ContentEditor() {
 	const [, setEditor] = useAtom(editorAtom)
 	const [, setEditorContent] = useAtom(editorContentAtom)
 	const nonce = useNonce()
+
+	const debouncedSetEditorContent = useMemo(
+		() =>
+			debounce((content: string) => {
+				setEditorContent(content)
+			}, 300), // 300ms delay
+		[setEditorContent],
+	)
+
+	useEffect(() => {
+		return () => {
+			debouncedSetEditorContent.cancel()
+		}
+	}, [debouncedSetEditorContent])
 
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -35,7 +50,7 @@ export function ContentEditor() {
 		},
 		onUpdate(props) {
 			const jsonContent = props.editor.getJSON()
-			setEditorContent(JSON.stringify(jsonContent))
+			debouncedSetEditorContent(JSON.stringify(jsonContent))
 		},
 		onDestroy() {
 			// Clean up editor in jotai to prevent access before next mount, e.g. when navigating away and back
