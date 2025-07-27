@@ -24,7 +24,6 @@ export const dashboardRoutes = () =>
 			// Blog
 			route('blog', './routes/papa/dashboard/blog/layout.tsx', [
 				index('./routes/papa/dashboard/blog/index/route.tsx'),
-				route('new', './routes/papa/dashboard/blog/new/route.tsx'),
 				route(':postSlug', './routes/papa/dashboard/blog/post-slug/route.tsx'),
 				route('resource', './routes/papa/dashboard/blog/resource.ts'),
 				...prefix('taxonomy', [

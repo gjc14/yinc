@@ -29,6 +29,7 @@ import {
 } from '../context'
 import type { action } from '../resource'
 import { FloatingTools } from './floating-tools'
+import { generateNewPost } from './utils'
 
 export default function DashboardSlugPost({
 	matches,
@@ -37,9 +38,12 @@ export default function DashboardSlugPost({
 	const adminMatch = matches[1]
 	const { admin } = adminMatch.data
 
+	const isCreate = params.postSlug === 'new'
 	const blogMatch = matches[2]
 	const { tags, categories, posts } = blogMatch.data
-	const currentPost = posts.find(p => p.slug === params.postSlug)
+	const currentPost = isCreate
+		? generateNewPost(admin)
+		: posts.find(p => p.slug === params.postSlug)
 
 	useHydrateAtoms([
 		[serverPostAtom, currentPost],
@@ -144,7 +148,7 @@ export default function DashboardSlugPost({
 		}
 
 		fetcher.submit(JSON.stringify(postReady), {
-			method: 'PUT', // Update
+			method: isCreate ? 'POST' : 'PUT',
 			encType: 'application/json',
 			action: '/dashboard/blog/resource',
 		})
@@ -152,7 +156,7 @@ export default function DashboardSlugPost({
 
 	// Handle database delete
 	const handleDelete = async () => {
-		if (!post || isSubmitting) return
+		if (!post || isSubmitting || isCreate) return
 
 		fetcher.submit(
 			{ id: post.id },
@@ -176,7 +180,7 @@ export default function DashboardSlugPost({
 		<div className="relative h-full overflow-hidden">
 			{/* Editor toolbar self positioning */}
 			<Toolbar isMobile={isMobile} />
-			<FloatingTools onSave={handleSave} />
+			<FloatingTools onSave={handleSave} isCreate={isCreate} />
 
 			<LocalStorageCheck />
 			<PostResetAlert onReset={handleReset} />

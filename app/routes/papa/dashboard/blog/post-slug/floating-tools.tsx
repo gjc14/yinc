@@ -13,7 +13,13 @@ import {
 	postAtom,
 } from '../context'
 
-export const FloatingTools = ({ onSave }: { onSave: () => void }) => {
+export const FloatingTools = ({
+	onSave,
+	isCreate,
+}: {
+	onSave: () => void
+	isCreate: boolean
+}) => {
 	const navigate = useNavigate()
 	const [hasChanges] = useAtom(hasChangesAtom)
 
@@ -27,20 +33,22 @@ export const FloatingTools = ({ onSave }: { onSave: () => void }) => {
 	return (
 		<div className="absolute bottom-8 left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center rounded-full border bg-white/50 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
 			{/* Preview */}
-			<Button
-				variant={'link'}
-				size={'sm'}
-				className="text-xs"
-				disabled={hasChanges}
-				onClick={() =>
-					navigate(
-						`/blog/${post.slug}${post.status !== 'PUBLISHED' ? '?preview=true' : ''}`,
-					)
-				}
-			>
-				{post.status !== 'PUBLISHED' ? 'Preview post' : 'View post'}
-				<ExternalLink className="size-3!" />
-			</Button>
+			{!isCreate && (
+				<Button
+					variant={'link'}
+					size={'sm'}
+					className="text-xs"
+					disabled={hasChanges}
+					onClick={() =>
+						navigate(
+							`/blog/${post.slug}${post.status !== 'PUBLISHED' ? '?preview=true' : ''}`,
+						)
+					}
+				>
+					{post.status !== 'PUBLISHED' ? 'Preview post' : 'View post'}
+					<ExternalLink className="size-3!" />
+				</Button>
+			)}
 
 			{/* Discard */}
 			<Button
@@ -64,7 +72,7 @@ export const FloatingTools = ({ onSave }: { onSave: () => void }) => {
 				onClick={onSave}
 			>
 				{isSaving && <Loader2 size={16} className="animate-spin" />}
-				<p className="text-xs">Save</p>
+				<p className="text-xs">{isCreate ? 'Create' : 'Save'}</p>
 			</Button>
 
 			{/* Open settings */}
