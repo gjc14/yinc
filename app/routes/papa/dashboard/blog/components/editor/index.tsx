@@ -31,7 +31,7 @@ export function ContentEditor() {
 		},
 		onCreate(props) {
 			setEditor(props.editor)
-			props.editor.commands.focus()
+			props.editor.commands.focus(1)
 		},
 		onUpdate(props) {
 			const jsonContent = props.editor.getJSON()
