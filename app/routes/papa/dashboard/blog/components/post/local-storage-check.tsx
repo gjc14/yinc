@@ -20,9 +20,9 @@ import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
 export const postLocalStorageKey = (id: number) => `dirty-post-${id}`
 
 /**
- * Initialize local storage to detect unsaved changes.
+ * Check local storage to detect unsaved changes when initialized.
  */
-export const PostLocalStorageInitialize = () => {
+export const LocalStorageCheck = () => {
 	const [isRestoreAlertOpen, setIsRestoreAlertOpen] = useAtom(
 		isRestoreAlertOpenAtom,
 	)

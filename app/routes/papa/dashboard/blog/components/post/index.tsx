@@ -20,28 +20,13 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from '~/components/ui/dialog'
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetHeader,
-	SheetTitle,
-} from '~/components/ui/sheet'
 import RichTextEditor, { type EditorRef } from '~/components/editor'
-import { useIsMobile } from '~/hooks/use-mobile'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import { Post } from '~/routes/web/blog/components/post'
 
 import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
-import { postLocalStorageKey } from './local-storage-alert'
+import { postLocalStorageKey } from './local-storage-check'
 import { PostSettings } from './post-settings'
 
 interface PostContentProps {

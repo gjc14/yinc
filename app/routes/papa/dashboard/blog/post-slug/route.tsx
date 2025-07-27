@@ -9,15 +9,11 @@ import {
 	Loader2,
 	RotateCcw,
 	Settings,
-	Trash,
 } from 'lucide-react'
-import type { isDirty } from 'zod'
 
 import { Button } from '~/components/ui/button'
 import { Loading } from '~/components/loading'
 import { useIsMobile } from '~/hooks/use-mobile'
-import type { PostWithRelations } from '~/lib/db/post.server'
-import type { post } from '~/lib/db/schema'
 import { generateSlug } from '~/lib/utils/seo'
 import { Post } from '~/routes/web/blog/components/post'
 
@@ -25,6 +21,7 @@ import type { Route } from '../+types/layout'
 import { ContentEditor } from '../components/editor'
 import { isToolbarOpenAtom, Toolbar } from '../components/editor/editor-toolbar'
 import { PostDeleteAlert } from '../components/post/delete-alert'
+import { LocalStorageCheck } from '../components/post/local-storage-check'
 import { PostSettings } from '../components/post/post-settings'
 import { PostResetAlert } from '../components/post/reset-alert'
 import {
@@ -53,8 +50,6 @@ export default function DashboardSlugPost({
 		[tagsAtom, tags],
 		[categoriesAtom, categories],
 
-		[isDirtyAtom, false],
-
 		[isSavingAtom, false],
 		[isDeletingAtom, false],
 	])
@@ -69,9 +64,8 @@ export default function DashboardSlugPost({
 	const isSubmitting = fetcher.state === 'submitting'
 	const isNavigating = navigation.state === 'loading'
 
-	// const postContentRef = useRef<PostHandle>(null)
-	const [isDirty, setIsDirty] = useAtom(isDirtyAtom)
 	const [post, setPost] = useAtom(postAtom)
+	const [isDirty, setIsDirty] = useAtom(isDirtyAtom)
 
 	const [isSaving, setIsSaving] = useAtom(isSavingAtom)
 	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
@@ -152,11 +146,11 @@ export default function DashboardSlugPost({
 
 		console.log('Editor:', postReady)
 
-		fetcher.submit(JSON.stringify(postReady), {
-			method: 'PUT', // Update
-			encType: 'application/json',
-			action: '/dashboard/blog/resource',
-		})
+		// fetcher.submit(JSON.stringify(postReady), {
+		// 	method: 'PUT', // Update
+		// 	encType: 'application/json',
+		// 	action: '/dashboard/blog/resource',
+		// })
 
 		setIsDirty(false)
 	}
@@ -192,7 +186,7 @@ export default function DashboardSlugPost({
 			<Toolbar isMobile={isMobile} />
 			<FloatingTools onSave={handleSave} />
 
-			{/* <PostLocalStorageInitialize /> */}
+			<LocalStorageCheck />
 			<PostResetAlert onReset={handleReset} />
 			<PostDeleteAlert onDelete={handleDelete} />
 
@@ -222,7 +216,7 @@ export default function DashboardSlugPost({
 }
 
 const FloatingTools = ({ onSave }: { onSave: () => void }) => {
-	const isDirty = true
+	const [isDirty] = useAtom(isDirtyAtom)
 
 	const [post] = useAtom(postAtom)
 	const [isSaving] = useAtom(isSavingAtom)
