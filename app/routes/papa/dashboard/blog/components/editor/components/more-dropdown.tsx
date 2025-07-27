@@ -28,7 +28,7 @@ export function MoreDropdownMenu({ options }: { options: EditOptionProps[] }) {
 			const { editor } = ctx
 			if (!editor) return
 
-			return editor.can()
+			return options.map(o => o.canRun(editor))
 		},
 	})
 
