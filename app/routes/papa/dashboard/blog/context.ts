@@ -15,8 +15,6 @@ export const editorContentAtom = atom<string | null>(null)
 
 export const isSettingsOpenAtom = atom(false)
 
-/** @deprecated use {@link hasChangesAtom} instead */
-export const isDirtyAtom = atom(false)
 export const hasChangesAtom = atom(get => {
 	const [server, draft] = [get(serverPostAtom), get(postAtom)]
 	const editorContent = get(editorContentAtom)

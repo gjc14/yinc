@@ -12,11 +12,12 @@ import { useAtom } from 'jotai'
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
 import { useNonce } from '~/hooks/use-nonce'
 
-import { editorAtom, postAtom } from '../../context'
+import { editorAtom, editorContentAtom, postAtom } from '../../context'
 
 export function ContentEditor() {
 	const [post] = useAtom(postAtom)
-	const [_, setEditor] = useAtom(editorAtom)
+	const [, setEditor] = useAtom(editorAtom)
+	const [, setEditorContent] = useAtom(editorContentAtom)
 	const nonce = useNonce()
 
 	const editor = useEditor({
@@ -31,6 +32,10 @@ export function ContentEditor() {
 		onCreate(props) {
 			setEditor(props.editor)
 			props.editor.commands.focus()
+		},
+		onUpdate(props) {
+			const jsonContent = props.editor.getJSON()
+			setEditorContent(JSON.stringify(jsonContent))
 		},
 		onDestroy() {
 			// Clean up editor in jotai to prevent access before next mount, e.g. when navigating away and back

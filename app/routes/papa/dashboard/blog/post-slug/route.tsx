@@ -27,12 +27,13 @@ import { PostResetAlert } from '../components/post/reset-alert'
 import {
 	categoriesAtom,
 	editorAtom,
+	hasChangesAtom,
 	isDeletingAtom,
-	isDirtyAtom,
 	isResetAlertOpenAtom,
 	isSavingAtom,
 	isSettingsOpenAtom,
 	postAtom,
+	serverPostAtom,
 	tagsAtom,
 } from '../context'
 import type { action } from '../resource'
@@ -46,6 +47,7 @@ export default function DashboardSlugPost({
 	const currentPost = posts.find(p => p.slug === params.postSlug)
 
 	useHydrateAtoms([
+		[serverPostAtom, currentPost],
 		[postAtom, currentPost],
 		[tagsAtom, tags],
 		[categoriesAtom, categories],
@@ -65,7 +67,8 @@ export default function DashboardSlugPost({
 	const isNavigating = navigation.state === 'loading'
 
 	const [post, setPost] = useAtom(postAtom)
-	const [isDirty, setIsDirty] = useAtom(isDirtyAtom)
+	const [, setServerPost] = useAtom(serverPostAtom)
+	const [hasChanges] = useAtom(hasChangesAtom)
 
 	const [isSaving, setIsSaving] = useAtom(isSavingAtom)
 	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
@@ -75,6 +78,7 @@ export default function DashboardSlugPost({
 
 	useEffect(() => {
 		setPost(currentPost)
+		setServerPost(currentPost)
 	}, [params.postSlug, setPost])
 
 	useEffect(() => {
@@ -116,7 +120,8 @@ export default function DashboardSlugPost({
 	const handleSave = () => {
 		if (
 			!post ||
-			!isDirty ||
+			!editor ||
+			!hasChanges ||
 			isSaving ||
 			isDeleting ||
 			isSubmitting ||
@@ -135,6 +140,7 @@ export default function DashboardSlugPost({
 				generateSlug(post.title || `p-${now}`, {
 					fallbackPrefix: 'post',
 				}),
+			content: JSON.stringify(editor.getJSON()),
 			createdAt: undefined,
 			updatedAt: undefined,
 			seo: {
@@ -144,15 +150,11 @@ export default function DashboardSlugPost({
 			},
 		}
 
-		console.log('Editor:', postReady)
-
-		// fetcher.submit(JSON.stringify(postReady), {
-		// 	method: 'PUT', // Update
-		// 	encType: 'application/json',
-		// 	action: '/dashboard/blog/resource',
-		// })
-
-		setIsDirty(false)
+		fetcher.submit(JSON.stringify(postReady), {
+			method: 'PUT', // Update
+			encType: 'application/json',
+			action: '/dashboard/blog/resource',
+		})
 	}
 
 	// Handle database delete
@@ -216,7 +218,8 @@ export default function DashboardSlugPost({
 }
 
 const FloatingTools = ({ onSave }: { onSave: () => void }) => {
-	const [isDirty] = useAtom(isDirtyAtom)
+	const navigate = useNavigate()
+	const [hasChanges] = useAtom(hasChangesAtom)
 
 	const [post] = useAtom(postAtom)
 	const [isSaving] = useAtom(isSavingAtom)
@@ -228,38 +231,32 @@ const FloatingTools = ({ onSave }: { onSave: () => void }) => {
 	return (
 		<div className="absolute bottom-8 left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center rounded-full border bg-white/50 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
 			{/* Preview */}
-			{post.status !== 'PUBLISHED' ? (
-				<Button variant={'link'} asChild disabled={isDirty}>
-					<Link
-						to={`/blog/${post.slug}?preview=true`}
-						target="_blank"
-						className="text-xs"
-					>
-						Preview post
-						<ExternalLink size={12} />
-					</Link>
-				</Button>
-			) : (
-				<Button variant={'link'} size={'sm'} asChild>
-					<Link to={`/blog/${post.slug}`} target="_blank" className="text-xs">
-						View post
-						<ExternalLink className="!size-3" />
-					</Link>
-				</Button>
-			)}
+			<Button
+				variant={'link'}
+				size={'sm'}
+				className="text-xs"
+				disabled={hasChanges}
+				onClick={() =>
+					navigate(
+						`/blog/${post.slug}${post.status !== 'PUBLISHED' ? '?preview=true' : ''}`,
+					)
+				}
+			>
+				{post.status !== 'PUBLISHED' ? 'Preview post' : 'View post'}
+				<ExternalLink className="size-3!" />
+			</Button>
 
 			{/* Discard */}
-			{isDirty && (
-				<Button
-					size={'sm'}
-					variant={'ghost'}
-					className="text-destructive hover:bg-destructive rounded-full hover:text-white"
-					onClick={() => setIsResetAlertOpen(true)}
-				>
-					<RotateCcw className="size-4" />
-					<p className="text-xs">Reset</p>
-				</Button>
-			)}
+			<Button
+				size={'sm'}
+				variant={'ghost'}
+				className="text-destructive hover:bg-destructive rounded-full hover:text-white"
+				disabled={!hasChanges || isSaving}
+				onClick={() => setIsResetAlertOpen(true)}
+			>
+				<RotateCcw className="size-4" />
+				<p className="text-xs">Reset</p>
+			</Button>
 
 			{/* Save */}
 			<Button
@@ -267,7 +264,7 @@ const FloatingTools = ({ onSave }: { onSave: () => void }) => {
 				size={'sm'}
 				variant={'ghost'}
 				className="hover:bg-primary hover:text-primary-foreground rounded-full"
-				disabled={!isDirty || isSaving}
+				disabled={!hasChanges || isSaving}
 				onClick={onSave}
 			>
 				{isSaving && <Loader2 size={16} className="animate-spin" />}
@@ -278,7 +275,6 @@ const FloatingTools = ({ onSave }: { onSave: () => void }) => {
 			<Button
 				className="ml-1 rounded-full"
 				size={'icon'}
-				variant={'outline'}
 				onClick={() => setIsSettingsOpen(p => !p)}
 			>
 				<Settings />
