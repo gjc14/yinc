@@ -2,6 +2,7 @@ import { Editor, useEditorState } from '@tiptap/react'
 import { useAtom } from 'jotai'
 
 import { Button } from '~/components/ui/button'
+import { Skeleton } from '~/components/ui/skeleton'
 import { cn } from '~/lib/utils'
 
 import { editorAtom } from '../../../context'
@@ -32,7 +33,7 @@ export function ToggleButton(props: ToggleButtonProps) {
 		selector: ctx => ctx.editor && props.canRun(ctx.editor),
 	})
 
-	if (!editor) return null
+	if (!editor) return <Skeleton className="size-8" />
 
 	return (
 		<TooltipWrapper tooltip={props.tooltip} shortcut={props.shortcut}>

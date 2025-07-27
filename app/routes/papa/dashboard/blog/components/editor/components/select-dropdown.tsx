@@ -10,6 +10,7 @@ import {
 	DropdownMenuRadioGroup,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import { Skeleton } from '~/components/ui/skeleton'
 
 import { editorAtom } from '../../../context'
 import { TooltipWrapper } from '../components/tooltip-wrapper'
@@ -52,7 +53,7 @@ export function SelectDropdownMenu({
 		},
 	})
 
-	if (!editor) return null
+	if (!editor) return <Skeleton className="size-8" />
 
 	return (
 		<DropdownMenu>

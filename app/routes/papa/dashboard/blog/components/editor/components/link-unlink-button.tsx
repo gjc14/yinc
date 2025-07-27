@@ -14,6 +14,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '~/components/ui/popover'
+import { Skeleton } from '~/components/ui/skeleton'
 
 import { editorAtom } from '../../../context'
 import { createLinkOption } from '../edit-options'
@@ -106,7 +107,7 @@ export const LinkUnlinkButtons = () => {
 		!isLinkUnlinkOpen && editor.commands.focus()
 	}, [isLinkUnlinkOpen])
 
-	if (!editor) return null
+	if (!editor) return <Skeleton className="size-8" />
 
 	return (
 		<Popover open={isLinkUnlinkOpen} onOpenChange={setIsLinkUnlinkOpen}>
