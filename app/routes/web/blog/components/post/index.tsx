@@ -34,6 +34,7 @@ export const Post = ({
 }) => {
 	const isHydrated = useHydrated()
 	const [html, setHtml] = useState<string | null>(null)
+	const [placeholder, setPlaceholder] = useState<string>()
 
 	useEffect(() => {
 		const prepareHtml = async () => {
@@ -56,6 +57,8 @@ export const Post = ({
 		}
 
 		prepareHtml()
+
+		setPlaceholder(getRandomTitlePlaceholder())
 	}, [isHydrated])
 
 	return (
@@ -65,7 +68,7 @@ export const Post = ({
 					<textarea
 						id="title"
 						name="title"
-						placeholder="Give a sensational title..."
+						placeholder={placeholder}
 						value={post.title}
 						onChange={e => onTitleChange?.(e.target.value)}
 						className="block field-sizing-content min-h-0 w-full resize-none border-none bg-transparent text-3xl leading-normal font-bold tracking-tight outline-none md:text-4xl md:leading-tight"
@@ -95,4 +98,21 @@ export const Post = ({
 			<PostFooter post={post} next={next} prev={prev} />
 		</>
 	)
+}
+
+function getRandomTitlePlaceholder() {
+	const titles = [
+		'This Cuisine is...',
+		'Future of Finance...',
+		'New Innovation in...',
+		'Next Month We Expect...',
+		'My Journey...',
+		'Personal Growth...',
+		'New Bug Found...',
+		'How to Turn on the Light...',
+		'Next Typhoon Comes in...',
+		'Doraemon is AI...',
+	]
+	const randomIndex = Math.floor(Math.random() * titles.length)
+	return titles[randomIndex]
 }
