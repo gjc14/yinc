@@ -14,8 +14,10 @@ import {
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
 
-import { editorAtom, isRestoreAlertOpenAtom, postAtom } from '../../context'
+import { isRestoreAlertOpenAtom, postAtom } from '../../context'
 import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
+
+export const postLocalStorageKey = (id: number) => `dirty-post-${id}`
 
 /**
  * Initialize local storage to detect unsaved changes.
@@ -24,43 +26,15 @@ export const PostLocalStorageInitialize = () => {
 	const [isRestoreAlertOpen, setIsRestoreAlertOpen] = useAtom(
 		isRestoreAlertOpenAtom,
 	)
+
 	const [post, setPost] = useAtom(postAtom)
-	const [editor] = useAtom(editorAtom)
-
-	if (!post) return null
-
-	const postLocalStorageKey = `dirty-post-${post.id}`
-
-	const handleDiscard = () => {
-		if (!window) return
-		window.localStorage.removeItem(postLocalStorageKey)
-
-		setIsRestoreAlertOpen(false)
-	}
-
-	const handleRestore = () => {
-		if (!window) return
-		const postContentString = window.localStorage.getItem(postLocalStorageKey)
-		if (!postContentString) return
-
-		const localPostContent = JSON.parse(postContentString)
-
-		const postWithDates = convertStringDatesToDateObjects(localPostContent)
-
-		setPost(postWithDates)
-		// Ensure editor content is also updated if it exists in the stored object
-		if (postWithDates.content !== undefined) {
-			editor?.commands.setContent(JSON.parse(postWithDates.content))
-		}
-
-		setIsRestoreAlertOpen(false)
-	}
 
 	useEffect(() => {
 		if (window) {
-			const dirtyPost = window.localStorage.getItem(postLocalStorageKey)
+			const dirtyPost = window.localStorage.getItem(localStorageKey)
+			if (!dirtyPost) return
 
-			if (dirtyPost) {
+			if (post) {
 				if (areDifferentPosts(post, JSON.parse(dirtyPost))) {
 					setIsRestoreAlertOpen(true)
 					console.log(
@@ -79,6 +53,27 @@ export const PostLocalStorageInitialize = () => {
 			}
 		}
 	}, [])
+
+	if (!post) return null
+
+	const localStorageKey = postLocalStorageKey(post.id)
+
+	const handleDiscard = () => {
+		window.localStorage.removeItem(localStorageKey)
+
+		setIsRestoreAlertOpen(false)
+	}
+
+	const handleRestore = () => {
+		const dirtyPost = window.localStorage.getItem(localStorageKey)
+		if (!dirtyPost) return
+
+		const postWithDates = convertStringDatesToDateObjects(JSON.parse(dirtyPost))
+
+		setPost(postWithDates)
+
+		setIsRestoreAlertOpen(false)
+	}
 
 	return (
 		<AlertDialog open={isRestoreAlertOpen} onOpenChange={setIsRestoreAlertOpen}>

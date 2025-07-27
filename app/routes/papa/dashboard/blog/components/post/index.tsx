@@ -41,6 +41,7 @@ import type { Category, Tag } from '~/lib/db/schema'
 import { Post } from '~/routes/web/blog/components/post'
 
 import { areDifferentPosts, convertStringDatesToDateObjects } from '../../utils'
+import { postLocalStorageKey } from './local-storage-alert'
 import { PostSettings } from './post-settings'
 
 interface PostContentProps {
@@ -73,11 +74,11 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		const [openAlert, setOpenAlert] = useState(false) // AlertDialog
 		const [postState, setPostState] = useState<PostWithRelations>(post)
 
-		const postLocalStorageKey = `dirty-post-${postState.id}`
+		const localStorageKey = postLocalStorageKey(postState.id)
 
 		const removeLocalStorageContent = () => {
 			if (!window) return
-			window.localStorage.removeItem(postLocalStorageKey)
+			window.localStorage.removeItem(localStorageKey)
 
 			isDirtyPostInitialized.current = true
 		}
@@ -88,7 +89,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 
 		const recoverLocalStorageContent = () => {
 			if (!window) return
-			const postContentString = window.localStorage.getItem(postLocalStorageKey)
+			const postContentString = window.localStorage.getItem(localStorageKey)
 			if (!postContentString) return
 
 			const postContentLocal = JSON.parse(postContentString)
@@ -118,7 +119,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		const debouncedLocalStorageUpdate = debounce(
 			(post: PostWithRelations) => {
 				if (!window) return
-				window.localStorage.setItem(postLocalStorageKey, JSON.stringify(post))
+				window.localStorage.setItem(localStorageKey, JSON.stringify(post))
 			},
 			200,
 			{},
@@ -137,7 +138,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 		// If not dirty initialized, if dirty initialized after recover/discard
 		useEffect(() => {
 			if (window) {
-				const dirtyPost = window.localStorage.getItem(postLocalStorageKey)
+				const dirtyPost = window.localStorage.getItem(localStorageKey)
 
 				if (dirtyPost) {
 					if (areDifferentPosts(postState, JSON.parse(dirtyPost))) {
@@ -214,7 +215,7 @@ export const PostComponent = forwardRef<PostHandle, PostContentProps>(
 					'Object.is',
 					Object.is(postState, post),
 				)
-				window.localStorage.removeItem(postLocalStorageKey)
+				window.localStorage.removeItem(localStorageKey)
 			}
 		}, [postState])
 
