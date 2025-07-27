@@ -81,7 +81,7 @@ export default function DashboardSlugPost({
 
 	useEffect(() => {
 		setPost(currentPost)
-	}, [currentPost])
+	}, [params.postSlug, setPost])
 
 	useEffect(() => {
 		setIsSaving(isSubmitting && fetcher.formMethod === 'PUT')

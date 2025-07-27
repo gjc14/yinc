@@ -4,7 +4,7 @@
 import './styles.css'
 import './styles/image-node.css'
 
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { EditorContent, useEditor } from '@tiptap/react'
 import { useAtom } from 'jotai'
@@ -60,6 +60,12 @@ export function ContentEditor() {
 		},
 		injectNonce: nonce,
 	})
+
+	useEffect(() => {
+		editor?.commands.setContent(
+			post?.content ? JSON.parse(post.content) : undefined,
+		)
+	}, [post])
 
 	/////////////////////////////
 	///      Drop Upload      ///
