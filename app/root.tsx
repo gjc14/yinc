@@ -15,7 +15,6 @@ import {
 import { ThemeProvider } from 'next-themes'
 
 import { FloatingToolkit } from './components/floating-toolkit'
-import { GlobalLoading } from './components/global-loading'
 import { Toaster } from './components/ui/sonner'
 import { useNonce } from './hooks/use-nonce'
 import { useServerNotification } from './hooks/use-notification'
@@ -109,7 +108,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<ThemeProvider nonce={nonce}>
-					<GlobalLoading />
 					<FloatingToolkit />
 					{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
 					{children}
