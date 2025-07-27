@@ -1,7 +1,7 @@
 import pkg from 'pg'
 import { z } from 'zod'
 
-import { capitalize, type ConventionalActionResponse } from '~/lib/utils'
+import { capitalize } from '~/lib/utils'
 
 const { DatabaseError } = pkg
 
@@ -11,35 +11,32 @@ const { DatabaseError } = pkg
  * @param request MDN Request
  * @returns `{ err: string }` error message
  */
-export const handleError = <T>(
+export const handleError = (
 	error: unknown,
 	request: Request,
 	options: { errorMessage?: string } = {},
-): ConventionalActionResponse<T> => {
+) => {
 	const { errorMessage } = options
 	if (error instanceof z.ZodError) {
 		console.error(error.message)
 		return {
 			err: 'Internal error: Invalid arguments',
-		} satisfies ConventionalActionResponse
+		}
 	}
-
 	if (error instanceof DatabaseError) {
 		console.error(error)
 		return {
 			err: capitalize(error.message) || error.detail || 'Database error',
-		} satisfies ConventionalActionResponse
+		}
 	}
-
 	if (error instanceof Error) {
 		console.error(error.message)
 		return {
 			err: error.message,
-		} satisfies ConventionalActionResponse
+		}
 	}
-
 	console.error(error)
 	return {
 		err: errorMessage ?? 'Internal error: Unknown error',
-	} satisfies ConventionalActionResponse
+	}
 }

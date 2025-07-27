@@ -86,11 +86,11 @@ export default function DashboardSlugPost({
 		setIsDeleting(isSubmitting && fetcher.formMethod === 'DELETE')
 
 		if (fetcher.state === 'loading' && fetcher.data) {
-			if (fetcher.formMethod === 'DELETE') {
+			if (fetcher.formMethod === 'DELETE' && 'data' in fetcher.data) {
 				fetcher.data.data && navigate('/dashboard/blog')
 			}
-			if (fetcher.formMethod === 'PUT') {
-				const { data } = fetcher.data
+			if (fetcher.formMethod === 'PUT' && 'data' in fetcher.data) {
+				const data = fetcher.data.data
 				if (data) {
 					data.slug !== post?.slug && navigate('/dashboard/blog/' + data.slug)
 					window.localStorage.removeItem(`dirty-post-${post?.id}`)

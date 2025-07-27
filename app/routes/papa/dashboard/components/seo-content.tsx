@@ -15,7 +15,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
-import { isConventionalSuccess } from '~/lib/utils'
+import { isActionSuccess } from '~/lib/utils'
 import { type SeoLoaderType } from '~/routes/papa/dashboard/seo'
 
 export const SeoContent = ({
@@ -36,7 +36,7 @@ export const SeoContent = ({
 		fetcher.formAction === action && fetcher.state === 'submitting'
 
 	useEffect(() => {
-		if (fetcher.state === 'loading' && isConventionalSuccess(fetcher.data)) {
+		if (fetcher.state === 'loading' && isActionSuccess(fetcher.data)) {
 			setOpen(false)
 		}
 	}, [fetcher])

@@ -5,47 +5,16 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
 }
 
-export type ConventionalActionResponse<T = unknown> = {
+export type ActionResponse = {
 	msg?: string
 	err?: string
-	data?: T
-	options?: {
-		preventAlert?: boolean
+	preventNotification?: boolean
+} & Record<string, unknown>
+
+export const isActionSuccess = (fetcherData: unknown): boolean => {
+	if (fetcherData && typeof fetcherData === 'object' && 'err' in fetcherData) {
+		return false
 	}
-}
-
-export type ConventionalSuccess<T = unknown> = {
-	msg: string
-	err?: undefined
-	data?: T
-	options?: {
-		preventAlert?: boolean
-	}
-}
-
-export type ConventionalError<T = unknown> = {
-	msg?: undefined
-	err: string
-	data?: T
-	options?: {
-		preventAlert?: boolean
-	}
-}
-
-export const isConventionalSuccess = (
-	fetcherData: unknown,
-): fetcherData is ConventionalSuccess => {
-	if (typeof fetcherData !== 'object' || fetcherData === null) return false
-	if (!('msg' in fetcherData)) return false
-	if ('err' in fetcherData && fetcherData.err) return false
-	return true
-}
-
-export const isConventionalError = (
-	fetcherData: unknown,
-): fetcherData is ConventionalError => {
-	if (typeof fetcherData !== 'object' || fetcherData === null) return false
-	if (!('err' in fetcherData) || !fetcherData.err) return false
 	return true
 }
 

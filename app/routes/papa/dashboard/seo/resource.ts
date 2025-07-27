@@ -3,7 +3,7 @@ import { type ActionFunctionArgs } from 'react-router'
 import { z } from 'zod'
 
 import { createSEO, deleteSEO, updateSEO } from '~/lib/db/seo.server'
-import { type ConventionalActionResponse } from '~/lib/utils'
+import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
@@ -26,7 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	if (!['POST', 'PUT', 'DELETE'].includes(request.method)) {
 		return {
 			err: 'Method not allowed',
-		} satisfies ConventionalActionResponse
+		} satisfies ActionResponse
 	}
 
 	await validateAdminSession(request)
@@ -47,7 +47,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				})
 				return {
 					msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} created`,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -62,7 +62,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				})
 				return {
 					msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} updated`,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -73,7 +73,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					const { seo } = await deleteSEO(Number(id))
 					return {
 						msg: `SEO for ${seo.route || seo.metaTitle || 'unknown'} delete`,
-					} satisfies ConventionalActionResponse
+					} satisfies ActionResponse
 				} else {
 					throw new Error('Invalid arguments')
 				}

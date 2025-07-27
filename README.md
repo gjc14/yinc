@@ -316,45 +316,56 @@ export const config = {
 
 ## Action
 
-### Conventional Return
+### Return
 
 Refer to: [Definitions in lib/utils](./app/lib/utils/index.tsx)
 
 ```ts
-return { msg: 'Action success 🎉' } satisfies ConventionalActionResponse
-return { err: 'Something went wrong 🚨' } satisfies ConventionalActionResponse
+// These will trigger toast automatically when fetcher.state === "loading"
+// Success
+return { msg: 'Action success 🎉' } satisfies ActionResponse
+// Error
+return { err: 'Something went wrong 🚨' } satisfies ActionResponse
+
+// To prevent notification, send `preventNotification` to true
+return { msg: "I don't want you to be seen", preventNotification: true }
 ```
 
+### Typed Fetcher Data
+
 ```ts
-import { type ActionFunctionArgs } from 'react-router'
+import { type ActionResponse } from '~/lib/utils'
+import { handleError } from '~/lib/utils/server'
 
-import { type ConventionalActionResponse } from '~/lib/utils'
-
-type ReturnData = {
+type UserData = {
+	id: number
 	name: string
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-	if (a) {
+export const action = async ({ request }: Route.ActionArgs) => {
+	try {
+		const user = validateUser()
 		return {
 			msg: `Welcome to PAPA!`,
-			data: { name: newName },
-		} satisfies ConventionalActionResponse<ReturnData>
-	} else {
-		return {
-			err: 'Method not allowed',
-		} satisfies ConventionalActionResponse
+			data: { id, name },
+		} satisfies ActionResponse
+	} catch (error) {
+		return handleError(error, request)
 	}
 }
 
-// If you use fetcher, you could benefit from the generic return data
-const fetcher = useFetcher<typeof action>()
+export default function Component() {
+	// This fetcher will be typed
+	const fetcher = useFetcher<typeof action>()
 
-useEffect(() => {
-	if (fetcher.status === 'loading' && fetcher.data.data) {
-		const returnedData = fetcher.data.data // Typed ReturnType
-	}
-}, [fetcher])
+	useEffect(() => {
+		if (fetcher.data && 'data' in fetcher.data) {
+			const {
+				data: { id, name },
+			} = fetcher.data
+		}
+	}, [fetcher.data])
+}
 ```
 
 ## Auth

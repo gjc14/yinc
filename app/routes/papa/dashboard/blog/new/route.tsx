@@ -43,7 +43,7 @@ export default function DashboardNewPost({ matches }: Route.ComponentProps) {
 	const isNavigating = navigation.state === 'loading'
 
 	useEffect(() => {
-		if (fetcher.state === 'loading' && fetcher.data) {
+		if (fetcher.state === 'loading' && fetcher.data && 'data' in fetcher.data) {
 			const { data } = fetcher.data
 			if (data) {
 				navigate(`/dashboard/blog/${data.slug}`)

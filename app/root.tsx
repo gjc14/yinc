@@ -18,6 +18,7 @@ import { FloatingToolkit } from './components/floating-toolkit'
 import { GlobalLoading } from './components/global-loading'
 import { Toaster } from './components/ui/sonner'
 import { useNonce } from './hooks/use-nonce'
+import { useServerNotification } from './hooks/use-notification'
 import {
 	generateNonce,
 	getContentSecurityPolicy,
@@ -121,10 +122,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+	useServerNotification()
+
 	return (
 		<>
 			<Toaster
-				position="top-right"
+				position="bottom-right"
 				closeButton
 				toastOptions={{
 					classNames: {

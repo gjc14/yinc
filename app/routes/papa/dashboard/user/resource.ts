@@ -6,7 +6,7 @@ import { createUpdateSchema } from 'drizzle-zod'
 import { auth } from '~/lib/auth/auth.server'
 import { user } from '~/lib/db/schema'
 import { deleteUser, updateUser } from '~/lib/db/user.server'
-import { isValidEmail, type ConventionalActionResponse } from '~/lib/utils'
+import { isValidEmail, type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
@@ -38,7 +38,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	if (!['POST', 'PUT', 'DELETE'].includes(request.method)) {
 		return {
 			err: 'Method not allowed',
-		} satisfies ConventionalActionResponse
+		} satisfies ActionResponse
 	}
 
 	const adminSession = await validateAdminSession(request)
@@ -88,7 +88,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 				return {
 					msg: `${role} ${user.email} has created successfully`,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -126,7 +126,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 				return {
 					msg: `${userNames} updated successfully`,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -153,7 +153,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 				return {
 					msg: `${userNames} deleted successfully`,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}

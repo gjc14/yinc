@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFetcher } from 'react-router'
 
 import type { FileMetadata } from '~/lib/db/schema'
-import { isConventionalError } from '~/lib/utils'
+import { isActionSuccess } from '~/lib/utils'
 import {
 	presignUrlResponseSchema,
 	type PresignRequest,
@@ -92,7 +92,7 @@ export const fetchPresignedPutUrls = async (
 
 		const responsePayload = await postPresignedUrl.json()
 
-		if (isConventionalError(responsePayload)) {
+		if (!isActionSuccess(responsePayload)) {
 			throw new Error(responsePayload.err)
 		}
 

@@ -8,7 +8,7 @@ import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
 import { db, S3 } from '~/lib/db/db.server'
 import type { FileMetadata } from '~/lib/db/schema'
 import { file as fileTable } from '~/lib/db/schema'
-import { type ConventionalActionResponse } from '~/lib/utils'
+import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
@@ -27,7 +27,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	if (!S3) {
 		return {
 			err: 'Object storage not configured',
-		} satisfies ConventionalActionResponse
+		} satisfies ActionResponse
 	}
 
 	const adminSession = await validateAdminSession(request)
@@ -89,8 +89,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				return {
 					msg: 'Presign urls generated successfully',
 					data: presignedUrlsWithMetadata,
-					options: { preventAlert: true },
-				} satisfies ConventionalActionResponse
+					preventNotification: true,
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -110,7 +110,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				return {
 					msg: 'File updated',
 					data: newFileMetadata,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
 				return handleError(error, request)
 			}
@@ -131,7 +131,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 						console.warn('User is deleting a file that does not belong to them')
 						return {
 							err: 'File not found',
-						} satisfies ConventionalActionResponse
+						} satisfies ActionResponse
 					}
 
 					await deleteFile(jsonData.key)
@@ -147,7 +147,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 					return {
 						msg: `File ${fileMetadata.name} deleted successfully`,
-					} satisfies ConventionalActionResponse
+					} satisfies ActionResponse
 				} else {
 					throw new Error('Invalid arguments')
 				}

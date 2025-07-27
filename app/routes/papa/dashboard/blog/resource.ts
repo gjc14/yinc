@@ -3,14 +3,9 @@ import { type ActionFunctionArgs } from 'react-router'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-import {
-	createPost,
-	deletePost,
-	updatePost,
-	type PostWithRelations,
-} from '~/lib/db/post.server'
+import { createPost, deletePost, updatePost } from '~/lib/db/post.server'
 import { category, post, tag } from '~/lib/db/schema'
-import { type ConventionalActionResponse } from '~/lib/utils'
+import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
@@ -52,9 +47,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				return {
 					msg: `Post ${post.title} created successfully`,
 					data: post,
-				} satisfies ConventionalActionResponse<{ slug: string }>
+				} satisfies ActionResponse
 			} catch (error) {
-				return handleError<PostWithRelations>(error, request)
+				return handleError(error, request)
 			}
 
 		case 'PUT':
@@ -77,9 +72,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				return {
 					msg: `Post ${post.title} updated successfully`,
 					data: post,
-				} satisfies ConventionalActionResponse
+				} satisfies ActionResponse
 			} catch (error) {
-				return handleError<PostWithRelations>(error, request)
+				return handleError(error, request)
 			}
 
 		case 'DELETE':
@@ -94,12 +89,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					return {
 						msg: `Post ${post.title} deleted successfully`,
 						data: post,
-					} satisfies ConventionalActionResponse
+					} satisfies ActionResponse
 				} else {
 					throw new Error('Invalid arguments')
 				}
 			} catch (error) {
-				return handleError<PostWithRelations>(error, request)
+				return handleError(error, request)
 			}
 
 		default:

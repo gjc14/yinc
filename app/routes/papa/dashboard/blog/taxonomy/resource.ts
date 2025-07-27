@@ -10,7 +10,7 @@ import {
 	deleteCategory,
 	deleteTag,
 } from '~/lib/db/taxonomy.server'
-import { type ConventionalActionResponse } from '~/lib/utils'
+import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 import { validateAdminSession } from '~/routes/papa/auth/utils'
 
@@ -73,23 +73,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					return {
 						msg: 'New category created',
 						data: { ...category, originalId: id },
-						options: {
-							preventAlert: true,
-						},
-					} satisfies ConventionalActionResponse<
-						Category & { originalId: number }
-					>
+						preventNotification: true,
+					} satisfies ActionResponse
 				} else if (request.method === 'DELETE') {
 					const { id } = deleteSchema.parse(formObject)
 					const { category } = await deleteCategory(id)
 					if (!category) {
 						return {
 							err: 'Category not found',
-						} satisfies ConventionalActionResponse
+						} satisfies ActionResponse
 					}
 					return {
 						msg: deleteMesage(category.name),
-					} satisfies ConventionalActionResponse
+					} satisfies ActionResponse
 				}
 			} catch (error) {
 				return handleError(error, request, {
@@ -115,23 +111,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					return {
 						msg: 'New child category created',
 						data: { ...category, originalId: id },
-						options: {
-							preventAlert: true,
-						},
-					} satisfies ConventionalActionResponse<
-						Category & { originalId: number }
-					>
+						preventNotification: true,
+					} satisfies ActionResponse
 				} else if (request.method === 'DELETE') {
 					const { id } = deleteSchema.parse(formObject)
 					const { category } = await deleteCategory(id)
 					if (!category) {
 						return {
 							err: 'Category not found',
-						} satisfies ConventionalActionResponse
+						} satisfies ActionResponse
 					}
 					return {
 						msg: deleteMesage(category.name),
-					} satisfies ConventionalActionResponse
+					} satisfies ActionResponse
 				}
 			} catch (error) {
 				return handleError(error, request, {
@@ -152,21 +144,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					return {
 						msg: 'New tag created',
 						data: { ...tag, originalId: id },
-						options: {
-							preventAlert: true,
-						},
-					} satisfies ConventionalActionResponse<Tag & { originalId: number }>
+						preventNotification: true,
+					} satisfies ActionResponse
 				} else if (request.method === 'DELETE') {
 					const { id } = deleteSchema.parse(formObject)
 					const { tag } = await deleteTag(id)
 					if (!tag) {
 						return {
 							err: 'Tag not found',
-						} satisfies ConventionalActionResponse
+						} satisfies ActionResponse
 					}
 					return {
 						msg: deleteMesage(tag.name),
-					} satisfies ConventionalActionResponse
+					} satisfies ActionResponse
 				}
 			} catch (error) {
 				return handleError(error, request, {
