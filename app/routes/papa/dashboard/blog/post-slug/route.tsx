@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useFetcher, useNavigate, useNavigation } from 'react-router'
+import { useFetcher, useNavigate, useNavigation } from 'react-router'
 
 import { useAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
@@ -19,7 +19,7 @@ import { Post } from '~/routes/web/blog/components/post'
 
 import type { Route } from '../+types/layout'
 import { ContentEditor } from '../components/editor'
-import { isToolbarOpenAtom, Toolbar } from '../components/editor/editor-toolbar'
+import { Toolbar } from '../components/editor/editor-toolbar'
 import { PostDeleteAlert } from '../components/post/delete-alert'
 import { LocalStorageCheck } from '../components/post/local-storage-check'
 import { PostSettings } from '../components/post/post-settings'
@@ -72,9 +72,6 @@ export default function DashboardSlugPost({
 
 	const [isSaving, setIsSaving] = useAtom(isSavingAtom)
 	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
-
-	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
-	const [isToolbarOpen, setIsToolbarOpen] = useAtom(isToolbarOpenAtom)
 
 	useEffect(() => {
 		setPost(currentPost)
@@ -139,6 +136,7 @@ export default function DashboardSlugPost({
 				post.slug ||
 				generateSlug(post.title || `p-${now}`, {
 					fallbackPrefix: 'post',
+					prevent: ['new'],
 				}),
 			content: JSON.stringify(editor.getJSON()),
 			createdAt: undefined,
@@ -162,9 +160,7 @@ export default function DashboardSlugPost({
 		if (!post || isSubmitting) return
 
 		fetcher.submit(
-			{
-				id: post.id,
-			},
+			{ id: post.id },
 			{
 				method: 'DELETE',
 				action: '/dashboard/blog/resource',
@@ -176,7 +172,6 @@ export default function DashboardSlugPost({
 	// Handle post reset
 	const handleReset = () => {
 		setPost(currentPost)
-		console.log('Editor:', editor)
 		editor?.commands.setContent(
 			currentPost?.content ? JSON.parse(currentPost.content) : undefined,
 		)

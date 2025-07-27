@@ -15,6 +15,7 @@ export const generateSlug = (
 		maxLength?: number
 		fallbackPrefix?: string
 		preserveUnicode?: boolean
+		prevent?: string[]
 	} = {},
 ) => {
 	const {
@@ -64,7 +65,17 @@ export const generateSlug = (
 		return generateFallbackSlug(fallbackPrefix)
 	}
 
+	if (options.prevent && options.prevent.includes(slug)) {
+		slug = slug + '-' + getRandomAnimal()
+	}
+
 	return slug
+}
+
+function getRandomAnimal() {
+	const animals = ['cat', 'dog', 'elephant', 'giraffe', 'penguin']
+	const randomIndex = Math.floor(Math.random() * animals.length)
+	return animals[randomIndex]
 }
 
 /**
