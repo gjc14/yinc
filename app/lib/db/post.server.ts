@@ -1,4 +1,4 @@
-import { asc, desc, eq, gt, inArray, like, lt, SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, like, lt, SQL } from 'drizzle-orm'
 
 import { db, type TransactionType } from '~/lib/db/db.server'
 import type { Category, Post, Seo, Tag, user } from '~/lib/db/schema'
@@ -23,76 +23,78 @@ export type PostWithRelations = Post & {
 
 export const getPosts = async (
 	props: {
-		cursor?: number
-		pageSize?: number
-		direction?: 'next' | 'previous'
 		status?: PostStatus | 'ALL'
-		categoriesFilter?: string[]
-		tagsFilter?: string[]
-		titleQuery?: string
+		categorySlugs?: string[]
+		tagSlugs?: string[]
+		title?: string
 	} = {},
 ): Promise<{
 	posts: PostWithRelations[]
-	nextCursor: number | null
-	prevCursor: number | null
-	totalCount: number
 	categoriesFilter?: Category[]
 	tagsFilter?: Tag[]
-	hasMore: boolean
 }> => {
-	const {
-		cursor,
-		pageSize = 10,
-		direction = 'next',
-		status = 'PUBLISHED', // Default status is PUBLISHED
-		categoriesFilter,
-		tagsFilter,
-		titleQuery = '',
-	} = props
+	const { status = 'PUBLISHED', categorySlugs, tagSlugs, title } = props
+
+	// Build where conditions array
+	const whereConditions: SQL[] = []
+
+	// Status filter
+	if (status !== 'ALL') {
+		whereConditions.push(eq(postTable.status, status))
+	}
+
+	// Title filter
+	if (title) {
+		whereConditions.push(like(postTable.title, `%${title}%`))
+	}
 
 	let filteredPostIds: number[] | undefined = undefined
 	let categories: Category[] | undefined = undefined
 	let tags: Tag[] | undefined = undefined
 
-	if (categoriesFilter && categoriesFilter.length > 0) {
+	// Get post IDs filtered by categories
+	if (categorySlugs && categorySlugs.length > 0) {
 		const { categoriessWithPostIds, postIds } =
-			await getPostIdsByCategorySlugs(categoriesFilter)
+			await getPostIdsByCategorySlugs(categorySlugs)
 		categories = categoriessWithPostIds
 		filteredPostIds = [...postIds]
 	}
-	if (tagsFilter && tagsFilter.length > 0) {
-		const { tagsWithPostIds, postIds } = await getPostIdsByTagSlugs(tagsFilter)
+
+	// Get post IDs filtered by tags (intersect with category filter if exists)
+	if (tagSlugs && tagSlugs.length > 0) {
+		const { tagsWithPostIds, postIds } = await getPostIdsByTagSlugs(tagSlugs)
 		tags = tagsWithPostIds
 		if (filteredPostIds) {
-			filteredPostIds = filteredPostIds.filter(id => postIds.includes(id)) // Inner join
+			// Intersection: posts must have both category and tag filters
+			filteredPostIds = filteredPostIds.filter(id => postIds.includes(id))
 		} else {
 			filteredPostIds = [...postIds]
 		}
 	}
 
-	const statusCondition = status !== 'ALL' ? [eq(postTable.status, status)] : []
-
-	const baseConditions = [
-		...statusCondition,
-		...(titleQuery ? [like(postTable.title, `%${titleQuery}%`)] : []),
-	]
-
-	let cursorCondition: SQL[] = []
-	if (cursor !== undefined) {
-		if (direction === 'next') {
-			cursorCondition = [lt(postTable.id, cursor)]
-		} else {
-			cursorCondition = [gt(postTable.id, cursor)]
+	// Add post ID filter if we have filtered IDs
+	if (filteredPostIds && filteredPostIds.length > 0) {
+		whereConditions.push(inArray(postTable.id, filteredPostIds))
+	} else if (filteredPostIds && filteredPostIds.length === 0) {
+		// No posts match the filters, return empty result early
+		return {
+			posts: [],
+			categoriesFilter: categories,
+			tagsFilter: tags,
 		}
 	}
 
+	// Combine all where conditions
+	const whereClause =
+		whereConditions.length > 0
+			? whereConditions.length === 1
+				? whereConditions[0]
+				: and(...whereConditions)
+			: undefined
+
 	const postsRaw = await db.query.post.findMany({
-		where: (posts, { and }) =>
-			and(
-				...baseConditions,
-				...cursorCondition,
-				...(filteredPostIds ? [inArray(posts.id, filteredPostIds)] : []),
-			),
+		where: whereClause,
+		orderBy: desc(postTable.createdAt),
 		with: {
 			author: true,
 			seo: true,
@@ -107,11 +109,6 @@ export const getPosts = async (
 				},
 			},
 		},
-		orderBy:
-			direction === 'next'
-				? (posts, { asc }) => asc(posts.id)
-				: (posts, { desc }) => desc(posts.id),
-		limit: pageSize + 1,
 	})
 
 	const posts = postsRaw.map(post => {
@@ -122,25 +119,10 @@ export const getPosts = async (
 		}
 	})
 
-	const hasMore = posts.length > pageSize
-
-	const pagePosts = hasMore ? posts.slice(0, pageSize) : posts
-
-	const resultPosts = direction === 'previous' ? pagePosts.reverse() : pagePosts
-
-	// Calculate next and previous cursors
-	const nextCursor =
-		resultPosts.length > 0 ? resultPosts[resultPosts.length - 1].id : null
-	const prevCursor = resultPosts.length > 0 ? resultPosts[0].id : null
-
 	return {
 		posts,
-		nextCursor: hasMore ? nextCursor : null,
-		prevCursor: cursor ? prevCursor : null,
-		totalCount: posts.length,
 		categoriesFilter: categories,
 		tagsFilter: tags,
-		hasMore,
 	}
 }
 

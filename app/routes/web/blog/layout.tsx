@@ -58,8 +58,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 		process.env.NODE_ENV === 'development' && console.time('getPosts:many')
 		const { posts, categoriesFilter, tagsFilter } = await getPosts({
 			status: 'PUBLISHED',
-			categoriesFilter: categories,
-			tagsFilter: tags,
+			categorySlugs: categories,
+			tagSlugs: tags,
 		})
 		process.env.NODE_ENV === 'development' && console.timeEnd('getPosts:many')
 		return {
