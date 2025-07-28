@@ -74,6 +74,7 @@ export const postToTag = pgTable(
 		tagId: integer('tag_id')
 			.notNull()
 			.references(() => tag.id, { onDelete: 'cascade' }),
+		order: integer('order').notNull().default(0), // Order of the tag in a post
 	},
 	table => [
 		primaryKey({ columns: [table.postId, table.tagId] }), // Composite primary key
@@ -105,6 +106,7 @@ export const postToCategory = pgTable(
 		categoryId: integer('category_id')
 			.notNull()
 			.references(() => category.id, { onDelete: 'cascade' }),
+		order: integer('order').notNull().default(0), // Order of the category in a post
 	},
 	table => [
 		primaryKey({ columns: [table.postId, table.categoryId] }), // Composite primary key
