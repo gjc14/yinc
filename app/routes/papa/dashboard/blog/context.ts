@@ -15,12 +15,14 @@ export const editorContentAtom = atom<string | null>(null)
 
 export const isSettingsOpenAtom = atom(false)
 
+const defaultContent = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null}}]}`
+
 export const hasChangesAtom = atom(get => {
 	const [server, draft] = [get(serverPostAtom), get(postAtom)]
 	const editorContent = get(editorContentAtom)
 	if (!editorContent || !server || !draft) return false
 
-	if (server.content !== editorContent) return true
+	if ((server.content || defaultContent) !== editorContent) return true
 	return areDifferentPosts(server, draft)
 })
 
