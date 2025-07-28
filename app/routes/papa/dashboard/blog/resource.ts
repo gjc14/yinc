@@ -1,3 +1,4 @@
+import type { Route } from './+types/resource'
 import { type ActionFunctionArgs } from 'react-router'
 
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
@@ -9,6 +10,14 @@ import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
+import { clearCache } from './layout-cache'
+
+export const clientAction = async ({
+	serverAction,
+}: Route.ClientActionArgs) => {
+	clearCache()
+	return serverAction()
+}
 
 /**
  * createInsertSchema(post) is used for create and update
@@ -34,6 +43,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	switch (request.method) {
 		case 'POST':
 			try {
+				// console.log('Creating new post with data:', jsonData)
 				const postData = postInsertUpdateSchema.parse(jsonData)
 				const taxonomyData = taxonomyInsertUpdateSchema.parse(jsonData)
 				const seoData = seoInsertUpdateSchema.parse(jsonData)
