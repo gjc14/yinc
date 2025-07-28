@@ -77,7 +77,7 @@ export const FloatingTools = ({
 
 			{/* Open settings */}
 			<Button
-				className="ml-1 rounded-full"
+				className="ml-1 size-8 rounded-full"
 				size={'icon'}
 				onClick={() => setIsSettingsOpen(p => !p)}
 			>

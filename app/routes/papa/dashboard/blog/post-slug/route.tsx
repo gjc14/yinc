@@ -45,18 +45,6 @@ export default function DashboardSlugPost({
 		? generateNewPost(admin)
 		: posts.find(p => p.slug === params.postSlug)
 
-	useHydrateAtoms([
-		[serverPostAtom, currentPost],
-		[postAtom, currentPost],
-		[tagsAtom, tags],
-		[categoriesAtom, categories],
-
-		[isSavingAtom, false],
-		[isDeletingAtom, false],
-	])
-
-	const [editor] = useAtom(editorAtom)
-
 	const isMobile = useIsMobile()
 	const fetcher = useFetcher<typeof action>()
 	const navigate = useNavigate()
@@ -65,12 +53,27 @@ export default function DashboardSlugPost({
 	const isSubmitting = fetcher.state === 'submitting'
 	const isNavigating = navigation.state === 'loading'
 
+	const method = fetcher.formMethod
+	const isSaving = isSubmitting && (method === 'PUT' || method === 'POST')
+	const isDeleting = isSubmitting && method === 'DELETE'
+
+	useHydrateAtoms([
+		[serverPostAtom, currentPost],
+		[postAtom, currentPost],
+		[tagsAtom, tags],
+		[categoriesAtom, categories],
+
+		[isSavingAtom, isSaving],
+		[isDeletingAtom, isDeleting],
+	])
+
+	const [editor] = useAtom(editorAtom)
+
 	const [post, setPost] = useAtom(postAtom)
 	const [, setServerPost] = useAtom(serverPostAtom)
 	const [hasChanges] = useAtom(hasChangesAtom)
-
-	const [isSaving, setIsSaving] = useAtom(isSavingAtom)
-	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
+	const [, setIsSaving] = useAtom(isSavingAtom)
+	const [, setIsDeleting] = useAtom(isDeletingAtom)
 
 	useEffect(() => {
 		setPost(currentPost)
@@ -78,14 +81,19 @@ export default function DashboardSlugPost({
 	}, [params.postSlug, setPost])
 
 	useEffect(() => {
-		setIsSaving(isSubmitting && fetcher.formMethod === 'PUT')
-		setIsDeleting(isSubmitting && fetcher.formMethod === 'DELETE')
+		setIsSaving(isSaving)
+		setIsDeleting(isDeleting)
+	}, [isSaving, isDeleting])
 
+	useEffect(() => {
 		if (fetcher.state === 'loading' && fetcher.data) {
 			if (fetcher.formMethod === 'DELETE' && 'data' in fetcher.data) {
 				fetcher.data.data && navigate('/dashboard/blog')
 			}
-			if (fetcher.formMethod === 'PUT' && 'data' in fetcher.data) {
+			if (
+				(fetcher.formMethod === 'PUT' || fetcher.formMethod === 'POST') &&
+				'data' in fetcher.data
+			) {
 				const data = fetcher.data.data
 				if (data) {
 					data.slug !== post?.slug && navigate('/dashboard/blog/' + data.slug)
