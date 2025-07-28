@@ -72,6 +72,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 
 export const clientLoader = async ({
 	request,
+	params,
 	serverLoader,
 }: Route.ClientLoaderArgs) => {
 	const cache = getCache()
@@ -82,7 +83,7 @@ export const clientLoader = async ({
 	}
 
 	const data = await serverLoader()
-	setCache(data)
+	if (!params.postSlug) setCache(data)
 	return data
 }
 
