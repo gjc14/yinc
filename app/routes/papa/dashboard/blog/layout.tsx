@@ -1,8 +1,9 @@
 import type { Route } from './+types/layout'
-import { Outlet } from 'react-router'
+import { Outlet, useNavigation } from 'react-router'
 
 import { Provider } from 'jotai'
 
+import { Loading } from '~/components/loading'
 import { getPosts } from '~/lib/db/post.server'
 import { getCategories, getTags } from '~/lib/db/taxonomy.server'
 
@@ -48,6 +49,16 @@ export const clientLoader = async ({
 clientLoader.hydrate = true
 
 export default function DashboardBlog() {
+	const navigation = useNavigation()
+	const isNavigating = navigation.state === 'loading'
+	if (isNavigating) {
+		return (
+			<div className="mx-auto flex h-full flex-1 flex-col items-center justify-center space-y-6">
+				<Loading />
+			</div>
+		)
+	}
+
 	return (
 		<Provider>
 			<Outlet />

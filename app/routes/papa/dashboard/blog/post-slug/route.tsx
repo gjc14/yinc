@@ -48,10 +48,8 @@ export default function DashboardSlugPost({
 	const isMobile = useIsMobile()
 	const fetcher = useFetcher<typeof action>()
 	const navigate = useNavigate()
-	const navigation = useNavigation()
 
 	const isSubmitting = fetcher.state === 'submitting'
-	const isNavigating = navigation.state === 'loading'
 
 	const method = fetcher.formMethod
 	const isSaving = isSubmitting && (method === 'PUT' || method === 'POST')
@@ -103,14 +101,6 @@ export default function DashboardSlugPost({
 		}
 	}, [fetcher.state, fetcher.formMethod, isSubmitting])
 
-	if (isNavigating) {
-		return (
-			<div className="mx-auto flex h-full flex-1 flex-col items-center justify-center space-y-6">
-				<Loading />
-			</div>
-		)
-	}
-
 	if (!post) {
 		return (
 			<div className="mx-auto flex h-full flex-1 flex-col items-center justify-center space-y-6">
@@ -128,8 +118,7 @@ export default function DashboardSlugPost({
 			!hasChanges ||
 			isSaving ||
 			isDeleting ||
-			isSubmitting ||
-			isNavigating
+			isSubmitting
 		)
 			return
 
