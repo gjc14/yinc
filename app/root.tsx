@@ -1,5 +1,5 @@
-import './app.css'
 import '@gjc14/sonner/dist/styles.css'
+import './app.css'
 
 import type { Route } from './+types/root'
 import {
@@ -12,17 +12,14 @@ import {
 	useRouteError,
 } from 'react-router'
 
+import { MotionConfig } from 'motion/react'
 import { ThemeProvider } from 'next-themes'
 
 import { FloatingToolkit } from './components/floating-toolkit'
 import { Toaster } from './components/ui/sonner'
 import { useNonce } from './hooks/use-nonce'
 import { useServerNotification } from './hooks/use-notification'
-import {
-	generateNonce,
-	getContentSecurityPolicy,
-	nonceContext,
-} from './middleware/csp'
+import { generateNonce, nonceContext } from './middleware/csp'
 
 const headersMiddleware: Route.unstable_MiddlewareFunction = async (
 	{ context, request },
@@ -31,9 +28,11 @@ const headersMiddleware: Route.unstable_MiddlewareFunction = async (
 	const nonce = generateNonce()
 
 	const headers = {
-		[process.env.NODE_ENV === 'production'
-			? 'Content-Security-Policy'
-			: 'Content-Security-Policy-Report-Only']: getContentSecurityPolicy(nonce),
+		/** This is not really practical */
+		// [process.env.NODE_ENV === 'production'
+		// 	? 'Content-Security-Policy'
+		// 	: 'Content-Security-Policy-Report-Only']: getContentSecurityPolicy(nonce),
+
 		/** @see https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security */
 		'Strict-Transport-Security': 'max-age=3600', // 1 hour. HTTPS only
 		'X-Frame-Options': 'SAMEORIGIN', // Prevent clickjacking
@@ -108,9 +107,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<ThemeProvider nonce={nonce}>
-					<FloatingToolkit />
-					{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
-					{children}
+					<MotionConfig nonce={nonce}>
+						<FloatingToolkit />
+						{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
+						{children}
+					</MotionConfig>
 				</ThemeProvider>
 				<ScrollRestoration nonce={nonce} />
 				<Scripts nonce={nonce} />
