@@ -28,7 +28,12 @@ export default function BlogPost({ matches, params }: Route.ComponentProps) {
 
 	return (
 		<div className="mx-auto w-full max-w-prose px-3">
-			<Link to={'..' + search} className="inline-flex">
+			<Link
+				to={'..' + search}
+				className="mb-3 inline-flex"
+				title="Go back"
+				aria-label="Go back"
+			>
 				<ArrowLeft className="cursor-pointer" />
 			</Link>
 			<Post post={currentPost} next={nextPost} prev={prevPost} />

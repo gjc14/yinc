@@ -18,7 +18,7 @@ export const PostCollection = ({
 	description?: React.ReactNode
 }) => {
 	return (
-		<div className="mx-auto mb-8 flex w-full max-w-2xl flex-col gap-8 px-3 md:px-9">
+		<div className="mx-auto mt-6 mb-20 flex w-full max-w-2xl flex-col gap-8 px-3 md:px-9">
 			<div className="flex flex-col px-6">
 				<motion.h2
 					initial={{ y: 48, opacity: 0 }}
