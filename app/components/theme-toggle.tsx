@@ -9,9 +9,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
-import { useHydrated } from '~/hooks/use-hydrated'
 import { useIsMounted } from '~/hooks/use-is-mounted'
-import { useNonce } from '~/hooks/use-nonce'
 import { useViewTransition } from '~/hooks/use-view-transition'
 import { cn } from '~/lib/utils'
 
@@ -71,8 +69,6 @@ export const ThemeToggle = forwardRef<
 	HTMLButtonElement,
 	ThemeToggleProps & ViewTransitionThemeOptions
 >(({ size = 'sm', className, start, variant, duration }, ref) => {
-	const isHydrated = useHydrated()
-	const nonce = useNonce()
 	const { setTheme } = useTheme()
 	const { startViewTransition } = useViewTransition()
 	const { styles } = getViewTransitionStyles({
@@ -87,12 +83,10 @@ export const ThemeToggle = forwardRef<
 		lg: 'size-11',
 	}
 
-	const safeNonce = isHydrated ? nonce : undefined
-
 	return (
 		<DropdownMenu>
-			{safeNonce && <style nonce={safeNonce}>{styles}</style>}
-			<DropdownMenuTrigger asChild nonce={safeNonce}>
+			<style>{styles}</style>
+			<DropdownMenuTrigger asChild>
 				<Button
 					ref={ref}
 					variant="outline"
@@ -102,9 +96,8 @@ export const ThemeToggle = forwardRef<
 					<CurrentThemeIcon size={size} />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" nonce={safeNonce}>
+			<DropdownMenuContent align="end">
 				<DropdownMenuItem
-					nonce={safeNonce}
 					onClick={() => {
 						startViewTransition(() => setTheme('light'))
 					}}
@@ -113,7 +106,6 @@ export const ThemeToggle = forwardRef<
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
-					nonce={safeNonce}
 					onClick={() => {
 						startViewTransition(() => setTheme('dark'))
 					}}
@@ -122,7 +114,6 @@ export const ThemeToggle = forwardRef<
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
-					nonce={safeNonce}
 					onClick={() => {
 						startViewTransition(() => setTheme('system'))
 					}}
@@ -144,24 +135,16 @@ export const ThemeDropDownMenu = ({
 	asChild?: boolean
 	className?: string
 }) => {
-	const isHydrated = useHydrated()
-	const nonce = useNonce()
 	const { setTheme } = useTheme()
-
-	const safeNonce = isHydrated ? nonce : undefined
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild={asChild} nonce={safeNonce}>
-				{children}
-			</DropdownMenuTrigger>
+			<DropdownMenuTrigger asChild={asChild}>{children}</DropdownMenuTrigger>
 			<DropdownMenuContent
-				nonce={safeNonce}
 				align="end"
 				className={cn('bg-secondary', className)}
 			>
 				<DropdownMenuItem
-					nonce={safeNonce}
 					onClick={() => {
 						setTheme('light')
 					}}
@@ -170,7 +153,6 @@ export const ThemeDropDownMenu = ({
 					Light
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					nonce={safeNonce}
 					onClick={() => {
 						setTheme('dark')
 					}}
@@ -179,7 +161,6 @@ export const ThemeDropDownMenu = ({
 					Dark
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					nonce={safeNonce}
 					onClick={() => {
 						setTheme('system')
 					}}

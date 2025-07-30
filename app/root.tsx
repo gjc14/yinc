@@ -17,41 +17,7 @@ import { ThemeProvider } from 'next-themes'
 
 import { FloatingToolkit } from './components/floating-toolkit'
 import { Toaster } from './components/ui/sonner'
-import { useNonce } from './hooks/use-nonce'
 import { useServerNotification } from './hooks/use-notification'
-import { generateNonce, nonceContext } from './middleware/csp'
-
-const headersMiddleware: Route.unstable_MiddlewareFunction = async (
-	{ context, request },
-	next,
-) => {
-	const nonce = generateNonce()
-
-	const headers = {
-		/** This is not really practical */
-		// [process.env.NODE_ENV === 'production'
-		// 	? 'Content-Security-Policy'
-		// 	: 'Content-Security-Policy-Report-Only']: getContentSecurityPolicy(nonce),
-
-		/** @see https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security */
-		'Strict-Transport-Security': 'max-age=3600', // 1 hour. HTTPS only
-		'X-Frame-Options': 'SAMEORIGIN', // Prevent clickjacking
-		'X-Content-Type-Options': 'nosniff', // Prevent MIME type sniffing
-	}
-
-	context.set(nonceContext, nonce)
-
-	const response = await next()
-	for (const [key, value] of Object.entries(headers)) {
-		response.headers.set(key, value)
-	}
-
-	return response
-}
-
-export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
-	headersMiddleware,
-]
 
 export function links() {
 	return [{ rel: 'icon', href: '/favicon.ico' }]
@@ -81,40 +47,30 @@ export const meta = ({ error }: Route.MetaArgs) => {
 	}
 }
 
-export const loader = ({ context }: Route.LoaderArgs) => {
-	return { nonce: context.get(nonceContext) }
-}
-
 /**
  * @see https://reactrouter.com/api/framework-conventions/root.tsx#layout-export
  * Because your <Layout> component is used for rendering the ErrorBoundary,
  * you should be very defensive to ensure that you can render your ErrorBoundary without encountering any render errors.
  */
 export function Layout({ children }: { children: React.ReactNode }) {
-	const nonce = useNonce()
-
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				{
-					/** Vite looks for this meta tag to inject the nonce @see https://vite.dev/guide/features.html#nonce-random */
-					import.meta.env.DEV && <meta property="csp-nonce" nonce={nonce} />
-				}
 				<Meta />
 				<Links />
 			</head>
 			<body>
-				<ThemeProvider nonce={nonce}>
-					<MotionConfig nonce={nonce}>
+				<ThemeProvider>
+					<MotionConfig>
 						<FloatingToolkit />
 						{/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
 						{children}
 					</MotionConfig>
 				</ThemeProvider>
-				<ScrollRestoration nonce={nonce} />
-				<Scripts nonce={nonce} />
+				<ScrollRestoration />
+				<Scripts />
 			</body>
 		</html>
 	)

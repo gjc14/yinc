@@ -11,7 +11,6 @@ import { useAtom } from 'jotai'
 import debounce from 'lodash/debounce'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
-import { useNonce } from '~/hooks/use-nonce'
 
 import { editorAtom, editorContentAtom, postAtom } from '../../context'
 
@@ -19,7 +18,6 @@ export function ContentEditor() {
 	const [post] = useAtom(postAtom)
 	const [, setEditor] = useAtom(editorAtom)
 	const [, setEditorContent] = useAtom(editorContentAtom)
-	const nonce = useNonce()
 
 	const debouncedSetEditorContent = useMemo(
 		() =>
@@ -78,7 +76,6 @@ export function ContentEditor() {
 				await Promise.all(awaitHandleFiles)
 			}
 		},
-		injectNonce: nonce,
 	})
 
 	useEffect(() => {
