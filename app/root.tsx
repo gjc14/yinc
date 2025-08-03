@@ -20,7 +20,22 @@ import { Toaster } from './components/ui/sonner'
 import { useServerNotification } from './hooks/use-notification'
 
 export function links() {
-	return [{ rel: 'icon', href: '/favicon.ico' }]
+	return [
+		{ rel: 'icon', href: '/favicon.ico' },
+		{
+			rel: 'stylesheet',
+			href: 'https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200..900&display=swap',
+		},
+		{
+			rel: 'preconnect',
+			href: 'https://fonts.googleapis.com',
+		},
+		{
+			rel: 'preconnect',
+			href: 'https://fonts.gstatic.com',
+			crossOrigin: 'anonymous',
+		},
+	]
 }
 
 export const meta = ({ error }: Route.MetaArgs) => {
