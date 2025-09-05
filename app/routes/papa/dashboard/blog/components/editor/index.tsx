@@ -12,13 +12,14 @@ import debounce from 'lodash/debounce'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
 
-import { editorAtom, editorContentAtom, postAtom } from '../../context'
+import { editorAtom, editorContentAtom, serverPostAtom } from '../../context'
 
 export function ContentEditor() {
-	const [post] = useAtom(postAtom)
+	const [serverPost] = useAtom(serverPostAtom)
 	const [, setEditor] = useAtom(editorAtom)
 	const [, setEditorContent] = useAtom(editorContentAtom)
 
+	// Content realtime update for hasChanges check
 	const debouncedSetEditorContent = useMemo(
 		() =>
 			debounce((content: string) => {
@@ -36,7 +37,7 @@ export function ContentEditor() {
 	const editor = useEditor({
 		immediatelyRender: false,
 		extensions: ExtensionKit(),
-		content: post?.content ? JSON.parse(post.content) : undefined,
+		content: serverPost?.content ? JSON.parse(serverPost.content) : undefined,
 		editorProps: {
 			attributes: {
 				class: 'mt-6 prose-article focus:outline-hidden',
@@ -80,9 +81,9 @@ export function ContentEditor() {
 
 	useEffect(() => {
 		editor?.commands.setContent(
-			post?.content ? JSON.parse(post.content) : undefined,
+			serverPost?.content ? JSON.parse(serverPost.content) : undefined,
 		)
-	}, [post])
+	}, [serverPost])
 
 	/////////////////////////////
 	///      Drop Upload      ///
