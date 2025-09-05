@@ -83,6 +83,7 @@ export function ContentEditor() {
 		editor?.commands.setContent(
 			serverPost?.content ? JSON.parse(serverPost.content) : undefined,
 		)
+		setEditorContent(serverPost?.content || '')
 	}, [serverPost])
 
 	/////////////////////////////
