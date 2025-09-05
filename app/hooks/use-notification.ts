@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFetchers, type FetcherWithComponents } from 'react-router'
 
 import { toast, type ExternalToast } from '@gjc14/sonner'
@@ -11,9 +11,16 @@ type ServerNotificationResponse = {
 /** Function to check if fetchers have response that satisfies auto notification */
 export function useServerNotification() {
 	const fetchers = useFetchers()
+	// Prevent duplicate notifications from same fetcher when re-render. e.g. navigate()
+	const processedFetchersRef = useRef<Set<string>>(new Set())
 
 	useEffect(() => {
 		fetchers.forEach(fetcher => {
+			const fetcherKey = fetcher.key
+			if (processedFetchersRef.current.has(fetcherKey)) {
+				return console.log('already processed', fetcherKey)
+			}
+
 			if (fetcher.data) {
 				if (fetcher.data.preventNotification) return
 				if (fetcher.data.msg) {
@@ -21,6 +28,8 @@ export function useServerNotification() {
 				} else if (fetcher.data.err) {
 					toast.error(fetcher.data.err)
 				}
+
+				processedFetchersRef.current.add(fetcherKey)
 			}
 		})
 	}, [fetchers])
