@@ -2,10 +2,10 @@ import { relations, sql, type InferSelectModel } from 'drizzle-orm'
 import {
 	check,
 	foreignKey,
+	index,
 	integer,
 	primaryKey,
 	serial,
-	uniqueIndex,
 	varchar,
 } from 'drizzle-orm/pg-core'
 
@@ -14,12 +14,16 @@ import { post } from './post'
 
 export type Tag = InferSelectModel<typeof tag>
 
-export const tag = pgTable('tag', {
-	id: serial('id').primaryKey(),
-	name: varchar('name', { length: 100 }).notNull(),
-	slug: varchar('slug', { length: 100 }).notNull().unique(),
-	description: varchar('description', { length: 255 }),
-})
+export const tag = pgTable(
+	'tag',
+	{
+		id: serial('id').primaryKey(),
+		name: varchar('name', { length: 100 }).notNull(),
+		slug: varchar('slug', { length: 100 }).notNull().unique(),
+		description: varchar('description', { length: 255 }),
+	},
+	table => [index('tag_slug_idx').on(table.slug)],
+)
 
 export const tagRelations = relations(tag, ({ many }) => ({
 	postToTag: many(postToTag),
@@ -44,6 +48,7 @@ export const category = pgTable(
 			columns: [table.parentId],
 			foreignColumns: [table.id],
 		}).onDelete('cascade'),
+		index('category_slug_idx').on(table.slug),
 	],
 )
 
@@ -78,7 +83,8 @@ export const postToTag = pgTable(
 	},
 	table => [
 		primaryKey({ columns: [table.postId, table.tagId] }), // Composite primary key
-		uniqueIndex('tag_idx').on(table.postId, table.tagId), // Unique constraint to prevent duplicates
+		index('post_to_tag_post_id_idx').on(table.postId),
+		index('post_to_tag_tag_id_idx').on(table.tagId),
 	],
 )
 
@@ -110,7 +116,8 @@ export const postToCategory = pgTable(
 	},
 	table => [
 		primaryKey({ columns: [table.postId, table.categoryId] }), // Composite primary key
-		uniqueIndex('category_idx').on(table.postId, table.categoryId), // Unique constraint
+		index('post_to_category_post_id_idx').on(table.postId),
+		index('post_to_category_category_id_idx').on(table.categoryId),
 	],
 )
 
