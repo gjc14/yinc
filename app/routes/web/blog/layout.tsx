@@ -18,7 +18,7 @@ export default function Blog() {
 		if (isLoading) {
 			timeoutId = setTimeout(() => {
 				setShowLoading(true)
-			}, 30)
+			}, 80)
 		} else {
 			setShowLoading(false)
 		}
