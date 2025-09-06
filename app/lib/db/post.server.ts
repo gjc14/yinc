@@ -1,7 +1,7 @@
-import { and, asc, desc, eq, gt, inArray, like, lt, SQL } from 'drizzle-orm'
+import { and, desc, eq, inArray, like, sql, SQL } from 'drizzle-orm'
 
 import { db, type TransactionType } from '~/lib/db/db.server'
-import type { Category, Post, Seo, Tag, user } from '~/lib/db/schema'
+import type { Category, Post, Seo, Tag } from '~/lib/db/schema'
 import {
 	category as categoryTable,
 	PostStatus,
@@ -10,7 +10,10 @@ import {
 	postToTag,
 	seo as seoTable,
 	tag as tagTable,
+	user,
 } from '~/lib/db/schema'
+
+import { convertDateFields, snakeToCamel } from './utils'
 
 type User = typeof user.$inferSelect
 
@@ -223,102 +226,79 @@ export const getPostBySlug = async (
 	status: PostStatus = 'PUBLISHED',
 ): Promise<{
 	post: PostWithRelations | null
-	prevPost: PostWithRelations | null
-	nextPost: PostWithRelations | null
+	prevPost: Pick<PostWithRelations, 'slug' | 'title'> | null
+	nextPost: Pick<PostWithRelations, 'slug' | 'title'> | null
 }> => {
-	const postRaw = await db.query.post.findFirst({
-		where: (posts, { eq, and }) =>
-			and(eq(posts.slug, slug), eq(posts.status, status)),
-		with: {
-			seo: true,
-			author: true,
-			postToTag: {
-				with: {
-					tag: true,
-				},
-			},
-			postToCategory: {
-				with: {
-					category: true,
-				},
-			},
-		},
-	})
+	const postResult = await db.execute(sql`
+		-- create window (extend post) with prev_id & next_id columns
+		-- | * | prev_id | next_id |
+		WITH ordered_posts AS (
+			SELECT
+				*,
+				LAG(p.id) OVER (ORDER BY p.updated_at) AS prev_id,
+				LEAD(p.id) OVER (ORDER BY p.updated_at) AS next_id
+			FROM ${postTable} p
+			WHERE p.status = ${status}
+			ORDER BY p.updated_at
+		)
 
-	if (!postRaw) {
+		SELECT
+			op.*,
+			prev_p.title AS prev_title,
+			prev_p.slug AS prev_slug,
+			next_p.title AS next_title,
+			next_p.slug AS next_slug,
+			-- Select author, seo, tags, categories as JSON
+			row_to_json(u) AS author,
+			row_to_json(s) AS seo,
+
+			(
+				SELECT json_agg(t)
+				FROM ${postToTag} pt
+				LEFT JOIN ${tagTable} t ON pt.tag_id = t.id
+				WHERE pt.post_id = op.id
+			) AS tags,
+			(
+				SELECT json_agg(c)
+				FROM ${postToCategory} pc
+				LEFT JOIN ${categoryTable} c ON pc.category_id = c.id
+				WHERE pc.post_id = op.id
+			) AS categories
+		-- From the windowed posts
+		FROM ordered_posts op
+		LEFT JOIN ${postTable} AS prev_p ON op.prev_id = prev_p.id
+		LEFT JOIN ${postTable} AS next_p ON op.next_id = next_p.id
+		-- JOIN author, seo
+		LEFT JOIN ${user} u ON op.author_id = u.id
+		LEFT JOIN ${seoTable} s ON op.id = s.post_id
+
+		WHERE op.slug = ${slug}
+    `)
+
+	if (postResult.rowCount !== 1) {
 		return { post: null, prevPost: null, nextPost: null }
 	}
 
-	const post = {
-		...postRaw,
-		tags: postRaw.postToTag.map(association => association.tag),
-		categories: postRaw.postToCategory.map(association => association.category),
+	const createAdjacentPost = (
+		title: string | null,
+		slug: string | null,
+	): Pick<PostWithRelations, 'slug' | 'title'> | null => {
+		return title && slug ? { title, slug } : null
 	}
 
-	const prevPostRaw = await db.query.post.findFirst({
-		where: (posts, { lt, eq, and }) =>
-			and(lt(posts.id, postRaw.id), eq(posts.status, status)),
-		orderBy: desc(postTable.id),
-		with: {
-			seo: true,
-			author: true,
-			postToTag: {
-				with: {
-					tag: true,
-				},
-			},
-			postToCategory: {
-				with: {
-					category: true,
-				},
-			},
-		},
-	})
-
-	const nextPostRaw = await db.query.post.findFirst({
-		where: (posts, { gt, eq, and }) =>
-			and(gt(posts.id, postRaw.id), eq(posts.status, status)),
-		orderBy: asc(postTable.id),
-		with: {
-			seo: true,
-			author: true,
-			postToTag: {
-				with: {
-					tag: true,
-				},
-			},
-			postToCategory: {
-				with: {
-					category: true,
-				},
-			},
-		},
-	})
-
-	const prevPost = prevPostRaw
-		? {
-				...prevPostRaw,
-				tags: prevPostRaw.postToTag.map(association => association.tag),
-				categories: prevPostRaw.postToCategory.map(
-					association => association.category,
-				),
-			}
-		: null
-
-	const nextPost = nextPostRaw
-		? {
-				...nextPostRaw,
-				tags: nextPostRaw.postToTag.map(association => association.tag),
-				categories: nextPostRaw.postToCategory.map(
-					association => association.category,
-				),
-			}
-		: null
+	const camelPost = convertDateFields(
+		snakeToCamel(postResult.rows[0]),
+	) as PostWithRelations & {
+		prevTitle: PostWithRelations['title']
+		prevSlug: PostWithRelations['slug']
+		nextTitle: PostWithRelations['title']
+		nextSlug: PostWithRelations['slug']
+	}
 
 	return {
-		post,
-		prevPost,
-		nextPost,
+		post: camelPost,
+		prevPost: createAdjacentPost(camelPost.prevTitle, camelPost.prevSlug),
+		nextPost: createAdjacentPost(camelPost.nextTitle, camelPost.nextSlug),
 	}
 }
 
