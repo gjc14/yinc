@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
 
@@ -36,7 +36,6 @@ export const PostFooter = ({
 					))}
 				</ul>
 			)}
-
 			<Separator />
 
 			{/* Navigation area */}
@@ -45,13 +44,19 @@ export const PostFooter = ({
 					<Button
 						variant="ghost"
 						className="group hover:bg-muted/50 flex h-auto items-center justify-start gap-3 p-4 text-left transition-colors"
-						onClick={() => navigate(`/blog/${prev.slug}${search}`)}
+						asChild
 					>
-						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 transition-transform group-hover:-translate-x-1" />
-						<div className="min-w-0 flex-1">
-							<div className="text-muted-foreground mb-1 text-xs">Previous</div>
-							<p className="line-clamp-2 font-medium text-wrap">{prev.title}</p>
-						</div>
+						<Link to={`/blog/${prev.slug}${search}`} prefetch="intent">
+							<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 transition-transform group-hover:-translate-x-1" />
+							<div className="min-w-0 flex-1">
+								<div className="text-muted-foreground mb-1 text-xs">
+									Previous
+								</div>
+								<p className="line-clamp-2 font-medium text-wrap">
+									{prev.title}
+								</p>
+							</div>
+						</Link>
 					</Button>
 				) : (
 					<div />
@@ -61,13 +66,17 @@ export const PostFooter = ({
 					<Button
 						variant="ghost"
 						className="group hover:bg-muted/50 flex h-auto items-center justify-end gap-3 p-4 text-right whitespace-break-spaces transition-colors"
-						onClick={() => navigate(`/blog/${next.slug}${search}`)}
+						asChild
 					>
-						<div className="min-w-0 flex-1 overflow-visible">
-							<div className="text-muted-foreground mb-1 text-xs">Next</div>
-							<p className="line-clamp-2 font-medium text-wrap">{next.title}</p>
-						</div>
-						<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 rotate-180 transition-transform group-hover:translate-x-1" />
+						<Link to={`/blog/${next.slug}${search}`} prefetch="intent">
+							<div className="min-w-0 flex-1 overflow-visible">
+								<div className="text-muted-foreground mb-1 text-xs">Next</div>
+								<p className="line-clamp-2 font-medium text-wrap">
+									{next.title}
+								</p>
+							</div>
+							<ChevronLeftIcon className="h-4 w-4 flex-shrink-0 rotate-180 transition-transform group-hover:translate-x-1" />
+						</Link>
 					</Button>
 				) : (
 					<div />

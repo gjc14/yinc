@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from 'react-router'
+import { Link, useFetcher, useLocation, useNavigate } from 'react-router'
 
 import { AvatarImage } from '@radix-ui/react-avatar'
 import { CircleCheckIcon, XCircle } from 'lucide-react'
@@ -68,6 +68,7 @@ export const PostCollection = ({
 }
 
 const Post = ({ post }: { post: PostWithRelations }) => {
+	const fetcher = useFetcher()
 	const navigate = useNavigate()
 	const { search } = useLocation()
 	const url = `/blog/${post.slug}${search}`
@@ -75,6 +76,7 @@ const Post = ({ post }: { post: PostWithRelations }) => {
 	return (
 		<div
 			onClick={() => navigate(url)}
+			onMouseEnter={() => fetcher.load(url)}
 			className="group hover:bg-accent cursor-pointer py-4 md:py-5"
 		>
 			<div className="flex flex-col px-5 md:px-6">
@@ -87,6 +89,9 @@ const Post = ({ post }: { post: PostWithRelations }) => {
 								e.stopPropagation()
 								navigate(`/blog?category=${category.slug}`)
 							}}
+							onMouseEnter={() =>
+								fetcher.load(`/blog?category=${category.slug}&index`)
+							}
 						>
 							{category.name}
 						</Badge>

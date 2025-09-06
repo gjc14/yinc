@@ -64,7 +64,9 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 							{post.categories.map((c, i) => (
 								<Fragment key={i}>
 									<Button variant={'link'} className="h-fit p-0" asChild>
-										<Link to={`/blog?category=${c.slug}`}>{c.name}</Link>
+										<Link to={`/blog?category=${c.slug}`} prefetch="intent">
+											{c.name}
+										</Link>
 									</Button>
 									{i < post.categories.length - 1 && (
 										<span className="px-1.5">&</span>
