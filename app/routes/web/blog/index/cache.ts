@@ -32,6 +32,16 @@ export async function fetchPosts(
 		tags,
 		title: q,
 	})
+	cleanupExpiredEntries()
 
 	return { meta, posts, categoriesFilter, tagsFilter }
+}
+
+function cleanupExpiredEntries() {
+	const now = Date.now()
+	for (const [key, entry] of postsServerMemoryCache.entries()) {
+		if (entry.expiresAt <= now) {
+			postsServerMemoryCache.delete(key)
+		}
+	}
 }

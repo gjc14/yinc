@@ -25,6 +25,16 @@ export async function fetchPost(postSlug: string, url: URL) {
 		postSlug,
 		'PUBLISHED',
 	)
+	cleanupExpiredEntries()
 
 	return { meta, post, nextPost, prevPost }
+}
+
+function cleanupExpiredEntries() {
+	const now = Date.now()
+	for (const [key, entry] of postServerMemoryCache.entries()) {
+		if (entry.expiresAt <= now) {
+			postServerMemoryCache.delete(key)
+		}
+	}
 }

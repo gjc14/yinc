@@ -26,22 +26,16 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
 	// cache hit
 	if (entry && entry.data && entry.expiresAt > now) {
-		console.log('server cache hit', cacheKey)
 		return data(entry.data, { headers })
-	}
-	if (entry && entry.expiresAt < now) {
-		console.log('server cache stale', cacheKey)
 	}
 
 	// inflight dedupe
 	if (entry?.promise) {
-		console.log('server cache inflight', cacheKey)
 		const payload = await entry.promise
 		return data(payload, { headers })
 	}
 
 	// cache miss
-	console.log('server cache miss', cacheKey)
 	const promise = fetchPosts(url, categories, tags, q)
 	postsServerMemoryCache.set(cacheKey, { expiresAt: 0, promise })
 
