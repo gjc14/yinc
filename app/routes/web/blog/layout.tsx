@@ -42,26 +42,28 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 	const tags = url.searchParams.get('tag')?.split(',')
 
 	if (postSlug) {
-		process.env.NODE_ENV === 'development' && console.time('getPosts:single')
+		process.env.NODE_ENV === 'development' && console.time('getPostBySlug')
 		// Enter directly to a post
-		const { post } = await getPostBySlug(
+		const { post, nextPost, prevPost } = await getPostBySlug(
 			postSlug,
 			preview ? 'DRAFT' : 'PUBLISHED',
 		)
-		process.env.NODE_ENV === 'development' && console.timeEnd('getPosts:single')
+		process.env.NODE_ENV === 'development' && console.timeEnd('getPostBySlug')
 		return {
 			searchParams: searchParams.toString(),
 			meta,
 			posts: post ? [post] : [],
+			nextPost,
+			prevPost,
 		}
 	} else {
-		process.env.NODE_ENV === 'development' && console.time('getPosts:many')
+		process.env.NODE_ENV === 'development' && console.time('getPosts')
 		const { posts, categoriesFilter, tagsFilter } = await getPosts({
 			status: 'PUBLISHED',
-			categorySlugs: categories,
-			tagSlugs: tags,
+			categories,
+			tags,
 		})
-		process.env.NODE_ENV === 'development' && console.timeEnd('getPosts:many')
+		process.env.NODE_ENV === 'development' && console.timeEnd('getPosts')
 		return {
 			searchParams: searchParams.toString(),
 			meta,

@@ -6,16 +6,23 @@ import { ArrowLeft, HeartCrack } from 'lucide-react'
 import { Post } from '../components/post'
 
 export default function BlogPost({ matches, params }: Route.ComponentProps) {
-	const { posts } = matches[2].data
+	const { posts, nextPost: nextServer, prevPost: prevServer } = matches[2].data
 	const { search } = useLocation()
 
 	const currentPostIndex = posts.findIndex(
 		post => post.slug === params.postSlug,
 	)
 	const currentPost = currentPostIndex !== -1 ? posts[currentPostIndex] : null
-	const nextPost =
-		currentPostIndex < posts.length - 1 ? posts[currentPostIndex + 1] : null
-	const prevPost = currentPostIndex > 0 ? posts[currentPostIndex - 1] : null
+	const nextPost = nextServer
+		? nextServer
+		: currentPostIndex < posts.length - 1
+			? posts[currentPostIndex + 1]
+			: null
+	const prevPost = prevServer
+		? prevServer
+		: currentPostIndex > 0
+			? posts[currentPostIndex - 1]
+			: null
 
 	if (!currentPost) {
 		return (
