@@ -1,12 +1,66 @@
 import type { Route } from './+types/route'
-import { Link } from 'react-router'
 
 import { Badge } from '~/components/ui/badge'
+import { getPosts } from '~/lib/db/post.server'
+import { getSEO } from '~/lib/db/seo.server'
+import { createMeta } from '~/lib/utils/seo'
 
 import { PostCollection } from '../components/posts'
 
-export default function Index({ matches }: Route.ComponentProps) {
-	const { meta, posts, categoriesFilter, tagsFilter } = matches[2].data
+export const meta = ({ data }: Route.MetaArgs) => {
+	if (!data || !data.meta) {
+		return [{ name: 'title', content: 'Blog' }]
+	}
+	return data.meta.metaTags
+}
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+	const url = new URL(request.url)
+
+	const { seo } = await getSEO(url.pathname)
+	const meta = seo ? createMeta(seo, url) : null
+
+	const { searchParams } = url
+	const categories = url.searchParams.get('category')?.split(',')
+	const tags = url.searchParams.get('tag')?.split(',')
+
+	process.env.NODE_ENV === 'development' && console.time('getPosts')
+	const { posts, categoriesFilter, tagsFilter } = await getPosts({
+		status: 'PUBLISHED',
+		categories,
+		tags,
+	})
+	process.env.NODE_ENV === 'development' && console.timeEnd('getPosts')
+	return {
+		searchParams: searchParams.toString(),
+		meta,
+		posts,
+		categoriesFilter,
+		tagsFilter,
+	}
+}
+
+let cache: Awaited<ReturnType<typeof loader>> | null = null
+
+export const clientLoader = async ({
+	request,
+	serverLoader,
+}: Route.ClientLoaderArgs) => {
+	if (cache) {
+		if (cache.searchParams === new URL(request.url).searchParams.toString()) {
+			return cache
+		}
+	}
+
+	const data = await serverLoader()
+	cache = data
+	return data
+}
+
+clientLoader.hydrate = true
+
+export default function Index({ loaderData }: Route.ComponentProps) {
+	const { meta, posts, categoriesFilter, tagsFilter } = loaderData
 
 	const isCategoryFiltering = categoriesFilter && categoriesFilter.length > 0
 	const isTagFiltering = tagsFilter && tagsFilter.length > 0
