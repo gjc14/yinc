@@ -23,8 +23,6 @@ import {
 	UndoRedoOptions,
 } from './edit-options'
 
-export const isToolbarOpenAtom = atom(true)
-
 const getColors = () =>
 	Object.entries(tailwindColors)
 		.filter(([name, value]) => typeof value !== 'string')

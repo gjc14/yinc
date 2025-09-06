@@ -43,9 +43,8 @@ export const PostSettings = () => {
 						</SheetClose>
 					</SheetDescription>
 				</SheetHeader>
-				<section className="px-3 pb-6">
-					<SettingsForm />
-				</section>
+
+				<SettingsForm />
 			</SheetContent>
 		</Sheet>
 	)
@@ -53,7 +52,7 @@ export const PostSettings = () => {
 
 const SettingsForm = () => {
 	return (
-		<section className="flex w-full grow flex-col gap-5">
+		<section className="flex w-full grow flex-col gap-5 px-3 pb-6">
 			<PostMetaPart />
 			<Separator />
 			<TaxonomyPart />
