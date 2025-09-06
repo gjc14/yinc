@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, like, sql, SQL } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 
 import { db, type TransactionType } from '~/lib/db/db.server'
 import type { Category, Post, Seo, Tag } from '~/lib/db/schema'
@@ -24,11 +24,16 @@ export type PostWithRelations = Post & {
 	author: User | null
 }
 
+/**
+ * Get posts with optional filters.
+ * @param props - The filters to apply when fetching posts.
+ * @returns The posts that match the filters.
+ */
 export const getPosts = async (
 	props: {
 		status?: PostStatus | 'ALL'
-		categorySlugs?: string[]
-		tagSlugs?: string[]
+		categories?: string[]
+		tags?: string[]
 		title?: string
 	} = {},
 ): Promise<{
@@ -36,96 +41,88 @@ export const getPosts = async (
 	categoriesFilter?: Category[]
 	tagsFilter?: Tag[]
 }> => {
-	const { status = 'PUBLISHED', categorySlugs, tagSlugs, title } = props
+	const {
+		status = 'PUBLISHED',
+		categories: categorySlugs = [],
+		tags: tagSlugs = [],
+		title,
+	} = props
 
-	// Build where conditions array
-	const whereConditions: SQL[] = []
-
-	// Status filter
-	if (status !== 'ALL') {
-		whereConditions.push(eq(postTable.status, status))
-	}
-
-	// Title filter
-	if (title) {
-		whereConditions.push(like(postTable.title, `%${title}%`))
-	}
-
-	let filteredPostIds: number[] | undefined = undefined
-	let categories: Category[] | undefined = undefined
-	let tags: Tag[] | undefined = undefined
-
-	// Get post IDs filtered by categories
-	if (categorySlugs && categorySlugs.length > 0) {
-		const { categoriessWithPostIds, postIds } =
-			await getPostIdsByCategorySlugs(categorySlugs)
-		categories = categoriessWithPostIds
-		filteredPostIds = [...postIds]
-	}
-
-	// Get post IDs filtered by tags (intersect with category filter if exists)
-	if (tagSlugs && tagSlugs.length > 0) {
-		const { tagsWithPostIds, postIds } = await getPostIdsByTagSlugs(tagSlugs)
-		tags = tagsWithPostIds
-		if (filteredPostIds) {
-			// Intersection: posts must have both category and tag filters
-			filteredPostIds = filteredPostIds.filter(id => postIds.includes(id))
-		} else {
-			filteredPostIds = [...postIds]
-		}
-	}
-
-	// Add post ID filter if we have filtered IDs
-	if (filteredPostIds && filteredPostIds.length > 0) {
-		whereConditions.push(inArray(postTable.id, filteredPostIds))
-	} else if (filteredPostIds && filteredPostIds.length === 0) {
-		// No posts match the filters, return empty result early
-		return {
-			posts: [],
-			categoriesFilter: categories,
-			tagsFilter: tags,
-		}
-	}
-
-	// Combine all where conditions
-	const whereClause =
-		whereConditions.length > 0
-			? whereConditions.length === 1
-				? whereConditions[0]
-				: and(...whereConditions)
-			: undefined
-
-	const postsRaw = await db.query.post.findMany({
-		where: whereClause,
-		orderBy: desc(postTable.createdAt),
-		with: {
-			author: true,
-			seo: true,
-			postToTag: {
-				with: {
-					tag: true,
-				},
-			},
-			postToCategory: {
-				with: {
-					category: true,
-				},
-			},
-		},
-	})
-
-	const posts = postsRaw.map(post => {
-		return {
-			...post,
-			tags: post.postToTag.map(association => association.tag),
-			categories: post.postToCategory.map(association => association.category),
-		}
-	})
+	const [postData, tagsData, categoriesData] = await Promise.all([
+		db.execute(sql`
+		SELECT DISTINCT ON (p.id)
+			p.*,
+			row_to_json(u) AS author,
+			row_to_json(s) AS seo,
+			(
+				SELECT json_agg(row_to_json(t))
+				FROM ${postToTag} pt
+				JOIN ${tagTable} t ON pt.tag_id = t.id
+				WHERE pt.post_id = p.id
+			) AS tags,
+			(
+				SELECT json_agg(row_to_json(c))
+				FROM ${postToCategory} pc
+				JOIN ${categoryTable} c ON pc.category_id = c.id
+				WHERE pc.post_id = p.id
+			) AS categories
+		FROM ${postTable} p
+		LEFT JOIN ${postToTag} pt ON p.id = pt.post_id
+		LEFT JOIN ${tagTable} t ON pt.tag_id = t.id
+		LEFT JOIN ${postToCategory} pc ON p.id = pc.post_id
+		LEFT JOIN ${categoryTable} c ON pc.category_id = c.id
+		LEFT JOIN ${user} u ON p.author_id = u.id
+		LEFT JOIN ${seoTable} s ON p.id = s.post_id
+		WHERE (
+			${status !== 'ALL' ? sql`p.status = ${status}` : sql`TRUE`}
+			AND (${title ? sql`p.title ILIKE ${'%' + title + '%'}` : sql`TRUE`})
+			AND (${
+				tagSlugs.length > 0
+					? sql`t.slug = ANY(ARRAY[${sql.join(
+							tagSlugs.map(s => sql`${s}`),
+							sql`, `,
+						)}])`
+					: sql`TRUE`
+			})
+			AND (${
+				categorySlugs.length > 0
+					? sql`c.slug = ANY(ARRAY[${sql.join(
+							categorySlugs.map(s => sql`${s}`),
+							sql`, `,
+						)}])`
+					: sql`TRUE`
+			})
+			-- more conditions
+		)
+	`),
+		tagSlugs.length > 0
+			? db.execute(sql`
+						SELECT *
+						FROM ${tagTable}
+						WHERE ${tagTable.slug} = ANY(ARRAY[${sql.join(
+							tagSlugs.map(s => sql`${s}`),
+							sql`, `,
+						)}])
+					`)
+			: { rows: [] },
+		categorySlugs.length > 0
+			? db.execute(sql`
+						SELECT *
+						FROM ${categoryTable}
+						WHERE ${categoryTable.slug} = ANY(ARRAY[${sql.join(
+							categorySlugs.map(s => sql`${s}`),
+							sql`, `,
+						)}])
+					`)
+			: { rows: [] },
+	])
 
 	return {
-		posts,
-		categoriesFilter: categories,
-		tagsFilter: tags,
+		posts: convertDateFields(
+			snakeToCamel(postData.rows),
+		) as PostWithRelations[],
+		tagsFilter: tagsData.rows as Tag[],
+		categoriesFilter: categoriesData.rows as Category[],
 	}
 }
 

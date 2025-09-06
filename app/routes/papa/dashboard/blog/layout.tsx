@@ -12,7 +12,6 @@ import { getCache, setCache } from './layout-cache'
 export const loader = async () => {
 	try {
 		console.time('blog-loader')
-		// TODO: Post fetching should be optimized
 		const [postsData, tagsData, categoriesData] = await Promise.all([
 			getPosts({ status: 'ALL' }),
 			getTags(),
