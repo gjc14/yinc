@@ -1,4 +1,3 @@
-import { atom } from 'jotai'
 import { Baseline, Paintbrush } from 'lucide-react'
 import tailwindColors from 'tailwindcss/colors.js'
 
@@ -55,7 +54,7 @@ export function Toolbar({
 			>
 				<div
 					id="buttons"
-					className="mx-auto flex h-fit w-fit flex-1 items-center justify-start gap-0.25 p-1"
+					className="mx-auto flex h-fit w-fit flex-1 items-center justify-start gap-0.25 px-3 py-1"
 				>
 					{/* Undo/Redo */}
 					{UndoRedoOptions.map(

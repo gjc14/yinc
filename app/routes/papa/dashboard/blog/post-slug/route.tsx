@@ -28,7 +28,7 @@ import {
 	tagsAtom,
 } from '../context'
 import type { action } from '../resource'
-import { FloatingTools } from './floating-tools'
+import { FloatingToolbar } from './floating-toolbar'
 import { generateNewPost } from './utils'
 
 export default function DashboardSlugPost({
@@ -177,7 +177,7 @@ export default function DashboardSlugPost({
 		<div className="relative h-full overflow-hidden">
 			{/* Editor toolbar self positioning */}
 			<Toolbar isMobile={isMobile} />
-			<FloatingTools onSave={handleSave} isCreate={isCreate} />
+			<FloatingToolbar onSave={handleSave} isCreate={isCreate} />
 
 			<LocalStorageCheck />
 			<PostResetAlert onReset={handleReset} />

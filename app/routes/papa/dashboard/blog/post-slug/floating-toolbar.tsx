@@ -4,6 +4,7 @@ import { useAtom } from 'jotai'
 import { ExternalLink, Loader2, RotateCcw, Settings } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
+import { useIsMobile } from '~/hooks/use-mobile'
 
 import {
 	hasChangesAtom,
@@ -13,13 +14,14 @@ import {
 	postAtom,
 } from '../context'
 
-export const FloatingTools = ({
+export const FloatingToolbar = ({
 	onSave,
 	isCreate,
 }: {
 	onSave: () => void
 	isCreate: boolean
 }) => {
+	const isMobile = useIsMobile()
 	const navigate = useNavigate()
 	const [hasChanges] = useAtom(hasChangesAtom)
 
@@ -31,7 +33,9 @@ export const FloatingTools = ({
 	if (!post) return null
 
 	return (
-		<div className="absolute bottom-8 left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center rounded-full border bg-white/50 p-1 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
+		<div
+			className={`absolute ${isMobile ? 'bottom-12' : 'bottom-8'} left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center gap-1 rounded-full border bg-white/50 py-1 pr-1 pl-1.5 shadow-md ring-1 ring-black/5 backdrop-blur-sm dark:bg-black/50`}
+		>
 			{/* Preview */}
 			{!isCreate && (
 				<Button
@@ -53,8 +57,8 @@ export const FloatingTools = ({
 			{/* Discard */}
 			<Button
 				size={'sm'}
-				variant={'ghost'}
-				className="text-destructive hover:bg-destructive rounded-full hover:text-white"
+				variant={'destructive'}
+				className="hover:text-destructive rounded-full border border-transparent hover:border-current hover:bg-transparent"
 				disabled={!hasChanges || isSaving}
 				onClick={() => setIsResetAlertOpen(true)}
 			>
@@ -66,8 +70,8 @@ export const FloatingTools = ({
 			<Button
 				type="submit"
 				size={'sm'}
-				variant={'ghost'}
-				className="hover:bg-primary hover:text-primary-foreground rounded-full"
+				variant={'default'}
+				className="hover:text-primary rounded-full border border-transparent hover:border-current hover:bg-transparent"
 				disabled={!hasChanges || isSaving}
 				onClick={onSave}
 			>
