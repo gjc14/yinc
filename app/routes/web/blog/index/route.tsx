@@ -1,11 +1,10 @@
 import type { Route } from './+types/route'
+import { data } from 'react-router'
 
 import { Badge } from '~/components/ui/badge'
-import { getPosts } from '~/lib/db/post.server'
-import { getSEO } from '~/lib/db/seo.server'
-import { createMeta } from '~/lib/utils/seo'
 
 import { PostCollection } from '../components/posts'
+import { fetchPosts, headers, postsServerMemoryCache, TTL } from './cache'
 
 export const meta = ({ data }: Route.MetaArgs) => {
 	if (!data || !data.meta) {
@@ -16,49 +15,44 @@ export const meta = ({ data }: Route.MetaArgs) => {
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
 	const url = new URL(request.url)
-
-	const { seo } = await getSEO(url.pathname)
-	const meta = seo ? createMeta(seo, url) : null
-
 	const { searchParams } = url
-	const categories = url.searchParams.get('category')?.split(',')
-	const tags = url.searchParams.get('tag')?.split(',')
+	const categories = searchParams.get('category')?.split(',')
+	const tags = searchParams.get('tag')?.split(',')
+	const q = searchParams.get('q') || undefined
 
-	process.env.NODE_ENV === 'development' && console.time('getPosts')
-	const { posts, categoriesFilter, tagsFilter } = await getPosts({
-		status: 'PUBLISHED',
-		categories,
-		tags,
+	const cacheKey = searchParams.toString()
+	const now = Date.now()
+	const entry = postsServerMemoryCache.get(cacheKey)
+
+	// cache hit
+	if (entry && entry.data && entry.expiresAt > now) {
+		console.log('server cache hit', cacheKey)
+		return data(entry.data, { headers })
+	}
+	if (entry && entry.expiresAt < now) {
+		console.log('server cache stale', cacheKey)
+	}
+
+	// inflight dedupe
+	if (entry?.promise) {
+		console.log('server cache inflight', cacheKey)
+		const payload = await entry.promise
+		return data(payload, { headers })
+	}
+
+	// cache miss
+	console.log('server cache miss', cacheKey)
+	const promise = fetchPosts(url, categories, tags, q)
+	postsServerMemoryCache.set(cacheKey, { expiresAt: 0, promise })
+
+	const payload = await promise
+	postsServerMemoryCache.set(cacheKey, {
+		data: payload,
+		expiresAt: Date.now() + TTL,
 	})
-	process.env.NODE_ENV === 'development' && console.timeEnd('getPosts')
-	return {
-		searchParams: searchParams.toString(),
-		meta,
-		posts,
-		categoriesFilter,
-		tagsFilter,
-	}
+
+	return data(payload, { headers })
 }
-
-export let cache: Awaited<ReturnType<typeof loader>> | null = null
-
-export const clientLoader = async ({
-	request,
-	serverLoader,
-}: Route.ClientLoaderArgs) => {
-	if (
-		cache &&
-		cache.searchParams === new URL(request.url).searchParams.toString()
-	) {
-		return cache
-	}
-
-	const data = await serverLoader()
-	cache = data
-	return data
-}
-
-clientLoader.hydrate = true
 
 export default function Index({ loaderData }: Route.ComponentProps) {
 	const { meta, posts, categoriesFilter, tagsFilter } = loaderData
