@@ -19,12 +19,15 @@ import { capitalize } from '~/lib/utils'
 
 export const HeaderWithBreadcrumbs = () => {
 	return (
-		<header className="my-2 flex shrink-0 items-center gap-2">
-			<div className="flex items-center gap-2 px-4">
+		<header className="flex w-full shrink-0 items-center gap-2 overflow-scroll border-b px-4 py-2">
+			<div className="flex items-center gap-2">
 				<SidebarTrigger className="-ml-1 cursor-pointer" />
 				<Separator orientation="vertical" className="mr-2 h-4" />
 				<DashboardBreadcrumbs />
 			</div>
+			{/* <div className="ml-auto flex items-center gap-2">
+				<Button size="sm">Hey Yo</Button>
+			</div> */}
 		</header>
 	)
 }
@@ -43,7 +46,7 @@ const DashboardBreadcrumbs = () => {
 
 	return (
 		<Breadcrumb>
-			<BreadcrumbList>
+			<BreadcrumbList className="flex w-full flex-nowrap">
 				{paths.map((path, i) => {
 					const link = `/${paths.slice(0, i + 1).join('/')}`
 					const name = getPathName(path)
@@ -57,7 +60,7 @@ const DashboardBreadcrumbs = () => {
 											<NavLink
 												to={link}
 												className={({ isActive }) =>
-													`${isActive ? 'text-primary' : 'hover:text-primary'} max-w-32 overflow-hidden text-sm text-nowrap text-ellipsis`
+													`${isActive ? 'text-primary' : 'hover:text-primary'} max-w-20 overflow-hidden text-sm text-nowrap text-ellipsis md:max-w-36`
 												}
 												end
 											>

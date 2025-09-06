@@ -128,7 +128,7 @@ export default function Blog() {
 
 			{isLoading && showLoading && (
 				<>
-					<div className="fixed inset-0 z-10 bg-black/50" />
+					<div className="fixed inset-0 z-10 bg-white/50 dark:bg-black/50" />
 					<BlogLoading />
 				</>
 			)}
