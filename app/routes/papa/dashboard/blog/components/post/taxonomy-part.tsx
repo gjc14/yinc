@@ -35,24 +35,15 @@ export const TaxonomyPart = () => {
 							value: String(c.id),
 						}))}
 						onSelectedChange={areSelected => {
-							const selectedCat = categories.filter(c =>
-								areSelected.some(s => +s.value === c.id),
-							)
-
-							const newCatValues = areSelected
-								.filter(
-									selected =>
-										!categories.some(c => String(c.id) === selected.value),
+							const newCategories = areSelected.map(selected => {
+								const existing = categories.find(
+									c => String(c.id) === selected.value,
 								)
-								.map(nc => generateNewCategory(nc.label))
+								return existing ?? generateNewCategory(selected.label)
+							})
 
 							setPost(prev =>
-								prev
-									? {
-											...prev,
-											categories: [...selectedCat, ...newCatValues],
-										}
-									: prev,
+								prev ? { ...prev, categories: newCategories } : prev,
 							)
 						}}
 					/>
@@ -72,24 +63,12 @@ export const TaxonomyPart = () => {
 							value: String(t.id),
 						}))}
 						onSelectedChange={areSelected => {
-							const selectedTags = tags.filter(t =>
-								areSelected.some(s => +s.value === t.id),
-							)
+							const newTags = areSelected.map(selected => {
+								const existing = tags.find(t => String(t.id) === selected.value)
+								return existing ?? generateNewTag(selected.label)
+							})
 
-							const newTagValues = areSelected
-								.filter(
-									selected => !tags.some(t => String(t.id) === selected.value),
-								)
-								.map(newTag => generateNewTag(newTag.label))
-
-							setPost(prev =>
-								prev
-									? {
-											...prev,
-											tags: [...selectedTags, ...newTagValues],
-										}
-									: prev,
-							)
+							setPost(prev => (prev ? { ...prev, tags: newTags } : prev))
 						}}
 					/>
 				</div>
