@@ -40,16 +40,17 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 	}
 }
 
-let cache: Awaited<ReturnType<typeof loader>> | null = null
+export let cache: Awaited<ReturnType<typeof loader>> | null = null
 
 export const clientLoader = async ({
 	request,
 	serverLoader,
 }: Route.ClientLoaderArgs) => {
-	if (cache) {
-		if (cache.searchParams === new URL(request.url).searchParams.toString()) {
-			return cache
-		}
+	if (
+		cache &&
+		cache.searchParams === new URL(request.url).searchParams.toString()
+	) {
+		return cache
 	}
 
 	const data = await serverLoader()

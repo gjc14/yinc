@@ -1,5 +1,5 @@
 import type { Route } from './+types/route'
-import { Link, useLocation } from 'react-router'
+import { data, Link, useLocation } from 'react-router'
 
 import { ArrowLeft, HeartCrack } from 'lucide-react'
 
@@ -8,6 +8,7 @@ import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 
 import { Post } from '../components/post'
+import { fetchPost, headers, postServerMemoryCache, TTL } from './cache'
 
 export const meta = ({ data }: Route.MetaArgs) => {
 	if (!data || !data.post || !data.meta) {
@@ -18,27 +19,56 @@ export const meta = ({ data }: Route.MetaArgs) => {
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
 	const url = new URL(request.url)
-	const { searchParams } = url
+	const { searchParams, pathname } = url
 	const preview = searchParams.get('preview') === 'true'
-
-	const { seo } = await getSEO(url.pathname)
-	const meta = seo ? createMeta(seo, url) : null
 
 	const { postSlug } = params
 
-	process.env.NODE_ENV === 'development' && console.time('getPostBySlug')
-	const { post, nextPost, prevPost } = await getPostBySlug(
-		postSlug,
-		preview ? 'DRAFT' : 'PUBLISHED',
-	)
-	process.env.NODE_ENV === 'development' && console.timeEnd('getPostBySlug')
-
-	return {
-		meta,
-		post,
-		nextPost,
-		prevPost,
+	if (preview) {
+		const { seo } = await getSEO(pathname)
+		const meta = seo ? createMeta(seo, url) : null
+		const { post, nextPost, prevPost } = await getPostBySlug(postSlug, 'DRAFT')
+		return data(
+			{ meta, post, nextPost, prevPost },
+			{
+				headers: {
+					'Cache-Control': 'no-store',
+				},
+			},
+		)
 	}
+
+	const now = Date.now()
+	const entry = postServerMemoryCache.get(postSlug)
+
+	// cache hit
+	if (entry && entry.data && entry.expiresAt > now) {
+		console.log('server cache hit', postSlug)
+		return data(entry.data, { headers })
+	}
+	if (entry && entry.expiresAt < now) {
+		console.log('server cache stale', postSlug)
+	}
+
+	// inflight dedupe
+	if (entry?.promise) {
+		console.log('server cache inflight', postSlug)
+		const payload = await entry.promise
+		return data(payload, { headers })
+	}
+
+	// cache miss
+	console.log('server cache miss', postSlug)
+	const promise = fetchPost(postSlug, url)
+	postServerMemoryCache.set(postSlug, { expiresAt: 0, promise })
+
+	const payload = await promise
+	postServerMemoryCache.set(postSlug, {
+		data: payload,
+		expiresAt: Date.now() + TTL,
+	})
+
+	return data(payload, { headers })
 }
 
 export default function BlogPost({ loaderData }: Route.ComponentProps) {
