@@ -2,7 +2,7 @@ import { relations, type InferSelectModel } from 'drizzle-orm'
 import { index, integer, text, uuid, varchar } from 'drizzle-orm/pg-core'
 
 import { user } from './auth'
-import { pgTable, timestampAttributes } from './helpers'
+import { deletedAtAttribute, pgTable, timestampAttributes } from './helpers'
 
 export type FileMetadata = InferSelectModel<typeof file>
 
@@ -16,7 +16,6 @@ export const file = pgTable(
 		name: varchar('name', { length: 255 }).notNull(),
 		description: varchar('description', { length: 255 }),
 		star: integer('star').default(0),
-		garbage: integer('garbage').default(0),
 
 		ownerId: text('owner_id').references(() => user.id, {
 			onDelete: 'set null',
@@ -24,6 +23,7 @@ export const file = pgTable(
 		public: integer('public').default(0),
 
 		...timestampAttributes,
+		...deletedAtAttribute,
 	},
 	t => [
 		index('file_owner_id_idx').on(t.ownerId),
