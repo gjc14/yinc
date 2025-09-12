@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-import { deleteFile, getUploadUrl } from '~/lib/db/asset.server'
+import { deleteFile, getUploadPresignedURL } from '~/lib/db/asset.server'
 import { db, S3 } from '~/lib/db/db.server'
 import type { FileMetadata } from '~/lib/db/schema'
 import { file as fileTable } from '~/lib/db/schema'
@@ -43,7 +43,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				// Generate file metadata
 				const presignedUrls = await Promise.all(
 					presignUrlRequests.map(async file => {
-						const presignedUrl = await getUploadUrl({
+						const presignedUrl = await getUploadPresignedURL({
 							key: file.key,
 							size: file.size,
 							type: file.type,

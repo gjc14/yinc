@@ -10,7 +10,15 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 import { S3 } from '~/lib/db/db.server'
 
-export const getUploadUrl = async ({
+/**
+ * Generate a presigned URL for uploading a file to object storage
+ * @param key - object key
+ * @param size - File size in bytes
+ * @param type - MIME type of the file
+ * @param checksum - SHA256 checksum of the file
+ * @returns string - Presigned URL
+ */
+export const getUploadPresignedURL = async ({
 	key,
 	size,
 	type,
@@ -42,6 +50,11 @@ export const getUploadUrl = async ({
 	}
 }
 
+/**
+ * Generate a presigned URL for downloading a file from object storage
+ * @param key - object key
+ * @returns string - Presigned URL
+ */
 export const getFileUrl = async (key: string) => {
 	if (!S3) throw new Error('S3 client not initialized')
 
@@ -59,7 +72,7 @@ export const getFileUrl = async (key: string) => {
 
 /**
  * Please handle the error in the caller function
- * @param key
+ * @param key - object key
  * @returns void
  */
 export const deleteFile = async (key: string) => {
