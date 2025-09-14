@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { Fragment } from 'react/jsx-runtime'
 
 import { generateHTML } from '@tiptap/html'
+import { format } from 'date-fns/format'
 import { LibraryBig } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -11,19 +12,21 @@ import ExtensionKit from '~/components/editor/extensions/extension-kit'
 import { useHydrated } from '~/hooks/use-hydrated'
 import type { PostWithRelations } from '~/lib/db/post.server'
 
+import { estimateReadingTime } from '../../utils'
+
 export function PostMeta({ post }: { post: PostWithRelations }) {
 	const isHydrated = useHydrated()
 
 	const readTime =
 		isHydrated &&
 		(post.content
-			? Math.ceil(
+			? estimateReadingTime(
 					generateHTML(
 						JSON.parse(post.content),
 						ExtensionKit({ openOnClick: true }),
-					).length / 300,
+					),
 				)
-			: 0) + ` minutes read`
+			: 0) + ` min read`
 
 	return (
 		<div className="mx-auto w-full py-2">
@@ -46,7 +49,7 @@ export function PostMeta({ post }: { post: PostWithRelations }) {
 							{post.author?.name || post.author?.email}
 						</Button>
 						<div className="text-muted-foreground flex items-center gap-1 text-sm text-wrap">
-							<span>{post.updatedAt.toDateString()}</span>
+							<span>{format(post.createdAt, 'MMM d, yyyy')}</span>
 							<span className="px-1">·</span>
 							<span>{readTime}</span>
 						</div>
