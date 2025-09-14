@@ -89,7 +89,7 @@ export const TagsSection = ({ tags }: { tags: TagType[] }) => {
 	)
 
 	return (
-		<div className="col-span-1 flex h-full flex-col rounded-lg border p-4 shadow-xs sm:col-span-2 lg:col-span-1">
+		<div className="flex min-h-0 flex-1 flex-col rounded-lg border p-4 shadow-xs lg:h-full lg:flex-none">
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">標籤</h2>
 				<Dialog>

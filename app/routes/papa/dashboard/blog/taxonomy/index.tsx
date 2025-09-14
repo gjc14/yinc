@@ -1,6 +1,7 @@
 import type { Route } from './+types'
 import { useMemo, useState } from 'react'
 
+import { Button } from '~/components/ui/button'
 import {
 	DashboardActions,
 	DashboardContent,
@@ -50,7 +51,7 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 				return {
 					...tag,
 					posts: postsLoader.filter(post =>
-						post.tags.map(t => t.id).includes(tag.id),
+						(post.tags ?? []).map(t => t.id).includes(tag.id),
 					),
 				}
 			}),
@@ -76,7 +77,7 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 						),
 					],
 					posts: postsLoader.filter(post =>
-						post.categories.map(c => c.id).includes(category.id),
+						(post.categories ?? []).map(c => c.id).includes(category.id),
 					),
 				}
 			}),
@@ -96,6 +97,11 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 		[categories, selectedCategoryId],
 	)
 
+	// Panel for mobile to show selected taxonomy
+	const [activePanel, setActivePanel] = useState<
+		'tags' | 'categories' | 'hierarchy'
+	>('tags')
+
 	return (
 		<DashboardSectionWrapper>
 			<DashboardHeader>
@@ -106,7 +112,7 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 				<DashboardActions></DashboardActions>
 			</DashboardHeader>
 
-			<DashboardContent className="grid grid-cols-1 grid-rows-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			<DashboardContent className="hidden gap-6 lg:grid lg:grid-cols-3 lg:grid-rows-1">
 				{/* Tags Section (Left) */}
 				<TagsSection tags={tags} />
 
@@ -119,6 +125,54 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 
 				{/* Category Hierarchy Section (Right) */}
 				<CategoryHierarchySection category={selectedCategory} />
+			</DashboardContent>
+
+			<DashboardContent className="flex min-h-0 flex-1 flex-col gap-3 lg:hidden">
+				{/* Tabs */}
+				<div className="border-primary/20 grid h-fit w-full grid-cols-3 rounded-full border p-1">
+					<Button
+						variant={activePanel === 'tags' ? 'default' : 'ghost'}
+						size={'sm'}
+						onClick={() => setActivePanel('tags')}
+						aria-pressed={activePanel === 'tags'}
+						className="rounded-full"
+					>
+						<span className="truncate">Tags</span>
+					</Button>
+					<Button
+						variant={activePanel === 'categories' ? 'default' : 'ghost'}
+						size={'sm'}
+						onClick={() => setActivePanel('categories')}
+						aria-pressed={activePanel === 'categories'}
+						className="rounded-full"
+					>
+						<span className="truncate">Categories</span>
+					</Button>
+					<Button
+						variant={activePanel === 'hierarchy' ? 'default' : 'ghost'}
+						size={'sm'}
+						onClick={() => setActivePanel('hierarchy')}
+						aria-pressed={activePanel === 'hierarchy'}
+						className="rounded-full"
+					>
+						<span className="truncate">Subcategories</span>
+					</Button>
+				</div>
+
+				{/* Panels */}
+				{activePanel === 'tags' && <TagsSection tags={tags} />}
+
+				{activePanel === 'categories' && (
+					<CategoriesSection
+						categories={categories.filter(c => !c.parentId)}
+						selectedCategoryId={selectedCategoryId}
+						setSelectedCategoryId={setSelectedCategoryId}
+					/>
+				)}
+
+				{activePanel === 'hierarchy' && (
+					<CategoryHierarchySection category={selectedCategory} />
+				)}
 			</DashboardContent>
 		</DashboardSectionWrapper>
 	)

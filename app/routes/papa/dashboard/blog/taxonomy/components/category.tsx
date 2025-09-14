@@ -169,7 +169,7 @@ export const CategoriesSection = ({
 	)
 
 	return (
-		<div className="flex h-full flex-col rounded-lg border p-4 shadow-xs">
+		<div className="flex min-h-0 flex-1 flex-col rounded-lg border p-4 shadow-xs lg:h-full lg:flex-none">
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">類別</h2>
 				<Dialog>
@@ -287,7 +287,7 @@ export const CategoryHierarchySection = ({
 		) || []
 
 	return (
-		<div className="flex h-full flex-col rounded-lg border p-4 shadow-xs">
+		<div className="flex min-h-0 flex-1 flex-col rounded-lg border p-4 shadow-xs lg:h-full lg:flex-none">
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">
 					{category ? `${category?.name} 的子類別` : '子類別'}
