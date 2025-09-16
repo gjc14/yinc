@@ -226,7 +226,7 @@ export const getPost = async (
 
 export const getPostBySlug = async (
 	slug: string,
-	status: PostStatus = 'PUBLISHED',
+	status: PostStatus | 'EDIT' = 'PUBLISHED',
 ): Promise<{
 	post: PostWithRelations | null
 	prevPost: Pick<PostWithRelations, 'slug' | 'title'> | null
@@ -241,7 +241,7 @@ export const getPostBySlug = async (
 				LAG(p.id) OVER (ORDER BY p.updated_at) AS prev_id,
 				LEAD(p.id) OVER (ORDER BY p.updated_at) AS next_id
 			FROM ${postTable} p
-			WHERE p.status = ${status}
+			WHERE ${status === 'EDIT' ? sql`TRUE` : sql`p.status = ${status}`}
 			ORDER BY p.updated_at
 		)
 
