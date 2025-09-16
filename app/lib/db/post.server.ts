@@ -54,17 +54,23 @@ export const getPosts = async (
 			p.*,
 			row_to_json(u) AS author,
 			row_to_json(s) AS seo,
-			(
-				SELECT json_agg(row_to_json(t))
-				FROM ${postToTag} pt
-				JOIN ${tagTable} t ON pt.tag_id = t.id
-				WHERE pt.post_id = p.id
+			COALESCE(
+				(
+					SELECT json_agg(row_to_json(t))
+					FROM ${postToTag} pt
+					JOIN ${tagTable} t ON pt.tag_id = t.id
+					WHERE pt.post_id = p.id
+				),
+				'[]'::json
 			) AS tags,
-			(
-				SELECT json_agg(row_to_json(c))
-				FROM ${postToCategory} pc
-				JOIN ${categoryTable} c ON pc.category_id = c.id
-				WHERE pc.post_id = p.id
+			COALESCE(
+				(
+					SELECT json_agg(row_to_json(c))
+					FROM ${postToCategory} pc
+					JOIN ${categoryTable} c ON pc.category_id = c.id
+					WHERE pc.post_id = p.id
+				),
+				'[]'::json
 			) AS categories
 		FROM ${postTable} p
 		LEFT JOIN ${postToTag} pt ON p.id = pt.post_id
@@ -249,17 +255,26 @@ export const getPostBySlug = async (
 			row_to_json(u) AS author,
 			row_to_json(s) AS seo,
 
-			(
-				SELECT json_agg(t)
-				FROM ${postToTag} pt
-				LEFT JOIN ${tagTable} t ON pt.tag_id = t.id
-				WHERE pt.post_id = op.id
+			-- Use coalesce to assign '[]',
+			-- making sure that it returns:
+			--  { tags: [], categories: [] } instead of { tags: null, categories: null }
+			COALESCE(
+				(
+					SELECT json_agg(t)
+					FROM ${postToTag} pt
+					LEFT JOIN ${tagTable} t ON pt.tag_id = t.id
+					WHERE pt.post_id = op.id
+				),
+				'[]'::json
 			) AS tags,
-			(
-				SELECT json_agg(c)
-				FROM ${postToCategory} pc
-				LEFT JOIN ${categoryTable} c ON pc.category_id = c.id
-				WHERE pc.post_id = op.id
+			COALESCE(
+				(
+					SELECT json_agg(c)
+					FROM ${postToCategory} pc
+					LEFT JOIN ${categoryTable} c ON pc.category_id = c.id
+					WHERE pc.post_id = op.id
+				),
+				'[]'::json
 			) AS categories
 		-- From the windowed posts
 		FROM ordered_posts op
