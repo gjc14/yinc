@@ -1,5 +1,5 @@
-import { relations, type InferSelectModel } from 'drizzle-orm'
-import { serial, text, varchar } from 'drizzle-orm/pg-core'
+import { relations, sql, type InferSelectModel } from 'drizzle-orm'
+import { check, serial, text, varchar } from 'drizzle-orm/pg-core'
 
 import { user } from './auth'
 import { pgTable, timestampAttributes } from './helpers'
@@ -17,21 +17,25 @@ export type PostStatus = (typeof PostStatus)[number]
 
 export type Post = InferSelectModel<typeof post>
 
-export const post = pgTable('post', {
-	id: serial('id').primaryKey(),
-	slug: varchar('slug').notNull().unique(),
-	title: varchar('title').notNull(),
-	content: text('content'),
-	excerpt: varchar('excerpt'),
-	featuredImage: varchar('featured_image'),
-	status: varchar('status', { length: 50 }).notNull(),
+export const post = pgTable(
+	'post',
+	{
+		id: serial('id').primaryKey(),
+		slug: varchar('slug').notNull().unique(),
+		title: varchar('title').notNull(),
+		content: text('content'),
+		excerpt: varchar('excerpt'),
+		featuredImage: varchar('featured_image'),
+		status: varchar('status', { length: 50 }).notNull(),
 
-	authorId: text('author_id').references(() => user.id, {
-		onDelete: 'set null',
-	}),
+		authorId: text('author_id').references(() => user.id, {
+			onDelete: 'set null',
+		}),
 
-	...timestampAttributes,
-})
+		...timestampAttributes,
+	},
+	t => [check('prevent_system_slug', sql`${t.slug} != 'new'`)],
+)
 
 export const postRelations = relations(post, ({ one, many }) => ({
 	author: one(user, {
