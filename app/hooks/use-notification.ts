@@ -18,6 +18,9 @@ export function useServerNotification() {
 		fetchers.forEach(fetcher => {
 			const fetcherKey = fetcher.key
 			if (processedFetchersRef.current.has(fetcherKey)) {
+				if (fetcher.state === 'submitting') {
+					processedFetchersRef.current.delete(fetcherKey)
+				}
 				return console.log('already processed', fetcherKey)
 			}
 
