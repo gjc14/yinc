@@ -9,7 +9,7 @@ import { areDifferentPosts } from './utils'
 export const serverPostAtom = atom<PostWithRelations | null>(null) // only for comparison
 export const postAtom = atom<PostWithRelations | null>(null) // actually used
 export const tagsAtom = atom<Tag[]>([])
-export const categoriesAtom = atom<Category[]>([])
+export const categoriesAtom = atom<(Category & { children: Category[] })[]>([])
 export const editorAtom = atom<Editor | null>(null)
 export const editorContentAtom = atom<string | null>(null)
 

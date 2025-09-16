@@ -2,7 +2,6 @@ import { redirect, type ActionFunctionArgs } from 'react-router'
 
 import { z } from 'zod'
 
-import type { Category, Tag } from '~/lib/db/schema'
 import {
 	createCategory,
 	createChildCategory,

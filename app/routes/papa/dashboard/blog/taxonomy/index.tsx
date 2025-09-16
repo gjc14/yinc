@@ -1,7 +1,10 @@
 import type { Route } from './+types'
 import { useMemo, useState } from 'react'
 
+import { useAtom } from 'jotai'
+
 import { Button } from '~/components/ui/button'
+import { getPosts } from '~/lib/db/post.server'
 import {
 	DashboardActions,
 	DashboardContent,
@@ -10,6 +13,7 @@ import {
 	DashboardTitle,
 } from '~/routes/papa/dashboard/components/dashboard-wrapper'
 
+import { categoriesAtom, tagsAtom } from '../context'
 import {
 	CategoriesSection,
 	CategoryHierarchySection,
@@ -24,14 +28,16 @@ import {
 
 export const actionRoute = '/dashboard/blog/taxonomy/resource'
 
+export const loader = async () => {
+	return await getPosts({ status: 'ALL' })
+}
+
 // Main Component
-export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
-	const match = matches[2]
-	const {
-		tags: tagsLoader,
-		categories: categoriesLoader,
-		posts: postsLoader,
-	} = match.data
+export default function DashboardTaxonomy({
+	loaderData: { posts: postsLoader },
+}: Route.ComponentProps) {
+	const [tagsContext] = useAtom(tagsAtom)
+	const [categoriesContext] = useAtom(categoriesAtom)
 
 	const pendingTags: (TagType & { _isPending: true })[] = usePendingTags().map(
 		p => ({ ...p, _isPending: true }),
@@ -47,7 +53,7 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 
 	const tags: (TagType & { _isPending?: true })[] = useMemo(
 		() => [
-			...tagsLoader.map(tag => {
+			...tagsContext.map(tag => {
 				return {
 					...tag,
 					posts: postsLoader.filter(post =>
@@ -56,15 +62,15 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 				}
 			}),
 			...pendingTags.filter(
-				pendingTag => !tagsLoader.some(tag => tag.slug === pendingTag.slug),
+				pendingTag => !tagsContext.some(tag => tag.slug === pendingTag.slug),
 			),
 		],
-		[tagsLoader, postsLoader, pendingTags],
+		[tagsContext, postsLoader, pendingTags],
 	)
 
 	const categories: (CategoryType & { _isPending?: true })[] = useMemo(
 		() => [
-			...categoriesLoader.map(category => {
+			...categoriesContext.map(category => {
 				const thisPendingChildren = pendingChildCategories.filter(
 					pendingChild => pendingChild.parentId === category.id,
 				)
@@ -83,12 +89,12 @@ export default function DashboardTaxonomy({ matches }: Route.ComponentProps) {
 			}),
 			...pendingCategories.filter(
 				pendingCategory =>
-					!categoriesLoader.some(
+					!categoriesContext.some(
 						category => category.slug === pendingCategory.slug,
 					),
 			),
 		],
-		[categoriesLoader, postsLoader, pendingChildCategories, pendingCategories],
+		[categoriesContext, postsLoader, pendingChildCategories, pendingCategories],
 	)
 
 	const selectedCategory = useMemo(
