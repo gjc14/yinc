@@ -4,7 +4,6 @@ import { data, Link, useLocation } from 'react-router'
 import { ArrowLeft, HeartCrack } from 'lucide-react'
 
 import { getPostBySlug } from '~/lib/db/post.server'
-import { getSEO } from '~/lib/db/seo.server'
 import { createMeta } from '~/lib/utils/seo'
 
 import { Post } from '../components/post'
@@ -19,15 +18,15 @@ export const meta = ({ data }: Route.MetaArgs) => {
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
 	const url = new URL(request.url)
-	const { searchParams, pathname } = url
+	const { searchParams } = url
 	const preview = searchParams.get('preview') === 'true'
 
 	const { postSlug } = params
 
 	if (preview) {
-		const { seo } = await getSEO(pathname)
-		const meta = seo ? createMeta(seo, url) : null
 		const { post, nextPost, prevPost } = await getPostBySlug(postSlug, 'DRAFT')
+		const meta = post?.seo ? createMeta(post.seo, url) : null
+
 		return data(
 			{ meta, post, nextPost, prevPost },
 			{
