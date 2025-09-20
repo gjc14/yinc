@@ -6,6 +6,7 @@ import './styles/image-node.css'
 
 import { useCallback, useEffect, useMemo } from 'react'
 
+import { toast } from '@gjc14/sonner'
 import { EditorContent, useEditor } from '@tiptap/react'
 import { useAtom } from 'jotai'
 import debounce from 'lodash/debounce'
@@ -18,6 +19,18 @@ export function ContentEditor() {
 	const [serverPost] = useAtom(serverPostAtom)
 	const [, setEditor] = useAtom(editorAtom)
 	const [, setEditorContent] = useAtom(editorContentAtom)
+
+	// Drop configurations
+	const allowedMimeTypes = [
+		'image/jpeg',
+		'image/png',
+		'image/gif',
+		'image/webp',
+		'image/avif',
+		// apple
+		'image/heic',
+		'image/heif',
+	]
 
 	// Content realtime update for hasChanges check
 	const debouncedSetEditorContent = useMemo(
@@ -42,6 +55,42 @@ export function ContentEditor() {
 			attributes: {
 				class: 'mt-6 prose-article focus:outline-hidden',
 			},
+			// https://github.com/ueberdosis/tiptap/blob/develop/packages/extension-file-handler/src/FileHandlePlugin.ts
+			handleDrop(view, event, slice, moved) {
+				if (moved) return false // don't handle if it's a move event (e.g. dragging selected text)
+				if (!event.dataTransfer?.files.length) {
+					return false
+				}
+
+				const dropPos = view.posAtCoords({
+					left: event.clientX,
+					top: event.clientY,
+				})
+
+				let filesArray = Array.from(event.dataTransfer.files)
+
+				event.preventDefault()
+				event.stopPropagation()
+
+				filesArray.map(file => {
+					if (allowedMimeTypes.includes(file.type)) {
+						switch (file.type.split('/')[0]) {
+							case 'image':
+								console.log('Image dropped:', file)
+								return handleImageDrop(file, dropPos?.pos || 0)
+							default:
+								toast.error(`File type not implemented: ${file.type}`)
+								console.warn('File type not implemented:', file.type, file)
+								return
+						}
+					} else {
+						toast.error(`Unsupported file type: ${file.type}`)
+						console.warn('Unsupported file type:', file.type, file)
+					}
+				})
+
+				return true
+			},
 		},
 		onCreate(props) {
 			setEditor(props.editor)
@@ -54,28 +103,6 @@ export function ContentEditor() {
 		onDestroy() {
 			// Clean up editor in jotai to prevent access before next mount, e.g. when navigating away and back
 			setEditor(null)
-		},
-		async onDrop(e, slice, moved) {
-			if (moved) return
-
-			const dataTransfer = e.dataTransfer
-			if (!dataTransfer) return
-
-			const files = Array.from(dataTransfer.files)
-
-			if (files.length) {
-				e.preventDefault()
-				const awaitHandleFiles = files.map(async file => {
-					console.log('File dropped:', file)
-
-					switch (file.type.split('/')[0]) {
-						case 'image':
-							return await handleImageDrop(file)
-					}
-				})
-
-				await Promise.all(awaitHandleFiles)
-			}
 		},
 	})
 
@@ -90,23 +117,25 @@ export function ContentEditor() {
 	///      Drop Upload      ///
 	/////////////////////////////
 	const imageBlobMap = new Map<string, File>()
+
 	const handleImageDrop = useCallback(
-		async (file: File) => {
+		async (file: File, dropPos: number) => {
 			if (!editor) return
 
 			const previewURL = URL.createObjectURL(file)
-			console.log('Image file dropped', previewURL)
-			// TODO: when saved, loop over post and replace previewURL with URL after upload
 			imageBlobMap.set(previewURL, file)
 
 			editor
 				.chain()
-				.focus()
-				.setImage({
-					src: URL.createObjectURL(file),
-					alt: file.name || 'image',
-					title: file.name || 'image',
+				.insertContentAt(dropPos, {
+					type: 'image',
+					attrs: {
+						src: previewURL,
+						alt: file.name,
+						title: file.name,
+					},
 				})
+				.focus()
 				.run()
 		},
 		[imageBlobMap, editor],
