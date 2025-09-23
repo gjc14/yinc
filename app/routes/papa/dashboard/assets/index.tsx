@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLoaderData } from 'react-router'
+import { useLoaderData, useRevalidator } from 'react-router'
 
 import { CloudAlert } from 'lucide-react'
 
@@ -29,6 +29,7 @@ export { loader } from './resource'
 
 export default function DashboardAsset() {
 	const { hasObjectStorage, files, origin } = useLoaderData<typeof loader>()
+	const { revalidate } = useRevalidator()
 	const [filesState, setFilesState] = useState(files)
 	const [display, setDisplay] = useState<(typeof displayOptions)[number]>('all')
 
@@ -88,6 +89,10 @@ export default function DashboardAsset() {
 							),
 						)
 					}}
+					onFileDeleted={fileMeta => {
+						setFilesState(filesState.filter(file => file.id !== fileMeta.id))
+					}}
+					onUpload={() => revalidate()}
 					origin={origin}
 				/>
 			) : (
