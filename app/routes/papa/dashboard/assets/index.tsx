@@ -19,7 +19,7 @@ import {
 	DashboardTitle,
 } from '~/routes/papa/dashboard/components/dashboard-wrapper'
 
-import { FileGridMain } from './components/file-grid'
+import { FileGrid } from './components/file-grid'
 import type { loader } from './resource'
 import { MIMETypes } from './utils'
 
@@ -79,7 +79,7 @@ export default function DashboardAsset() {
 				</DashboardActions>
 			</DashboardHeader>
 			{hasObjectStorage ? (
-				<FileGridMain
+				<FileGrid
 					files={filesDisplayed}
 					onFileUpdate={fileMeta => {
 						setFilesState(

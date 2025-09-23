@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useFetcher } from 'react-router'
 
+import { ZodError } from 'zod'
+
 import type { FileMetadata } from '~/lib/db/schema'
 import { isActionSuccess } from '~/lib/utils'
 import {
@@ -127,7 +129,8 @@ export type UploadState = {
 }
 
 /**
- * Hook to get upload function progress for files
+ * Hook to get upload functions for files.
+ * If you need more control over the upload process, refer to `oneStepUpload()`.
  */
 export const useFileUpload = () => {
 	const [uploadProgress, setUploadProgress] = useState<UploadState>({})
@@ -230,8 +233,24 @@ export const useFileUpload = () => {
 				)
 				return uploadSingleFileWithRetry(file, retries - 1)
 			} else {
-				console.error(`Upload failed for ${file.name} after retries`)
-				throw error
+				console.error(`Upload failed for ${file.name}`, error)
+
+				let errorMessage = 'Upload failed'
+				if (error instanceof ZodError) {
+					const errorMessages = error.errors.map(err => err.message).join('; ')
+					errorMessage = `Validation error: ${errorMessages}.`
+				} else if (error instanceof Error) {
+					errorMessage = error.message
+				}
+
+				setUploadProgress(prev => ({
+					...prev,
+					[file.key]: {
+						...prev[file.key],
+						status: 'error',
+						error: errorMessage,
+					},
+				}))
 			}
 		}
 	}
@@ -239,9 +258,39 @@ export const useFileUpload = () => {
 	const uploadToPresignedUrl = async (
 		files: (FileWithFileMetadata & { presignedUrl: string })[],
 	) => {
-		// Initialize progress state for all files
+		try {
+			// Upload all files simultaneously
+			const uploadPromises = files.map(file => uploadSingleFileWithRetry(file))
+			await Promise.allSettled(uploadPromises)
+		} catch (error) {
+			console.error('Upload failed:', error)
+		}
+	}
+
+	/**
+	 * Prepare files for upload
+	 * @param filesInput files from input or drop
+	 * @param ownerId
+	 * @returns files with generated storage keys
+	 */
+	const prepareFiles = (
+		filesInput: File[],
+		ownerId: string,
+	): FileUploading[] => {
+		return filesInput.map(file => ({
+			file,
+			key: generateStorageKey(file, ownerId),
+		}))
+	}
+
+	/**
+	 * After prepareFiles, initialize the upload process, setting given files to pending status
+	 * @param newFiles files to be uploaded
+	 */
+	const initUploadProcess = (newFiles: FileUploading[]) => {
+		// Initialize progress state for files (showing pending status)
 		setUploadProgress(prev => {
-			const initial = files.reduce(
+			const initial = newFiles.reduce(
 				(acc, { file, key }) => ({
 					...acc,
 					[key]: {
@@ -254,20 +303,48 @@ export const useFileUpload = () => {
 			)
 			return { ...prev, ...initial }
 		})
+	}
 
+	/**
+	 * @param filesInput files from input or drop
+	 * @param ownerId
+	 * @param onKeyGenerated optional callback when keys are generated, before presign request
+	 * @returns when files are uploaded, with metadata and presigned URL
+	 * 1. Generate key for file
+	 * 2. Initialize upload progress state
+	 * 3. Get presigned URLs
+	 * 4. uploadToPresignedUrl via XML and track uploadProgress
+	 */
+	const oneStepUpload = async (
+		filesInput: File[],
+		ownerId: string,
+		onSaveToDatabase?: (files: FileWithFileMetadata[]) => void,
+	): Promise<(FileWithFileMetadata & { presignedUrl: string })[]> => {
+		const preparedFiles = prepareFiles(filesInput, ownerId)
+		initUploadProcess(preparedFiles)
+
+		// Request to self
+		let filesWithPresignedUrl
 		try {
-			// Upload all files simultaneously
-			const uploadPromises = files.map(file => uploadSingleFileWithRetry(file))
-			await Promise.allSettled(uploadPromises)
+			// Now fetch presigned URLs (files will show as "pending" during this time), then upload
+			filesWithPresignedUrl = await fetchPresignedPutUrls(preparedFiles)
 		} catch (error) {
-			console.error('Upload failed:', error)
-			throw error
+			console.error('Error fetching presigned URLs:', error)
+			return []
 		}
+
+		onSaveToDatabase?.(filesWithPresignedUrl)
+
+		// Request to presigned URLs
+		await uploadToPresignedUrl(filesWithPresignedUrl)
+		return filesWithPresignedUrl
 	}
 
 	return {
 		uploadProgress,
-		setUploadProgress,
+		prepareFiles,
+		initUploadProcess,
 		uploadToPresignedUrl,
+		oneStepUpload,
 	}
 }

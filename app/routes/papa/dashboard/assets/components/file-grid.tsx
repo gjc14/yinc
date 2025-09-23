@@ -128,71 +128,26 @@ export const FileGridMain = ({
 		return types
 	}, [acceptedTypes])
 
-	// 1. Generate key for file
-	// 2. uploadToPresignedUrl via XML and track uploadProgress
-	// 3. Save file to fileState once completed
-	const { uploadProgress, setUploadProgress, uploadToPresignedUrl } =
-		useFileUpload()
+	const { uploadProgress, oneStepUpload } = useFileUpload()
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		accept: getAcceptedFileTypes(),
 		onDrop: async acceptedFiles => {
 			if (!userSession) return
 
-			const newFiles: FileUploading[] = acceptedFiles.map(file => ({
-				file,
-				key: generateStorageKey(file, userSession.user.id),
-			}))
-
-			// Initialize progress state for all files (showing pending status)
-			const initialProgress = newFiles.reduce(
-				(acc, { file, key }) => ({
-					...acc,
-					[key]: {
-						file: file,
-						progress: 0,
-						status: 'pending' as const,
-					},
-				}),
-				{} as UploadState,
-			)
-
-			// Update the progress state with all pending files
-			setUploadProgress(prev => ({ ...prev, ...initialProgress }))
-
 			try {
-				// Now fetch presigned URLs (files will show as "pending" during this time), then upload
-				const presignedFiles = await fetchPresignedPutUrls(newFiles)
-				await uploadToPresignedUrl(presignedFiles)
-				onUpload?.(presignedFiles)
+				const filesWithPresignedUrl = await oneStepUpload(
+					acceptedFiles,
+					userSession.user.id,
+				)
+				onUpload?.(filesWithPresignedUrl)
 
+				// Add new files to file grid when finished
 				setFileState(prev => {
-					return [...prev, ...presignedFiles]
+					return [...prev, ...filesWithPresignedUrl]
 				})
 			} catch (error) {
-				console.error('Error uploading files', error)
-				setUploadProgress(prev => {
-					const newProgress = { ...prev }
-
-					let errorMessage = 'Upload failed'
-					if (error instanceof ZodError) {
-						const errorMessages = error.errors
-							.map(err => err.message)
-							.join('; ')
-						errorMessage = `Validation error: ${errorMessages}.`
-					} else if (error instanceof Error) {
-						console.log('Error')
-						errorMessage = error.message
-					}
-
-					for (const file of newFiles) {
-						newProgress[file.key] = {
-							...newProgress[file.key],
-							status: 'error',
-							error: errorMessage,
-						}
-					}
-					return newProgress
-				})
+				console.error('Error uploading files:', error)
+				return
 			}
 		},
 	})
