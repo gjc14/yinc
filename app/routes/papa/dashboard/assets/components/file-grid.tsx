@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
+import { toast } from '@gjc14/sonner'
 import { CloudUploadIcon, CupSoda } from 'lucide-react'
-import { ZodError } from 'zod'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -17,12 +17,7 @@ import { authClient } from '~/lib/auth/auth-client'
 import type { FileMetadata } from '~/lib/db/schema'
 import { cn } from '~/lib/utils'
 
-import type { FileUploading, UploadState } from '../utils'
-import {
-	fetchPresignedPutUrls,
-	generateStorageKey,
-	useFileUpload,
-} from '../utils'
+import { useFileUpload } from '../utils'
 import { FileCard } from './file-card'
 import { ProgressCard } from './progress-card'
 
@@ -43,52 +38,53 @@ export interface FileGridProps {
 export const FileGrid = (props: FileGridProps) => {
 	if (!props.dialogTrigger) {
 		return <FileGridMain {...props} />
-	} else if (props.dialogTrigger) {
-		const [open, setOpen] = useState(false)
-		const [visuallySelected, setVisuallySelected] =
-			useState<FileMetadata | null>(null)
-
-		return (
-			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogTrigger asChild>{props.dialogTrigger}</DialogTrigger>
-				<DialogContent className="max-h-[90vh] max-w-xl min-w-[50vw] overflow-scroll">
-					<DialogHeader className="h-fit">
-						<DialogTitle>Assets</DialogTitle>
-						<DialogDescription className="flex w-full grow items-center">
-							Manage gallery, select or upload assets here.
-							<Button
-								className="ml-auto"
-								disabled={!visuallySelected}
-								onClick={() => {
-									if (!visuallySelected) return
-									props.onFileSelect?.(visuallySelected)
-									setOpen(false)
-								}}
-							>
-								Select
-							</Button>
-						</DialogDescription>
-					</DialogHeader>
-
-					<FileGridMain
-						{...props}
-						onFileSelect={file => {
-							setOpen(false)
-							props.onFileSelect?.(file)
-						}}
-						visuallySelected={visuallySelected}
-						setVisuallySelected={setVisuallySelected}
-					/>
-				</DialogContent>
-			</Dialog>
-		)
 	}
+
+	const [open, setOpen] = useState(false)
+	const [visuallySelected, setVisuallySelected] = useState<FileMetadata | null>(
+		null,
+	)
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>{props.dialogTrigger}</DialogTrigger>
+			<DialogContent className="max-h-[90vh] max-w-xl min-w-[50vw] overflow-scroll">
+				<DialogHeader className="h-fit">
+					<DialogTitle>Assets</DialogTitle>
+					<DialogDescription className="flex w-full grow items-center">
+						Manage gallery, select or upload assets here.
+						<Button
+							className="ml-auto"
+							disabled={!visuallySelected}
+							onClick={() => {
+								if (!visuallySelected) return
+								props.onFileSelect?.(visuallySelected)
+								setOpen(false)
+							}}
+						>
+							Select
+						</Button>
+					</DialogDescription>
+				</DialogHeader>
+
+				<FileGridMain
+					{...props}
+					onFileSelect={file => {
+						setOpen(false)
+						props.onFileSelect?.(file)
+					}}
+					visuallySelected={visuallySelected}
+					setVisuallySelected={setVisuallySelected}
+				/>
+			</DialogContent>
+		</Dialog>
+	)
 }
 
 /**
  * Main component rendering the file grid with drag and drop support.
  */
-export const FileGridMain = ({
+const FileGridMain = ({
 	files,
 	origin,
 	onFileSelect,
@@ -140,46 +136,12 @@ export const FileGridMain = ({
 					userSession.user.id,
 				)
 				onUpload?.(filesWithPresignedUrl)
-
-				// Add new files to file grid when finished
-				setFileState(prev => {
-					return [...prev, ...filesWithPresignedUrl]
-				})
 			} catch (error) {
 				console.error('Error uploading files:', error)
-				return
+				return toast.error('Error uploading files. Please try again.')
 			}
 		},
 	})
-
-	/////////////////////////
-	///   File handling   ///
-	/////////////////////////
-	const [fileState, setFileState] = useState<FileGridProps['files']>(files)
-
-	useEffect(() => {
-		setFileState(files)
-	}, [files])
-
-	const handleFileUpdate = (fileMeta: FileMetadata) => {
-		// Handle object storage connection
-		setFileState(prev => {
-			return prev.map(file => {
-				if (file.id === fileMeta.id) {
-					return { ...file, ...fileMeta }
-				}
-				return file
-			})
-		})
-		onFileUpdate?.(fileMeta)
-	}
-
-	const handleFileDelete = (file: FileMetadata) => {
-		setFileState(prev => {
-			return prev.filter(prevFile => prevFile.id !== file.id)
-		})
-		onFileDeleted?.(file)
-	}
 
 	return (
 		<div
@@ -198,11 +160,11 @@ export const FileGridMain = ({
 			>
 				<CloudUploadIcon className="text-primary h-12 w-12" />
 			</div>
-			{fileState.length > 0 ? (
+			{files.length > 0 ? (
 				<div
 					className={cn(
 						'grid gap-2',
-						fileState.length === 1
+						files.length === 1
 							? 'grid-cols-2'
 							: 'grid-cols-[repeat(auto-fit,minmax(100px,1fr))]',
 						dialogTrigger
@@ -210,15 +172,15 @@ export const FileGridMain = ({
 							: 'sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7',
 					)}
 				>
-					{fileState.map((file, index) => {
+					{files.map(file => {
 						return (
 							<FileCard
-								key={index}
+								key={file.key}
 								file={file}
 								origin={origin}
 								onSelect={onFileSelect}
-								onUpdate={handleFileUpdate}
-								onDeleted={handleFileDelete}
+								onUpdate={onFileUpdate}
+								onDeleted={onFileDeleted}
 								visuallySelected={visuallySelected}
 								setVisuallySelected={setVisuallySelected}
 							/>
