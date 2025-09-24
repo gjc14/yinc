@@ -2,7 +2,6 @@ import type { Route } from './+types/route'
 import { useEffect, useMemo, useState } from 'react'
 import { data, Link, useNavigation } from 'react-router'
 
-import { useAtom } from 'jotai'
 import { PlusCircle } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
@@ -16,11 +15,9 @@ import {
 } from '~/routes/papa/dashboard/components/dashboard-wrapper'
 import { DataTable } from '~/routes/papa/dashboard/components/data-table'
 
-import { categoriesAtom, tagsAtom } from '../context'
 import { fetchPosts, headers, postsServerMemoryCache, TTL } from './cache'
 import { columns } from './colums'
 import { Filter } from './filters'
-import { Search } from './search'
 
 export const meta = () => {
 	return [{ name: 'title', content: 'Dashboard Blog' }]

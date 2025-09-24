@@ -9,6 +9,7 @@ import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
 
 import { validateAdminSession } from '../../auth/utils'
+import { postsServerMemoryCache } from './index/cache'
 
 /**
  * createInsertSchema(post) is used for create and update
@@ -45,6 +46,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					...seoData,
 				})
 
+				postsServerMemoryCache.clear()
 				return {
 					msg: `Post ${post.title} created successfully`,
 					data: post,
@@ -70,6 +72,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					...seoData,
 				})
 
+				postsServerMemoryCache.clear()
 				return {
 					msg: `Post ${post.title} updated successfully`,
 					data: post,
@@ -87,6 +90,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					typeof jsonData.id === 'number'
 				) {
 					const { post } = await deletePost(jsonData.id)
+
+					postsServerMemoryCache.clear()
 					return {
 						msg: `Post ${post.title} deleted successfully`,
 					} satisfies ActionResponse
@@ -98,6 +103,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			}
 
 		default:
-			throw new Response('', { status: 405 })
+			throw new Response('', { status: 405, statusText: 'Method Not Allowed' })
 	}
 }
