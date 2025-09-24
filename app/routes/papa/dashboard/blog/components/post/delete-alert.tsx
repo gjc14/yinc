@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai'
-import { useHydrateAtoms } from 'jotai/utils'
 import { Loader2 } from 'lucide-react'
 
 import {
@@ -16,8 +15,6 @@ import {
 import { isDeleteAlertOpenAtom, isDeletingAtom, postAtom } from '../../context'
 
 export const PostDeleteAlert = ({ onDelete }: { onDelete: () => void }) => {
-	useHydrateAtoms([[isDeleteAlertOpenAtom, false]])
-
 	const [post] = useAtom(postAtom)
 	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
 	const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useAtom(

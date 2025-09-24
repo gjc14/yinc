@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai'
-import { useHydrateAtoms } from 'jotai/utils'
 
 import {
 	AlertDialog,
@@ -18,8 +17,6 @@ import { isResetAlertOpenAtom, postAtom } from '../../context'
  * Reset current dirty post to its initial state.
  */
 export const PostResetAlert = ({ onReset }: { onReset: () => void }) => {
-	useHydrateAtoms([[isResetAlertOpenAtom, false]])
-
 	const [isResetAlertOpen, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
 	const [post] = useAtom(postAtom)
 

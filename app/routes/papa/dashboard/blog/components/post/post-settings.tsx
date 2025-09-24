@@ -1,8 +1,6 @@
 import { useAtom } from 'jotai'
-import { useHydrateAtoms } from 'jotai/utils'
 import { X } from 'lucide-react'
 
-import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import {
 	Sheet,
@@ -11,7 +9,6 @@ import {
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
-	SheetTrigger,
 } from '~/components/ui/sheet'
 import { useIsMobile } from '~/hooks/use-mobile'
 
@@ -22,8 +19,6 @@ import { SeoPart } from './seo-part'
 import { TaxonomyPart } from './taxonomy-part'
 
 export const PostSettings = () => {
-	useHydrateAtoms([[isSettingsOpenAtom, false]])
-
 	const [open, setOpen] = useAtom(isSettingsOpenAtom)
 
 	const isMobile = useIsMobile()

@@ -21,8 +21,11 @@ import { PostResetAlert } from '../components/post/reset-alert'
 import {
 	editorAtom,
 	hasChangesAtom,
+	isDeleteAlertOpenAtom,
 	isDeletingAtom,
+	isResetAlertOpenAtom,
 	isSavingAtom,
+	isSettingsOpenAtom,
 	postAtom,
 	serverPostAtom,
 } from '../context'
@@ -75,12 +78,19 @@ export default function DashboardSlugPost({
 		[postAtom, currentPost],
 		[isSavingAtom, isSaving],
 		[isDeletingAtom, isDeleting],
+		[isDeleteAlertOpenAtom, false],
+		[isSettingsOpenAtom, false],
+		[isResetAlertOpenAtom, false],
 	])
 
 	const [, setServerPost] = useAtom(serverPostAtom)
 	const [post, setPost] = useAtom(postAtom)
 	const [, setIsSaving] = useAtom(isSavingAtom)
 	const [, setIsDeleting] = useAtom(isDeletingAtom)
+
+	const [, setIsDeleteAlertOpen] = useAtom(isDeleteAlertOpenAtom)
+	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
+	const [, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
 
 	const [editor] = useAtom(editorAtom)
 	const [hasChanges] = useAtom(hasChangesAtom)
@@ -89,6 +99,10 @@ export default function DashboardSlugPost({
 	useEffect(() => {
 		setServerPost(currentPost)
 		setPost(currentPost)
+
+		setIsDeleteAlertOpen(false)
+		setIsSettingsOpen(false)
+		setIsResetAlertOpen(false)
 	}, [params.postSlug])
 
 	// When saving/deleting state changes, update atoms
