@@ -5,6 +5,7 @@ import type { PostWithRelations } from '~/lib/db/post.server'
 import type { Category, Tag } from '~/lib/db/schema'
 import type { loader } from '~/routes/papa/dashboard/assets/resource'
 
+import { defaultContent } from './post-slug/utils'
 import { areDifferentPosts } from './utils'
 
 // used when post loaded / updated from server
@@ -22,8 +23,6 @@ type AssetLoaderData = Awaited<ReturnType<typeof loader>>
 export const assetsAtom = atom<AssetLoaderData | null>(null)
 
 export const isSettingsOpenAtom = atom(false)
-
-export const defaultContent = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null}}]}`
 
 export const hasChangesAtom = atom(get => {
 	const [server, draft] = [get(serverPostAtom), get(postAtom)]

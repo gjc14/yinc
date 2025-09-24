@@ -2,6 +2,10 @@ import type { Session } from '~/lib/auth/auth-client'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { PostStatus, type user as userTable } from '~/lib/db/schema'
 
+export const postLocalStorageKey = (id: number) => `papa:blog:draft:${id}`
+
+export const defaultContent = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null}}]}`
+
 export const generateNewPost = (user: Session['user']): PostWithRelations => {
 	const now = new Date()
 	return {
@@ -10,7 +14,7 @@ export const generateNewPost = (user: Session['user']): PostWithRelations => {
 		updatedAt: now,
 		title: '',
 		slug: '',
-		content: null,
+		content: defaultContent,
 		excerpt: null,
 		featuredImage: null,
 		status: PostStatus[0],

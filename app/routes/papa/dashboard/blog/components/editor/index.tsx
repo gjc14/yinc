@@ -17,12 +17,8 @@ import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
 import { authClient } from '~/lib/auth/auth-client'
 
 import { useFileUpload, type FileWithFileMetadata } from '../../../assets/utils'
-import {
-	defaultContent,
-	editorAtom,
-	editorContentAtom,
-	serverPostAtom,
-} from '../../context'
+import { editorAtom, editorContentAtom, serverPostAtom } from '../../context'
+import { defaultContent } from '../../post-slug/utils'
 
 export function ContentEditor() {
 	const [postId, setPostId] = useState<number | null>(null)
