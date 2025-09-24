@@ -117,11 +117,11 @@ export const NavUser = ({ user }: NavUserProps) => {
 
 							<ThemeDropDownMenu asChild>
 								<DropdownMenuItem
-									className="group flex items-center gap-2"
-									onClick={() => {}}
+									onSelect={e => e.preventDefault()}
+									className="group flex w-full items-center gap-2"
 								>
-									<CurrentThemeIcon className="transition-transform group-hover:rotate-[25deg] dark:group-hover:rotate-[25deg]" />
-									<p className="text-sm">Change Theme</p>
+									<CurrentThemeIcon className="size-4 transition-transform group-hover:rotate-[25deg] dark:group-hover:rotate-[25deg]" />
+									<span className="text-sm">Change Theme</span>
 								</DropdownMenuItem>
 							</ThemeDropDownMenu>
 						</DropdownMenuGroup>
@@ -133,7 +133,7 @@ export const NavUser = ({ user }: NavUserProps) => {
 							>
 								<LogOut
 									size={16}
-									className="rotate-180 transition-transform group-hover:-translate-x-0.5"
+									className="transition-transform group-hover:-translate-x-0.5"
 								/>
 								<p className="text-sm">Sign Out</p>
 							</button>
