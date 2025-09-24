@@ -7,8 +7,11 @@ import type { loader } from '~/routes/papa/dashboard/assets/resource'
 
 import { areDifferentPosts } from './utils'
 
+// used when post loaded / updated from server
 export const serverPostAtom = atom<PostWithRelations | null>(null) // only for comparison
+// used when post is being edited
 export const postAtom = atom<PostWithRelations | null>(null) // actually used
+
 export const tagsAtom = atom<Tag[]>([])
 export const categoriesAtom = atom<(Category & { children: Category[] })[]>([])
 export const editorAtom = atom<Editor | null>(null)
@@ -20,7 +23,7 @@ export const assetsAtom = atom<AssetLoaderData | null>(null)
 
 export const isSettingsOpenAtom = atom(false)
 
-const defaultContent = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null}}]}`
+export const defaultContent = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null}}]}`
 
 export const hasChangesAtom = atom(get => {
 	const [server, draft] = [get(serverPostAtom), get(postAtom)]

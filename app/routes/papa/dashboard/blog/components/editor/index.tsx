@@ -1,10 +1,12 @@
 /**
  * PostEditor uses Jotai, should be placed in <Provider> context.
+ * editor will be saved in jotai, so when navigating away and back, the editor instance is still there.
+ * editorContent will update if serverPost changes (e.g. switch to another post, or update post)
  */
 import './styles.css'
 import './styles/image-node.css'
 
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { toast } from '@gjc14/sonner'
 import { EditorContent, useEditor } from '@tiptap/react'
@@ -15,9 +17,15 @@ import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
 import { authClient } from '~/lib/auth/auth-client'
 
 import { useFileUpload, type FileWithFileMetadata } from '../../../assets/utils'
-import { editorAtom, editorContentAtom, serverPostAtom } from '../../context'
+import {
+	defaultContent,
+	editorAtom,
+	editorContentAtom,
+	serverPostAtom,
+} from '../../context'
 
 export function ContentEditor() {
+	const [postId, setPostId] = useState<number | null>(null)
 	const { data: userSession } = authClient.useSession()
 	const [serverPost] = useAtom(serverPostAtom)
 	const [, setEditor] = useAtom(editorAtom)
@@ -116,17 +124,19 @@ export function ContentEditor() {
 	})
 
 	useEffect(() => {
-		if (!editor || !serverPost?.content) return
+		if (!editor || !serverPost || !serverPost.id) return
 
-		editor.commands.setContent(JSON.parse(serverPost.content))
-		setEditorContent(serverPost.content || '')
+		// Update content if navigated to another post, should not change if same post (e.g. revalidate after update)
+		if (postId !== serverPost.id) {
+			setPostId(serverPost.id)
 
-		// Clean up tmpImage when content changes (e.g. switch to another post)
-		return () => {
-			tmpImage.forEach(file => URL.revokeObjectURL(file.previewURL))
-			tmpImage.clear()
+			// Update content
+			editor.commands.setContent(
+				JSON.parse(serverPost.content || defaultContent),
+			)
+			setEditorContent(serverPost.content || defaultContent)
 		}
-	}, [serverPost, editor])
+	}, [editor, serverPost])
 
 	// Handle shortcut keys
 	const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -139,7 +149,7 @@ export function ContentEditor() {
 	/////////////////////////////
 	const tmpImage = useMemo(
 		() => new Map<string, FileWithFileMetadata & { previewURL: string }>(),
-		[],
+		[editor, serverPost],
 	) // key: imageKey, value: FileWithFileMetadata. Only for preview and revokeObjectURL later
 	const { uploadProgress, oneStepUpload } = useFileUpload()
 
@@ -166,7 +176,7 @@ export function ContentEditor() {
 				tmpImage.set(files[0].key, { ...files[0], previewURL }),
 			)
 		},
-		[editor, userSession, oneStepUpload, tmpImage],
+		[tmpImage, userSession, oneStepUpload],
 	)
 
 	useEffect(() => {
@@ -217,7 +227,7 @@ export function ContentEditor() {
 				URL.revokeObjectURL(file.previewURL) // free memory
 			}
 		})
-	}, [uploadProgress, editor, tmpImage])
+	}, [tmpImage, uploadProgress])
 
 	return <EditorContent editor={editor} onKeyDown={handleKeyDown} />
 }
