@@ -12,13 +12,18 @@ import { useAtom } from 'jotai'
 import debounce from 'lodash/debounce'
 
 import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
+import { authClient } from '~/lib/auth/auth-client'
 
+import { useFileUpload, type FileWithFileMetadata } from '../../../assets/utils'
 import { editorAtom, editorContentAtom, serverPostAtom } from '../../context'
 
 export function ContentEditor() {
+	const { data: userSession } = authClient.useSession()
 	const [serverPost] = useAtom(serverPostAtom)
 	const [, setEditor] = useAtom(editorAtom)
 	const [, setEditorContent] = useAtom(editorContentAtom)
+
+	const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 	// Drop configurations
 	const allowedMimeTypes = [
@@ -73,6 +78,10 @@ export function ContentEditor() {
 				event.stopPropagation()
 
 				filesArray.map(file => {
+					if (file.size > MAX_FILE_SIZE) {
+						toast.error(`File too large: ${file.name} (max 10MB)`)
+						return
+					}
 					if (allowedMimeTypes.includes(file.type)) {
 						switch (file.type.split('/')[0]) {
 							case 'image':
@@ -107,23 +116,38 @@ export function ContentEditor() {
 	})
 
 	useEffect(() => {
-		editor?.commands.setContent(
-			serverPost?.content ? JSON.parse(serverPost.content) : undefined,
-		)
-		setEditorContent(serverPost?.content || '')
-	}, [serverPost])
+		if (!editor || !serverPost?.content) return
+
+		editor.commands.setContent(JSON.parse(serverPost.content))
+		setEditorContent(serverPost.content || '')
+
+		// Clean up tmpImage when content changes (e.g. switch to another post)
+		return () => {
+			tmpImage.forEach(file => URL.revokeObjectURL(file.previewURL))
+			tmpImage.clear()
+		}
+	}, [serverPost, editor])
+
+	// Handle shortcut keys
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		e.stopPropagation() // prevent passing e out e.g. mod+b will only bold rather than toggle sidebar as well
+		// e.preventDefault() // TBD. prevent like mod+s save, mod+p print, or mod+r refres
+	}
 
 	/////////////////////////////
 	///      Drop Upload      ///
 	/////////////////////////////
-	const imageBlobMap = new Map<string, File>()
+	const tmpImage = useMemo(
+		() => new Map<string, FileWithFileMetadata & { previewURL: string }>(),
+		[],
+	) // key: imageKey, value: FileWithFileMetadata. Only for preview and revokeObjectURL later
+	const { uploadProgress, oneStepUpload } = useFileUpload()
 
 	const handleImageDrop = useCallback(
 		async (file: File, dropPos: number) => {
-			if (!editor) return
+			if (!editor || !userSession) return
 
 			const previewURL = URL.createObjectURL(file)
-			imageBlobMap.set(previewURL, file)
 
 			editor
 				.chain()
@@ -137,15 +161,63 @@ export function ContentEditor() {
 				})
 				.focus()
 				.run()
+
+			await oneStepUpload([file], userSession.user.id, files =>
+				tmpImage.set(files[0].key, { ...files[0], previewURL }),
+			)
 		},
-		[imageBlobMap, editor],
+		[editor, userSession, oneStepUpload, tmpImage],
 	)
 
-	// Handle shortcut keys
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		e.stopPropagation() // prevent passing e out e.g. mod+b will only bold rather than toggle sidebar as well
-		// e.preventDefault() // TBD. prevent like mod+s save, mod+p print, or mod+r refres
-	}
+	useEffect(() => {
+		if (!editor) return
+
+		// uploadProgress: { [key: string]: UploadProgress }
+		Object.entries(uploadProgress).forEach(([key, progress]) => {
+			const file = tmpImage.get(key)
+			if (!file) return
+
+			if (progress.status === 'error' || progress.status === 'completed') {
+				// Find the image node with previewURL
+				const imagePreviewNode = editor.$node('image', { src: file.previewURL })
+				if (!imagePreviewNode) return
+
+				switch (progress.status) {
+					case 'error':
+						toast.error(`Upload failed: ${progress.error}`)
+
+						// Remove the image node with previewUrl
+						editor
+							.chain()
+							.setNodeSelection(imagePreviewNode.pos)
+							.deleteSelection()
+							.run()
+						break
+					case 'completed':
+						const url = `/assets/${file.id}`
+
+						// Prefetch the image before replacing
+						const img = new Image()
+						img.onload = () => {
+							// Replace the preview URL with the actual URL after image is loaded
+							editor
+								.chain()
+								.setNodeSelection(imagePreviewNode.pos)
+								.updateAttributes('image', { src: url })
+								.run()
+						}
+						img.onerror = () => {
+							console.error('Failed to load uploaded image:', url)
+						}
+						img.src = url
+						break
+				}
+
+				tmpImage.delete(key)
+				URL.revokeObjectURL(file.previewURL) // free memory
+			}
+		})
+	}, [uploadProgress, editor, tmpImage])
 
 	return <EditorContent editor={editor} onKeyDown={handleKeyDown} />
 }
