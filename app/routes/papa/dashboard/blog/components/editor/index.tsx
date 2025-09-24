@@ -199,8 +199,10 @@ export function ContentEditor() {
 						// Remove the image node with previewUrl
 						editor
 							.chain()
-							.setNodeSelection(imagePreviewNode.pos)
-							.deleteSelection()
+							.command(({ tr }) => {
+								tr.deleteRange(imagePreviewNode.from, imagePreviewNode.to)
+								return true
+							})
 							.run()
 						break
 					case 'completed':
@@ -212,8 +214,10 @@ export function ContentEditor() {
 							// Replace the preview URL with the actual URL after image is loaded
 							editor
 								.chain()
-								.setNodeSelection(imagePreviewNode.pos)
-								.updateAttributes('image', { src: url })
+								.command(({ tr }) => {
+									tr.setNodeAttribute(imagePreviewNode.pos, 'src', url)
+									return true
+								})
 								.run()
 						}
 						img.onerror = () => {
