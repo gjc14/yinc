@@ -27,6 +27,14 @@ export const isValidEmail = (email: string) => {
 	return emailRegex.test(email)
 }
 
+export const defaultValidUrlProtocols = [
+	'http:',
+	'https:',
+	'mailto:',
+	'tel:',
+	'sms:',
+	'ftp:',
+]
 export function isValidUrl(string: string, allowedProtocols?: string[]) {
 	let url
 
@@ -37,15 +45,7 @@ export function isValidUrl(string: string, allowedProtocols?: string[]) {
 	}
 
 	// Default allowed protocols if none specified
-	const defaultProtocols = [
-		'http:',
-		'https:',
-		'mailto:',
-		'tel:',
-		'sms:',
-		'ftp:',
-	]
-	const protocols = allowedProtocols || defaultProtocols
+	const protocols = allowedProtocols || defaultValidUrlProtocols
 
 	return protocols.includes(url.protocol)
 }

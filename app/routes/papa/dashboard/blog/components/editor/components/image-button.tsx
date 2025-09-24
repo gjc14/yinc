@@ -18,7 +18,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Skeleton } from '~/components/ui/skeleton'
-import { isValidUrl } from '~/lib/utils'
+import { defaultValidUrlProtocols, isValidUrl } from '~/lib/utils'
 
 import { editorAtom } from '../../../context'
 import { createImageOption } from '../edit-options'
@@ -92,7 +92,11 @@ export const ImageButton = () => {
 		}
 	}
 
-	const insertAvailable = isValidUrl(srcInput) && canRun
+	const validSrcInput =
+		srcInput.startsWith('/assets') ||
+		isValidUrl(srcInput, [...defaultValidUrlProtocols, 'blob:'])
+
+	const insertAvailable = validSrcInput && canRun
 
 	if (!editor) return <Skeleton className="size-8" />
 
