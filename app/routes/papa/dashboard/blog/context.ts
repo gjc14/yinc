@@ -24,6 +24,15 @@ export const assetsAtom = atom<AssetLoaderData | null>(null)
 
 export const isSettingsOpenAtom = atom(false)
 
+export const isRestoreAlertOpenAtom = atom(false)
+export const isResetAlertOpenAtom = atom(false)
+export const isDeleteAlertOpenAtom = atom(false)
+
+export const isSavingAtom = atom(false)
+export const isDeletingAtom = atom(false)
+
+export const isDraftCheckCompleteAtom = atom(false)
+
 export const hasChangesAtom = atom(get => {
 	const [server, draft] = [get(serverPostAtom), get(postAtom)]
 	const editorContent = get(editorContentAtom)
@@ -32,10 +41,3 @@ export const hasChangesAtom = atom(get => {
 	if ((server.content || defaultContent) !== editorContent) return true
 	return areDifferentPosts(server, draft)
 })
-
-export const isRestoreAlertOpenAtom = atom(false)
-export const isResetAlertOpenAtom = atom(false)
-export const isDeleteAlertOpenAtom = atom(false)
-
-export const isSavingAtom = atom(false)
-export const isDeletingAtom = atom(false)

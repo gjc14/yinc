@@ -23,7 +23,9 @@ import {
 	hasChangesAtom,
 	isDeleteAlertOpenAtom,
 	isDeletingAtom,
+	isDraftCheckCompleteAtom,
 	isResetAlertOpenAtom,
+	isRestoreAlertOpenAtom,
 	isSavingAtom,
 	isSettingsOpenAtom,
 	postAtom,
@@ -31,6 +33,7 @@ import {
 } from '../context'
 import type { action } from '../resource'
 import { FloatingToolbar } from './floating-toolbar'
+import { useAutoSaveDraft } from './use-auto-save-draft'
 import { generateNewPost } from './utils'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -78,9 +81,11 @@ export default function DashboardSlugPost({
 		[postAtom, currentPost],
 		[isSavingAtom, isSaving],
 		[isDeletingAtom, isDeleting],
-		[isDeleteAlertOpenAtom, false],
 		[isSettingsOpenAtom, false],
+		[isRestoreAlertOpenAtom, false],
 		[isResetAlertOpenAtom, false],
+		[isDeleteAlertOpenAtom, false],
+		[isDraftCheckCompleteAtom, false],
 	])
 
 	const [, setServerPost] = useAtom(serverPostAtom)
@@ -88,21 +93,27 @@ export default function DashboardSlugPost({
 	const [, setIsSaving] = useAtom(isSavingAtom)
 	const [, setIsDeleting] = useAtom(isDeletingAtom)
 
-	const [, setIsDeleteAlertOpen] = useAtom(isDeleteAlertOpenAtom)
 	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
+	const [, setIsRestoreAlertOpen] = useAtom(isRestoreAlertOpenAtom)
 	const [, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
+	const [, setIsDeleteAlertOpen] = useAtom(isDeleteAlertOpenAtom)
+	const [, setIsLocalStorageCheckComplete] = useAtom(isDraftCheckCompleteAtom)
 
 	const [editor] = useAtom(editorAtom)
 	const [hasChanges] = useAtom(hasChangesAtom)
+
+	useAutoSaveDraft()
 
 	// When route changes, update post atoms
 	useEffect(() => {
 		setServerPost(currentPost)
 		setPost(currentPost)
 
-		setIsDeleteAlertOpen(false)
 		setIsSettingsOpen(false)
+		setIsRestoreAlertOpen(false)
 		setIsResetAlertOpen(false)
+		setIsDeleteAlertOpen(false)
+		setIsLocalStorageCheckComplete(false)
 	}, [params.postSlug])
 
 	// When saving/deleting state changes, update atoms
@@ -206,8 +217,10 @@ export default function DashboardSlugPost({
 
 	// Handle post reset
 	const handleReset = () => {
+		if (!editor) return
+
 		setPost(currentPost)
-		editor?.commands.setContent(
+		editor.commands.setContent(
 			currentPost?.content ? JSON.parse(currentPost.content) : undefined,
 		)
 	}
