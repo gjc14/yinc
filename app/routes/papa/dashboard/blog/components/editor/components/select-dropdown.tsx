@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { DropdownMenuRadioItem } from '@radix-ui/react-dropdown-menu'
 import { useEditorState } from '@tiptap/react'
 import { useAtom } from 'jotai'
@@ -26,6 +28,7 @@ export function SelectDropdownMenu({
 	side?: 'top' | 'right' | 'bottom' | 'left'
 }) {
 	const [editor] = useAtom(editorAtom)
+	const [open, setOpen] = useState(false)
 
 	const ActiveIcon = useEditorState({
 		editor,
@@ -56,7 +59,13 @@ export function SelectDropdownMenu({
 	if (!editor) return <Skeleton className="size-8" />
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu
+			open={open}
+			onOpenChange={open => {
+				setOpen(open)
+				if (!open) editor.chain().focus().run()
+			}}
+		>
 			<TooltipWrapper tooltip={tooltip} side={side}>
 				<DropdownMenuTrigger asChild>
 					<Button
@@ -68,7 +77,10 @@ export function SelectDropdownMenu({
 					</Button>
 				</DropdownMenuTrigger>
 			</TooltipWrapper>
-			<DropdownMenuContent className="bg-background">
+			<DropdownMenuContent
+				className="bg-background"
+				onCloseAutoFocus={e => e.preventDefault()}
+			>
 				<DropdownMenuRadioGroup className="flex flex-col">
 					{options.map(
 						({ name, shortcut, icon: Icon, run, canRun, isActive }, index) => (

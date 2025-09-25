@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { DropdownMenuRadioItem } from '@radix-ui/react-dropdown-menu'
 import { Editor, useEditorState } from '@tiptap/react'
 import { useAtom } from 'jotai'
@@ -51,6 +53,7 @@ export function ColorDropdownMenu({
 	displayText?: boolean
 }) {
 	const [editor] = useAtom(editorAtom)
+	const [open, setOpen] = useState(false)
 
 	const activeColor = useEditorState({
 		editor,
@@ -79,7 +82,13 @@ export function ColorDropdownMenu({
 	if (!editor) return <Skeleton className="size-8" />
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu
+			open={open}
+			onOpenChange={open => {
+				setOpen(open)
+				if (!open) editor.chain().focus().run()
+			}}
+		>
 			<TooltipWrapper tooltip={tooltip} side={side}>
 				<DropdownMenuTrigger asChild>
 					<Button
@@ -97,7 +106,10 @@ export function ColorDropdownMenu({
 					</Button>
 				</DropdownMenuTrigger>
 			</TooltipWrapper>
-			<DropdownMenuContent className="bg-background max-w-[90vw]">
+			<DropdownMenuContent
+				className="bg-background max-w-[90vw]"
+				onCloseAutoFocus={e => e.preventDefault()}
+			>
 				<DropdownMenuRadioGroup className="grid grid-cols-[repeat(5,1fr)] justify-center gap-0.5 p-1">
 					{options.map(({ name, run, canRun, isActive, color }, index) => (
 						<TooltipWrapper key={index} tooltip={name} side="top">

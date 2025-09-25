@@ -83,7 +83,6 @@ export const ImageButton = () => {
 			if (!srcInput || !editor) return
 			editor
 				.chain()
-				.focus()
 				.setImage({ src: srcInput, alt: altInput, title: titleInput })
 				.run()
 		} catch (error) {
@@ -108,11 +107,15 @@ export const ImageButton = () => {
 			open={isImageSelectorOpen}
 			onOpenChange={open => {
 				setIsImageSelectorOpen(open)
-				if (open && editor) {
+				if (!editor) return
+
+				if (open) {
 					const { src, alt, title } = editor.getAttributes('image')
 					setSrcInput(src || '')
 					setAltInput(alt || '')
 					setTitleInput(title || '')
+				} else {
+					editor.commands.focus()
 				}
 			}}
 		>
@@ -128,7 +131,10 @@ export const ImageButton = () => {
 					</Button>
 				</DialogTrigger>
 			</TooltipWrapper>
-			<DialogContent className="max-h-[90vh] overflow-scroll">
+			<DialogContent
+				className="max-h-[90vh] overflow-scroll"
+				onCloseAutoFocus={e => e.preventDefault()}
+			>
 				<DialogTitle hidden>Add Image</DialogTitle>
 				<DialogDescription hidden></DialogDescription>
 				<div className="flex flex-col items-center gap-3">

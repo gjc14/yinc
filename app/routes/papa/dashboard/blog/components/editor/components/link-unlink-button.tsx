@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { PopoverClose } from '@radix-ui/react-popover'
@@ -94,12 +94,6 @@ export const LinkUnlinkButtons = () => {
 		}
 	}
 
-	useEffect(() => {
-		if (!editor) return
-
-		!isLinkUnlinkOpen && editor.commands.focus()
-	}, [isLinkUnlinkOpen])
-
 	if (!editor) return <Skeleton className="size-8" />
 
 	return (
@@ -108,8 +102,13 @@ export const LinkUnlinkButtons = () => {
 			onOpenChange={open => {
 				setIsLinkUnlinkOpen(open)
 				if (!editor) return
-				const { href } = editor.getAttributes('link')
-				setLinkInput(href || '')
+
+				if (open) {
+					const { href } = editor.getAttributes('link')
+					setLinkInput(href || '')
+				} else {
+					editor.commands.focus()
+				}
 			}}
 		>
 			<TooltipWrapper tooltip="Link / Unlink" shortcut={LINK_UNKINK_SHORTCUT}>
