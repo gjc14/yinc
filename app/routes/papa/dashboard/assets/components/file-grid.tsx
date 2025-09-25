@@ -29,10 +29,13 @@ export interface FileGridProps {
 	onFileDeleted?: (file: FileMetadata) => void
 	dialogTrigger?: React.ReactNode
 	onUpload?: (files: FileMetadata[]) => void
+	/** Controllable state to visually show selected single file */
 	visuallySelected?: FileMetadata | null
 	setVisuallySelected?: React.Dispatch<
 		React.SetStateAction<FileMetadata | null>
 	>
+	/** @default "sm" */
+	cardSize?: 'sm' | 'md' | 'lg'
 }
 
 /**
@@ -82,6 +85,7 @@ export const FileGrid = (props: FileGridProps) => {
 					}}
 					visuallySelected={visuallySelected}
 					setVisuallySelected={setVisuallySelected}
+					cardSize={props.cardSize || (props.dialogTrigger ? 'md' : undefined)}
 				/>
 			</DialogContent>
 		</Dialog>
@@ -100,7 +104,8 @@ const FileGridMain = ({
 	onUpload,
 	dialogTrigger,
 	visuallySelected,
-	setVisuallySelected
+	setVisuallySelected,
+	cardSize = 'sm',
 }: FileGridProps) => {
 	const { data: userSession } = authClient.useSession()
 
@@ -169,9 +174,11 @@ const FileGridMain = ({
 						files.length === 1
 							? 'grid-cols-2'
 							: 'grid-cols-[repeat(auto-fit,minmax(100px,1fr))]',
-						dialogTrigger
-							? 'sm:grid-cols-3 md:grid-cols-4'
-							: 'sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7',
+						cardSize === 'lg'
+							? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+							: cardSize === 'md'
+								? 'sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+								: 'sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7', // sm
 					)}
 				>
 					{files.map(file => {
