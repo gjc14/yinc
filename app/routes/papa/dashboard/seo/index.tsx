@@ -47,7 +47,7 @@ export default function SEO() {
 			<DashboardHeader>
 				<DashboardTitle
 					title="SEO"
-					description="SEO data is connect to post or route. You could set in either here or in post or route."
+					description="Used by either post or route. Post will auto-generate one when created. If you customize a route, make sure to use this source to create meta data."
 				></DashboardTitle>
 				<DashboardActions>
 					<Button size={'sm'} onClick={() => setOpen(true)}>

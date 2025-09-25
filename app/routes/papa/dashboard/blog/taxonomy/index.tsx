@@ -113,7 +113,7 @@ export default function DashboardTaxonomy({
 			<DashboardHeader>
 				<DashboardTitle
 					title="Taxonomy"
-					description="SEO data is connect to post or route. You could set in either here or in post or route."
+					description="You can manage tags, categories generated here, and see their related posts. Ideally, a post will have one category and multiple tags."
 				></DashboardTitle>
 				<DashboardActions></DashboardActions>
 			</DashboardHeader>

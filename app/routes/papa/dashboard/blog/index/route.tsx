@@ -24,7 +24,7 @@ export const meta = () => {
 }
 
 /**
- * @see file [web blog index route.tsx](../../../../web/blog/index/route.tsx)
+ * @link [web blog index route](../../../../web/blog/index/route.tsx)
  */
 export const loader = async ({ request }: Route.LoaderArgs) => {
 	const url = new URL(request.url)

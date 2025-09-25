@@ -52,7 +52,8 @@ export const OtpEmail = ({
 						<Text style={paragraph}>Hello {username},</Text>
 						<Text style={paragraph}>
 							Your verification code is below.
-							{expireIn && `This code will expire in ${expireIn / 60} minutes.`}
+							{expireIn &&
+								` This code will expire in ${expireIn / 60} minutes.`}
 						</Text>
 						<Section style={otpContainer}>
 							<Text style={otpCode}>{otp}</Text>
