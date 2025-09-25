@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
 
 import { toast } from '@gjc14/sonner'
@@ -26,7 +26,6 @@ import {
 import { Button } from '~/components/ui/button'
 import {
 	Dialog,
-	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
@@ -52,8 +51,13 @@ export type FileCardProps = {
 	setVisuallySelected?: React.Dispatch<
 		React.SetStateAction<FileMetadata | null>
 	>
+	selectOnDoubleClick?: boolean
 }
 
+/**
+ * onClick on a file card will set setVisuallySelected and make a dashed border around the card
+ * onSelect will be called when the card is clicked (or double clicked if selectOnDoubleClick is true)
+ */
 export const FileCard = ({
 	file,
 	origin,
@@ -63,6 +67,7 @@ export const FileCard = ({
 	onDeleted,
 	visuallySelected,
 	setVisuallySelected,
+	selectOnDoubleClick = false,
 }: FileCardProps) => {
 	const fetcher = useFetcher()
 	const [open, setOpen] = useState(false)
@@ -79,10 +84,6 @@ export const FileCard = ({
 	const fileGeneralType = file.type.split('/')[0]
 	const url = `/assets/${file.id}`
 	const isSubmitting = fetcher.state === 'submitting'
-
-	const handleSelect = () => {
-		onSelect?.(file)
-	}
 
 	const handleUpdate = () => {
 		if (isSubmitting) return
@@ -136,18 +137,16 @@ export const FileCard = ({
 			)}
 			onClick={e => {
 				e.stopPropagation()
+				!selectOnDoubleClick && onSelect?.(file)
 				setVisuallySelected?.(file)
 			}}
-			onDoubleClick={() => {
-				if (onSelect) {
-					handleSelect()
-				} else {
-					setOpen(true)
-				}
+			onDoubleClick={e => {
+				e.stopPropagation()
+				selectOnDoubleClick && onSelect?.(file)
 			}}
 		>
 			{fileGeneralType === 'image' ? (
-				<img src={url} alt={file.name} className="" />
+				<img src={url} alt={file.name} />
 			) : fileGeneralType === 'video' ? (
 				<Film />
 			) : fileGeneralType === 'audio' ? (

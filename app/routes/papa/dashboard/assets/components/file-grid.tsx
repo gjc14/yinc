@@ -29,6 +29,10 @@ export interface FileGridProps {
 	onFileDeleted?: (file: FileMetadata) => void
 	dialogTrigger?: React.ReactNode
 	onUpload?: (files: FileMetadata[]) => void
+	visuallySelected?: FileMetadata | null
+	setVisuallySelected?: React.Dispatch<
+		React.SetStateAction<FileMetadata | null>
+	>
 }
 
 /**
@@ -41,9 +45,12 @@ export const FileGrid = (props: FileGridProps) => {
 	}
 
 	const [open, setOpen] = useState(false)
-	const [visuallySelected, setVisuallySelected] = useState<FileMetadata | null>(
-		null,
-	)
+	const [internalVisuallySelected, setInternalVisuallySelected] =
+		useState<FileMetadata | null>(null)
+
+	const visuallySelected = props.visuallySelected ?? internalVisuallySelected
+	const setVisuallySelected =
+		props.setVisuallySelected ?? setInternalVisuallySelected
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -93,13 +100,8 @@ const FileGridMain = ({
 	onUpload,
 	dialogTrigger,
 	visuallySelected,
-	setVisuallySelected,
-}: FileGridProps & {
-	visuallySelected?: FileMetadata | null
-	setVisuallySelected?: React.Dispatch<
-		React.SetStateAction<FileMetadata | null>
-	>
-}) => {
+	setVisuallySelected
+}: FileGridProps) => {
 	const { data: userSession } = authClient.useSession()
 
 	///////////////////////////////////////////
@@ -146,7 +148,7 @@ const FileGridMain = ({
 	return (
 		<div
 			className={cn(
-				'relative h-auto grow rounded-xl border-4 border-dashed p-3',
+				'relative h-auto w-full grow overflow-scroll rounded-xl border-4 border-dashed p-3',
 				isDragActive ? 'border-4 border-sky-600 dark:border-sky-600' : '',
 			)}
 			{...getRootProps()}
@@ -183,6 +185,7 @@ const FileGridMain = ({
 								onDeleted={onFileDeleted}
 								visuallySelected={visuallySelected}
 								setVisuallySelected={setVisuallySelected}
+								selectOnDoubleClick={dialogTrigger ? true : false}
 							/>
 						)
 					})}
