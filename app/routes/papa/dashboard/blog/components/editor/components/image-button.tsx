@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { useEditorState } from '@tiptap/react'
@@ -34,6 +34,10 @@ export const ImageButton = () => {
 	const [srcInput, setSrcInput] = useState('')
 	const [altInput, setAltInput] = useState('')
 	const [titleInput, setTitleInput] = useState('')
+
+	const [imageLoading, setImageLoading] = useState(false)
+	const [imageError, setImageError] = useState(false)
+	const [currentLoadingSrc, setCurrentLoadingSrc] = useState('')
 
 	useHydrateAtoms([[isImageSelectorOpenAtom, false]])
 
@@ -94,11 +98,33 @@ export const ImageButton = () => {
 		}
 	}
 
+	const handleImageLoad = () => {
+		setImageLoading(false)
+		setImageError(false)
+	}
+
+	const handleImageError = () => {
+		setImageLoading(false)
+		setImageError(true)
+	}
+
 	const validSrcInput =
 		srcInput.startsWith('/assets') ||
 		isValidUrl(srcInput, [...defaultValidUrlProtocols, 'blob:'])
 
 	const insertAvailable = validSrcInput && canRun
+
+	useEffect(() => {
+		if (validSrcInput && srcInput !== currentLoadingSrc) {
+			setImageLoading(true)
+			setImageError(false)
+			setCurrentLoadingSrc(srcInput)
+		} else if (!validSrcInput) {
+			setImageLoading(false)
+			setImageError(false)
+			setCurrentLoadingSrc('')
+		}
+	}, [srcInput, currentLoadingSrc])
 
 	if (!editor) return <Skeleton className="size-8" />
 
@@ -139,14 +165,24 @@ export const ImageButton = () => {
 				<DialogDescription hidden></DialogDescription>
 				<div className="flex flex-col items-center gap-3">
 					{/* Preview */}
-					<section className="flex h-40 w-full items-center justify-center border">
+					<section
+						className={`flex h-40 w-full items-center justify-center border backdrop-blur-md`}
+					>
 						{insertAvailable ? (
-							<img
-								src={srcInput}
-								alt={altInput}
-								title={titleInput}
-								className={`max-h-40 object-contain`}
-							/>
+							<>
+								<img
+									src={srcInput}
+									alt={altInput}
+									title={titleInput}
+									className={`max-h-40 object-contain transition-opacity ${
+										imageLoading ? 'hidden' : 'opacity-100'
+									}`}
+									onLoad={handleImageLoad}
+									onError={handleImageError}
+								/>
+								{imageLoading && <Loader className="animate-spin" />}
+								{imageError && <>❌</>}
+							</>
 						) : (
 							<>🍌</>
 						)}
@@ -238,6 +274,7 @@ function AssetGallery({
 						title: file.name,
 					})
 				}}
+				cardSize="lg"
 			/>
 		)
 	} else {
