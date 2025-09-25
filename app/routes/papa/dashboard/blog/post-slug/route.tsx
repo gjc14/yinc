@@ -15,7 +15,6 @@ import { Post } from '~/routes/web/blog/components/post'
 import { ContentEditor } from '../components/editor'
 import { Toolbar } from '../components/editor/editor-toolbar'
 import { PostDeleteAlert } from '../components/post/delete-alert'
-import { LocalStorageCheck } from '../components/post/local-storage-check'
 import { PostSettings } from '../components/post/post-settings'
 import { PostResetAlert } from '../components/post/reset-alert'
 import {
@@ -231,7 +230,6 @@ export default function DashboardSlugPost({
 			<Toolbar isMobile={isMobile} />
 			<FloatingToolbar onSave={handleSave} isCreate={isCreate} />
 
-			<LocalStorageCheck />
 			<PostResetAlert onReset={handleReset} />
 			<PostDeleteAlert onDelete={handleDelete} />
 
