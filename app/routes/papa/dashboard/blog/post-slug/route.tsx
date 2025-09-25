@@ -34,6 +34,7 @@ import {
 import type { action } from '../resource'
 import { FloatingToolbar } from './floating-toolbar'
 import { useAutoSaveDraft } from './use-auto-save-draft'
+import { useCheckDraft } from './use-check-draft'
 import { generateNewPost } from './utils'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -102,8 +103,6 @@ export default function DashboardSlugPost({
 	const [editor] = useAtom(editorAtom)
 	const [hasChanges] = useAtom(hasChangesAtom)
 
-	useAutoSaveDraft()
-
 	// When route changes, update post atoms
 	useEffect(() => {
 		setServerPost(currentPost)
@@ -115,6 +114,9 @@ export default function DashboardSlugPost({
 		setIsDeleteAlertOpen(false)
 		setIsLocalStorageCheckComplete(false)
 	}, [params.postSlug])
+
+	useAutoSaveDraft()
+	useCheckDraft()
 
 	// When saving/deleting state changes, update atoms
 	useEffect(() => {
