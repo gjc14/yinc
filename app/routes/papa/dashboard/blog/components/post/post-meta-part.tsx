@@ -2,8 +2,6 @@
  * PostMetaPart Component
  * This component is responsible for rendering the meta part of the post editor.
  */
-import { useEffect, useRef, useState } from 'react'
-import { useFetcher } from 'react-router'
 
 import { toast } from '@gjc14/sonner'
 import { useAtom } from 'jotai'
@@ -22,40 +20,19 @@ import {
 import { Textarea } from '~/components/ui/textarea'
 import { Loading } from '~/components/loading'
 import { SeparatorWithText } from '~/components/separator-with-text'
-import { PostStatus, type FileMetadata } from '~/lib/db/schema'
+import { PostStatus } from '~/lib/db/schema'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
-import type { loader } from '~/routes/papa/dashboard/assets/resource'
 
 import { FileGrid } from '../../../assets/components/file-grid'
-import { assetResourceRoute } from '../../../assets/utils'
 import { editorAtom, postAtom } from '../../context'
+import { useAssetsContext } from '../../hooks'
 import { TinyLinkButton } from './tiny-link-button'
 
 export const PostMetaPart = () => {
 	const [post, setPost] = useAtom(postAtom)
 	const [editor] = useAtom(editorAtom)
-	const fetcher = useFetcher<typeof loader>()
 
-	const fileLoadedRef = useRef(false)
-	const [files, setFiles] = useState<FileMetadata[]>([])
-	const [origin, setOrigin] = useState<string>('')
-	const [hasObjectStorage, setHasObjectStorage] = useState(false)
-
-	const isLoading = fetcher.state !== 'idle'
-
-	useEffect(() => {
-		if (fileLoadedRef.current) return
-		fetcher.load(assetResourceRoute)
-	}, [])
-
-	useEffect(() => {
-		if (fetcher.data) {
-			setFiles(fetcher.data.files)
-			setOrigin(fetcher.data.origin)
-			setHasObjectStorage(fetcher.data.hasObjectStorage)
-			fileLoadedRef.current = true
-		}
-	}, [fetcher])
+	const { files, origin, hasObjectStorage, isLoading } = useAssetsContext()
 
 	if (!editor || !post) return <Loading />
 
@@ -117,7 +94,7 @@ export const PostMetaPart = () => {
 					}}
 				/>
 				<SeparatorWithText text="Or" />
-				{!fileLoadedRef.current || isLoading ? (
+				{isLoading ? (
 					<Button
 						size={'sm'}
 						variant={'secondary'}
@@ -147,10 +124,10 @@ export const PostMetaPart = () => {
 						}}
 					/>
 				) : (
-					<div className="flex h-full min-h-60 w-full grow flex-col items-center justify-center gap-3 rounded-xl border">
-						<CloudAlert size={50} />
-						<p className="max-w-sm text-center">
-							Please setup your S3 Object Storage to start uploading assets
+					<div className="text-muted-foreground flex w-full flex-1 flex-col items-center justify-center gap-2 rounded-xl border px-2 py-3">
+						<CloudAlert size={30} />
+						<p className="max-w-sm text-center text-sm">
+							Please setup your S3 Object Storage to start using assets.
 						</p>
 					</div>
 				)}

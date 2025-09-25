@@ -4,7 +4,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useEditorState } from '@tiptap/react'
 import { atom, useAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
-import { Image } from 'lucide-react'
+import { CloudAlert, Image, Loader } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -17,10 +17,13 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Separator } from '~/components/ui/separator'
 import { Skeleton } from '~/components/ui/skeleton'
 import { defaultValidUrlProtocols, isValidUrl } from '~/lib/utils'
+import { FileGrid } from '~/routes/papa/dashboard/assets/components/file-grid'
 
 import { editorAtom } from '../../../context'
+import { useAssetsContext } from '../../../hooks'
 import { createImageOption } from '../edit-options'
 import { TooltipWrapper } from './tooltip-wrapper'
 
@@ -106,8 +109,10 @@ export const ImageButton = () => {
 			onOpenChange={open => {
 				setIsImageSelectorOpen(open)
 				if (open && editor) {
-					const { src } = editor.getAttributes('image')
+					const { src, alt, title } = editor.getAttributes('image')
 					setSrcInput(src || '')
+					setAltInput(alt || '')
+					setTitleInput(title || '')
 				}
 			}}
 		>
@@ -123,11 +128,12 @@ export const ImageButton = () => {
 					</Button>
 				</DialogTrigger>
 			</TooltipWrapper>
-			<DialogContent>
+			<DialogContent className="max-h-[90vh] overflow-scroll">
 				<DialogTitle hidden>Add Image</DialogTitle>
 				<DialogDescription hidden></DialogDescription>
-				<div className="flex flex-col items-center gap-2">
-					<div className="flex h-40 w-full items-center justify-center border">
+				<div className="flex flex-col items-center gap-3">
+					{/* Preview */}
+					<section className="flex h-40 w-full items-center justify-center border">
 						{insertAvailable ? (
 							<img
 								src={srcInput}
@@ -138,42 +144,55 @@ export const ImageButton = () => {
 						) : (
 							<>🍌</>
 						)}
-					</div>
+					</section>
 
-					<div className="w-full">
-						<Label htmlFor="image-src">Image URL *</Label>
-						<Input
-							id="image-src"
-							value={srcInput}
-							onChange={e => setSrcInput(e.target.value)}
-							placeholder="https://example.com/image.webp"
-						/>
-					</div>
+					{/* Inputs */}
+					<section className="flex w-full flex-col gap-2">
+						<div className="w-full">
+							<Label htmlFor="image-src">Image URL *</Label>
+							<Input
+								id="image-src"
+								value={srcInput}
+								onChange={e => setSrcInput(e.target.value)}
+								placeholder="https://example.com/image.webp"
+							/>
+						</div>
 
-					<div className="w-full">
-						<Label htmlFor="image-alt">Image Alt Text </Label>
-						<Input
-							id="image-alt"
-							value={altInput}
-							onChange={e => setAltInput(e.target.value)}
-							placeholder="My Image Alt Text"
-						/>
-					</div>
+						<div className="w-full">
+							<Label htmlFor="image-alt">Image Alt Text </Label>
+							<Input
+								id="image-alt"
+								value={altInput}
+								onChange={e => setAltInput(e.target.value)}
+								placeholder="My Image Alt Text"
+							/>
+						</div>
 
-					<div className="w-full">
-						<Label htmlFor="image-title">Image Title </Label>
-						<Input
-							id="image-title"
-							value={titleInput}
-							onChange={e => setTitleInput(e.target.value)}
-							placeholder="My Image"
-						/>
-					</div>
+						<div className="w-full">
+							<Label htmlFor="image-title">Image Title </Label>
+							<Input
+								id="image-title"
+								value={titleInput}
+								onChange={e => setTitleInput(e.target.value)}
+								placeholder="My Image"
+							/>
+						</div>
+					</section>
+
+					<Separator />
+
+					<AssetGallery
+						onSelect={({ src, alt, title }) => {
+							setSrcInput(src)
+							setAltInput(alt || '')
+							setTitleInput(title)
+						}}
+					/>
 
 					<DialogClose asChild>
 						<Button
 							onClick={setSrc}
-							className="w-full"
+							className="mt-2 w-full"
 							disabled={!insertAvailable}
 						>
 							Insert
@@ -183,4 +202,46 @@ export const ImageButton = () => {
 			</DialogContent>
 		</Dialog>
 	)
+}
+
+function AssetGallery({
+	onSelect,
+}: {
+	onSelect: (args: { src: string; alt: string | null; title: string }) => void
+}) {
+	const { files, origin, hasObjectStorage, isLoading } = useAssetsContext()
+
+	if (isLoading) {
+		return (
+			<div className="text-muted-foreground flex w-full flex-1 flex-col items-center justify-center gap-2 rounded-xl border px-2 py-5">
+				<Loader className="animate-spin" />
+				<p className="max-w-sm text-center text-sm">
+					Loading your assets, please wait a second.
+				</p>
+			</div>
+		)
+	} else if (hasObjectStorage) {
+		return (
+			<FileGrid
+				files={files}
+				origin={origin}
+				onFileSelect={file => {
+					onSelect({
+						src: `/assets/${file.id}`,
+						alt: file.description,
+						title: file.name,
+					})
+				}}
+			/>
+		)
+	} else {
+		return (
+			<div className="text-muted-foreground flex w-full flex-1 flex-col items-center justify-center gap-2 rounded-xl border px-2 py-5">
+				<CloudAlert size={30} />
+				<p className="max-w-sm text-center text-sm">
+					Please setup your S3 Object Storage to start using assets.
+				</p>
+			</div>
+		)
+	}
 }
