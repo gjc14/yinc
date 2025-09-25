@@ -46,11 +46,6 @@ const askName = (): Promise<string> => {
 async function checkAndCreateAdmin() {
 	const db = drizzle(process.env.DATABASE_URL!, { schema })
 
-	await db.transaction(async tx => {
-		await insertDefaultData(tx, 'psRr2HBzP8Fv7Nxyvr45KY4mpcLu1sCY')
-		tx.execute(sql`create schema if not exists ${pgSchema('default')}`)
-	})
-
 	try {
 		// Check if admin exists
 		const admin = await db.query.user.findMany({
