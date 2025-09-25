@@ -17,6 +17,7 @@ import { Toolbar } from '../components/editor/editor-toolbar'
 import { PostDeleteAlert } from '../components/post/delete-alert'
 import { PostSettings } from '../components/post/post-settings'
 import { PostResetAlert } from '../components/post/reset-alert'
+import { PostRestoreAlert } from '../components/post/restore-alert'
 import {
 	editorAtom,
 	hasChangesAtom,
@@ -230,6 +231,7 @@ export default function DashboardSlugPost({
 			<Toolbar isMobile={isMobile} />
 			<FloatingToolbar onSave={handleSave} isCreate={isCreate} />
 
+			<PostRestoreAlert />
 			<PostResetAlert onReset={handleReset} />
 			<PostDeleteAlert onDelete={handleDelete} />
 
