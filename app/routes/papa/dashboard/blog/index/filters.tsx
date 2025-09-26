@@ -1,6 +1,5 @@
-import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import { useSearchParams } from 'react-router'
 
 import { useAtom } from 'jotai'
 import { Check, ChevronDown, Loader2 } from 'lucide-react'
@@ -23,43 +22,42 @@ import {
 import type { Category, Tag } from '~/lib/db/schema'
 import { cn } from '~/lib/utils'
 
+import { useNavigationMetadata } from '../../layout/context'
 import { categoriesAtom, tagsAtom } from '../context'
 
 export const Filter = ({
 	q,
 	tagFilter,
 	categoryFilter,
-	searching,
 }: {
 	q?: string
 	tagFilter?: Tag[]
 	categoryFilter?: Category[]
-	searching?: boolean
 }) => {
-	const [open, setOpen] = React.useState(false)
+	const [params, setSearchParams] = useSearchParams()
+	const { navMetadata, setNavMetadata } = useNavigationMetadata()
+	const searching = navMetadata.showGlobalLoader === false
+
+	const [tags] = useAtom(tagsAtom)
+	const [categories] = useAtom(categoriesAtom)
+
+	const [open, setOpen] = useState(false)
 	const [query, setQuery] = useState(q || '')
 	const [tagsInFilter, setTagsInFilter] = useState<Tag[]>(tagFilter || [])
 	const [categoryInFilter, setCategoryInFilter] = useState<Category[]>(
 		categoryFilter || [],
 	)
 
-	const hasFilter = !!(q || tagFilter?.length || categoryFilter?.length)
-
-	const { search, pathname } = useLocation()
-	const navigate = useNavigate()
-	const [tags] = useAtom(tagsAtom)
-	const [categories] = useAtom(categoriesAtom)
-
 	// inner popovers open state
 	const [tagsOpen, setTagsOpen] = useState(false)
 	const [categoriesOpen, setCategoriesOpen] = useState(false)
+
+	const hasFilter = !!(q || tagFilter?.length || categoryFilter?.length)
 
 	const applyFilter = () => {
 		if (searching) return
 
 		// start from the current URL search to preserve all other params (q, category, etc.)
-		const params = new URLSearchParams(search)
-
 		if (query) {
 			params.set('q', query)
 		} else {
@@ -78,7 +76,10 @@ export const Filter = ({
 			params.delete('category')
 		}
 
-		navigate(`${pathname}?${params.toString()}`)
+		setNavMetadata({ showGlobalLoader: false })
+		setSearchParams(params, {
+			replace: true,
+		})
 		// close the main popover after applying
 		setOpen(false)
 	}

@@ -1,11 +1,10 @@
 import type { Route } from './+types/route'
 import { useEffect, useMemo, useState } from 'react'
-import { data, Link, useNavigation } from 'react-router'
+import { data, Link, useNavigation, useSearchParams } from 'react-router'
 
 import { PlusCircle } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
-import { Loading } from '~/components/loading'
 import {
 	DashboardActions,
 	DashboardContent,
@@ -64,13 +63,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 export default function DashboardPost({ loaderData }: Route.ComponentProps) {
 	const { posts, categoryFilter, tagFilter, q } = loaderData
 
-	const navigation = useNavigation()
-
-	const params = new URLSearchParams(navigation.location?.search || '')
-	const searching = ['q', 'tag', 'category'].some(k => params.has(k))
-
-	const isNavigating = navigation.state === 'loading' && !searching
-
 	const [rowSelection, setRowSelection] = useState({})
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
 
@@ -84,25 +76,12 @@ export default function DashboardPost({ loaderData }: Route.ComponentProps) {
 		})
 	}, [posts])
 
-	if (isNavigating) {
-		return (
-			<div className="mx-auto flex h-full flex-1 flex-col items-center justify-center space-y-6">
-				<Loading />
-			</div>
-		)
-	}
-
 	return (
 		<DashboardSectionWrapper className="gap-2">
 			<DashboardHeader>
 				<DashboardTitle title="Posts"></DashboardTitle>
 				<DashboardActions>
-					<Filter
-						q={q}
-						tagFilter={tagFilter}
-						categoryFilter={categoryFilter}
-						searching={searching}
-					/>
+					<Filter q={q} tagFilter={tagFilter} categoryFilter={categoryFilter} />
 					<Button size={'sm'} asChild>
 						<Link to="/dashboard/blog/new">
 							<PlusCircle size={16} />

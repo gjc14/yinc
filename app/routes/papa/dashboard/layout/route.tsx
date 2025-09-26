@@ -1,11 +1,12 @@
 import type { Route } from './+types/route'
-import { memo, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import {
 	isRouteErrorResponse,
 	Link,
-	Outlet,
 	redirect,
+	Outlet as RROutlet,
 	useLocation,
+	useNavigation,
 	useRouteError,
 } from 'react-router'
 
@@ -17,10 +18,12 @@ import {
 	SidebarInset,
 	SidebarProvider,
 } from '~/components/ui/sidebar'
+import { Loading } from '~/components/loading'
 import { statusCodeMap } from '~/lib/utils/status-code'
 
 import { validateAdminSession } from '../../auth/utils'
 import { getServiceDashboardConfigs } from '../../utils/service-configs'
+import { DashboardSectionWrapper } from '../components/dashboard-wrapper'
 import type { ServiceDashboardConfig } from '../components/service-swicher'
 import { DashboardSidebar } from './components/dashboard-sidebar'
 import {
@@ -29,6 +32,7 @@ import {
 	DEFAULT_SERVICE,
 } from './components/data'
 import { HeaderWithBreadcrumbs } from './components/header-breadcrumbs'
+import { NavigationProvider, useNavigationMetadata } from './context'
 
 export const meta = ({ error }: Route.MetaArgs) => {
 	if (!error) {
@@ -109,24 +113,51 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 	}, [location.pathname, serviceDashboardConfigs])
 
 	return (
-		<SidebarProvider defaultOpen={defaultSidebarOpen}>
-			<MemoDashboardSidebar
-				user={memoizedUser}
-				services={availableServices}
-				currentService={currentService}
-				mainNavItems={currentSidebarItems}
-				secondaryNavItems={
-					isDashboard ? DEFAULT_SECONDARY_NAV_ITEMS : undefined
-				}
-			/>
+		<NavigationProvider>
+			<SidebarProvider defaultOpen={defaultSidebarOpen}>
+				<MemoDashboardSidebar
+					user={memoizedUser}
+					services={availableServices}
+					currentService={currentService}
+					mainNavItems={currentSidebarItems}
+					secondaryNavItems={
+						isDashboard ? DEFAULT_SECONDARY_NAV_ITEMS : undefined
+					}
+				/>
 
-			<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
-				<MemoHeaderWithBreadcrumb />
+				<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
+					<MemoHeaderWithBreadcrumb />
 
-				<Outlet />
-			</SidebarInset>
-		</SidebarProvider>
+					<Outlet />
+				</SidebarInset>
+			</SidebarProvider>
+		</NavigationProvider>
 	)
+}
+
+const Outlet = () => {
+	const navigation = useNavigation()
+	const { navMetadata, setNavMetadata } = useNavigationMetadata()
+
+	// Use context during 'loading', fall back to location.state after loader completes
+	const shouldShowLoader =
+		navigation.state === 'loading' && navMetadata.showGlobalLoader
+
+	useEffect(() => {
+		if (navigation.state === 'idle') {
+			setNavMetadata({ showGlobalLoader: true }) // Reset to default
+		}
+	}, [navigation.state, setNavMetadata])
+
+	if (shouldShowLoader) {
+		return (
+			<DashboardSectionWrapper className="items-center justify-center">
+				<Loading />
+			</DashboardSectionWrapper>
+		)
+	}
+
+	return <RROutlet />
 }
 
 export function ErrorBoundary() {
