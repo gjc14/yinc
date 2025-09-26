@@ -386,7 +386,7 @@ Organization
 
 - For safety concern, now only OTP method is available.
 
-## Admin Components
+## Dashboard
 
 ### Data Table
 
@@ -458,16 +458,19 @@ const tagColumns: ColumnDef<TagType>[] = [
 
 ```tsx
 export function MyComponent() {
+	const [rowSelection, setRowSelection] = useState({})
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
+
+	const tableData = users.map(user => ({
+		...user,
+		setRowsDeleting,
+	}))
 
 	return (
 		<DataTable
 			columns={columns}
 			// Pass in rowsDeleting set state into table
-			data={users.map(u => ({
-				...u,
-				setRowsDeleting,
-			}))}
+			data={tableData}
 			// Configure style if row id matches rowsDeleting
 			rowGroupStyle={[
 				{
@@ -475,6 +478,8 @@ export function MyComponent() {
 					className: 'opacity-50 pointer-events-none',
 				},
 			]}
+			rowSelection={rowSelection}
+			setRowSelection={setRowSelection}
 			hideColumnFilter
 		>
 			{/* DataTable passes a table ref for you to use table api, and this will be rendered above table in toolbox */}
@@ -498,14 +503,56 @@ export function MyComponent() {
 ```tsx
 export default function DashboardExample() {
 	return (
-		<AdminSectionWrapper>
-			<AdminHeader>
-				<AdminTitle title="Your dashboard title"></AdminTitle>
-				<AdminActions>{/* You may put some buttons here */}</AdminActions>
-			</AdminHeader>
+		<DashboardSectionWrapper>
+			<DashboardHeader>
+				<DashboardTitle title="Your dashboard title"></DashboardTitle>
+				<DashboardActions>
+					{/* You may put some buttons here */}
+				</DashboardActions>
+			</DashboardHeader>
 			{/* Your main content goes here */}
-			<AdminContent>Main content</AdminContent>
-		</AdminSectionWrapper>
+			<DashboardContent>Main content</DashboardContent>
+		</DashboardSectionWrapper>
 	)
+}
+```
+
+### Global Navigating UI
+
+Displaying when navigating using `useNavigation` hook. The UI is written in
+[layout](./layout/route.tsx).
+
+#### Prevent Navigating UI
+
+To prevent displaying the UI, utilize `useNavigationMetadata` hook. When
+navigating over, `navMetadata.showGlobalLoader` will be set to true.
+
+1. Manually set `showGlobalLoader` to false
+   (`setNavMetadata({ showGlobalLoader: false })`)
+2. Navigate starts
+3. Navigate ends
+4. `showGlobalLoader` is set to true automatically
+
+```tsx
+const Component = () => {
+	const { navMetadata, setNavMetadata } = useNavigationMetadata()
+	const navigate = useNavigate()
+	const [, setSearchParams] = useSearchParams()
+
+	const isNavigating = navMetadata.showGlobalLoader === false
+
+	const goToSomewhere = () => {
+		// Set showGlobalLoader to false first
+		setNavMetadata({ showGlobalLoader: false })
+
+		// a. navigate to destination
+		navigate('/path/to/destination', { replace: true })
+
+		// or
+		// b. Update search params
+		setSearchParams(params, { replace: true })
+	}
+
+	return <button onClick={goToSomewhere}>Go to Somewhere</button>
 }
 ```
