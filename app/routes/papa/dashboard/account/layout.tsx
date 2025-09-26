@@ -4,11 +4,15 @@ import {
 	AnimatedNav,
 	type RouteButton,
 } from '~/components/animated-horizontal-nav'
+import { Loading } from '~/components/loading'
 import {
+	DashboardContent,
 	DashboardHeader,
 	DashboardSectionWrapper,
 	DashboardTitle,
 } from '~/routes/papa/dashboard/components/dashboard-wrapper'
+
+import { useNavigationMetadata } from '../layout/context'
 
 const DashboardAccountRoutes: RouteButton[] = [
 	{ to: '/dashboard/account', title: 'Profile' },
@@ -18,14 +22,28 @@ const DashboardAccountRoutes: RouteButton[] = [
 ]
 
 export default function DashboardAccount() {
+	const { navMetadata, setNavMetadata } = useNavigationMetadata()
+	const navigating = navMetadata.showGlobalLoader === false
+
 	return (
 		<DashboardSectionWrapper>
 			<DashboardHeader>
 				<DashboardTitle>
-					<AnimatedNav routes={DashboardAccountRoutes} />
+					<AnimatedNav
+						routes={DashboardAccountRoutes.map(route => ({
+							...route,
+							onClick: () => setNavMetadata({ showGlobalLoader: false }),
+						}))}
+					/>
 				</DashboardTitle>
 			</DashboardHeader>
-			<Outlet />
+			{navigating ? (
+				<DashboardContent className="items-center justify-center">
+					<Loading />
+				</DashboardContent>
+			) : (
+				<Outlet />
+			)}
 		</DashboardSectionWrapper>
 	)
 }

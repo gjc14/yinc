@@ -4,13 +4,18 @@ import { NavLink } from 'react-router'
 import { motion } from 'motion/react'
 
 import { Button } from '~/components/ui/button'
+import { cn } from '~/lib/utils'
 
 export interface RouteButton {
 	to: string
 	title: string
 }
 
-export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
+export const AnimatedNav = ({
+	routes,
+}: {
+	routes: (RouteButton & React.ComponentProps<'button'>)[]
+}) => {
 	const [hoveredTab, setHoveredTab] = useState<number | null>(null)
 	const [activeTabBounds, setActiveTabBounds] = useState<{
 		left: number
@@ -21,6 +26,8 @@ export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
 		width: number
 	}>({ left: 0, width: 0 })
 	const navRef = useRef<HTMLDivElement>(null)
+
+	console.log('routes', routes)
 
 	useEffect(() => {
 		if (hoveredTab !== null && navRef.current) {
@@ -92,17 +99,21 @@ export const AnimatedNav = ({ routes }: { routes: RouteButton[] }) => {
 				}}
 			/>
 
-			{routes.map((route, i) => (
-				<AnimatedLink
-					key={i}
-					to={route.to}
-					title={route.title}
-					index={i}
-					onHover={() => setHoveredTab(i)}
-					onLeave={() => setHoveredTab(null)}
-					onActive={() => updateActiveTabPosition(i)}
-				/>
-			))}
+			{routes.map((route, i) => {
+				const { to, title, ...buttonProps } = route
+				return (
+					<AnimatedLink
+						key={i}
+						to={to}
+						title={title}
+						index={i}
+						onHover={() => setHoveredTab(i)}
+						onLeave={() => setHoveredTab(null)}
+						onActive={() => updateActiveTabPosition(i)}
+						{...buttonProps}
+					/>
+				)
+			})}
 		</nav>
 	)
 }
@@ -121,7 +132,9 @@ const AnimatedLink = ({
 	onHover,
 	onLeave,
 	onActive,
-}: AnimatedLinkProps) => {
+	className,
+	...rest
+}: AnimatedLinkProps & React.ComponentProps<'button'>) => {
 	return (
 		<NavLink to={to} end className="relative">
 			{({ isActive, isPending }) => {
@@ -146,15 +159,16 @@ const AnimatedLink = ({
 						<Button
 							variant={'ghost'}
 							data-index={index}
-							className={
-								'mb-2 h-8 rounded-sm px-3 hover:bg-transparent' +
-								' ' +
-								(isActive ? 'text-primary' : 'text-muted-foreground') +
-								' ' +
-								(isPending ? 'animate-pulse' : '')
-							}
+							className={cn(
+								'mb-2 h-8 rounded-sm px-3',
+								'hover:bg-transparent dark:hover:bg-transparent',
+								isActive ? 'text-primary' : 'text-muted-foreground',
+								isPending ? 'animate-pulse' : '',
+								className,
+							)}
 							onMouseEnter={onHover}
 							onMouseLeave={onLeave}
+							{...rest}
 						>
 							{title}
 						</Button>
