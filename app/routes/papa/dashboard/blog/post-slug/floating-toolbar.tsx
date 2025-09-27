@@ -20,6 +20,7 @@ import {
 	serverPostAtom,
 } from '../context'
 import type { action } from '../resource'
+import { postLocalStorageKey } from './utils'
 
 export const FloatingToolbar = ({ isCreate }: { isCreate: boolean }) => {
 	const isMobile = useIsMobile()
@@ -57,10 +58,10 @@ export const FloatingToolbar = ({ isCreate }: { isCreate: boolean }) => {
 			const data = fetcher.data.data
 			if (data) {
 				// Update atoms with returned data
+				post && window.localStorage.removeItem(postLocalStorageKey(post.id))
 				setServerPost(data)
 				setPost(data)
 				data.slug !== post?.slug && navigate('/dashboard/blog/' + data.slug)
-				window.localStorage.removeItem(`dirty-post-${post?.id}`)
 			}
 		}
 	}, [fetcher.state, fetcher.formMethod, fetcher.data, isSubmitting])
