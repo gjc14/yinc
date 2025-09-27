@@ -1,6 +1,5 @@
 import type { Route } from './+types/route'
 import { useEffect } from 'react'
-import { useFetcher, useNavigate } from 'react-router'
 
 import { useAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
@@ -8,7 +7,6 @@ import { HeartCrack } from 'lucide-react'
 
 import { useIsMobile } from '~/hooks/use-mobile'
 import { getPostBySlug } from '~/lib/db/post.server'
-import { generateSlug } from '~/lib/utils/seo'
 import { Post } from '~/routes/web/blog/components/post'
 
 import { ContentEditor } from '../components/editor'
@@ -18,19 +16,12 @@ import { PostSettings } from '../components/post/post-settings'
 import { PostResetAlert } from '../components/post/reset-alert'
 import { PostRestoreAlert } from '../components/post/restore-alert'
 import {
-	editorAtom,
-	hasChangesAtom,
 	isDeleteAlertOpenAtom,
-	isDeletingAtom,
-	isDraftCheckCompleteAtom,
 	isResetAlertOpenAtom,
-	isRestoreAlertOpenAtom,
-	isSavingAtom,
 	isSettingsOpenAtom,
 	postAtom,
 	serverPostAtom,
 } from '../context'
-import type { action } from '../resource'
 import { FloatingToolbar } from './floating-toolbar'
 import { useAutoSaveDraft } from './use-auto-save-draft'
 import { useCheckDraft } from './use-check-draft'
@@ -64,40 +55,22 @@ export default function DashboardSlugPost({
 	const currentPost = isCreate ? generateNewPost(admin) : sPost.post
 
 	const isMobile = useIsMobile()
-	const fetcher = useFetcher<typeof action>()
-	const navigate = useNavigate()
-
-	const isSubmitting = fetcher.state === 'submitting'
-	const method = fetcher.formMethod
-
-	const isSaving = isSubmitting && (method === 'PUT' || method === 'POST')
-	const isDeleting = isSubmitting && method === 'DELETE'
 
 	useHydrateAtoms([
 		[serverPostAtom, currentPost],
 		[postAtom, currentPost],
-		[isSavingAtom, isSaving],
-		[isDeletingAtom, isDeleting],
+
 		[isSettingsOpenAtom, false],
-		[isRestoreAlertOpenAtom, false],
 		[isResetAlertOpenAtom, false],
 		[isDeleteAlertOpenAtom, false],
-		[isDraftCheckCompleteAtom, false],
 	])
 
 	const [, setServerPost] = useAtom(serverPostAtom)
 	const [post, setPost] = useAtom(postAtom)
-	const [, setIsSaving] = useAtom(isSavingAtom)
-	const [, setIsDeleting] = useAtom(isDeletingAtom)
 
 	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
-	const [, setIsRestoreAlertOpen] = useAtom(isRestoreAlertOpenAtom)
 	const [, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
 	const [, setIsDeleteAlertOpen] = useAtom(isDeleteAlertOpenAtom)
-	const [, setIsLocalStorageCheckComplete] = useAtom(isDraftCheckCompleteAtom)
-
-	const [editor] = useAtom(editorAtom)
-	const [hasChanges] = useAtom(hasChangesAtom)
 
 	// When route changes, update post atoms
 	useEffect(() => {
@@ -105,41 +78,9 @@ export default function DashboardSlugPost({
 		setPost(currentPost)
 
 		setIsSettingsOpen(false)
-		setIsRestoreAlertOpen(false)
 		setIsResetAlertOpen(false)
 		setIsDeleteAlertOpen(false)
-		setIsLocalStorageCheckComplete(false)
 	}, [params.postSlug])
-
-	useAutoSaveDraft()
-	useCheckDraft()
-
-	// When saving/deleting state changes, update atoms
-	useEffect(() => {
-		setIsSaving(isSaving)
-		setIsDeleting(isDeleting)
-	}, [isSaving, isDeleting])
-
-	useEffect(() => {
-		if (fetcher.state === 'loading' && fetcher.data) {
-			if (fetcher.formMethod === 'DELETE') {
-				'msg' in fetcher.data && navigate('/dashboard/blog')
-			}
-			if (
-				(fetcher.formMethod === 'PUT' || fetcher.formMethod === 'POST') &&
-				'data' in fetcher.data
-			) {
-				const data = fetcher.data.data
-				if (data) {
-					// Update atoms with returned data
-					setServerPost(data)
-					setPost(data)
-					data.slug !== post?.slug && navigate('/dashboard/blog/' + data.slug)
-					window.localStorage.removeItem(`dirty-post-${post?.id}`)
-				}
-			}
-		}
-	}, [fetcher.state, fetcher.formMethod, fetcher.data, isSubmitting])
 
 	if (!post) {
 		return (
@@ -150,80 +91,17 @@ export default function DashboardSlugPost({
 		)
 	}
 
-	// Handle database save
-	const handleSave = () => {
-		if (
-			!post ||
-			!editor ||
-			!hasChanges ||
-			isSaving ||
-			isDeleting ||
-			isSubmitting
-		)
-			return
-
-		const now = new Date().toISOString().replace(/T/, '@').split('.')[0]
-
-		// Remove date fields and set default values
-		const postReady = {
-			...post,
-			title: post.title || `p-${now}`,
-			slug:
-				post.slug ||
-				generateSlug(post.title || `p-${now}`, {
-					fallbackPrefix: 'post',
-					prevent: ['new'],
-				}),
-			content: JSON.stringify(editor.getJSON()),
-			createdAt: undefined,
-			updatedAt: undefined,
-			seo: {
-				...post.seo,
-				createdAt: undefined,
-				updatedAt: undefined,
-			},
-		}
-
-		fetcher.submit(JSON.stringify(postReady), {
-			method: isCreate ? 'POST' : 'PUT',
-			encType: 'application/json',
-			action: '/dashboard/blog/resource',
-		})
-	}
-
-	// Handle database delete
-	const handleDelete = async () => {
-		if (!post || isSubmitting || isCreate) return
-
-		fetcher.submit(
-			{ id: post.id },
-			{
-				method: 'DELETE',
-				action: '/dashboard/blog/resource',
-				encType: 'application/json',
-			},
-		)
-	}
-
-	// Handle post reset
-	const handleReset = () => {
-		if (!editor) return
-
-		setPost(currentPost)
-		editor.commands.setContent(
-			currentPost?.content ? JSON.parse(currentPost.content) : undefined,
-		)
-	}
-
 	return (
 		<div className="relative h-full overflow-hidden">
+			<DraftManager />
+
 			{/* Editor toolbar self positioning */}
 			<Toolbar isMobile={isMobile} />
-			<FloatingToolbar onSave={handleSave} isCreate={isCreate} />
+			<FloatingToolbar isCreate={isCreate} />
 
 			<PostRestoreAlert />
-			<PostResetAlert onReset={handleReset} />
-			<PostDeleteAlert onDelete={handleDelete} />
+			<PostResetAlert />
+			<PostDeleteAlert isCreate={isCreate} />
 
 			<PostSettings />
 
@@ -248,4 +126,10 @@ export default function DashboardSlugPost({
 			</section>
 		</div>
 	)
+}
+
+const DraftManager = () => {
+	useCheckDraft()
+	useAutoSaveDraft()
+	return null
 }

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
 
 import {
 	isDraftCheckCompleteAtom,
@@ -22,6 +23,8 @@ export const useCheckDraft = () => {
 	)
 	const [, setIsRestoreAlertOpen] = useAtom(isRestoreAlertOpenAtom)
 	const [serverPost] = useAtom(serverPostAtom)
+
+	useHydrateAtoms([[isDraftCheckCompleteAtom, false]])
 
 	useEffect(() => {
 		if (!serverPost || isDraftCheckComplete) return

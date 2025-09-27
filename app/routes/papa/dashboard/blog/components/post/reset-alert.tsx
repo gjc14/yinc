@@ -11,16 +11,30 @@ import {
 	AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
 
-import { isResetAlertOpenAtom, postAtom } from '../../context'
+import {
+	editorAtom,
+	isResetAlertOpenAtom,
+	postAtom,
+	serverPostAtom,
+} from '../../context'
 
 /**
  * Reset current dirty post to its initial state.
  */
-export const PostResetAlert = ({ onReset }: { onReset: () => void }) => {
+export const PostResetAlert = () => {
 	const [isResetAlertOpen, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
-	const [post] = useAtom(postAtom)
+	const [post, setPost] = useAtom(postAtom)
+	const [serverPost] = useAtom(serverPostAtom)
+	const [editor] = useAtom(editorAtom)
 
-	if (!post) return null
+	if (!post || !editor) return null
+
+	const handleReset = () => {
+		setPost(serverPost)
+		editor.commands.setContent(
+			serverPost?.content ? JSON.parse(serverPost.content) : undefined,
+		)
+	}
 
 	return (
 		<AlertDialog open={isResetAlertOpen} onOpenChange={setIsResetAlertOpen}>
@@ -36,7 +50,7 @@ export const PostResetAlert = ({ onReset }: { onReset: () => void }) => {
 					<AlertDialogCancel onClick={() => setIsResetAlertOpen(false)}>
 						Cancel
 					</AlertDialogCancel>
-					<AlertDialogAction onClick={() => onReset()}>Reset</AlertDialogAction>
+					<AlertDialogAction onClick={handleReset}>Reset</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

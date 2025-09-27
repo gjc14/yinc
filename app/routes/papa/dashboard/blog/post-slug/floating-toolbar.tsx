@@ -1,36 +1,103 @@
-import { useNavigate } from 'react-router'
+import { useEffect } from 'react'
+import { useFetcher, useNavigate } from 'react-router'
 
 import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
 import { ExternalLink, Loader2, RotateCcw, Settings } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { useIsMobile } from '~/hooks/use-mobile'
+import { generateSlug } from '~/lib/utils/seo'
 
 import {
+	editorAtom,
 	hasChangesAtom,
+	isDeletingAtom,
 	isResetAlertOpenAtom,
 	isSavingAtom,
 	isSettingsOpenAtom,
 	postAtom,
+	serverPostAtom,
 } from '../context'
+import type { action } from '../resource'
 
-export const FloatingToolbar = ({
-	onSave,
-	isCreate,
-}: {
-	onSave: () => void
-	isCreate: boolean
-}) => {
+export const FloatingToolbar = ({ isCreate }: { isCreate: boolean }) => {
 	const isMobile = useIsMobile()
+	const fetcher = useFetcher<typeof action>()
 	const navigate = useNavigate()
+
+	const isSubmitting = fetcher.state === 'submitting'
+	const method = fetcher.formMethod
+	const isSaving = isSubmitting && (method === 'PUT' || method === 'POST')
+
+	const [editor] = useAtom(editorAtom)
+	const [post, setPost] = useAtom(postAtom)
+	const [, setServerPost] = useAtom(serverPostAtom)
 	const [hasChanges] = useAtom(hasChangesAtom)
 
-	const [post] = useAtom(postAtom)
-	const [isSaving] = useAtom(isSavingAtom)
+	const [, setIsSaving] = useAtom(isSavingAtom)
+	const [isDeleting] = useAtom(isDeletingAtom)
 	const [, setIsSettingsOpen] = useAtom(isSettingsOpenAtom)
 	const [, setIsResetAlertOpen] = useAtom(isResetAlertOpenAtom)
 
-	if (!post) return null
+	useHydrateAtoms([[isSavingAtom, isSaving]])
+
+	// When saving state changes, update atoms
+	useEffect(() => {
+		setIsSaving(isSaving)
+	}, [isSaving])
+
+	useEffect(() => {
+		if (
+			fetcher.state === 'loading' &&
+			fetcher.data &&
+			(fetcher.formMethod === 'PUT' || fetcher.formMethod === 'POST') &&
+			'data' in fetcher.data
+		) {
+			const data = fetcher.data.data
+			if (data) {
+				// Update atoms with returned data
+				setServerPost(data)
+				setPost(data)
+				data.slug !== post?.slug && navigate('/dashboard/blog/' + data.slug)
+				window.localStorage.removeItem(`dirty-post-${post?.id}`)
+			}
+		}
+	}, [fetcher.state, fetcher.formMethod, fetcher.data, isSubmitting])
+
+	if (!post || !editor) return null
+
+	const handleSave = () => {
+		if (!hasChanges || isSaving || isDeleting || isSubmitting) return
+
+		const now = Date.now()
+
+		// Remove date fields and set default values
+		const postReady = {
+			...post,
+			title: post.title || `p-${now}`,
+			slug:
+				post.slug ||
+				generateSlug(post.title || `p-${now}`, {
+					fallbackPrefix: 'post',
+					prevent: ['new'],
+				}),
+			content: JSON.stringify(editor.getJSON()),
+			createdAt: undefined,
+			updatedAt: undefined,
+			seo: {
+				...post.seo,
+				createdAt: undefined,
+				updatedAt: undefined,
+			},
+		}
+
+		fetcher.submit(JSON.stringify(postReady), {
+			method: isCreate ? 'POST' : 'PUT',
+			encType: 'application/json',
+			action: '/dashboard/blog/resource',
+		})
+	}
 
 	return (
 		<div
@@ -73,7 +140,7 @@ export const FloatingToolbar = ({
 				variant={'default'}
 				className="hover:text-primary rounded-full border border-transparent hover:border-current hover:bg-transparent"
 				disabled={!hasChanges || isSaving}
-				onClick={onSave}
+				onClick={handleSave}
 			>
 				{isSaving && <Loader2 size={16} className="animate-spin" />}
 				<p className="text-xs">{isCreate ? 'Create' : 'Save'}</p>

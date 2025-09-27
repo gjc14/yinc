@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
 
 import {
 	AlertDialog,
@@ -36,6 +37,8 @@ export const PostRestoreAlert = () => {
 	const [editor] = useAtom(editorAtom)
 	const [serverPost] = useAtom(serverPostAtom)
 	const [, setPost] = useAtom(postAtom)
+
+	useHydrateAtoms([[isDraftCheckCompleteAtom, false]])
 
 	if (!serverPost || !editor) return null
 

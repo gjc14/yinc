@@ -1,4 +1,8 @@
+import { useEffect } from 'react'
+import { useFetcher, useNavigate } from 'react-router'
+
 import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
 import { Loader2 } from 'lucide-react'
 
 import {
@@ -14,14 +18,51 @@ import {
 
 import { isDeleteAlertOpenAtom, isDeletingAtom, postAtom } from '../../context'
 
-export const PostDeleteAlert = ({ onDelete }: { onDelete: () => void }) => {
+export const PostDeleteAlert = ({ isCreate }: { isCreate: boolean }) => {
+	const fetcher = useFetcher()
+	const navigate = useNavigate()
+
+	const isSubmitting = fetcher.state === 'submitting'
+	const method = fetcher.formMethod
+	const isDeleting = isSubmitting && method === 'DELETE'
+
 	const [post] = useAtom(postAtom)
-	const [isDeleting, setIsDeleting] = useAtom(isDeletingAtom)
+	const [, setIsDeleting] = useAtom(isDeletingAtom)
 	const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useAtom(
 		isDeleteAlertOpenAtom,
 	)
 
+	useHydrateAtoms([[isDeletingAtom, isDeleting]])
+
+	useEffect(() => {
+		setIsDeleting(isDeleting)
+	}, [isDeleting])
+
+	useEffect(() => {
+		if (
+			fetcher.state === 'loading' &&
+			fetcher.data &&
+			fetcher.formMethod === 'DELETE' &&
+			'msg' in fetcher.data
+		) {
+			navigate('/dashboard/blog')
+		}
+	}, [fetcher.state, fetcher.formMethod, fetcher.data, isSubmitting])
+
 	if (!post) return null
+
+	const handleDelete = async () => {
+		if (isSubmitting || isCreate) return
+
+		fetcher.submit(
+			{ id: post.id },
+			{
+				method: 'DELETE',
+				action: '/dashboard/blog/resource',
+				encType: 'application/json',
+			},
+		)
+	}
 
 	return (
 		<AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
@@ -42,7 +83,7 @@ export const PostDeleteAlert = ({ onDelete }: { onDelete: () => void }) => {
 						disabled={isDeleting}
 						onClick={e => {
 							e.preventDefault()
-							onDelete()
+							handleDelete()
 							setIsDeleting(true)
 						}}
 					>
