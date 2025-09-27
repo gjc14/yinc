@@ -9,6 +9,7 @@ import { LinkUnlinkButtons } from './components/link-unlink-button'
 import { MoreDropdownMenu } from './components/more-dropdown'
 import { SelectDropdownMenu } from './components/select-dropdown'
 import { ToggleButton } from './components/toggle-button'
+import { YoutubeButton } from './components/youtube-button'
 import {
 	AdvancedParagraphOptions,
 	AlignOptions,
@@ -114,6 +115,7 @@ export function Toolbar({
 					{/* link, image, video */}
 					<LinkUnlinkButtons />
 					<ImageButton />
+					<YoutubeButton />
 
 					<Separator />
 

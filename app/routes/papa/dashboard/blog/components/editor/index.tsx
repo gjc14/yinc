@@ -5,6 +5,7 @@
  */
 import './styles.css'
 import './styles/image-node.css'
+import './styles/youtube-node.css'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 

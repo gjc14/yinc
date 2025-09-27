@@ -7,12 +7,12 @@ import { Superscript } from '@tiptap/extension-superscript'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import { Typography } from '@tiptap/extension-typography'
+import { Youtube } from '@tiptap/extension-youtube'
 import { Placeholder, Selection } from '@tiptap/extensions'
 import { StarterKit } from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
 
 // Custom Extensions
-import { Youtube } from './extensions/responsive-youtube'
 import { SmilieReplacer } from './extensions/smilie-replacer'
 
 /**
@@ -51,7 +51,16 @@ export const ExtensionKit = ({
 		TextStyleKit.configure({}),
 		CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
 		Image,
-		Youtube,
+		/** @see https://tiptap.dev/docs/editor/extensions/custom-extensions/extend-existing#settings */
+		Youtube.extend({
+			addOptions() {
+				return {
+					...this.parent?.(),
+					width: '100%',
+					height: 360,
+				}
+			},
+		}),
 		TaskList,
 		TaskItem.configure({
 			nested: true,

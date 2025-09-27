@@ -1,4 +1,3 @@
-import type { SetImageOptions } from '@tiptap/extension-image'
 import { Editor } from '@tiptap/react'
 import {
 	AlignCenter,
@@ -33,6 +32,8 @@ import {
 	Undo,
 	type LucideIcon,
 } from 'lucide-react'
+
+import { Youtube } from '~/components/icons/youtube'
 
 export interface EditOptionProps {
 	name: string
@@ -348,14 +349,29 @@ const createLinkUnlinkOption = (href?: string) => ({
 			.run(),
 })
 
-const createImageOption = (props: SetImageOptions) => ({
+export type SetImageOptions = Parameters<Editor['commands']['setImage']>[0]
+const createImageOption = (props?: SetImageOptions) => ({
 	name: 'Image',
 	shortcut: 'mod+shift+i',
 	icon: Image,
 	isActive: (editor: Editor) => editor.isActive('image'),
-	run: (editor: Editor) => editor.chain().focus().setImage(props).run(),
+	run: (editor: Editor) =>
+		props ? editor.chain().focus().setImage(props).run() : false,
 	canRun: (editor: Editor) =>
-		editor.can().chain().focus().setImage(props).run(),
+		props ? editor.can().chain().focus().setImage(props).run() : false,
+})
+
+export type SetYoutubeVideoOptions = Parameters<
+	Editor['commands']['setYoutubeVideo']
+>[0]
+const createYoutubeOption = (props?: SetYoutubeVideoOptions) => ({
+	name: 'Youtube',
+	icon: Youtube,
+	isActive: (editor: Editor) => editor.isActive('youtube'),
+	run: (editor: Editor) =>
+		props ? editor.chain().focus().setYoutubeVideo(props).run() : false,
+	canRun: (editor: Editor) =>
+		props ? editor.can().chain().focus().setYoutubeVideo(props).run() : false,
 })
 
 export {
@@ -373,4 +389,5 @@ export {
 	UndoRedoOptions,
 	createLinkUnlinkOption,
 	createImageOption,
+	createYoutubeOption,
 }

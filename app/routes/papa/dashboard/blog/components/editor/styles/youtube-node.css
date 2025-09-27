@@ -1,0 +1,21 @@
+@reference "../../../../../../../app.css";
+
+.tiptap.ProseMirror {
+	div[data-youtube-video] {
+		cursor: move;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		margin-left: -0.5rem;
+		margin-right: -0.5rem;
+
+		iframe {
+			margin: 2rem 0;
+			outline: 0.125rem solid transparent;
+			@apply block min-h-[200px] min-w-[200px];
+		}
+
+		&.ProseMirror-selectednode iframe {
+			@apply outline-yellow-500;
+		}
+	}
+}
