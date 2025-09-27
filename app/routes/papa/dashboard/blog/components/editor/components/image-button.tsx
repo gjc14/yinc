@@ -67,6 +67,12 @@ export const ImageButton = () => {
 	const isActive = imageStates?.isActive
 	const canRun = imageStates?.canRun
 
+	const validSrcInput =
+		srcInput.startsWith('/assets') ||
+		isValidUrl(srcInput, [...defaultValidUrlProtocols, 'blob:'])
+
+	const insertAvailable = validSrcInput && canRun
+
 	// Open Image selector
 	useHotkeys(
 		IMAGE_SHORTCUT,
@@ -82,9 +88,23 @@ export const ImageButton = () => {
 		},
 	)
 
+	useEffect(() => {
+		if (validSrcInput && srcInput !== currentLoadingSrc) {
+			setImageLoading(true)
+			setImageError(false)
+			setCurrentLoadingSrc(srcInput)
+		} else if (!validSrcInput) {
+			setImageLoading(false)
+			setImageError(false)
+			setCurrentLoadingSrc('')
+		}
+	}, [srcInput, currentLoadingSrc])
+
+	if (!editor) return <Skeleton className="size-8" />
+
 	const setSrc = () => {
 		try {
-			if (!srcInput || !editor) return
+			if (!srcInput) return
 			editor
 				.chain()
 				.setImage({ src: srcInput, alt: altInput, title: titleInput })
@@ -108,32 +128,11 @@ export const ImageButton = () => {
 		setImageError(true)
 	}
 
-	const validSrcInput =
-		srcInput.startsWith('/assets') ||
-		isValidUrl(srcInput, [...defaultValidUrlProtocols, 'blob:'])
-
-	const insertAvailable = validSrcInput && canRun
-
-	useEffect(() => {
-		if (validSrcInput && srcInput !== currentLoadingSrc) {
-			setImageLoading(true)
-			setImageError(false)
-			setCurrentLoadingSrc(srcInput)
-		} else if (!validSrcInput) {
-			setImageLoading(false)
-			setImageError(false)
-			setCurrentLoadingSrc('')
-		}
-	}, [srcInput, currentLoadingSrc])
-
-	if (!editor) return <Skeleton className="size-8" />
-
 	return (
 		<Dialog
 			open={isImageSelectorOpen}
 			onOpenChange={open => {
 				setIsImageSelectorOpen(open)
-				if (!editor) return
 
 				if (open) {
 					const { src, alt, title } = editor.getAttributes('image')

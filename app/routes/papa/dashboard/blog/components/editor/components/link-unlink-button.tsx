@@ -64,12 +64,14 @@ export const LinkUnlinkButtons = () => {
 		},
 	)
 
+	if (!editor) return <Skeleton className="size-8" />
+
 	const setLink = () => {
 		try {
 			if (!linkInput) {
 				return unsetLink()
 			}
-			editor?.chain().focus().setLink({ href: linkInput }).run()
+			editor.chain().focus().setLink({ href: linkInput }).run()
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error('Error unsetting link:', error.message)
@@ -79,7 +81,7 @@ export const LinkUnlinkButtons = () => {
 		}
 	}
 
-	const unsetLink = () => editor?.chain().focus().unsetLink().run()
+	const unsetLink = () => editor.chain().focus().unsetLink().run()
 
 	const handleOpenLink = () => {
 		if (!linkInput) return
@@ -93,8 +95,6 @@ export const LinkUnlinkButtons = () => {
 			setLink()
 		}
 	}
-
-	if (!editor) return <Skeleton className="size-8" />
 
 	return (
 		<Popover
