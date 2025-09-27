@@ -469,6 +469,16 @@ export const deletePost = async (id: number): Promise<{ post: Post }> => {
 	return { post }
 }
 
+export const deletePosts = async (
+	ids: number[],
+): Promise<{ count: number }> => {
+	const posts = await db
+		.delete(postTable)
+		.where(inArray(postTable.id, ids))
+		.returning()
+	return { count: posts.length }
+}
+
 export const processTaxonomyTags = async (
 	tx: TransactionType,
 	tags: Tag[],

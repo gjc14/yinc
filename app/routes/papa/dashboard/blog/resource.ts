@@ -3,7 +3,12 @@ import { type ActionFunctionArgs } from 'react-router'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-import { createPost, deletePost, updatePost } from '~/lib/db/post.server'
+import {
+	createPost,
+	deletePost,
+	deletePosts,
+	updatePost,
+} from '~/lib/db/post.server'
 import { category, post, tag } from '~/lib/db/schema'
 import { type ActionResponse } from '~/lib/utils'
 import { handleError } from '~/lib/utils/server'
@@ -30,7 +35,7 @@ const seoInsertUpdateSchema = z.object({
 export const action = async ({ request }: ActionFunctionArgs) => {
 	await validateAdminSession(request)
 
-	const jsonData = await request.json()
+	const jsonData = (await request.json()) as unknown
 
 	switch (request.method) {
 		case 'POST':
@@ -83,6 +88,24 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 		case 'DELETE':
 			try {
+				// Bulk delete ({ ids: number[] })
+				if (
+					jsonData &&
+					typeof jsonData === 'object' &&
+					'ids' in jsonData &&
+					Array.isArray(jsonData.ids) &&
+					jsonData.ids.every((id: unknown) => typeof id === 'number')
+				) {
+					// When bulk deleting, jsonData can be an array
+					const { count } = await deletePosts(jsonData.ids)
+
+					postsServerMemoryCache.clear()
+					return {
+						msg: `Deleted ${count} posts successfully`,
+					} satisfies ActionResponse
+				}
+
+				// Single delete
 				if (
 					jsonData &&
 					typeof jsonData === 'object' &&

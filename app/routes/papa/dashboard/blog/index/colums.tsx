@@ -91,7 +91,6 @@ export const columns: ColumnDef<
 		header: 'Edit',
 		cell: props => {
 			const row = props.row
-			const hi = props.row
 			const fetcher = useFetcher()
 
 			const rowId = row.id

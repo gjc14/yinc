@@ -1,6 +1,6 @@
 import type { Route } from './+types/route'
 import { useEffect, useMemo, useState } from 'react'
-import { data, Link, useNavigation, useSearchParams } from 'react-router'
+import { data, Link, useFetcher, useNavigation, useSubmit } from 'react-router'
 
 import { PlusCircle } from 'lucide-react'
 
@@ -14,6 +14,8 @@ import {
 } from '~/routes/papa/dashboard/components/dashboard-wrapper'
 import { DataTable } from '~/routes/papa/dashboard/components/data-table'
 
+import type { action } from '../resource'
+import { BulkDeleteAlertDialog } from './bulk-delete'
 import { fetchPosts, headers, postsServerMemoryCache, TTL } from './cache'
 import { columns } from './colums'
 import { Filter } from './filters'
@@ -62,13 +64,14 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
 export default function DashboardPost({ loaderData }: Route.ComponentProps) {
 	const { posts, categoryFilter, tagFilter, q } = loaderData
+	const fetcher = useFetcher<typeof action>()
 
-	const [rowSelection, setRowSelection] = useState({})
+	const isDeleting = fetcher.state === 'submitting'
+
+	const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
 	const [rowsDeleting, setRowsDeleting] = useState<Set<string>>(new Set())
 
-	useEffect(() => {
-		console.log('rowSelection', rowSelection)
-	}, [rowSelection, rowsDeleting])
+	const numberOfRowsSelected = Object.keys(rowSelection).length
 
 	const tableData = useMemo(() => {
 		return posts.map(p => {
@@ -76,11 +79,58 @@ export default function DashboardPost({ loaderData }: Route.ComponentProps) {
 		})
 	}, [posts])
 
+	useEffect(() => {
+		if (fetcher.state === 'idle' && fetcher.data && 'msg' in fetcher.data) {
+			// Clear selection after successful delete
+			setRowSelection({})
+			// Remove deleted rows from deleting state
+			setRowsDeleting(prev => {
+				const newSet = new Set(prev)
+				Object.keys(rowSelection).forEach(id => newSet.delete(id))
+				return newSet
+			})
+		}
+	}, [fetcher.state])
+
+	const handleBulkDelete = async () => {
+		// Display deleting state
+		setRowsDeleting(prev => {
+			const newSet = new Set(prev)
+			Object.keys(rowSelection).forEach(id => newSet.add(id))
+			return newSet
+		})
+
+		// Get post ids
+		const postIds = Object.keys(rowSelection).map(rawId => {
+			if (Number.isNaN(rawId)) console.warn('Invalid rawId:', rawId)
+			const postId = posts[Number(rawId)].id
+			if (!postId) console.warn('Post not found for rowId:', Number(rawId))
+			return postId
+		})
+
+		// Submit bulk delete request
+		fetcher.submit(
+			{ ids: postIds },
+			{
+				method: 'DELETE',
+				action: `/dashboard/blog/resource`,
+				encType: 'application/json',
+			},
+		)
+	}
+
 	return (
 		<DashboardSectionWrapper className="gap-2">
 			<DashboardHeader>
 				<DashboardTitle title="Posts"></DashboardTitle>
 				<DashboardActions>
+					{numberOfRowsSelected > 0 && (
+						<BulkDeleteAlertDialog
+							numberOfRowsDeleting={numberOfRowsSelected}
+							onDelete={handleBulkDelete}
+							isDeleting={isDeleting}
+						/>
+					)}
 					<Filter q={q} tagFilter={tagFilter} categoryFilter={categoryFilter} />
 					<Button size={'sm'} asChild>
 						<Link to="/dashboard/blog/new">
