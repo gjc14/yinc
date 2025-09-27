@@ -252,6 +252,29 @@ ffmpeg -i logo.png -vf "scale=32:32:force_original_aspect_ratio=decrease,pad=32:
 
 ## Service
 
+In Papa, you could easily extend routes by adding files in `services` folder.
+Please structured as following:
+
+```
+routes
+└── services
+└── └── my-route1
+└── └── └── layout.tsx
+└── └── └── index.tsx
+└── └── └── about.tsx
+└── └── └── config.tsx
+└── └── my-route2
+└── └── └── layout.tsx
+└── └── └── index.tsx
+└── └── └── about.tsx
+└── └── └── config.tsx
+```
+
+<!-- prettier-ignore -->
+> [!NOTE]
+> tip: You may run `pnpm run add:website` to see an easy example of how files
+> structures.
+
 **Config files:**
 
 Run `pnpm run add:service` to generate example routes, including independent
@@ -276,7 +299,7 @@ For example:
 
 ```tsx
 // /app/routes/services
-import { index, route, type RouteConfig } from '@react-router/dev/routes'
+import { Apple, Command } from 'lucide-react'
 
 import type { Service } from '../../papa/utils/service-configs'
 
@@ -372,7 +395,7 @@ export default function Component() {
 
 ### Hierarchy
 
-```ts
+```
 Organization
 ├── (Team)
 └── └── Member
