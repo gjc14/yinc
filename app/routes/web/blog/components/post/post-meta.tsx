@@ -8,7 +8,7 @@ import { LibraryBig } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
-import ExtensionKit from '~/components/editor/extensions/extension-kit'
+import ExtensionKit from '~/components/editor/extension-kit'
 import { useHydrated } from '~/hooks/use-hydrated'
 import type { PostWithRelations } from '~/lib/db/post.server'
 

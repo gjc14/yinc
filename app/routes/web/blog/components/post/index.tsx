@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { generateHTML } from '@tiptap/html'
 import hljs from 'highlight.js'
 
-import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
+import { ExtensionKit } from '~/components/editor/extension-kit'
 import { Loading } from '~/components/loading'
 import { useHydrated } from '~/hooks/use-hydrated'
 import type { PostWithRelations } from '~/lib/db/post.server'

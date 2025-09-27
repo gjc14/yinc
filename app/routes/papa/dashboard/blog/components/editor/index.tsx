@@ -13,7 +13,7 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import { useAtom } from 'jotai'
 import debounce from 'lodash/debounce'
 
-import { ExtensionKit } from '~/components/editor/extensions/extension-kit'
+import { ExtensionKit } from '~/components/editor/extension-kit'
 import { authClient } from '~/lib/auth/auth-client'
 
 import { useFileUpload, type FileWithFileMetadata } from '../../../assets/utils'

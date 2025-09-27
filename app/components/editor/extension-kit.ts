@@ -12,8 +12,8 @@ import { StarterKit } from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
 
 // Custom Extensions
-import { Youtube } from './responseive-youtube'
-import { SmilieReplacer } from './smilie-replacer'
+import { Youtube } from './extensions/responsive-youtube'
+import { SmilieReplacer } from './extensions/smilie-replacer'
 
 /**
  * ExtensionKit
