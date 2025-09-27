@@ -2,20 +2,14 @@ import { mkdir, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 const websiteServiceConfig = `
-import { index, route } from '@react-router/dev/routes'
-
 import type { Service } from '../../papa/utils/service-configs'
 
 export const config = {
-	routes: [
-		route(
-			'/',
-			'./routes/services/website/layout.tsx',
-			[
-				index('./routes/services/website/index.tsx'),
-				route('about', './routes/services/website/about.tsx'),
-			],
-		),
+	routes: ({ route, index }) => [
+		route('/', './routes/services/website/layout.tsx', [
+			index('./routes/services/website/index.tsx'),
+			route('about', './routes/services/website/about.tsx'),
+		]),
 	],
 } satisfies Service
 `
@@ -25,26 +19,20 @@ import { Link, Outlet } from 'react-router'
 
 export default function WebsiteLayout() {
 	return (
-		<div className="min-h-svh flex flex-col">
+		<div className="flex min-h-svh flex-col">
 			{/* Header */}
-			<header className="border-b sticky top-0 z-50">
+			<header className="sticky top-0 z-50 border-b">
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="flex justify-between items-center h-16">
+					<div className="flex h-16 items-center justify-between">
 						<div className="flex items-center space-x-2">
 							<span className="text-2xl">🍟</span>
 						</div>
-						
+
 						<nav className="flex items-center space-x-8">
-							<Link 
-								to="/" 
-								className="hover:underline"
-							>
+							<Link to="/" className="hover:underline">
 								Home
 							</Link>
-							<Link 
-								to="/about" 
-								className="hover:underline"
-							>
+							<Link to="/about" className="hover:underline">
 								About
 							</Link>
 						</nav>
@@ -59,8 +47,8 @@ export default function WebsiteLayout() {
 
 			{/* Footer */}
 			<footer className="border-t">
-				<div className="container mx-auto  px-4 sm:px-6 lg:px-8 py-8">
-					<div className="text-center text-muted-foreground">
+				<div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+					<div className="text-muted-foreground text-center">
 						<p>Footer</p>
 					</div>
 				</div>
@@ -71,14 +59,18 @@ export default function WebsiteLayout() {
 `
 
 const websiteIndex = `
+import type { Route } from './+types'
+
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+	return {}
+}
+
 export default function Website() {
 	return (
-		<div className="flex-1 flex items-center justify-center py-16">
-			<div className="mx-auto text-center px-4">
-				<h1 className="text-4xl font-bold mb-6">Main page</h1>
-				<p className="text-lg text-muted-foreground">
-					Any content goes here!
-				</p>
+		<div className="flex flex-1 items-center justify-center py-16">
+			<div className="mx-auto px-4 text-center">
+				<h1 className="mb-6 text-4xl font-bold">Main page</h1>
+				<p className="text-muted-foreground text-lg">Any content goes here!</p>
 			</div>
 		</div>
 	)
@@ -90,10 +82,8 @@ export default function About() {
 	return (
 		<div className="py-16">
 			<div className="mx-auto px-4 text-center">
-				<h1 className="text-4xl font-bold mb-6">About Page</h1>
-				<p className="text-lg text-muted-foreground">
-					Any content goes here!
-				</p>
+				<h1 className="mb-6 text-4xl font-bold">About Page</h1>
+				<p className="text-muted-foreground text-lg">Any content goes here!</p>
 			</div>
 		</div>
 	)
