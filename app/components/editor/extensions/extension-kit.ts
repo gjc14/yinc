@@ -11,7 +11,7 @@ import { Placeholder, Selection } from '@tiptap/extensions'
 import { StarterKit } from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
 
-import { ColorHighlighter } from './color-highlighter'
+// Custom Extensions
 import { Youtube } from './responseive-youtube'
 import { SmilieReplacer } from './smilie-replacer'
 
@@ -26,13 +26,9 @@ export const ExtensionKit = ({
 } = {}) => {
 	return [
 		StarterKit.configure({
-			heading: {
-				levels: [2, 3, 4, 5],
-			},
 			codeBlock: false,
 			dropcursor: {
 				width: 2,
-				class: 'ProseMirror-dropcursor border-black',
 			},
 			link: {
 				openOnClick: openOnClick,
@@ -55,9 +51,7 @@ export const ExtensionKit = ({
 		TextStyleKit.configure({}),
 		CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
 		Image,
-		Youtube.configure({
-			inline: true,
-		}),
+		Youtube,
 		TaskList,
 		TaskItem.configure({
 			nested: true,
@@ -65,8 +59,7 @@ export const ExtensionKit = ({
 
 		// Plugins
 		// SlashCommand,
-		SmilieReplacer,
-		ColorHighlighter,
+		SmilieReplacer, // extends text node
 
 		// Extensions
 		Placeholder.configure({
