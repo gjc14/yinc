@@ -132,98 +132,6 @@ export const getPosts = async (
 	}
 }
 
-export const getPostIdsByTagSlugs = async (
-	tagSlugs: string[],
-): Promise<{ tagsWithPostIds: typeof tagsWithPostIds; postIds: number[] }> => {
-	const tagsWithPostIds = await db.query.tag.findMany({
-		where: (tags, { inArray }) => inArray(tags.slug, tagSlugs),
-		with: {
-			postToTag: {
-				columns: {
-					postId: true,
-				},
-			},
-		},
-	})
-	const filteredPostIds = tagsWithPostIds.flatMap(t =>
-		t.postToTag.flatMap(t => t.postId),
-	)
-	return { tagsWithPostIds, postIds: filteredPostIds }
-}
-
-export const getPostIdsByCategorySlugs = async (
-	categorySlugs: string[],
-): Promise<{
-	categoriessWithPostIds: typeof catsWithPostIds
-	postIds: number[]
-}> => {
-	const catsWithPostIds = await db.query.category.findMany({
-		where: (cats, { inArray }) => inArray(cats.slug, categorySlugs),
-		with: {
-			postToCategory: {
-				columns: {
-					postId: true,
-				},
-			},
-		},
-	})
-	const filteredPostIds = catsWithPostIds.flatMap(t =>
-		t.postToCategory.flatMap(t => t.postId),
-	)
-	return { categoriessWithPostIds: catsWithPostIds, postIds: filteredPostIds }
-}
-
-export const getPostsByAuthor = async (
-	authorId: string,
-): Promise<{ posts: typeof posts }> => {
-	const posts = await db.query.post.findMany({
-		where: (post, { eq }) => eq(post.authorId, authorId),
-		with: {
-			postToTag: {
-				columns: {
-					postId: true,
-				},
-			},
-		},
-	})
-
-	return { posts }
-}
-
-export const getPost = async (
-	id: number,
-): Promise<{ post: PostWithRelations | null }> => {
-	const postRaw = await db.query.post.findFirst({
-		where: (t, { eq }) => eq(t.id, id),
-		with: {
-			author: true,
-			seo: true,
-			postToTag: {
-				with: {
-					tag: true,
-				},
-			},
-			postToCategory: {
-				with: {
-					category: true,
-				},
-			},
-		},
-	})
-
-	const post = postRaw
-		? {
-				...postRaw,
-				tags: postRaw.postToTag.map(association => association.tag),
-				categories: postRaw.postToCategory.map(
-					association => association.category,
-				),
-			}
-		: null
-
-	return { post }
-}
-
 export const getPostBySlug = async (
 	slug: string,
 	status: PostStatus | 'EDIT' = 'PUBLISHED',
@@ -479,7 +387,7 @@ export const deletePosts = async (
 	return { count: posts.length }
 }
 
-export const processTaxonomyTags = async (
+const processTaxonomyTags = async (
 	tx: TransactionType,
 	tags: Tag[],
 	postId: number,
@@ -544,7 +452,7 @@ export const processTaxonomyTags = async (
 	return []
 }
 
-export const processTaxonomyCategories = async (
+const processTaxonomyCategories = async (
 	tx: TransactionType,
 	categories: Category[],
 	postId: number,

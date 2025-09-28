@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, inArray, lt } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 
 import { user as userTable } from '~/lib/db/schema'
 
@@ -28,23 +28,6 @@ export const getUsers = async ({
 	return {
 		users,
 	}
-}
-
-export const getUser = async (
-	email: string,
-): Promise<{ user: User[] | null }> => {
-	const user = await db
-		.select()
-		.from(userTable)
-		.where(eq(userTable.email, email))
-	return { user }
-}
-
-export const getUserById = async (
-	id: string,
-): Promise<{ user: User[] | null }> => {
-	const user = await db.select().from(userTable).where(eq(userTable.id, id))
-	return { user }
 }
 
 export const updateUser = async (props: {

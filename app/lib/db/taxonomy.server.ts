@@ -1,6 +1,3 @@
-/**
- * TODO: Add description and slug
- */
 import { eq } from 'drizzle-orm'
 
 import { db } from '~/lib/db/db.server'
