@@ -22,8 +22,19 @@ import {
 export interface DashboardMenuItem {
 	title: string
 	icon: React.ElementType
+	/**
+	 * relative path to the /dashboard route
+	 * @example 'assets' // will resolve to /dashboard/assets
+	 */
 	pathname: string
-	sub?: { title: string; pathname: string }[]
+	sub?: {
+		title: string
+		/**
+		 * relative path to the parent pathname
+		 * @example 'child' // will resolve to /dashboard/assets/child
+		 * */
+		pathname: string
+	}[]
 }
 
 interface NavMenuProps {

@@ -43,7 +43,8 @@ export interface ServiceDashboardConfig {
 	 */
 	logo: React.ElementType | string
 	/**
-	 * The URL path for the service, e.g., '/my-service'
+	 * The absolute URL path for the service. If you want to utilize dashboard sidebar, this should start with `/dashboard/`.
+	 * @example '/dashboard/my-service'
 	 */
 	pathname: string
 	/**

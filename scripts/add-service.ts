@@ -12,19 +12,7 @@ export const config = {
 		description: 'This is an example service for demonstration purposes.',
 		logo: Command,
 		pathname: '/dashboard/example-service',
-		routes: ({ route, index }) => [
-			route(
-				'example-service',
-				'./routes/services/example-service/dashboard/layout.tsx',
-				[
-					index('./routes/services/example-service/dashboard/index.tsx'),
-					route(
-						':productId',
-						'./routes/services/example-service/dashboard/product/route.tsx',
-					),
-				],
-			),
-		],
+		// sidebar config is how you set sidebar in /dashboard, if you're not using /dashboard, this could be omitted.
 		sidebar: [
 			{
 				icon: Apple,
@@ -37,6 +25,19 @@ export const config = {
 					},
 				],
 			},
+		],
+		routes: ({ route, index }) => [
+			route(
+				'example-service',
+				'./routes/services/example-service/dashboard/layout.tsx',
+				[
+					index('./routes/services/example-service/dashboard/index.tsx'),
+					route(
+						':productId',
+						'./routes/services/example-service/dashboard/product/route.tsx',
+					),
+				],
+			),
 		],
 	},
 	routes: ({ route, index }) => [
@@ -76,7 +77,8 @@ import { Button } from '~/components/ui/button'
 
 export default function ExampleDashboardIndex() {
 	return (
-		<div className="w-full flex-1 mx-auto p-8 bg-accent">
+		// You may style this div with flex or grid layout
+		<div className="bg-primary/10 flex w-full flex-1 flex-col items-start justify-start p-2">
 			<p>Example Shop Dashboard - Index Page</p>
 
 			<Button asChild className="mt-3">
@@ -85,32 +87,41 @@ export default function ExampleDashboardIndex() {
 		</div>
 	)
 }
+
 `
 
 const exampleDashboardLayout = `
 import { Link, Outlet } from 'react-router'
 
 import { Button } from '~/components/ui/button'
+import {
+	DashboardActions,
+	DashboardContent,
+	DashboardHeader,
+	DashboardSectionWrapper,
+	DashboardTitle,
+} from '~/routes/papa/dashboard/components/dashboard-wrapper'
 
 export default function ExampleDashboardLayout() {
 	return (
-		<section className="w-full flex-1 mx-auto">
-			<div className="max-w-4xl flex flex-col items-center gap-2 mx-auto">
-				<h1>🍜 Example Shop Dashboard</h1>
-
-				<Button
-					asChild
-					variant={'ghost'}
-					className="mb-8 border-dashed border-2"
-				>
-					<Link to="/example-shop">Go to Example Shop</Link>
-				</Button>
-			</div>
-
-			<Outlet />
-		</section>
+		<DashboardSectionWrapper>
+			<DashboardHeader>
+				<DashboardTitle title="🍜 Example Shop Dashboard" />
+				<DashboardActions>
+					{/* You may put some buttons here */}
+					<Button asChild variant={'ghost'} className="border-2 border-dashed">
+						<Link to="/example-shop">Go to Example Shop</Link>
+					</Button>
+				</DashboardActions>
+			</DashboardHeader>
+			<DashboardContent>
+				{/* This will renders the nested routes */}
+				<Outlet />
+			</DashboardContent>
+		</DashboardSectionWrapper>
 	)
 }
+
 `
 
 const exampleDashboardProductRoute = `
@@ -125,11 +136,14 @@ export default function ExampleDashboardSub({
 	loaderData,
 }: Route.ComponentProps) {
 	return (
-		<div className="w-full flex-1 mx-auto p-8 bg-accent">
-			<p>Example Service Dashboard - Product Id {loaderData.productId} Page</p>
+		// You may style this div with flex or grid layout
+		<div className="bg-accent flex w-full flex-1 flex-col items-center justify-center">
+			<h3 className="text-6xl">🍜</h3>
+			<p>Product Id {loaderData.productId} Page</p>
 		</div>
 	)
 }
+
 `
 
 const exampleShopIndex = `

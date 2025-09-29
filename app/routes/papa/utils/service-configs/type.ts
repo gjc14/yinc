@@ -35,6 +35,7 @@ export interface Service {
 		 */
 		routes?: (helper: RouteHelper) => RouteConfig
 		/**
+		 * sidebar config is how you set sidebar in /dashboard, if you're not using /dashboard, this could be omitted.
 		 * @example
 		 * ```ts
 		 * const MainNavItems: DashboardMenuItem[] = [
