@@ -1,5 +1,6 @@
 import { forwardRef } from 'react'
 
+import type { DropdownMenuSubContentProps } from '@radix-ui/react-dropdown-menu'
 import { Moon, Sun, SunMoon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
@@ -7,6 +8,10 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuPortal,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 import { useIsMounted } from '~/hooks/use-is-mounted'
@@ -126,50 +131,71 @@ export const ThemeToggle = forwardRef<
 })
 
 // DropdownMenu
-export const ThemeDropDownMenu = ({
+export const ThemeDropDownMenuTrigger = ({
 	children,
 	asChild = false,
-	className,
 }: {
 	children: React.ReactNode
 	asChild?: boolean
-	className?: string
 }) => {
 	const { setTheme } = useTheme()
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild={asChild}>{children}</DropdownMenuTrigger>
-			<DropdownMenuContent
-				align="end"
-				className={cn('bg-secondary', className)}
-			>
-				<DropdownMenuItem
-					onClick={() => {
-						setTheme('light')
-					}}
-				>
+			<DropdownMenuContent>
+				<DropdownMenuItem onClick={() => setTheme('light')}>
 					<Sun size={16} className="mr-2" />
 					Light
 				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => {
-						setTheme('dark')
-					}}
-				>
+				<DropdownMenuItem onClick={() => setTheme('dark')}>
 					<Moon size={16} className="mr-2" />
 					Dark
 				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => {
-						setTheme('system')
-					}}
-				>
+				<DropdownMenuItem onClick={() => setTheme('system')}>
 					<SunMoon size={16} className="mr-2" />
 					System
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
+	)
+}
+
+// DropdownMenuSub
+export const ThemeDropdownMenuSubTrigger = ({
+	children,
+	className,
+	contentProps,
+}: {
+	children: React.ReactNode
+	className?: string
+	/** DropdownMenuSubContent props */
+	contentProps?: DropdownMenuSubContentProps
+}) => {
+	const { setTheme } = useTheme()
+
+	return (
+		<DropdownMenuSub>
+			<DropdownMenuSubTrigger className={className}>
+				{children}
+			</DropdownMenuSubTrigger>
+			<DropdownMenuPortal>
+				<DropdownMenuSubContent {...contentProps}>
+					<DropdownMenuItem onClick={() => setTheme('light')}>
+						<Sun size={16} className="mr-2" />
+						Light
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => setTheme('dark')}>
+						<Moon size={16} className="mr-2" />
+						Dark
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => setTheme('system')}>
+						<SunMoon size={16} className="mr-2" />
+						System
+					</DropdownMenuItem>
+				</DropdownMenuSubContent>
+			</DropdownMenuPortal>
+		</DropdownMenuSub>
 	)
 }
 

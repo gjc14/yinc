@@ -17,10 +17,14 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
-import { CurrentThemeIcon, ThemeDropDownMenu } from '~/components/theme-toggle'
+import {
+	CurrentThemeIcon,
+	ThemeDropdownMenuSubTrigger,
+} from '~/components/theme-toggle'
 import { authClient } from '~/lib/auth/auth-client'
 
 export function FloatingToolkit() {
@@ -46,7 +50,12 @@ export function FloatingToolkit() {
 									<ChevronUp size={20} />
 								</Button>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" side="top" className="mb-2 w-56">
+							<DropdownMenuContent
+								align="start"
+								side="top"
+								className="mb-2 w-56"
+							>
+								<DropdownMenuLabel>Quick Toolkit</DropdownMenuLabel>
 								<DropdownMenuItem onClick={() => navigate('/')}>
 									<PanelTop className="mr-2 size-4" />
 									<span>View Website</span>
@@ -64,6 +73,8 @@ export function FloatingToolkit() {
 									<span>New Post</span>
 								</DropdownMenuItem>
 
+								<DropdownMenuSeparator />
+
 								<DropdownMenuItem
 									onClick={() =>
 										window.open(
@@ -79,12 +90,10 @@ export function FloatingToolkit() {
 
 								<DropdownMenuSeparator />
 
-								<ThemeDropDownMenu asChild>
-									<DropdownMenuItem onSelect={e => e.preventDefault()}>
-										<CurrentThemeIcon className="mr-2 size-4" />
-										<span>Change Theme</span>
-									</DropdownMenuItem>
-								</ThemeDropDownMenu>
+								<ThemeDropdownMenuSubTrigger className="cursor-pointer">
+									<CurrentThemeIcon className="mr-2 size-4" />
+									Change Theme
+								</ThemeDropdownMenuSubTrigger>
 
 								<DropdownMenuSeparator />
 

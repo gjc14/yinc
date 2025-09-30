@@ -9,6 +9,7 @@ import {
 	LogOut,
 	Shield,
 	Sparkles,
+	User2,
 	type LucideIcon,
 } from 'lucide-react'
 
@@ -28,7 +29,10 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
-import { CurrentThemeIcon, ThemeDropDownMenu } from '~/components/theme-toggle'
+import {
+	CurrentThemeIcon,
+	ThemeDropdownMenuSubTrigger,
+} from '~/components/theme-toggle'
 import { authClient } from '~/lib/auth/auth-client'
 import type { Session } from '~/lib/auth/auth.server'
 
@@ -81,7 +85,7 @@ export const NavUser = ({ user }: NavUserProps) => {
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-						side={isMobile ? 'bottom' : 'right'}
+						side={'top'}
 						align="end"
 						sideOffset={4}
 					>
@@ -104,26 +108,30 @@ export const NavUser = ({ user }: NavUserProps) => {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<ActionButton
+								icon={User2}
+								title="My Profile"
+								route="/dashboard/profile"
+							/>
+						</DropdownMenuGroup>
+						<DropdownMenuSeparator />
+						<DropdownMenuGroup>
+							<ActionButton
 								icon={Sparkles}
 								title="Upgrade to Pro"
 								route="/dashboard/account/upgrade"
 							/>
 						</DropdownMenuGroup>
+
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							{DefaultUserOptions.map(option => (
 								<ActionButton key={option.title} {...option} />
 							))}
 
-							<ThemeDropDownMenu asChild>
-								<DropdownMenuItem
-									onSelect={e => e.preventDefault()}
-									className="group flex w-full items-center gap-2"
-								>
-									<CurrentThemeIcon className="size-4 transition-transform group-hover:rotate-[25deg] dark:group-hover:rotate-[25deg]" />
-									<span className="text-sm">Change Theme</span>
-								</DropdownMenuItem>
-							</ThemeDropDownMenu>
+							<ThemeDropdownMenuSubTrigger className="group flex cursor-pointer items-center gap-2">
+								<CurrentThemeIcon className="size-4 transition-transform group-hover:rotate-[25deg] dark:group-hover:rotate-[25deg]" />
+								Change Theme
+							</ThemeDropdownMenuSubTrigger>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem className="group" asChild>
@@ -133,7 +141,7 @@ export const NavUser = ({ user }: NavUserProps) => {
 							>
 								<LogOut
 									size={16}
-									className="transition-transform group-hover:-translate-x-0.5"
+									className="transition-transform group-hover:translate-x-0.5"
 								/>
 								<p className="text-sm">Sign Out</p>
 							</button>
@@ -177,15 +185,15 @@ interface ActionButtonProps {
 const ActionButton = (props: ActionButtonProps) => {
 	if (props.route) {
 		return (
-			<Link to={props.route}>
-				<DropdownMenuItem className="group flex items-center gap-2">
+			<DropdownMenuItem className="group flex items-center gap-2" asChild>
+				<Link to={props.route}>
 					<props.icon
 						size={16}
 						className="transition-transform group-hover:rotate-[25deg]"
 					/>
 					<p className="text-sm">{props.title}</p>
-				</DropdownMenuItem>
-			</Link>
+				</Link>
+			</DropdownMenuItem>
 		)
 	}
 	return (
