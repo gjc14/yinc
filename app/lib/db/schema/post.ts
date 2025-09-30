@@ -8,10 +8,11 @@ import { postToCategory, postToTag } from './taxonomy'
 
 export const PostStatus = [
 	'DRAFT',
+	'SCHEDULED',
 	'PUBLISHED',
 	'ARCHIVED',
 	'TRASHED',
-	'POLICY',
+	'OTHER',
 ] as const
 export type PostStatus = (typeof PostStatus)[number]
 
@@ -21,12 +22,12 @@ export const post = pgTable(
 	'post',
 	{
 		id: serial('id').primaryKey(),
+		status: varchar('status', { length: 20 }).notNull(),
 		slug: varchar('slug').notNull().unique(),
 		title: varchar('title').notNull(),
 		content: text('content'),
 		excerpt: varchar('excerpt'),
 		featuredImage: varchar('featured_image'),
-		status: varchar('status', { length: 50 }).notNull(),
 
 		authorId: text('author_id').references(() => user.id, {
 			onDelete: 'set null',

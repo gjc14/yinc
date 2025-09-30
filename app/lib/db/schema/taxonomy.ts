@@ -14,20 +14,12 @@ import { post } from './post'
 
 export type Tag = InferSelectModel<typeof tag>
 
-export const tag = pgTable(
-	'tag',
-	{
-		id: serial('id').primaryKey(),
-		name: varchar('name', { length: 100 }).notNull(),
-		slug: varchar('slug', { length: 100 }).notNull().unique(),
-		description: varchar('description', { length: 255 }),
-	},
-	table => [index('tag_slug_idx').on(table.slug)],
-)
-
-export const tagRelations = relations(tag, ({ many }) => ({
-	postToTag: many(postToTag),
-}))
+export const tag = pgTable('tag', {
+	id: serial('id').primaryKey(),
+	name: varchar('name', { length: 100 }).notNull(),
+	slug: varchar('slug', { length: 100 }).notNull().unique(),
+	description: varchar('description', { length: 255 }),
+})
 
 export type Category = InferSelectModel<typeof category>
 
@@ -36,7 +28,7 @@ export const category = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		name: varchar('name', { length: 100 }).notNull(),
-		slug: varchar('slug', { length: 100 }).notNull(),
+		slug: varchar('slug', { length: 100 }).notNull().unique(),
 		description: varchar('description', { length: 255 }),
 		parentId: integer('parent_id'),
 	},
@@ -48,21 +40,8 @@ export const category = pgTable(
 			columns: [table.parentId],
 			foreignColumns: [table.id],
 		}).onDelete('cascade'),
-		index('category_slug_idx').on(table.slug),
 	],
 )
-
-export const categoryRelations = relations(category, ({ one, many }) => ({
-	postToCategory: many(postToCategory),
-	parent: one(category, {
-		fields: [category.parentId],
-		references: [category.id],
-		relationName: 'parent_child',
-	}),
-	children: many(category, {
-		relationName: 'parent_child',
-	}),
-}))
 
 // Associative tables
 
@@ -88,20 +67,9 @@ export const postToTag = pgTable(
 	],
 )
 
-export const postToTagRelation = relations(postToTag, ({ one }) => ({
-	post: one(post, {
-		fields: [postToTag.postId],
-		references: [post.id],
-	}),
-	tag: one(tag, {
-		fields: [postToTag.tagId],
-		references: [tag.id],
-	}),
-}))
-
 // posts <-> categories
 
-export type PostsToCategory = InferSelectModel<typeof postToCategory>
+export type PostToCategory = InferSelectModel<typeof postToCategory>
 
 export const postToCategory = pgTable(
 	'post_to_category',
@@ -120,6 +88,35 @@ export const postToCategory = pgTable(
 		index('post_to_category_category_id_idx').on(table.categoryId),
 	],
 )
+
+// === Relations ===
+
+export const tagRelations = relations(tag, ({ many }) => ({
+	postToTag: many(postToTag),
+}))
+
+export const categoryRelations = relations(category, ({ one, many }) => ({
+	postToCategory: many(postToCategory),
+	parent: one(category, {
+		fields: [category.parentId],
+		references: [category.id],
+		relationName: 'parent_child',
+	}),
+	children: many(category, {
+		relationName: 'parent_child',
+	}),
+}))
+
+export const postToTagRelation = relations(postToTag, ({ one }) => ({
+	post: one(post, {
+		fields: [postToTag.postId],
+		references: [post.id],
+	}),
+	tag: one(tag, {
+		fields: [postToTag.tagId],
+		references: [tag.id],
+	}),
+}))
 
 export const postToCategoryRelations = relations(postToCategory, ({ one }) => ({
 	post: one(post, {

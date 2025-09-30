@@ -50,17 +50,19 @@ export const columns: ColumnDef<
 				case 'published':
 					variant = 'default'
 					break
+				case 'scheduled':
+					variant = 'default'
+					break
 				case 'trashed':
 					variant = 'destructive'
 					break
 				case 'archived':
-					variant = 'secondary'
+					variant = 'outline'
 					break
-				case 'policy':
+				case 'other':
 					variant = 'outline'
 					break
 				default:
-					variant = 'default'
 					break
 			}
 			return (

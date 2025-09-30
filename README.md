@@ -337,6 +337,74 @@ export const config = {
 } satisfies Service
 ```
 
+### Create Database Schema
+
+To facilitate develop process, we utilize
+[Drizzle ORM](https://orm.drizzle.team) to design database schema.
+
+Any files under any folder with `lib/db/schema` will be considered as a schema
+definition.
+
+For example:
+
+Files under `/app/routes/services/my-service/lib/db/schema` will be used; Files
+under `/app/routes/rebellious-route/lib/db/schema` as well will be read.
+
+**Conventional way to generate schema in your service**
+
+1. Create folder `lib/db/schema` in your service e.g.
+   `/app/routes/services/my-service/lib/db/schema`
+2. Create file `my-schema-name.ts` under the former folder created.
+3. Write schema.
+
+   Any schema declared with `pgTable` imported from `drizzle-orm/pg-core` will
+   default belongs to **public** schema. To use **papa** schema instead of
+   **public**, import `pgTable` from `~/lib/db/schema/helpers`, or define your
+   own schema by:
+
+   ```tsx
+   const mySchema = pgSchema('my-schema-name')
+   const myPgTable = mySchema.table
+   const myPgEnum = mySchema.enum
+   const myView = mySchema.view
+   ```
+
+   For more information about schema definition, refer to
+   [table and columns declaration](https://orm.drizzle.team/docs/sql-schema-declaration#tables-and-columns-declaration).
+
+   An example for table declaration:
+
+   ```tsx
+   import { check, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core'
+   import { sql } from 'drizzle-orm/sql/sql'
+
+   import { user } from '~/lib/db/schema/auth'
+   import { timestampAttributes } from '~/lib/db/schema/helpers'
+
+   export const post = pgTable(
+   	'post',
+   	{
+   		id: serial('id').primaryKey(),
+   		slug: varchar('slug').notNull().unique(),
+   		title: varchar('title').notNull(),
+   		content: text('content'),
+   		excerpt: varchar('excerpt'),
+   		featuredImage: varchar('featured_image'),
+   		status: varchar('status', { length: 50 }).notNull(),
+
+   		authorId: text('author_id').references(() => user.id, {
+   			onDelete: 'set null',
+   		}),
+
+   		...timestampAttributes,
+   	},
+   	t => [check('prevent_system_slug', sql`${t.slug} != 'new'`)],
+   )
+   ```
+
+4. Push the schema to your PostgreSQL by `pnpm run db:push`, then follow the
+   instructions.
+
 ## Action
 
 ### Return
