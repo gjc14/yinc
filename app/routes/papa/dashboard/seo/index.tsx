@@ -51,7 +51,7 @@ export default function SEO() {
 				></DashboardTitle>
 				<DashboardActions>
 					<Button size={'sm'} onClick={() => setOpen(true)}>
-						<PlusCircle size={16} />
+						<PlusCircle />
 						<p className="text-xs">Create seo</p>
 					</Button>
 					<SeoContent
@@ -97,7 +97,7 @@ export const columns: ColumnDef<
 		header: ({ column }) => {
 			return <SimpleSortHeader column={column}>Route</SimpleSortHeader>
 		},
-		accessorFn: row => row.route ?? `/blog/${row.post?.slug}`,
+		accessorFn: row => row.route,
 	},
 	{
 		accessorKey: 'metaTitle',

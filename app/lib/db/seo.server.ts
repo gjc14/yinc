@@ -4,13 +4,9 @@ import { db } from './db.server'
 import { seo as seoTable, type Seo } from './schema'
 
 export const getSEOs = async (): Promise<{
-	seos: (Seo & { post: { slug: string } | null })[]
+	seos: Seo[]
 }> => {
-	const seos = await db.query.seo.findMany({
-		with: {
-			post: { columns: { slug: true } },
-		},
-	})
+	const seos = await db.query.seo.findMany()
 
 	return { seos }
 }

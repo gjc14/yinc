@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Form, useFetcher } from 'react-router'
 
-import { Loader2, Save } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -122,12 +122,8 @@ export const SeoContent = ({
 					</div>
 				</Form>
 				<DialogFooter>
-					<Button form="seo-content" type="submit">
-						{isSubmitting ? (
-							<Loader2 size={16} className="animate-spin" />
-						) : (
-							<Save size={16} />
-						)}
+					<Button form="seo-content" type="submit" disabled={isSubmitting}>
+						{isSubmitting && <Loader2 className="animate-spin" />}
 						{seo ? 'Save changes' : 'Create'}
 					</Button>
 				</DialogFooter>
