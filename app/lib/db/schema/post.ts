@@ -1,5 +1,5 @@
 import { relations, sql, type InferSelectModel } from 'drizzle-orm'
-import { check, serial, text, varchar } from 'drizzle-orm/pg-core'
+import { check, integer, serial, text, varchar } from 'drizzle-orm/pg-core'
 
 import { user } from './auth'
 import { pgTable, timestampAttributes } from './helpers'
@@ -33,6 +33,12 @@ export const post = pgTable(
 			onDelete: 'set null',
 		}),
 
+		seoId: integer('seo_id')
+			.references(() => seo.id, {
+				onDelete: 'restrict',
+			})
+			.notNull(),
+
 		...timestampAttributes,
 	},
 	t => [check('prevent_system_slug', sql`${t.slug} != 'new'`)],
@@ -44,8 +50,8 @@ export const postRelations = relations(post, ({ one, many }) => ({
 		references: [user.id],
 	}),
 	seo: one(seo, {
-		fields: [post.id],
-		references: [seo.postId],
+		fields: [post.seoId],
+		references: [seo.id],
 	}),
 
 	postToTag: many(postToTag),
