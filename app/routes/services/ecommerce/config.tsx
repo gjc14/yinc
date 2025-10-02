@@ -101,10 +101,10 @@ export const config = {
 		],
 	},
 	routes: ({ route, index }) => [
-		route('/store', './routes/services/ecommerce/store/layout.tsx', [
-			index('./routes/services/ecommerce/store/index.tsx'),
+		route('/store', './routes/services/ecommerce/store/layout/route.tsx', [
+			index('./routes/services/ecommerce/store/index/route.tsx'),
 			route(
-				':productId',
+				'product/:productId',
 				'./routes/services/ecommerce/store/product/route.tsx',
 			),
 		]),
