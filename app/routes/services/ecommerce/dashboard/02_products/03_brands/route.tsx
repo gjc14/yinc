@@ -1,13 +1,48 @@
 import type { Route } from './+types/route'
 
-export default function ECBrands({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+import {
+	DashboardActions,
+	DashboardContent,
+	DashboardHeader,
+	DashboardSectionWrapper,
+	DashboardTitle,
+} from '~/routes/papa/dashboard/components/dashboard-wrapper'
+
+import { getEcBrands } from '../../../lib/db/taxonomy.server'
+import { CreateTaxonomyDialog } from '../../components/create-taxonomy-dialog'
+
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+	const brands = await getEcBrands()
+	return { brands }
+}
+
+export default function ECBrands({ loaderData }: Route.ComponentProps) {
 	return (
-		<div>
-			{/* Frontend Code here. */}
-			<h1>ECBrands</h1>
-		</div>
+		<DashboardSectionWrapper>
+			<DashboardHeader>
+				<DashboardTitle title="Brands"></DashboardTitle>
+				<DashboardActions>
+					<CreateTaxonomyDialog
+						data={loaderData.brands}
+						config={{
+							name: 'Brand',
+							pluralName: 'Brands',
+							actionEndpoint: 'resource',
+							hasDescription: true,
+							hasParent: true,
+							hasImage: true,
+							namePlaceholder: 'Papa',
+							slugPlaceholder: 'papa',
+						}}
+					/>
+				</DashboardActions>
+			</DashboardHeader>
+			{/* Your main content goes here */}
+			<DashboardContent>
+				{loaderData.brands.map(brand => (
+					<div key={brand.id}>{brand.name}</div>
+				))}
+			</DashboardContent>
+		</DashboardSectionWrapper>
 	)
 }
