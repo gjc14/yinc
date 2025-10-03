@@ -80,16 +80,32 @@ export const config = {
 							'./routes/services/ecommerce/dashboard/02_products/03_brands/route.tsx',
 						),
 						route(
+							'brands/resource',
+							'./routes/services/ecommerce/dashboard/02_products/03_brands/resource.ts',
+						),
+						route(
 							'categories',
 							'./routes/services/ecommerce/dashboard/02_products/04_categories/route.tsx',
+						),
+						route(
+							'categories/resource',
+							'./routes/services/ecommerce/dashboard/02_products/04_categories/resource.ts',
 						),
 						route(
 							'tags',
 							'./routes/services/ecommerce/dashboard/02_products/05_tags/route.tsx',
 						),
 						route(
+							'tags/resource',
+							'./routes/services/ecommerce/dashboard/02_products/05_tags/resource.ts',
+						),
+						route(
 							'attributes',
 							'./routes/services/ecommerce/dashboard/02_products/06_attributes/route.tsx',
+						),
+						route(
+							'attributes/resource',
+							'./routes/services/ecommerce/dashboard/02_products/06_attributes/resource.ts',
 						),
 						route(
 							'reviews',
