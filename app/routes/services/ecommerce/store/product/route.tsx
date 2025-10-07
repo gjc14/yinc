@@ -1,16 +1,120 @@
 import type { Route } from './+types/route'
+import { isRouteErrorResponse, Link, useRouteError } from 'react-router'
 
-export const action = async ({ request, params }: Route.ActionArgs) => {
-	return {}
-}
+import { ArrowLeft, Store } from 'lucide-react'
+
+import { Button } from '~/components/ui/button'
+import { Separator } from '~/components/ui/separator'
+import { statusCodeMap } from '~/lib/utils/status-code'
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
 	return {}
 }
 
-export default function ProductPage({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function ProductPage({ loaderData }: Route.ComponentProps) {
 	return <div></div>
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError()
+
+	// Route throw new Response (404, etc.)
+	if (isRouteErrorResponse(error)) {
+		console.error('Product Route Error Response:', error)
+
+		const statusMessage = statusCodeMap[error.status]
+		const errorMessage = error.data || statusMessage.text || 'Error Response'
+
+		return (
+			<ProductErrorTemplate
+				status={error.status}
+				statusText={errorMessage}
+				returnTo={'/store'}
+			/>
+		)
+	} else if (error instanceof Error) {
+		// throw new Error('message')
+		console.error('Error:', error)
+
+		return (
+			<ProductErrorTemplate
+				status={500}
+				statusText={'Internal Error'}
+				returnTo={'/store'}
+			/>
+		)
+	}
+
+	console.error('Unknown Error:', error)
+
+	return (
+		// Unknown error
+		<ProductErrorTemplate
+			status={'XXX'}
+			statusText={'Unknown Error'}
+			returnTo={'/store'}
+		/>
+	)
+}
+
+const ProductErrorTemplate = ({
+	status,
+	statusText,
+	returnTo,
+}: {
+	status: string | number
+	statusText: string
+	returnTo: string
+}) => {
+	// TODO: use store context to display store name, etc.
+	// const store = useStoreContext()
+	return (
+		<main className="flex w-screen flex-1 flex-col items-center justify-between">
+			<div></div>
+			<div className="flex flex-col items-center justify-center text-center">
+				<h1 className="inline-block text-[30vw] font-medium md:text-[20vw]">
+					{status}
+				</h1>
+				<Separator className="mt-3 mb-6 w-20 md:w-36" />
+
+				<h2 className="text-base font-light">
+					{statusText || 'Product Error Page'}
+				</h2>
+
+				<div className="mt-12 mb-8 flex items-center gap-3">
+					<Button variant={'link'} asChild>
+						<Link to={returnTo}>
+							<ArrowLeft size={12} />
+							Return to <code>{returnTo}</code>
+						</Link>
+					</Button>
+					<Button variant={'outline'} asChild>
+						<Link to={'/store'}>
+							Browse Products
+							<Store size={12} />
+						</Link>
+					</Button>
+				</div>
+
+				<div>
+					<p className="text-muted-foreground text-sm">Need assistance?</p>
+					<Button variant={'link'} asChild>
+						<Link to={'/store/contact'}>Contact Us</Link>
+					</Button>
+				</div>
+			</div>
+			<div className="font-open-sans mb-8 flex items-center">
+				<p className="mr-3 inline-block border-r pr-5 text-lg font-normal">
+					{/* TODO: Store name */}
+					{'Papa E-Commerce'}
+				</p>
+				<div className="inline-block">
+					<p className="text-left text-xs font-light">
+						{/* TODO: Store Copyright */}© {new Date().getFullYear()}{' '}
+						{'CHIU YIN CHEN @Taipei'}
+					</p>
+				</div>
+			</div>
+		</main>
+	)
 }

@@ -120,7 +120,7 @@ export const config = {
 		route('/store', './routes/services/ecommerce/store/layout/route.tsx', [
 			index('./routes/services/ecommerce/store/index/route.tsx'),
 			route(
-				'product/:productId',
+				'product/:productSlug',
 				'./routes/services/ecommerce/store/product/route.tsx',
 			),
 		]),
