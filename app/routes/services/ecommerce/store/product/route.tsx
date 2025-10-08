@@ -6,13 +6,62 @@ import { ArrowLeft, Store } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import { statusCodeMap } from '~/lib/utils/status-code'
+import { validateAdminSession } from '~/routes/papa/auth/utils'
+
+import {
+	getCrossSellProducts,
+	getProduct,
+	getProductGallery,
+} from '../../lib/db/product.server'
+import { StoreProductPage } from './page'
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
-	return {}
+	const url = new URL(request.url)
+	const preview = url.searchParams.get('preview') === 'true'
+	if (preview) await validateAdminSession(request)
+
+	const product = await getProduct({
+		slug: params.productSlug,
+		preview: preview,
+	})
+
+	if (!product) {
+		// TODO: fetch customized "not found" text
+		throw new Response('Product Not Found', {
+			status: 404,
+		})
+	}
+
+	const productGalleryPromise = new Promise<
+		Awaited<ReturnType<typeof getProductGallery>>
+	>(async resolve => {
+		const gallery = await getProductGallery(product.id)
+		// Insert main product image as first image if exists
+		if (product.option.image) {
+			gallery.unshift({
+				image: product.option.image,
+				productId: product.id,
+				order: 0,
+				alt: product.name,
+				title: product.name,
+			})
+		}
+		resolve(gallery)
+	})
+
+	const crossSellProductsPromise = getCrossSellProducts(product.id)
+
+	return {
+		product,
+		productVariants: product.variants,
+		productAttributes: product.attributes,
+		productGalleryPromise,
+		crossSellProductsPromise: crossSellProductsPromise,
+	}
 }
 
-export default function ProductPage({ loaderData }: Route.ComponentProps) {
-	return <div></div>
+export default function ProductRoute({ loaderData }: Route.ComponentProps) {
+	return <StoreProductPage {...loaderData} />
 }
 
 export function ErrorBoundary() {
