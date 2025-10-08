@@ -1,6 +1,7 @@
+import camelcaseKeys from 'camelcase-keys'
 import { sql } from 'drizzle-orm'
 
-import { snakeToCamel } from '~/lib/db/utils'
+import { convertDateFields } from '~/lib/db/utils'
 
 import { dbStore } from './db.server'
 import {
@@ -80,7 +81,9 @@ export async function getProducts({
 	relations = false,
 }: GetProductsParamsBase & { relations?: boolean } = {}) {
 	console.time('getProducts')
-	const products = await dbStore.execute(sql`
+	const products = await dbStore.execute<
+		ProductListing | ProductListingWithRelations
+	>(sql`
 		SELECT
 		DISTINCT ON (p.id)
 			p.id,
@@ -169,7 +172,10 @@ export async function getProducts({
 	`)
 	console.timeEnd('getProducts')
 
-	const validProducts = products.rows.filter(product => {
+	const validProducts = convertDateFields(
+		camelcaseKeys(products.rows, { deep: true }),
+		['updatedAt'],
+	).filter(product => {
 		if (!product.option) {
 			console.error(`Product ${product.id} has no productOption`)
 			return false
@@ -177,8 +183,5 @@ export async function getProducts({
 		return true
 	})
 
-	return snakeToCamel(validProducts) as (
-		| ProductListing
-		| ProductListingWithRelations
-	)[]
+	return validProducts
 }

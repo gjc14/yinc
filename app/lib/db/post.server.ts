@@ -1,3 +1,4 @@
+import camelcaseKeys from 'camelcase-keys'
 import { eq, inArray, sql } from 'drizzle-orm'
 
 import { db, type TransactionType } from '~/lib/db/db.server'
@@ -13,7 +14,7 @@ import {
 	user,
 } from '~/lib/db/schema'
 
-import { convertDateFields, snakeToCamel } from './utils'
+import { convertDateFields } from './utils'
 
 type User = typeof user.$inferSelect
 
@@ -49,7 +50,7 @@ export const getPosts = async (
 	} = props
 
 	const [postData, tagsData, categoriesData] = await Promise.all([
-		db.execute(sql`
+		db.execute<PostWithRelations>(sql`
 		SELECT DISTINCT ON (p.id)
 			p.*,
 			row_to_json(u) AS author,
@@ -124,9 +125,13 @@ export const getPosts = async (
 	])
 
 	return {
-		posts: convertDateFields(
-			snakeToCamel(postData.rows),
-		) as PostWithRelations[],
+		posts: convertDateFields(camelcaseKeys(postData.rows, { deep: true }), [
+			'createdAt',
+			'updatedAt',
+			'deletedAt',
+			'publishedAt',
+			'banExpires',
+		]),
 		tagFilter: tagsData.rows as Tag[],
 		categoryFilter: categoriesData.rows as Category[],
 	}
@@ -140,7 +145,14 @@ export const getPostBySlug = async (
 	prevPost: Pick<PostWithRelations, 'slug' | 'title'> | null
 	nextPost: Pick<PostWithRelations, 'slug' | 'title'> | null
 }> => {
-	const postResult = await db.execute(sql`
+	const postResult = await db.execute<
+		PostWithRelations & {
+			prevTitle: PostWithRelations['title']
+			prevSlug: PostWithRelations['slug']
+			nextTitle: PostWithRelations['title']
+			nextSlug: PostWithRelations['slug']
+		}
+	>(sql`
 		-- create window (extend post) with prev_id & next_id columns
 		-- | * | prev_id | next_id |
 		WITH ordered_posts AS (
@@ -207,13 +219,9 @@ export const getPostBySlug = async (
 	}
 
 	const camelPost = convertDateFields(
-		snakeToCamel(postResult.rows[0]),
-	) as PostWithRelations & {
-		prevTitle: PostWithRelations['title']
-		prevSlug: PostWithRelations['slug']
-		nextTitle: PostWithRelations['title']
-		nextSlug: PostWithRelations['slug']
-	}
+		camelcaseKeys(postResult.rows[0], { deep: true }),
+		['createdAt', 'updatedAt', 'deletedAt', 'publishedAt', 'banExpires'],
+	)
 
 	return {
 		post: camelPost,
