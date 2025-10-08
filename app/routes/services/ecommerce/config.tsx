@@ -72,7 +72,7 @@ export const config = {
 							'./routes/services/ecommerce/dashboard/02_products/01_index/route.tsx',
 						),
 						route(
-							':productId',
+							':productSlug',
 							'./routes/services/ecommerce/dashboard/02_products/02_product/route.tsx',
 						),
 						route(

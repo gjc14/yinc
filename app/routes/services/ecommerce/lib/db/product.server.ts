@@ -199,10 +199,12 @@ export type ProductAttribute = Omit<
 export const getProduct = async ({
 	slug,
 	preview = false,
+	edit = false,
 	status = 'PUBLISHED',
 }: {
 	slug: string
 	preview?: boolean
+	edit?: boolean
 	status?: ProductStatus
 }) => {
 	console.time('getProduct')
@@ -312,7 +314,7 @@ export const getProduct = async ({
 
 		WHERE
 			p.slug = ${slug}
-			AND ${!preview ? sql`p.status = ${status}` : sql`TRUE`}
+			AND ${!(preview || edit) ? sql`p.status = ${status}` : sql`TRUE`}
 	`)
 	console.timeEnd('getProduct')
 
