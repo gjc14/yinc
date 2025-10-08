@@ -1,4 +1,4 @@
-import { relations, sql, type InferSelectModel } from 'drizzle-orm'
+import { sql, type InferSelectModel } from 'drizzle-orm'
 import {
 	check,
 	foreignKey,
@@ -73,44 +73,3 @@ export const ecAttribute = pgTable('ec_attribute', {
 	slug: varchar('slug', { length: 100 }).notNull().unique(),
 	value: varchar('value', { length: 255 }),
 })
-
-// === Relations ===
-
-// import {
-// 	productToAttribute,
-// 	productToBrand,
-// 	productToCategory,
-// 	productToTag,
-// } from './product'
-
-// export const ecTagRelations = relations(ecTag, ({ many }) => ({
-// 	productToTag: many(productToTag),
-// }))
-
-// export const ecCategoryRelations = relations(ecCategory, ({ one, many }) => ({
-// 	productToCategory: many(productToCategory),
-// 	parent: one(ecCategory, {
-// 		fields: [ecCategory.parentId],
-// 		references: [ecCategory.id],
-// 		relationName: 'parent_child',
-// 	}),
-// 	children: many(ecCategory, {
-// 		relationName: 'parent_child',
-// 	}),
-// }))
-
-// export const ecBrandRelations = relations(ecBrand, ({ one, many }) => ({
-// 	productToBrand: many(productToBrand),
-// 	parent: one(ecBrand, {
-// 		fields: [ecBrand.parentId],
-// 		references: [ecBrand.id],
-// 		relationName: 'parent_child',
-// 	}),
-// 	children: many(ecBrand, {
-// 		relationName: 'parent_child',
-// 	}),
-// }))
-
-// export const ecAttributeRelations = relations(ecAttribute, ({ many }) => ({
-// 	productToAttribute: many(productToAttribute),
-// }))

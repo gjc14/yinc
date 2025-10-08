@@ -298,24 +298,6 @@ export const productToBrand = pgTable(
 	],
 )
 
-export const productToAttribute = pgTable(
-	'ec_product_to_attribute',
-	{
-		productId: integer('product_id')
-			.notNull()
-			.references(() => product.id, { onDelete: 'cascade' }),
-		attributeId: integer('attribute_id')
-			.notNull()
-			.references(() => ecAttribute.id, { onDelete: 'cascade' }),
-		order: integer('order').notNull().default(0),
-	},
-	t => [
-		primaryKey({ columns: [t.productId, t.attributeId] }), // Composite primary key
-		index('ec_product_to_attribute_product_id_idx').on(t.productId),
-		index('ec_product_to_attribute_attribute_id_idx').on(t.attributeId),
-	],
-)
-
 export const productGallery = pgTable(
 	'ec_product_gallery',
 	{
@@ -394,20 +376,6 @@ export const productToBrandRelations = relations(productToBrand, ({ one }) => ({
 		references: [ecBrand.id],
 	}),
 }))
-
-export const productToAttributeRelations = relations(
-	productToAttribute,
-	({ one }) => ({
-		product: one(product, {
-			fields: [productToAttribute.productId],
-			references: [product.id],
-		}),
-		attribute: one(ecAttribute, {
-			fields: [productToAttribute.attributeId],
-			references: [ecAttribute.id],
-		}),
-	}),
-)
 
 export const productRelations = relations(product, ({ one }) => ({
 	productOption: one(productOption, {

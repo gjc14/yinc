@@ -7,13 +7,12 @@ import { dbStore } from './db.server'
 import {
 	product,
 	productOption,
-	productToAttribute,
 	productToBrand,
 	productToCategory,
 	productToTag,
 	type ProductStatus,
 } from './schema/product'
-import { ecAttribute, ecBrand, ecCategory, ecTag } from './schema/taxonomy'
+import { ecBrand, ecCategory, ecTag } from './schema/taxonomy'
 
 type Product = typeof product.$inferSelect
 type ProductOption = typeof productOption.$inferSelect
@@ -39,7 +38,6 @@ export type ProductListingWithRelations = ProductListing & {
 	categories: (typeof ecCategory.$inferSelect)[]
 	tags: (typeof ecTag.$inferSelect)[]
 	brands: (typeof ecBrand.$inferSelect)[]
-	attributes: (typeof ecAttribute.$inferSelect)[]
 }
 
 type GetProductsParamsBase = {
@@ -134,16 +132,7 @@ export async function getProducts({
 								WHERE pb.product_id = p.id
 							),
 							'[]'::json
-						) AS brands,
-						COALESCE(
-							(
-								SELECT json_agg(a)
-								FROM ${productToAttribute} pa
-								LEFT JOIN ${ecAttribute} a ON pa.attribute_id = a.id
-								WHERE pa.product_id = p.id
-							),
-							'[]'::json
-						) AS attributes`
+						) AS brands`
 					: undefined
 			}
 
@@ -158,9 +147,6 @@ export async function getProducts({
 
 		LEFT JOIN ${productToBrand} ptb ON p.id = ptb.product_id
 		LEFT JOIN ${ecBrand} eb ON ptb.brand_id = eb.id
-
-		LEFT JOIN ${productToAttribute} pta ON p.id = pta.product_id
-		LEFT JOIN ${ecAttribute} ea ON pta.attribute_id = ea.id
 
 		WHERE
 			${status !== 'ALL' ? sql`p.status = ${status}` : sql`TRUE`}
