@@ -10,7 +10,7 @@ import {
 	AlertDialogTrigger,
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { Loading } from '~/components/loading'
+import { Spinner } from '~/components/ui/spinner'
 
 export const BulkDeleteAlertDialog = ({
 	numberOfRowsDeleting,
@@ -25,7 +25,7 @@ export const BulkDeleteAlertDialog = ({
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
 				<Button size={'sm'} variant={'destructive'} disabled={isDeleting}>
-					{isDeleting && <Loading />}
+					{isDeleting && <Spinner />}
 					{`Delete Posts (${numberOfRowsDeleting})`}
 				</Button>
 			</AlertDialogTrigger>
@@ -41,7 +41,7 @@ export const BulkDeleteAlertDialog = ({
 				<AlertDialogFooter>
 					<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
 					<AlertDialogAction onClick={onDelete} disabled={isDeleting}>
-						{isDeleting && <Loading />}
+						{isDeleting && <Spinner />}
 						{`Delete ${numberOfRowsDeleting} Posts`}
 					</AlertDialogAction>
 				</AlertDialogFooter>

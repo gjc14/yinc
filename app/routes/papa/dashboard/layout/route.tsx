@@ -18,7 +18,7 @@ import {
 	SidebarInset,
 	SidebarProvider,
 } from '~/components/ui/sidebar'
-import { Loading } from '~/components/loading'
+import { Spinner } from '~/components/ui/spinner'
 import { statusCodeMap } from '~/lib/utils/status-code'
 
 import { validateAdminSession } from '../../auth/utils'
@@ -152,7 +152,7 @@ const Outlet = () => {
 	if (shouldShowLoader) {
 		return (
 			<DashboardSectionWrapper className="items-center justify-center">
-				<Loading />
+				<Spinner />
 			</DashboardSectionWrapper>
 		)
 	}

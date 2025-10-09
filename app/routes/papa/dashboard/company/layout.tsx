@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router'
 
+import { Spinner } from '~/components/ui/spinner'
 import {
 	AnimatedNav,
 	type RouteButton,
 } from '~/components/animated-horizontal-nav'
-import { Loading } from '~/components/loading'
 import {
 	DashboardContent,
 	DashboardHeader,
@@ -28,7 +28,7 @@ export default function DashboardCompany() {
 	return (
 		<DashboardSectionWrapper>
 			<DashboardHeader>
-				<DashboardTitle>
+				<DashboardTitle className="w-full">
 					<AnimatedNav
 						routes={DashboardCompanyRoutes.map(route => ({
 							...route,
@@ -39,7 +39,7 @@ export default function DashboardCompany() {
 			</DashboardHeader>
 			{navigating ? (
 				<DashboardContent className="items-center justify-center">
-					<Loading />
+					<Spinner />
 				</DashboardContent>
 			) : (
 				<Outlet />

@@ -5,7 +5,7 @@
 import { useAtom } from 'jotai'
 
 import { Label } from '~/components/ui/label'
-import { Loading } from '~/components/loading'
+import { Spinner } from '~/components/ui/spinner'
 import { MultiSelect } from '~/components/multi-select'
 import { generateNewCategory } from '~/routes/papa/dashboard/blog/taxonomy/components/category'
 import { generateNewTag } from '~/routes/papa/dashboard/blog/taxonomy/components/tag'
@@ -18,7 +18,7 @@ export const TaxonomyPart = () => {
 	const [tags] = useAtom(tagsAtom)
 	const [categories] = useAtom(categoriesAtom)
 
-	if (!editor || !post) return <Loading />
+	if (!editor || !post) return <Spinner />
 
 	return (
 		<>

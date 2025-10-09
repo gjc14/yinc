@@ -17,8 +17,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '~/components/ui/select'
+import { Spinner } from '~/components/ui/spinner'
 import { Textarea } from '~/components/ui/textarea'
-import { Loading } from '~/components/loading'
 import { SeparatorWithText } from '~/components/separator-with-text'
 import { PostStatus } from '~/lib/db/schema'
 import { generateSeoDescription, generateSlug } from '~/lib/utils/seo'
@@ -34,7 +34,7 @@ export const PostMetaPart = () => {
 
 	const { files, origin, hasObjectStorage, isLoading } = useAssetsContext()
 
-	if (!editor || !post) return <Loading />
+	if (!editor || !post) return <Spinner />
 
 	const handleSlug = () => {
 		const slug = generateSlug(post.title, {

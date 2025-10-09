@@ -22,8 +22,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '~/components/ui/select'
+import { Spinner } from '~/components/ui/spinner'
 import { Textarea } from '~/components/ui/textarea'
-import { Loading } from '~/components/loading'
 
 type TaxonomyItem = {
 	id: number
@@ -361,7 +361,7 @@ export function CreateTaxonomyDialog({
 							className="mt-3 w-full"
 							disabled={isSubmitting}
 						>
-							{isSubmitting && <Loading />}
+							{isSubmitting && <Spinner />}
 							Create {config.name}
 						</Button>
 					</form>

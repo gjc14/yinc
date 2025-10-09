@@ -7,8 +7,8 @@ import { useAtom } from 'jotai'
 
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Spinner } from '~/components/ui/spinner'
 import { Textarea } from '~/components/ui/textarea'
-import { Loading } from '~/components/loading'
 import { MultiSelect } from '~/components/multi-select'
 import type { PostWithRelations } from '~/lib/db/post.server'
 import { generateSeoDescription } from '~/lib/utils/seo'
@@ -20,7 +20,7 @@ export const SeoPart = () => {
 	const [post, setPost] = useAtom(postAtom)
 	const [editor] = useAtom(editorAtom)
 
-	if (!editor || !post) return <Loading />
+	if (!editor || !post) return <Spinner />
 
 	const handleTitle = () => {
 		setPost(prev => {

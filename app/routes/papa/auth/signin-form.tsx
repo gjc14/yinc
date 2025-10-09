@@ -21,7 +21,7 @@ import {
 	InputOTPSlot,
 } from '~/components/ui/input-otp'
 import { Label } from '~/components/ui/label'
-import { Loading } from '~/components/loading'
+import { Spinner } from '~/components/ui/spinner'
 import { authClient } from '~/lib/auth/auth-client'
 
 export const SignInForm = () => {
@@ -191,7 +191,7 @@ export const SignInForm = () => {
 						form="send-otp"
 					>
 						{isSubmitting ? (
-							<Loading />
+							<Spinner />
 						) : countDown > 0 ? (
 							<span>Wait {countDown}s to sign in again</span>
 						) : (
@@ -206,7 +206,7 @@ export const SignInForm = () => {
 							type="submit"
 							form="sign-in"
 						>
-							{isSubmitting ? <Loading /> : 'Verify & Sign In'}
+							{isSubmitting ? <Spinner /> : 'Verify & Sign In'}
 						</Button>
 						<Button
 							variant="outline"

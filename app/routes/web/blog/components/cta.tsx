@@ -8,7 +8,7 @@ import {
 	CardTitle,
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
-import { Loading } from '~/components/loading'
+import { Spinner } from '~/components/ui/spinner'
 
 export const CTA = ({
 	subscribeRoute = '/blog/subscribe',
@@ -40,8 +40,7 @@ export const CTA = ({
 					>
 						<Input placeholder="your@ema.il" name="email" />
 						<Button size={'sm'}>
-							<Loading
-								size={16}
+							<Spinner
 								className={`absolute ${
 									isSubmitting ? 'opacity-100' : 'opacity-0'
 								}`}
