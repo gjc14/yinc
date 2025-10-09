@@ -48,7 +48,7 @@ export default function SEO() {
 				<DashboardTitle
 					title="SEO"
 					description="Used by either post or route. Post will auto-generate one when created. If you customize a route, make sure to use this source to create meta data."
-				></DashboardTitle>
+				/>
 				<DashboardActions>
 					<Button size={'sm'} onClick={() => setOpen(true)}>
 						<PlusCircle />

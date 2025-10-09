@@ -10,7 +10,7 @@ const DashboardSectionWrapper = ({
 	return (
 		<section
 			className={cn(
-				'relative flex h-auto w-full grow flex-col gap-5 overflow-auto p-2 md:px-5 md:py-3',
+				'relative flex h-auto w-full flex-1 flex-col gap-2 overflow-auto p-2 md:gap-3 md:px-5 md:py-3',
 				className,
 			)}
 		>

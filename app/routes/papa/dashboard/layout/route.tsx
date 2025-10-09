@@ -125,7 +125,7 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 					}
 				/>
 
-				<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-x-hidden">
+				<SidebarInset className="h-[calc(100svh-(--spacing(4)))] overflow-hidden">
 					<MemoHeaderWithBreadcrumb />
 
 					<Outlet />
