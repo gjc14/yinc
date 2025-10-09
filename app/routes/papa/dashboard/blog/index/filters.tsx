@@ -31,8 +31,8 @@ export const Filter = ({
 	categoryFilter,
 }: {
 	q?: string
-	tagFilter?: Tag[]
-	categoryFilter?: Category[]
+	tagFilter?: Pick<Tag, 'id' | 'slug' | 'name'>[]
+	categoryFilter?: Pick<Category, 'id' | 'slug' | 'name'>[]
 }) => {
 	const [params, setSearchParams] = useSearchParams()
 	const { navMetadata, setNavMetadata } = useNavigationMetadata()
@@ -43,10 +43,12 @@ export const Filter = ({
 
 	const [open, setOpen] = useState(false)
 	const [query, setQuery] = useState(q || '')
-	const [tagsInFilter, setTagsInFilter] = useState<Tag[]>(tagFilter || [])
-	const [categoryInFilter, setCategoryInFilter] = useState<Category[]>(
-		categoryFilter || [],
-	)
+	const [tagsInFilter, setTagsInFilter] = useState<
+		Pick<Tag, 'id' | 'slug' | 'name'>[]
+	>(tagFilter || [])
+	const [categoryInFilter, setCategoryInFilter] = useState<
+		Pick<Category, 'id' | 'slug' | 'name'>[]
+	>(categoryFilter || [])
 
 	// inner popovers open state
 	const [tagsOpen, setTagsOpen] = useState(false)

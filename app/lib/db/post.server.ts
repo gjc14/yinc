@@ -39,19 +39,15 @@ export const getPosts = async (
 	} = {},
 ): Promise<{
 	posts: PostWithRelations[]
-	categoryFilter?: Category[]
-	tagFilter?: Tag[]
+	categoryFilter?: Pick<Category, 'id' | 'name' | 'slug'>[]
+	tagFilter?: Pick<Tag, 'id' | 'name' | 'slug'>[]
 }> => {
-	const {
-		status = 'PUBLISHED',
-		categories: categorySlugs = [],
-		tags: tagSlugs = [],
-		title,
-	} = props
+	const { status = 'PUBLISHED', categories = [], tags = [], title } = props
 
 	const [postData, tagsData, categoriesData] = await Promise.all([
 		db.execute<PostWithRelations>(sql`
-		SELECT DISTINCT ON (p.id)
+		SELECT
+			DISTINCT ON (p.id)
 			p.*,
 			row_to_json(u) AS author,
 			row_to_json(s) AS seo,
@@ -59,7 +55,7 @@ export const getPosts = async (
 				(
 					SELECT json_agg(row_to_json(t))
 					FROM ${postToTag} pt
-					JOIN ${tagTable} t ON pt.tag_id = t.id
+					LEFT JOIN ${tagTable} t ON pt.tag_id = t.id
 					WHERE pt.post_id = p.id
 				),
 				'[]'::json
@@ -68,7 +64,7 @@ export const getPosts = async (
 				(
 					SELECT json_agg(row_to_json(c))
 					FROM ${postToCategory} pc
-					JOIN ${categoryTable} c ON pc.category_id = c.id
+					LEFT JOIN ${categoryTable} c ON pc.category_id = c.id
 					WHERE pc.post_id = p.id
 				),
 				'[]'::json
@@ -82,45 +78,31 @@ export const getPosts = async (
 		LEFT JOIN ${seoTable} s ON s.id = p.seo_id
 		WHERE (
 			${status !== 'ALL' ? sql`p.status = ${status}` : sql`TRUE`}
-			AND (${title ? sql`p.title ILIKE ${'%' + title + '%'}` : sql`TRUE`})
-			AND (${
-				tagSlugs.length > 0
-					? sql`t.slug = ANY(ARRAY[${sql.join(
-							tagSlugs.map(s => sql`${s}`),
-							sql`, `,
-						)}])`
-					: sql`TRUE`
-			})
-			AND (${
-				categorySlugs.length > 0
-					? sql`c.slug = ANY(ARRAY[${sql.join(
-							categorySlugs.map(s => sql`${s}`),
-							sql`, `,
-						)}])`
-					: sql`TRUE`
-			})
+			AND ${title ? sql`p.title ILIKE ${'%' + title + '%'}` : sql`TRUE`}
+			AND ${tags.length ? sql`t.slug = ANY(ARRAY[${sql.join(tags, sql`,`)}])` : sql`TRUE`}
+			AND ${categories.length ? sql`c.slug = ANY(ARRAY[${sql.join(categories, sql`,`)}])` : sql`TRUE`}
 			-- more conditions
 		)
 	`),
-		tagSlugs.length > 0
+		tags.length
 			? db.execute(sql`
-						SELECT *
-						FROM ${tagTable}
-						WHERE ${tagTable.slug} = ANY(ARRAY[${sql.join(
-							tagSlugs.map(s => sql`${s}`),
-							sql`, `,
-						)}])
-					`)
+					SELECT
+						${tagTable.id},
+						${tagTable.name},
+						${tagTable.slug},
+					FROM ${tagTable}
+					WHERE ${tagTable.slug} = ANY(ARRAY[${sql.join(tags, sql`,`)}])
+				`)
 			: { rows: [] },
-		categorySlugs.length > 0
+		categories.length
 			? db.execute(sql`
-						SELECT *
-						FROM ${categoryTable}
-						WHERE ${categoryTable.slug} = ANY(ARRAY[${sql.join(
-							categorySlugs.map(s => sql`${s}`),
-							sql`, `,
-						)}])
-					`)
+					SELECT
+						${categoryTable.id},
+						${categoryTable.name},
+						${categoryTable.slug},
+					FROM ${categoryTable}
+					WHERE ${categoryTable.slug} = ANY(ARRAY[${sql.join(categories, sql`,`)}])
+				`)
 			: { rows: [] },
 	])
 
@@ -132,8 +114,11 @@ export const getPosts = async (
 			'publishedAt',
 			'banExpires',
 		]),
-		tagFilter: tagsData.rows as Tag[],
-		categoryFilter: categoriesData.rows as Category[],
+		tagFilter: tagsData.rows as Pick<Tag, 'id' | 'name' | 'slug'>[],
+		categoryFilter: categoriesData.rows as Pick<
+			Category,
+			'id' | 'name' | 'slug'
+		>[],
 	}
 }
 
@@ -418,7 +403,7 @@ const processTaxonomyTags = async (
 
 	// Insert new tags
 	let insertedTags: Tag[] = []
-	if (tagsToInsert.length > 0) {
+	if (tagsToInsert.length) {
 		insertedTags = await tx
 			.insert(tagTable)
 			.values(
@@ -443,7 +428,7 @@ const processTaxonomyTags = async (
 	await tx.delete(postToTag).where(eq(postToTag.postId, postId))
 
 	// Create new relations
-	if (allTagIds.length > 0) {
+	if (allTagIds.length) {
 		await tx.insert(postToTag).values(
 			allTagIds.map(tagId => ({
 				postId: postId,
@@ -483,7 +468,7 @@ const processTaxonomyCategories = async (
 
 	// Insert new cats
 	let insertedCats: Category[] = []
-	if (catsToInsert.length > 0) {
+	if (catsToInsert.length) {
 		insertedCats = await tx
 			.insert(categoryTable)
 			.values(
@@ -506,7 +491,7 @@ const processTaxonomyCategories = async (
 
 	await tx.delete(postToCategory).where(eq(postToCategory.postId, postId))
 
-	if (allCatIds.length > 0) {
+	if (allCatIds.length) {
 		await tx.insert(postToCategory).values(
 			allCatIds.map(categoryId => ({
 				postId: postId,
