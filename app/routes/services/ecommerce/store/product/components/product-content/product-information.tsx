@@ -4,12 +4,8 @@ import { Button } from '~/components/ui/button'
 
 import type { ProductContentProps } from '.'
 
-export const ProductInformation = ({
-	product,
-	productVariants,
-	productAttributes,
-}: ProductContentProps) => {
-	const variantProduct = productVariants.length > 0 // Check if there are variants
+export const ProductInformation = ({ product }: ProductContentProps) => {
+	const variantProduct = product.variants.length > 0 // Check if there are variants
 
 	// === Attribute Selection State for Variants ===
 	const [selectedAttributes, setSelectedAttributes] = useState<
@@ -20,7 +16,7 @@ export const ProductInformation = ({
 	// e.g. { color: Set { 'red', 'blue' }, size: Set { 'S', 'M', 'L' } }
 	const attributeOptions = useMemo(
 		() =>
-			productVariants.reduce(
+			product.variants.reduce(
 				(acc, variant) => {
 					Object.entries(variant.combination).forEach(([attr, v]) => {
 						if (!acc[attr]) {
@@ -32,11 +28,11 @@ export const ProductInformation = ({
 				},
 				{} as Record<string, Set<string>>,
 			),
-		[productVariants],
+		[product.variants],
 	)
 
 	// Convert sets to sorted arrays
-	const attributeKeys = productAttributes
+	const attributeKeys = product.attributes
 		.filter(attr => {
 			if (!attr.name) return false
 			return Object.keys(attributeOptions).includes(attr.name)
@@ -47,7 +43,7 @@ export const ProductInformation = ({
 	) // [ key, string[] ] => { key: string[] }
 
 	// Find matching variant based on selected attributes
-	const selectedVariant = productVariants.find(variant => {
+	const selectedVariant = product.variants.find(variant => {
 		const combination = variant.combination
 		// Only check attributes that have been selected
 		return Object.entries(combination).every(
@@ -62,19 +58,21 @@ export const ProductInformation = ({
 	const filteredVariants = useMemo(() => {
 		// If no attributes are selected, return all variants
 		if (Object.keys(selectedAttributes).length === 0) {
-			return productVariants
+			return product.variants
 		}
 
 		// Filter variants that match the selected attributes
-		return productVariants.filter(variant => {
+		return product.variants.filter(variant => {
 			const combination = variant.combination
 			return Object.entries(selectedAttributes).every(
 				([key, value]) => combination[key] === value,
 			)
 		})
-	}, [selectedAttributes, productVariants])
+	}, [selectedAttributes, product.variants])
 
-	const getLowestPrice = (variants: ProductContentProps['productVariants']) => {
+	const getLowestPrice = (
+		variants: ProductContentProps['product']['variants'],
+	) => {
 		return Math.min(
 			...variants.map(
 				variant => variant.option.salePrice || variant.option.price,
@@ -122,7 +120,7 @@ export const ProductInformation = ({
 			...selectedAttributes,
 			[attributeName]: attributeValue,
 		}
-		return productVariants.some(variant => {
+		return product.variants.some(variant => {
 			const combination = variant.combination
 			// If any testSelection entry doesn't match, this variant isn't a match
 			return Object.entries(testSelection).every(
@@ -155,7 +153,7 @@ export const ProductInformation = ({
 			...selectedAttributes,
 			[attributeName]: attributeValue,
 		}
-		return productVariants.filter(variant => {
+		return product.variants.filter(variant => {
 			const combination = variant.combination
 			return Object.entries(testSelection).every(
 				([key, value]) => combination[key] === value,

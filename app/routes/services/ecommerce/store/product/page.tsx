@@ -30,13 +30,7 @@ type StoreProductPageProps = ProductContentProps & {
  * Store product page component, displays product, image gallery, and cross-sell products.
  */
 export function StoreProductPage(props: StoreProductPageProps) {
-	const {
-		product,
-		productVariants,
-		productAttributes,
-		productGalleryPromise,
-		crossSellProductsPromise,
-	} = props
+	const { product, productGalleryPromise, crossSellProductsPromise } = props
 
 	return (
 		<div className="relative w-full flex-1 space-y-16 px-3 md:px-8 xl:px-12">
@@ -54,11 +48,7 @@ export function StoreProductPage(props: StoreProductPageProps) {
 						)}
 					</Await>
 				</Suspense>
-				<ProductContent
-					product={product}
-					productVariants={productVariants}
-					productAttributes={productAttributes}
-				/>
+				<ProductContent product={product} />
 			</div>
 
 			{/* Cross Sell Section */}

@@ -1,35 +1,18 @@
 import { Button } from '~/components/ui/button'
-import type { productAttribute } from '~/routes/services/ecommerce/lib/db/schema'
 
-import type {
-	ProductVariant,
-	ProductWithOption,
-} from '../../../../lib/db/product.server'
+import type { getProduct } from '../../../../lib/db/product.server'
 import { ProductAttributes } from './product-attributes'
 import { ProductDetails } from './product-details'
 import { ProductInformation } from './product-information'
 
 export type ProductContentProps = {
-	product: ProductWithOption
-	productVariants: ProductVariant[]
-	productAttributes: Omit<
-		typeof productAttribute.$inferSelect,
-		'productId' | 'attributeId'
-	>[]
+	product: NonNullable<Awaited<ReturnType<typeof getProduct>>>
 }
 
-export const ProductContent = ({
-	product,
-	productVariants,
-	productAttributes,
-}: ProductContentProps) => {
+export const ProductContent = ({ product }: ProductContentProps) => {
 	return (
 		<section className="space-y-12">
-			<ProductInformation
-				product={product}
-				productVariants={productVariants}
-				productAttributes={productAttributes}
-			/>
+			<ProductInformation product={product} />
 
 			<div className="flex items-center gap-2">
 				<Button
@@ -52,7 +35,7 @@ export const ProductContent = ({
 			{product.details && <ProductDetails details={product.details} />}
 
 			{/* Attributes */}
-			<ProductAttributes productAttributes={productAttributes} />
+			<ProductAttributes productAttributes={product.attributes} />
 		</section>
 	)
 }

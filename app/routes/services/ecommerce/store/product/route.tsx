@@ -51,13 +51,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 
 	const crossSellProductsPromise = getCrossSellProducts(product.id)
 
-	return {
-		product,
-		productVariants: product.variants,
-		productAttributes: product.attributes,
-		productGalleryPromise,
-		crossSellProductsPromise: crossSellProductsPromise,
-	}
+	return { product, productGalleryPromise, crossSellProductsPromise }
 }
 
 export default function ProductRoute({ loaderData }: Route.ComponentProps) {
