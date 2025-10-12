@@ -30,7 +30,7 @@ export const PostSettings = () => {
 				side={isMobile ? 'bottom' : 'right'}
 				hideCloseButton
 			>
-				<SheetHeader className="bg-primary-foreground/80 sticky top-0 flex-row items-center justify-between space-y-0 py-3 backdrop-blur-xs">
+				<SheetHeader className="supports-[backdrop-filter]:bg-primary-foreground/80 bg-primary-foreground sticky top-0 flex-row items-center justify-between space-y-0 py-3 backdrop-blur-xs">
 					<SheetTitle>Edit Post</SheetTitle>
 					<SheetDescription>
 						<SheetClose className="cursor-pointer">

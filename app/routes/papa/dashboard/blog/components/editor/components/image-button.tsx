@@ -165,7 +165,7 @@ export const ImageButton = () => {
 				<div className="flex flex-col items-center gap-3">
 					{/* Preview */}
 					<section
-						className={`flex h-40 w-full items-center justify-center border backdrop-blur-md`}
+						className={`supports-[backdrop-filter]:bg-background/10 bg-background flex h-40 w-full items-center justify-center border backdrop-blur-md`}
 					>
 						{insertAvailable ? (
 							<>

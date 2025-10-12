@@ -20,7 +20,7 @@ const navigationLinks = [
 
 export function Header() {
 	return (
-		<header className="bg-primary-foreground/50 sticky top-0 z-10 w-full border-b px-4 backdrop-blur-md md:px-6">
+		<header className="supports-[backdrop-filter]:bg-primary-foreground/50 bg-primary-foreground sticky top-0 z-10 w-full border-b px-4 backdrop-blur-md md:px-6">
 			<div className="flex h-16 items-center justify-between">
 				{/* Logo */}
 				<div className="flex items-center">

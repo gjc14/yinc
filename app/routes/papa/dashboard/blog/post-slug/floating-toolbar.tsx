@@ -102,7 +102,7 @@ export const FloatingToolbar = ({ isCreate }: { isCreate: boolean }) => {
 
 	return (
 		<div
-			className={`absolute ${isMobile ? 'bottom-12' : 'bottom-8'} left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center gap-1 rounded-full border bg-white/50 py-1 pr-1 pl-1.5 shadow-md ring-1 ring-black/5 backdrop-blur-sm dark:bg-black/50`}
+			className={`absolute ${isMobile ? 'bottom-12' : 'bottom-8'} bg-primary left-1/2 z-10 mx-auto flex w-fit -translate-x-1/2 items-center gap-1 rounded-full border py-1 pr-1 pl-1.5 shadow-md ring-1 ring-black/5 backdrop-blur-sm supports-[backdrop-filter]:bg-white/50 supports-[backdrop-filter]:dark:bg-black/50`}
 		>
 			{/* Preview */}
 			{!isCreate && (

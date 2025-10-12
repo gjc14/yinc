@@ -52,7 +52,7 @@ export function Toolbar({
 		<TooltipProvider delayDuration={800}>
 			<div
 				id="editor-toolbar"
-				className={`bg-background/80 absolute right-0 ${isMobile ? 'bottom-0' : 'top-0'} left-0 z-20 w-full overflow-x-scroll border-b backdrop-blur-sm`}
+				className={`supports-[backdrop-filter]:bg-background/80 bg-background absolute right-0 ${isMobile ? 'bottom-0' : 'top-0'} left-0 z-20 w-full overflow-x-scroll border-b backdrop-blur-sm`}
 			>
 				<div
 					id="buttons"

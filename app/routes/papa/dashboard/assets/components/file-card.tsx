@@ -155,7 +155,7 @@ export const FileCard = ({
 				<File />
 			)}
 			{deleteAlert && (
-				<div className="absolute flex h-full w-full flex-col items-center justify-center gap-1.5 rounded-lg pt-3 backdrop-blur-xs">
+				<div className="bg-background supports-[backdrop-filter]:bg-background/20 absolute flex h-full w-full flex-col items-center justify-center gap-1.5 rounded-lg pt-3 backdrop-blur-xs">
 					<Button
 						variant={'destructive'}
 						size={'sm'}
