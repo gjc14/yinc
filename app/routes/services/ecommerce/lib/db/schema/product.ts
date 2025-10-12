@@ -92,7 +92,7 @@ export const product = pgTable(
 			.default('DRAFT'),
 		slug: varchar('slug').notNull().unique(),
 		name: varchar('name').notNull(),
-		subTitle: varchar('sub_title'),
+		subtitle: varchar('subtitle'),
 		description: varchar('description'),
 		details: jsonb('details').$type<ProductDetailSection[]>(),
 		purchaseNote: varchar('purchase_note'),

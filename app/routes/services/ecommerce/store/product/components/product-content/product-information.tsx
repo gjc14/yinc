@@ -173,8 +173,8 @@ export const ProductInformation = ({ product }: ProductContentProps) => {
 			<div className="space-y-4">
 				<div>
 					<h1 className="mb-2 text-4xl font-light">{product.name}</h1>
-					{product.subTitle && (
-						<p className="text-primary/60 text-lg">{product.subTitle}</p>
+					{product.subtitle && (
+						<p className="text-primary/60 text-lg">{product.subtitle}</p>
 					)}
 				</div>
 				<div className="my-8 flex items-baseline gap-3">
