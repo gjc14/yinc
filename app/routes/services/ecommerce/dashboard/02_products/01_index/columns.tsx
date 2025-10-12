@@ -167,13 +167,13 @@ export const columns: ColumnDef<
 							{ id },
 							{
 								method: 'DELETE',
-								action: `/dashboard/blog/resource`,
+								action: `/dashboard/ecommerce/products/${slug}/resource`,
 								encType: 'application/json',
 							},
 						)
 					}}
 				>
-					<Link to={`/dashboard/blog/${slug}`}>
+					<Link to={`/dashboard/ecommerce/products/${slug}`}>
 						<DropdownMenuItem>Edit</DropdownMenuItem>
 					</Link>
 				</DashboardDataTableMoreMenu>

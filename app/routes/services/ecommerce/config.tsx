@@ -72,8 +72,20 @@ export const config = {
 							'./routes/services/ecommerce/dashboard/02_products/01_index/route.tsx',
 						),
 						route(
+							// multiple
+							'resource',
+							'./routes/services/ecommerce/dashboard/02_products/resource.ts',
+						),
+						route(
 							':productSlug',
 							'./routes/services/ecommerce/dashboard/02_products/02_product/route.tsx',
+							[
+								route(
+									// individual
+									'resource',
+									'./routes/services/ecommerce/dashboard/02_products/02_product/resource.ts',
+								),
+							],
 						),
 						route(
 							'brands',
