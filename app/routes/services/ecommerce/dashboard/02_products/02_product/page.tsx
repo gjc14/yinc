@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Form } from 'react-router'
+
+import { useAtom } from 'jotai'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -28,24 +30,42 @@ import { Separator } from '~/components/ui/separator'
 import { Switch } from '~/components/ui/switch'
 import { Textarea } from '~/components/ui/textarea'
 
-import type { getProduct, ProductListing } from '../../../lib/db/product.server'
-import {
-	ProductStatus,
-	ProductVisibility,
-	type productGallery,
-} from '../../../lib/db/schema'
+import { ProductStatus, ProductVisibility } from '../../../lib/db/schema'
 import { Header } from '../../../store/layout/components/header'
 import { StoreProductPage } from '../../../store/product/page'
+import {
+	crossSellProductsAtom,
+	productAtom,
+	productGalleryAtom,
+} from './context'
 
-type ProductEditPageProps = {
-	product: NonNullable<Awaited<ReturnType<typeof getProduct>>>
-	productGalleryPromise: Promise<(typeof productGallery.$inferSelect)[]>
-	crossSellProductsPromise: Promise<ProductListing[]>
-}
-
-export function ProductEditPage(props: ProductEditPageProps) {
+export function ProductEditPage() {
 	const [preview, setPreview] = useState(true)
-	const [product, setProduct] = useState<typeof props.product>(props.product)
+
+	const [product, setProduct] = useAtom(productAtom)
+	const [crossSellProducts] = useAtom(crossSellProductsAtom)
+	const [productGallery] = useAtom(productGalleryAtom)
+
+	// Create reactive promises that resolve with current atom values
+	// When atom is null, promise resolves to empty array to prevent serveer unsolved promises
+	// When atom has data, promise resolves immediately (preview updates)
+	const productGalleryPromise = useMemo((): Promise<
+		NonNullable<typeof productGallery>
+	> => {
+		if (productGallery === null) {
+			return Promise.resolve([])
+		}
+		return Promise.resolve(productGallery)
+	}, [productGallery])
+
+	const crossSellProductsPromise = useMemo((): Promise<
+		NonNullable<typeof crossSellProducts>
+	> => {
+		if (crossSellProducts === null) {
+			return Promise.resolve([])
+		}
+		return Promise.resolve(crossSellProducts)
+	}, [crossSellProducts])
 
 	const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
@@ -53,10 +73,12 @@ export function ProductEditPage(props: ProductEditPageProps) {
 		// TODO: Implement save logic
 	}
 
-	const handleProductChange = (
-		updatedProduct: Partial<typeof props.product>,
-	) => {
-		setProduct(prev => ({ ...prev, ...updatedProduct }))
+	const handleProductChange = (updatedProduct: Partial<typeof product>) => {
+		setProduct(prev => prev && { ...prev, ...updatedProduct })
+	}
+
+	if (!product) {
+		return null
 	}
 
 	return (
@@ -313,8 +335,8 @@ export function ProductEditPage(props: ProductEditPageProps) {
 							<Header />
 							<StoreProductPage
 								product={product}
-								productGalleryPromise={props.productGalleryPromise}
-								crossSellProductsPromise={props.crossSellProductsPromise}
+								productGalleryPromise={productGalleryPromise}
+								crossSellProductsPromise={crossSellProductsPromise}
 							/>
 						</section>
 					</ResizablePanel>

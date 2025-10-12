@@ -1,10 +1,19 @@
 import type { Route } from './+types/route'
+import { useEffect } from 'react'
+
+import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
 
 import {
 	getCrossSellProducts,
 	getProduct,
 	getProductGallery,
 } from '../../../lib/db/product.server'
+import {
+	crossSellProductsAtom,
+	productAtom,
+	productGalleryAtom,
+} from './context'
 import { ProductEditPage } from './page'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -40,5 +49,19 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 }
 
 export default function ECProduct({ loaderData }: Route.ComponentProps) {
-	return <ProductEditPage {...loaderData} />
+	useHydrateAtoms([[productAtom, loaderData.product]])
+	const [, setCrossSellProductsAtom] = useAtom(crossSellProductsAtom)
+	const [, setProductGalleryAtom] = useAtom(productGalleryAtom)
+
+	// Resolve promises and set atoms after initial render
+	useEffect(() => {
+		loaderData.productGalleryPromise.then(gallery => {
+			setProductGalleryAtom(gallery)
+		})
+		loaderData.crossSellProductsPromise.then(products => {
+			setCrossSellProductsAtom(products)
+		})
+	}, [loaderData])
+
+	return <ProductEditPage />
 }
