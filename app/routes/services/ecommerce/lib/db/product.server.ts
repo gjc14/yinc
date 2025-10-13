@@ -187,7 +187,7 @@ export type ProductVariant = typeof productVariant.$inferSelect & {
 /** Single product select attribute type */
 export type ProductAttribute = Omit<
 	typeof productAttribute.$inferSelect,
-	'productId' | 'attributeId'
+	'productId'
 >
 
 /**
@@ -275,6 +275,7 @@ export const getProduct = async ({
 					SELECT json_agg(
 						json_build_object(
 							'id', pa.id,
+							'attribute_id', pa.attribute_id,
 							'name', CASE 
 								WHEN pa.attribute_id IS NOT NULL AND a.name IS NOT NULL 
 								THEN a.name 
