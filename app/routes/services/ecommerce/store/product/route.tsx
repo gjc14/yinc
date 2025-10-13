@@ -1,6 +1,9 @@
 import type { Route } from './+types/route'
+import { useEffect, useState } from 'react'
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router'
 
+import { useAtom } from 'jotai'
+import { useHydrateAtoms } from 'jotai/utils'
 import { ArrowLeft, Store } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
@@ -13,6 +16,12 @@ import {
 	getProduct,
 	getProductGallery,
 } from '../../lib/db/product.server'
+import {
+	crossSellProductsAtom,
+	isResolvingAtom,
+	productAtom,
+	productGalleryAtom,
+} from './context'
 import { StoreProductPage } from './page'
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
@@ -55,7 +64,36 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 }
 
 export default function ProductRoute({ loaderData }: Route.ComponentProps) {
-	return <StoreProductPage {...loaderData} />
+	useHydrateAtoms([[productAtom, loaderData.product]])
+	const [, setProduct] = useAtom(productAtom)
+	const [, setIsResolving] = useAtom(isResolvingAtom)
+	const [, setCrossSellProducts] = useAtom(crossSellProductsAtom)
+	const [, setProductGallery] = useAtom(productGalleryAtom)
+
+	useEffect(() => {
+		setProduct(loaderData.product)
+		setIsResolving({
+			crossSellProducts: true,
+			productGallery: true,
+		})
+
+		// Resolve promises
+		loaderData.crossSellProductsPromise
+			.then(setCrossSellProducts)
+			.finally(() => setIsResolving(r => ({ ...r, crossSellProducts: false })))
+		loaderData.productGalleryPromise
+			.then(setProductGallery)
+			.finally(() => setIsResolving(r => ({ ...r, productGallery: false })))
+
+		return () => {
+			setProduct(null)
+			setIsResolving({ crossSellProducts: false, productGallery: false })
+			setCrossSellProducts([])
+			setProductGallery([])
+		}
+	}, [loaderData])
+
+	return <StoreProductPage />
 }
 
 export function ErrorBoundary() {

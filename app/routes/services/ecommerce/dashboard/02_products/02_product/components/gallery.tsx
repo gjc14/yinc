@@ -4,7 +4,10 @@ import { X } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 
-import { productAtom, productGalleryAtom } from '../context'
+import {
+	productAtom,
+	productGalleryAtom,
+} from '../../../../store/product/context'
 
 export function Gallery() {
 	const [gallery, setGallery] = useAtom(productGalleryAtom)

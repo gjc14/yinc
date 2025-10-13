@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { useAtom } from 'jotai'
 
@@ -13,6 +13,7 @@ import { Separator } from '~/components/ui/separator'
 import { Switch } from '~/components/ui/switch'
 
 import { Header } from '../../../store/layout/components/header'
+import { productAtom } from '../../../store/product/context'
 import { StoreProductPage } from '../../../store/product/page'
 import { Attributes } from './components/attributes'
 import { Details } from './components/details'
@@ -23,39 +24,11 @@ import { MainOption } from './components/main-option'
 import { Publishing } from './components/publishing'
 import { Taxonomies } from './components/taxonomies'
 import { Variants } from './components/variants'
-import {
-	crossSellProductsAtom,
-	productAtom,
-	productGalleryAtom,
-} from './context'
 
 export function ProductEditPage() {
 	const [preview, setPreview] = useState(true)
 
 	const [product] = useAtom(productAtom)
-	const [crossSellProducts] = useAtom(crossSellProductsAtom)
-	const [productGallery] = useAtom(productGalleryAtom)
-
-	// Create reactive promises that resolve with current atom values
-	// When atom is null, promise resolves to empty array to prevent serveer unsolved promises
-	// When atom has data, promise resolves immediately (preview updates)
-	const productGalleryPromise = useMemo((): Promise<
-		NonNullable<typeof productGallery>
-	> => {
-		if (productGallery === null) {
-			return Promise.resolve([])
-		}
-		return Promise.resolve(productGallery)
-	}, [productGallery])
-
-	const crossSellProductsPromise = useMemo((): Promise<
-		NonNullable<typeof crossSellProducts>
-	> => {
-		if (crossSellProducts === null) {
-			return Promise.resolve([])
-		}
-		return Promise.resolve(crossSellProducts)
-	}, [crossSellProducts])
 
 	if (!product) return null
 
@@ -133,11 +106,7 @@ export function ProductEditPage() {
 					<ResizablePanel defaultSize={50} minSize={30}>
 						<section className="h-full w-full overflow-auto">
 							<Header />
-							<StoreProductPage
-								product={product}
-								productGalleryPromise={productGalleryPromise}
-								crossSellProductsPromise={crossSellProductsPromise}
-							/>
+							<StoreProductPage />
 						</section>
 					</ResizablePanel>
 				</>

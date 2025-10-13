@@ -2,7 +2,7 @@ import { useAtom } from 'jotai'
 
 import { Card } from '~/components/ui/card'
 
-import { productAtom } from '../context'
+import { productAtom } from '../../../../store/product/context'
 
 export function Variants() {
 	const [product] = useAtom(productAtom)

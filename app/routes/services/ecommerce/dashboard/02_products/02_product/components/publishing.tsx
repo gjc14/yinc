@@ -19,7 +19,7 @@ import {
 import { Separator } from '~/components/ui/separator'
 
 import { ProductStatus, ProductVisibility } from '../../../../lib/db/schema'
-import { productAtom } from '../context'
+import { productAtom } from '../../../../store/product/context'
 
 export function Publishing() {
 	const [product, setProduct] = useAtom(productAtom)

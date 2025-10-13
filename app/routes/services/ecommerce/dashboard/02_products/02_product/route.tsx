@@ -11,9 +11,10 @@ import {
 } from '../../../lib/db/product.server'
 import {
 	crossSellProductsAtom,
+	isResolvingAtom,
 	productAtom,
 	productGalleryAtom,
-} from './context'
+} from '../../../store/product/context'
 import { ProductEditPage } from './page'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -50,17 +51,32 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 
 export default function ECProduct({ loaderData }: Route.ComponentProps) {
 	useHydrateAtoms([[productAtom, loaderData.product]])
-	const [, setCrossSellProductsAtom] = useAtom(crossSellProductsAtom)
-	const [, setProductGalleryAtom] = useAtom(productGalleryAtom)
+	const [, setProduct] = useAtom(productAtom)
+	const [, setIsResolving] = useAtom(isResolvingAtom)
+	const [, setCrossSellProducts] = useAtom(crossSellProductsAtom)
+	const [, setProductGallery] = useAtom(productGalleryAtom)
 
-	// Resolve promises and set atoms after initial render
 	useEffect(() => {
-		loaderData.productGalleryPromise.then(gallery => {
-			setProductGalleryAtom(gallery)
+		setProduct(loaderData.product)
+		setIsResolving({
+			crossSellProducts: true,
+			productGallery: true,
 		})
-		loaderData.crossSellProductsPromise.then(products => {
-			setCrossSellProductsAtom(products)
-		})
+
+		// Resolve promises
+		loaderData.crossSellProductsPromise
+			.then(setCrossSellProducts)
+			.finally(() => setIsResolving(r => ({ ...r, crossSellProducts: false })))
+		loaderData.productGalleryPromise
+			.then(setProductGallery)
+			.finally(() => setIsResolving(r => ({ ...r, productGallery: false })))
+
+		return () => {
+			setProduct(null)
+			setIsResolving({ crossSellProducts: false, productGallery: false })
+			setCrossSellProducts([])
+			setProductGallery([])
+		}
 	}, [loaderData])
 
 	return <ProductEditPage />

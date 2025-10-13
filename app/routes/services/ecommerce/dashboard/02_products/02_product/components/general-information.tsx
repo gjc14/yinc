@@ -11,7 +11,7 @@ import { Field, FieldDescription, FieldLabel } from '~/components/ui/field'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
 
-import { productAtom } from '../context'
+import { productAtom } from '../../../../store/product/context'
 
 export function GeneralInformation() {
 	const [product, setProduct] = useAtom(productAtom)

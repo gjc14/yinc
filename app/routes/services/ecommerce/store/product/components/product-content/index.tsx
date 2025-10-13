@@ -1,20 +1,22 @@
+import { useAtom } from 'jotai'
+
 import { Button } from '~/components/ui/button'
 
-import type { getProduct } from '../../../../lib/db/product.server'
+import { productAtom } from '../../context'
 import { ProductAttributes } from './product-attributes'
 import { ProductDetails } from './product-details'
 import { ProductInformation } from './product-information'
 
-export type ProductContentProps = {
-	product: NonNullable<Awaited<ReturnType<typeof getProduct>>>
-}
+export const ProductContent = () => {
+	const [product] = useAtom(productAtom)
 
-export const ProductContent = ({ product }: ProductContentProps) => {
+	if (!product) return null
+
 	return (
 		<section className="space-y-12">
 			<ProductInformation product={product} />
 
-			<div className="flex items-center gap-2">
+			<div className="flex flex-wrap items-center gap-2">
 				<Button
 					variant={'ghost'}
 					// disabled={!isSelectionComplete}

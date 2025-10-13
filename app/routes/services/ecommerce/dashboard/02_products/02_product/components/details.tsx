@@ -22,7 +22,7 @@ import {
 	ItemTitle,
 } from '~/components/ui/item'
 
-import { productAtom } from '../context'
+import { productAtom } from '../../../../store/product/context'
 
 type DetailType = NonNullable<
 	NonNullable<ReturnType<typeof productAtom.read>>['details']
