@@ -1,4 +1,4 @@
-import { sql, type InferSelectModel } from 'drizzle-orm'
+import { relations, sql, type InferSelectModel } from 'drizzle-orm'
 import {
 	check,
 	foreignKey,
@@ -73,3 +73,27 @@ export const ecAttribute = pgTable('ec_attribute', {
 	slug: varchar('slug', { length: 100 }).notNull().unique(),
 	value: varchar('value', { length: 255 }),
 })
+
+// Relations
+
+export const ecCategoryRelations = relations(ecCategory, ({ one, many }) => ({
+	parent: one(ecCategory, {
+		fields: [ecCategory.parentId],
+		references: [ecCategory.id],
+		relationName: 'parent_child',
+	}),
+	children: many(ecCategory, {
+		relationName: 'parent_child',
+	}),
+}))
+
+export const ecBrandRelations = relations(ecBrand, ({ one, many }) => ({
+	parent: one(ecBrand, {
+		fields: [ecBrand.parentId],
+		references: [ecBrand.id],
+		relationName: 'parent_child',
+	}),
+	children: many(ecBrand, {
+		relationName: 'parent_child',
+	}),
+}))

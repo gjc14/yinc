@@ -5,11 +5,17 @@ import type {
 	getProduct,
 	getProductGallery,
 } from '../../lib/db/product.server'
+import type {
+	EcBrand as Brand,
+	EcCategory as Category,
+	EcTag as Tag,
+} from '../../lib/db/schema'
 
 export const productAtom = atom<Awaited<ReturnType<typeof getProduct>> | null>(
 	null,
 )
 
+// === Product Related Data ===
 export const productGalleryAtom = atom<Awaited<
 	ReturnType<typeof getProductGallery>
 > | null>(null)
@@ -17,6 +23,12 @@ export const crossSellProductsAtom = atom<Awaited<
 	ReturnType<typeof getCrossSellProducts>
 > | null>(null)
 
+// === Taxonomies ===
+export const tagsAtom = atom<Tag[]>([])
+export const categoriesAtom = atom<(Category & { children: Category[] })[]>([])
+export const brandsAtom = atom<(Brand & { children: Brand[] })[]>([])
+
+// === States ===
 export const isResolvingAtom = atom<{
 	productGallery: boolean
 	crossSellProducts: boolean
