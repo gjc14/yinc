@@ -25,8 +25,8 @@ export const crossSellProductsAtom = atom<Awaited<
 
 // === Taxonomies ===
 export const tagsAtom = atom<Tag[]>([])
-export const categoriesAtom = atom<(Category & { children: Category[] })[]>([])
-export const brandsAtom = atom<(Brand & { children: Brand[] })[]>([])
+export const categoriesAtom = atom<Category[]>([])
+export const brandsAtom = atom<Brand[]>([])
 
 // === States ===
 export const isResolvingAtom = atom<{

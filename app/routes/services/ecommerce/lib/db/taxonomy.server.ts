@@ -27,9 +27,7 @@ export const createEcCategory = async (
 }
 
 export const getEcCategories = async () => {
-	const categories = await dbStore.query.ecCategory.findMany({
-		with: { children: true },
-	})
+	const categories = await dbStore.query.ecCategory.findMany()
 
 	return categories
 }
@@ -42,9 +40,7 @@ export const createEcBrand = async (
 }
 
 export const getEcBrands = async () => {
-	const brands = await dbStore.query.ecBrand.findMany({
-		with: { children: true },
-	})
+	const brands = await dbStore.query.ecBrand.findMany()
 
 	return brands
 }

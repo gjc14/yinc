@@ -35,7 +35,7 @@ function CheckboxTreeItem({
 	onToggle,
 	getNodeState,
 }: CheckboxTreeItemProps) {
-	const [isExpanded, setIsExpanded] = React.useState(true)
+	const [isExpanded, setIsExpanded] = React.useState(false)
 	const checkboxRef = React.useRef<HTMLButtonElement>(null)
 	const hasChildren = node.children && node.children.length > 0
 	const state = getNodeState(node)
