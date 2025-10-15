@@ -23,6 +23,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 				const category = await createEcCategory(categoryData)
 				return {
 					msg: `Category ${category.name} created successfully`,
+					data: category,
 				} satisfies ActionResponse
 			case 'PUT':
 				return {} satisfies ActionResponse

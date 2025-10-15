@@ -23,6 +23,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 				const tag = await createEcTag(tagData)
 				return {
 					msg: `Tag ${tag.name} created successfully`,
+					data: tag,
 				} satisfies ActionResponse
 			case 'PUT':
 				return {} satisfies ActionResponse

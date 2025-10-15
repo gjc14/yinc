@@ -49,6 +49,10 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 	return { product, productGalleryPromise, crossSellProductsPromise }
 }
 
+// To prevent revalidation when fetchers are called (taxonomies, brands, etc.)
+// Please call revalidate() manually when updating product
+export const shouldRevalidate = () => false
+
 export default function ECProduct({ loaderData }: Route.ComponentProps) {
 	useHydrateAtoms([[productAtom, loaderData.product]])
 	const [, setProduct] = useAtom(productAtom)

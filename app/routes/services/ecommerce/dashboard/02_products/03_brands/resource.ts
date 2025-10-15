@@ -23,6 +23,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 				const brand = await createEcBrand(brandData)
 				return {
 					msg: `Brand ${brand.name} created successfully`,
+					data: brand,
 				} satisfies ActionResponse
 			case 'PUT':
 				return {} satisfies ActionResponse
