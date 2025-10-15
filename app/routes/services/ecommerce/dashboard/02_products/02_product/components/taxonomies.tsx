@@ -7,6 +7,7 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '~/components/ui/card'
@@ -26,6 +27,7 @@ import type { action as cAction } from '../../04_categories/resource'
 import type { loader as cLoader } from '../../04_categories/route'
 import type { action as tAction } from '../../05_tags/resource'
 import type { loader as tLoader } from '../../05_tags/route'
+import { CreateTaxonomyPopover } from './create-taxonomy-popover'
 
 const generateTaxonomy = (name: string) => {
 	const slug = generateSlug(name, { fallbackPrefix: 'new classification' })
@@ -55,9 +57,10 @@ export function Taxonomies() {
 	const [tags, setTags] = useAtom(tagsAtom)
 	const [brands, setBrands] = useAtom(brandsAtom)
 
-	const [cPending, setCPending] = useState<typeof categories>([])
+	const topLevelCategories = categories.filter(c => !c.parentId)
+	const topLevelBrands = brands.filter(b => !b.parentId)
+
 	const [tPending, setTPending] = useState<typeof tags>([])
-	const [bPending, setBPending] = useState<typeof brands>([])
 
 	const [dataInitialized, setDataInitialized] = useState({
 		tags: false,
@@ -66,6 +69,11 @@ export function Taxonomies() {
 	})
 
 	useEffect(() => {
+		!dataInitialized.categories &&
+			cFetcher.load('/dashboard/ecommerce/products/categories')
+		!dataInitialized.brands &&
+			bFetcher.load('/dashboard/ecommerce/products/brands')
+
 		// Handle taxonomies response
 		const cData = cFetcher.data
 		const tData = tFetcher.data
@@ -97,7 +105,6 @@ export function Taxonomies() {
 		) {
 			const createdCategory = cCreateFetcher.data.data
 
-			setCPending(prev => prev.filter(c => c.slug !== createdCategory.slug))
 			setCategories(prev => [...prev, { ...createdCategory, children: [] }])
 			setProduct(prev =>
 				prev
@@ -135,7 +142,6 @@ export function Taxonomies() {
 		) {
 			const createdBrand = bCreateFetcher.data.data
 
-			setBPending(prev => prev.filter(b => b.slug !== createdBrand.slug))
 			setBrands(prev => [...prev, { ...createdBrand, children: [] }])
 			setProduct(prev =>
 				prev ? { ...prev, brands: [...prev.brands, createdBrand] } : prev,
@@ -144,20 +150,6 @@ export function Taxonomies() {
 	}, [bCreateFetcher.state, bCreateFetcher.data])
 
 	// Auto-submit pending items
-	useEffect(() => {
-		if (cPending.length > 0 && cCreateFetcher.state === 'idle') {
-			const [first] = cPending
-			cCreateFetcher.submit(
-				{ name: first.name, slug: first.slug },
-				{
-					method: 'post',
-					action: '/dashboard/ecommerce/products/categories/resource',
-					encType: 'application/json',
-				},
-			)
-		}
-	}, [cPending, cCreateFetcher.state])
-
 	useEffect(() => {
 		if (tPending.length > 0 && tCreateFetcher.state === 'idle') {
 			const [first] = tPending
@@ -171,34 +163,6 @@ export function Taxonomies() {
 			)
 		}
 	}, [tPending, tCreateFetcher.state])
-
-	useEffect(() => {
-		if (bPending.length > 0 && bCreateFetcher.state === 'idle') {
-			const [first] = bPending
-			bCreateFetcher.submit(
-				{ name: first.name, slug: first.slug },
-				{
-					method: 'post',
-					action: '/dashboard/ecommerce/products/brands/resource',
-					encType: 'application/json',
-				},
-			)
-		}
-	}, [bPending, bCreateFetcher.state])
-
-	const cSelected = product
-		? [
-				...product.categories.map(c => ({
-					label: c.name,
-					value: String(c.id),
-				})),
-				...cPending.map(c => ({
-					label: c.name,
-					value: c.name,
-					className: c.id > 0 ? '' : 'opacity-50',
-				})),
-			]
-		: []
 
 	const tSelected = product
 		? [
@@ -214,20 +178,6 @@ export function Taxonomies() {
 			]
 		: []
 
-	const bSelected = product
-		? [
-				...product.brands.map(b => ({
-					label: b.name,
-					value: String(b.id),
-				})),
-				...bPending.map(b => ({
-					label: b.name,
-					value: b.name,
-					className: b.id > 0 ? '' : 'opacity-50',
-				})),
-			]
-		: []
-
 	return (
 		<>
 			<Card>
@@ -235,48 +185,21 @@ export function Taxonomies() {
 					<CardTitle>categories</CardTitle>
 					<CardDescription>categories description</CardDescription>
 				</CardHeader>
-				<CardContent>
-					{!product ? (
-						<Spinner />
-					) : (
-						<MultiSelect
-							options={categories.map(c => ({
-								label: c.name,
-								value: String(c.id),
-							}))}
-							selected={cSelected}
-							onSelectedChange={areSelected => {
-								const { existing, notExisting } = areSelected.reduce(
-									(acc, selected) => {
-										const found = categories.find(
-											c => String(c.id) === selected.value,
-										)
-										if (found) {
-											acc.existing.push(found)
-										} else {
-											acc.notExisting.push(generateTaxonomy(selected.label))
-										}
-										return acc
-									},
-									{
-										existing: [] as typeof categories,
-										notExisting: [] as typeof categories,
-									},
-								)
-
-								setProduct(prev =>
-									prev ? { ...prev, categories: existing } : prev,
-								)
-								setCPending(notExisting)
-							}}
-							onInitSearch={() =>
-								!dataInitialized.categories &&
-								cFetcher.load('/dashboard/ecommerce/products/categories')
-							}
-							isSearching={!dataInitialized.categories}
-						/>
-					)}
-				</CardContent>
+				<CardContent>{!product ? <Spinner /> : <></>}</CardContent>
+				<CardFooter className="w-full">
+					<CreateTaxonomyPopover
+						taxonomyType="Category"
+						parentOptions={topLevelCategories}
+						onCreate={data => {
+							cCreateFetcher.submit(data, {
+								method: 'post',
+								action: '/dashboard/ecommerce/products/categories/resource',
+								encType: 'application/json',
+							})
+						}}
+						isSubmitting={cCreateFetcher.state === 'submitting'}
+					/>
+				</CardFooter>
 			</Card>
 			<Card>
 				<CardHeader>
@@ -329,48 +252,21 @@ export function Taxonomies() {
 					<CardTitle>brands</CardTitle>
 					<CardDescription>brands description</CardDescription>
 				</CardHeader>
-				<CardContent>
-					{!product ? (
-						<Spinner />
-					) : (
-						<MultiSelect
-							options={brands.map(b => ({
-								label: b.name,
-								value: String(b.id),
-							}))}
-							selected={bSelected}
-							onSelectedChange={areSelected => {
-								const { existing, notExisting } = areSelected.reduce(
-									(acc, selected) => {
-										const found = brands.find(
-											b => String(b.id) === selected.value,
-										)
-										if (found) {
-											acc.existing.push(found)
-										} else {
-											acc.notExisting.push(generateTaxonomy(selected.label))
-										}
-										return acc
-									},
-									{
-										existing: [] as typeof brands,
-										notExisting: [] as typeof brands,
-									},
-								)
-
-								setProduct(prev =>
-									prev ? { ...prev, brands: existing } : prev,
-								)
-								setBPending(notExisting)
-							}}
-							onInitSearch={() =>
-								!dataInitialized.brands &&
-								bFetcher.load('/dashboard/ecommerce/products/brands')
-							}
-							isSearching={!dataInitialized.brands}
-						/>
-					)}
-				</CardContent>
+				<CardContent>{!product ? <Spinner /> : <></>}</CardContent>
+				<CardFooter className="w-full">
+					<CreateTaxonomyPopover
+						taxonomyType="Brand"
+						parentOptions={topLevelBrands}
+						onCreate={data => {
+							bCreateFetcher.submit(data, {
+								method: 'post',
+								action: '/dashboard/ecommerce/products/brands/resource',
+								encType: 'application/json',
+							})
+						}}
+						isSubmitting={bCreateFetcher.state === 'submitting'}
+					/>
+				</CardFooter>
 			</Card>
 		</>
 	)
