@@ -6,12 +6,12 @@ import { useAtom } from 'jotai'
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '~/components/ui/card'
 import { Spinner } from '~/components/ui/spinner'
+import { CheckboxTree, type TreeNode } from '~/components/checkbox-tree'
 import { MultiSelect } from '~/components/multi-select'
 import { generateSlug } from '~/lib/utils/seo'
 import {
@@ -60,6 +60,16 @@ export function Taxonomies() {
 	const topLevelCategories = categories.filter(c => !c.parentId)
 	const topLevelBrands = brands.filter(b => !b.parentId)
 
+	const [selectedCIds, setSelectedCIds] = useState<string[]>(
+		product ? product.categories.map(c => String(c.id)) : [],
+	)
+	const [selectedBIds, setSelectedBIds] = useState<string[]>(
+		product ? product.brands.map(b => String(b.id)) : [],
+	)
+
+	const cTreeData = taxonomiesToTree(categories)
+	const bTreeData = taxonomiesToTree(brands)
+
 	const [tPending, setTPending] = useState<typeof tags>([])
 
 	const [dataInitialized, setDataInitialized] = useState({
@@ -94,6 +104,21 @@ export function Taxonomies() {
 			setDataInitialized(prev => ({ ...prev, brands: true }))
 		}
 	}, [cFetcher.data, tFetcher.data, bFetcher.data])
+
+	// Sync selected categories/brands with product
+	useEffect(() => {
+		setProduct(prev =>
+			prev
+				? {
+						...prev,
+						categories: categories.filter(c =>
+							selectedCIds.includes(String(c.id)),
+						),
+						brands: brands.filter(b => selectedBIds.includes(String(b.id))),
+					}
+				: prev,
+		)
+	}, [selectedCIds, selectedBIds])
 
 	// Handle category creation
 	useEffect(() => {
@@ -180,12 +205,27 @@ export function Taxonomies() {
 
 	return (
 		<>
-			<Card>
+			<Card className="gap-4 pt-6 pb-5">
 				<CardHeader>
-					<CardTitle>categories</CardTitle>
-					<CardDescription>categories description</CardDescription>
+					<CardTitle>Categories</CardTitle>
 				</CardHeader>
-				<CardContent>{!product ? <Spinner /> : <></>}</CardContent>
+				<div className="flex w-full items-center justify-center px-5">
+					{!product || !dataInitialized.categories ? (
+						<Spinner />
+					) : cTreeData.length > 0 ? (
+						<div className="max-h-52 w-full overflow-auto border">
+							<CheckboxTree
+								data={cTreeData}
+								selectedIds={selectedCIds}
+								onSelectionChange={setSelectedCIds}
+							/>
+						</div>
+					) : (
+						<div className="text-muted-foreground my-3 rounded-md border border-dashed p-2 text-center text-sm">
+							Please add categories to see options
+						</div>
+					)}
+				</div>
 				<CardFooter className="w-full">
 					<CreateTaxonomyPopover
 						taxonomyType="Category"
@@ -197,16 +237,19 @@ export function Taxonomies() {
 								encType: 'application/json',
 							})
 						}}
-						isSubmitting={cCreateFetcher.state === 'submitting'}
+						isSubmitting={
+							!product ||
+							!dataInitialized.categories ||
+							cCreateFetcher.state === 'submitting'
+						}
 					/>
 				</CardFooter>
 			</Card>
-			<Card>
+			<Card className="gap-4 pt-6 pb-5">
 				<CardHeader>
-					<CardTitle>tags</CardTitle>
-					<CardDescription>tags description</CardDescription>
+					<CardTitle>Tags</CardTitle>
 				</CardHeader>
-				<CardContent>
+				<div className="flex w-full items-center justify-center px-5">
 					{!product ? (
 						<Spinner />
 					) : (
@@ -245,14 +288,29 @@ export function Taxonomies() {
 							isSearching={!dataInitialized.tags}
 						/>
 					)}
-				</CardContent>
+				</div>
 			</Card>
-			<Card>
+			<Card className="gap-4 pt-6 pb-5">
 				<CardHeader>
-					<CardTitle>brands</CardTitle>
-					<CardDescription>brands description</CardDescription>
+					<CardTitle>Brands</CardTitle>
 				</CardHeader>
-				<CardContent>{!product ? <Spinner /> : <></>}</CardContent>
+				<div className="flex w-full items-center justify-center px-5">
+					{!product || !dataInitialized.brands ? (
+						<Spinner />
+					) : bTreeData.length > 0 ? (
+						<div className="max-h-52 w-full overflow-auto border">
+							<CheckboxTree
+								data={bTreeData}
+								selectedIds={selectedBIds}
+								onSelectionChange={setSelectedBIds}
+							/>
+						</div>
+					) : (
+						<div className="text-muted-foreground my-3 rounded-md border border-dashed p-2 text-center text-sm">
+							Please add brands to see options
+						</div>
+					)}
+				</div>
 				<CardFooter className="w-full">
 					<CreateTaxonomyPopover
 						taxonomyType="Brand"
@@ -264,10 +322,54 @@ export function Taxonomies() {
 								encType: 'application/json',
 							})
 						}}
-						isSubmitting={bCreateFetcher.state === 'submitting'}
+						isSubmitting={
+							!product ||
+							!dataInitialized.brands ||
+							bCreateFetcher.state === 'submitting'
+						}
 					/>
 				</CardFooter>
 			</Card>
 		</>
 	)
+}
+
+// util
+type Taxonomy =
+	| ReturnType<typeof categoriesAtom.read>[number]
+	| ReturnType<typeof brandsAtom.read>[number]
+
+/**
+ * Transform a flat array into a tree structure
+ */
+function taxonomiesToTree(tmies: Taxonomy[]): TreeNode[] {
+	const tmyMap = new Map<number, Taxonomy>()
+	const rootTaxonomies: Taxonomy[] = []
+
+	// Create tmy map
+	tmies.forEach(tmy => {
+		tmyMap.set(tmy.id, tmy)
+	})
+
+	// Find root (no parent) taxonomies
+	tmies.forEach(tmy => {
+		if (tmy.parentId === null) {
+			rootTaxonomies.push(tmy)
+		}
+	})
+
+	// Recursively build tree structure
+	function buildTree(tmy: Taxonomy): TreeNode {
+		const children = tmies
+			.filter(t => t.parentId === tmy.id)
+			.map(child => buildTree(child))
+
+		return {
+			id: String(tmy.id),
+			label: tmy.name,
+			children: children.length > 0 ? children : undefined,
+		}
+	}
+
+	return rootTaxonomies.map(rootTmy => buildTree(rootTmy))
 }
