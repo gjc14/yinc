@@ -97,7 +97,7 @@ export const Details = () => {
 						/>
 					))
 				) : (
-					<p className="text-muted-foreground rounded-md border p-3 text-center text-sm">
+					<p className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-sm">
 						No details added yet. Click "Add Detail" to create one.
 					</p>
 				)}

@@ -105,10 +105,16 @@ export function Gallery() {
 				isLoading={fetcher.state === 'loading'}
 				open={openSelectFeature}
 				onOpenChange={open => {
-					setOpenSelectFeature(open)
-					setSrcInput('')
-					setAltInput('')
-					setTitleInput('')
+					setOpenSelectGallery(open)
+					if (open) {
+						setSrcInput(product.option.image || '')
+						setAltInput(product.option.imageAlt || '')
+						setTitleInput(product.option.imageTitle || '')
+					} else {
+						setSrcInput('')
+						setAltInput('')
+						setTitleInput('')
+					}
 				}}
 				srcInput={srcInput}
 				setSrcInput={setSrcInput}
@@ -135,7 +141,7 @@ export function Gallery() {
 								const newGallery = gallery.filter((_, index) => index !== i)
 								setGallery(newGallery)
 							}}
-							className="bg-destructive text-destructive-foreground absolute top-0.5 right-0.5 cursor-pointer rounded-full p-0.5 hover:opacity-80"
+							className="bg-destructive absolute top-0.5 right-0.5 cursor-pointer rounded-full p-0.5 text-white hover:opacity-80"
 						>
 							<X size={12} />
 						</button>

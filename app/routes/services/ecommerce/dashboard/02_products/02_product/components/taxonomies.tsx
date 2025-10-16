@@ -3,13 +3,7 @@ import { useFetcher } from 'react-router'
 
 import { useAtom } from 'jotai'
 
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '~/components/ui/card'
+import { Card, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
 import { Spinner } from '~/components/ui/spinner'
 import { CheckboxTree, type TreeNode } from '~/components/checkbox-tree'
 import { MultiSelect } from '~/components/multi-select'
@@ -213,7 +207,7 @@ export function Taxonomies() {
 					{!product || !dataInitialized.categories ? (
 						<Spinner />
 					) : cTreeData.length > 0 ? (
-						<div className="max-h-52 w-full overflow-auto border">
+						<div className="max-h-52 w-full overflow-auto border py-1.5">
 							<CheckboxTree
 								data={cTreeData}
 								selectedIds={selectedCIds}
@@ -298,7 +292,7 @@ export function Taxonomies() {
 					{!product || !dataInitialized.brands ? (
 						<Spinner />
 					) : bTreeData.length > 0 ? (
-						<div className="max-h-52 w-full overflow-auto border">
+						<div className="max-h-52 w-full overflow-auto border py-1.5">
 							<CheckboxTree
 								data={bTreeData}
 								selectedIds={selectedBIds}

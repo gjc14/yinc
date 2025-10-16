@@ -37,7 +37,13 @@ export function ProductEditPage() {
 
 	return (
 		<ResizablePanelGroup direction="horizontal">
-			<ResizablePanel className="@container" defaultSize={50} minSize={30}>
+			<ResizablePanel
+				className="@container"
+				defaultSize={preview ? 50 : 100}
+				minSize={30}
+				id="edit-panel"
+				order={0}
+			>
 				<section className="relative h-full w-full overflow-auto">
 					{/* Sticky Header */}
 					<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 border-b backdrop-blur">
@@ -120,7 +126,13 @@ export function ProductEditPage() {
 			{preview && (
 				<>
 					<ResizableHandle />
-					<ResizablePanel className="@container" defaultSize={50} minSize={30}>
+					<ResizablePanel
+						className="@container"
+						defaultSize={50}
+						minSize={30}
+						id="dynamic-preview-panel"
+						order={1}
+					>
 						<section className="h-full w-full overflow-auto">
 							<Header />
 							<StoreProductPage />
