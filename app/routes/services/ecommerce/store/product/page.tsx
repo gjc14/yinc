@@ -6,20 +6,22 @@ import { useAtom } from 'jotai'
 import { Separator } from '~/components/ui/separator'
 
 import { ProductBreadcrumb } from './components/product-breadcrumb'
-import { ProductCard, ProductCardSkeleton } from './components/product-card'
 import { ProductContent } from './components/product-content'
+import {
+	ProductCrossSell,
+	ProductCrossSellSkeleton,
+} from './components/product-cross-sell'
 import {
 	ProductImageGallery,
 	ProductImageGallerySkeleton,
 } from './components/product-image-gallery'
-import { crossSellProductsAtom, isResolvingAtom, productAtom } from './context'
+import { isResolvingAtom, productAtom } from './context'
 
 /**
  * Store product page component, displays product, image gallery, and cross-sell products.
  */
 export function StoreProductPage() {
 	const [product] = useAtom(productAtom)
-	const [crossSellProducts] = useAtom(crossSellProductsAtom)
 
 	const [isResolving] = useAtom(isResolvingAtom)
 
@@ -36,22 +38,18 @@ export function StoreProductPage() {
 				) : (
 					<ProductImageGallery />
 				)}
+
 				<ProductContent />
 			</div>
 
 			{/* Cross Sell Section */}
 			<div className="my-24">
 				<Separator />
-				<h2 className="mt-16 mb-8 text-2xl font-light">You may also like</h2>
-				<div className="grid grid-cols-2 gap-8 @lg:grid-cols-3">
-					{isResolving.crossSellProducts
-						? Array.from({ length: 3 }).map((_, i) => (
-								<ProductCardSkeleton key={i} />
-							))
-						: crossSellProducts?.map(csp => (
-								<ProductCard key={csp.id} product={csp} />
-							))}
-				</div>
+				{isResolving.crossSellProducts ? (
+					<ProductCrossSellSkeleton />
+				) : (
+					<ProductCrossSell />
+				)}
 			</div>
 		</div>
 	)

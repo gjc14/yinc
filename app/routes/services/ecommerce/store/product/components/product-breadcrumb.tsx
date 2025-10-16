@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
 
-import { ChevronDownIcon } from 'lucide-react'
+import { ChevronDownIcon, Slash } from 'lucide-react'
 
 import {
 	Breadcrumb,
@@ -37,11 +37,14 @@ export function ProductBreadcrumb() {
 
 				{categories.length > 0 && (
 					<>
-						<BreadcrumbSeparator />
+						<BreadcrumbSeparator>
+							<Slash />
+						</BreadcrumbSeparator>
+
 						<BreadcrumbItem className="text-sm">
 							{categories.length > 1 ? (
 								<DropdownMenu>
-									<DropdownMenuTrigger className="flex items-center gap-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5">
+									<DropdownMenuTrigger className="flex cursor-pointer items-center gap-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5">
 										{categories[0].name}
 										<ChevronDownIcon />
 									</DropdownMenuTrigger>
@@ -64,7 +67,10 @@ export function ProductBreadcrumb() {
 					</>
 				)}
 
-				<BreadcrumbSeparator />
+				<BreadcrumbSeparator>
+					<Slash />
+				</BreadcrumbSeparator>
+
 				<BreadcrumbItem className="text-sm">
 					<BreadcrumbPage>{product.name}</BreadcrumbPage>
 				</BreadcrumbItem>
