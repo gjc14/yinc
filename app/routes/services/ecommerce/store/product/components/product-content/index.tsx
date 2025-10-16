@@ -1,27 +1,25 @@
-import { useAtom } from 'jotai'
-
-import { productAtom } from '../../context'
+import { useProductPage } from '../../hooks/use-product-page'
 import { ProductAction } from './product-action'
 import { ProductAttributes } from './product-attributes'
 import { ProductDetails } from './product-details'
 import { ProductInformation } from './product-information'
 
 export const ProductContent = () => {
-	const [product] = useAtom(productAtom)
+	const { product } = useProductPage()
 
 	if (!product) return null
 
 	return (
 		<section className="space-y-12">
-			<ProductInformation product={product} />
+			<ProductInformation />
 
-			<ProductAction product={product} />
+			<ProductAction />
 
 			{/* Details Tabs */}
-			{product.details && <ProductDetails details={product.details} />}
+			{product.details && <ProductDetails />}
 
 			{/* Attributes */}
-			<ProductAttributes productAttributes={product.attributes} />
+			<ProductAttributes />
 		</section>
 	)
 }

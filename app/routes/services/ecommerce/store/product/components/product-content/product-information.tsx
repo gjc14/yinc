@@ -1,18 +1,14 @@
 import { Button } from '~/components/ui/button'
 
-import type { Product } from '../../context'
-import { useProductVariants } from '../../hooks/use-product-variants'
+import { useProductPage } from '../../hooks/use-product-page'
 
-export const ProductInformation = ({
-	product,
-}: {
-	product: NonNullable<Product>
-}) => {
+export const ProductInformation = () => {
 	const {
 		// State & Flags
+		product,
 		selectedAttributes,
-		hasVariants,
 		setHoveredAttributeImage,
+		hasVariants,
 
 		// Attributes
 		attributeKeys,
@@ -33,7 +29,9 @@ export const ProductInformation = ({
 
 		// Actions
 		handleAttributeSelect,
-	} = useProductVariants(product)
+	} = useProductPage()
+
+	if (!product) return null
 
 	return (
 		<>

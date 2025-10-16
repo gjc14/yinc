@@ -1,17 +1,12 @@
 import { useState } from 'react'
 
-import { useAtom } from 'jotai'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { Skeleton } from '~/components/ui/skeleton'
 
 import { productGallery as productGalleryTable } from '../../../lib/db/schema'
-import {
-	hoveredAttributeImageAtom,
-	productAtom,
-	productGalleryAtom,
-} from '../context'
+import { useProductPage } from '../hooks/use-product-page'
 
 const ProductImageGalleryWrapper = ({
 	sticky = true,
@@ -30,9 +25,7 @@ const ProductImageGalleryWrapper = ({
 export type ProductGallery = (typeof productGalleryTable.$inferSelect)[]
 
 export const ProductImageGallery = () => {
-	const [product] = useAtom(productAtom)
-	const [productGallery] = useAtom(productGalleryAtom)
-	const [hoveredAttributeImage] = useAtom(hoveredAttributeImageAtom)
+	const { product, productGallery, hoveredAttributeImage } = useProductPage()
 
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 

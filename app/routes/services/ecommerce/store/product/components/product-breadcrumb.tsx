@@ -1,6 +1,5 @@
 import { Link } from 'react-router'
 
-import { useAtom } from 'jotai'
 import { ChevronDownIcon } from 'lucide-react'
 
 import {
@@ -18,11 +17,10 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 
-import { productAtom, storeConfigAtom } from '../context'
+import { useProductPage } from '../hooks/use-product-page'
 
 export function ProductBreadcrumb() {
-	const [store] = useAtom(storeConfigAtom)
-	const [product] = useAtom(productAtom)
+	const { store, product } = useProductPage()
 
 	if (!product) return null
 

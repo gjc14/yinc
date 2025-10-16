@@ -1,18 +1,30 @@
 import { useEffect, useMemo } from 'react'
 
+import { boolean } from 'drizzle-orm/gel-core'
 import { useAtom } from 'jotai'
 
 import {
+	crossSellProductsAtom,
 	hoveredAttributeImageAtom,
+	isResolvingAtom,
+	productAtom,
+	productGalleryAtom,
 	selectedAttributesAtom,
+	storeConfigAtom,
 	type Product,
 } from '../context'
 
 /**
- * Hook for managing product variants logic
+ * Hook for managing product page logic
  * Handles attribute selection, variant matching, and price calculations
  */
-export const useProductVariants = (product: NonNullable<Product>) => {
+export const useProductPage = () => {
+	const [store] = useAtom(storeConfigAtom)
+	const [product] = useAtom(productAtom)
+	const [productGallery] = useAtom(productGalleryAtom)
+	const [crossSellProducts] = useAtom(crossSellProductsAtom)
+	const [isResolving] = useAtom(isResolvingAtom)
+
 	const [selectedAttributes, setSelectedAttributes] = useAtom(
 		selectedAttributesAtom,
 	)
@@ -26,6 +38,43 @@ export const useProductVariants = (product: NonNullable<Product>) => {
 			setHoveredAttributeImage(undefined)
 		}
 	}, [])
+
+	if (!product) {
+		return {
+			// State
+			store,
+			product,
+			productGallery,
+			crossSellProducts,
+			isResolving,
+			selectedAttributes,
+			hoveredAttributeImage,
+			setHoveredAttributeImage,
+			hasVariants: false,
+
+			// Attributes
+			attributeKeys: [],
+			attributeValues: {},
+
+			// Selection
+			filteredVariants: [],
+			selectedVariant: undefined,
+			selectedOption: undefined,
+
+			// Pricing
+			displayPrice: 0,
+			hasDiscount: false,
+			displayOriginalPrice: undefined,
+
+			// Availability checks
+			isAttributeValueAvailable: () => boolean,
+			getAttributeValueImage: undefined,
+
+			// Actions
+			handleAttributeSelect: () => {},
+			resetSelection: () => {},
+		} as const
+	}
 
 	const hasVariants = product.variants.length > 0
 
@@ -282,10 +331,15 @@ export const useProductVariants = (product: NonNullable<Product>) => {
 
 	return {
 		// State
+		store,
+		product,
+		productGallery,
+		crossSellProducts,
+		isResolving,
 		selectedAttributes,
-		hasVariants,
 		hoveredAttributeImage,
 		setHoveredAttributeImage,
+		hasVariants,
 
 		// Attributes
 		attributeKeys,

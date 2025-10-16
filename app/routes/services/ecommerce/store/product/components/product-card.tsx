@@ -4,7 +4,7 @@ import { Skeleton } from '~/components/ui/skeleton'
 
 import type { ProductListing } from '../../../lib/db/product.server'
 
-export type ProductCardProps = {
+type ProductCardProps = {
 	product: ProductListing
 }
 

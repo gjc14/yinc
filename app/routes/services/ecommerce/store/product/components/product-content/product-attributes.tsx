@@ -1,13 +1,15 @@
 import { Separator } from '~/components/ui/separator'
 
-import type { Product } from '../../context'
+import { useProductPage } from '../../hooks/use-product-page'
 
-export const ProductAttributes = ({
-	productAttributes,
-}: {
-	productAttributes: NonNullable<Product>['attributes']
-}) => {
-	const visibleAttributes = productAttributes.filter(attr => attr.visible === 1)
+export const ProductAttributes = () => {
+	const { product } = useProductPage()
+	if (!product || !product.attributes || product.attributes.length === 0)
+		return null
+
+	const visibleAttributes = product.attributes.filter(
+		attr => attr.visible === 1,
+	)
 
 	if (visibleAttributes.length === 0) return null
 	return (

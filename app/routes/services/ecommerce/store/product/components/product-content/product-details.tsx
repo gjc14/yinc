@@ -3,22 +3,19 @@ import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 
-import type { Product } from '../../context'
+import { useProductPage } from '../../hooks/use-product-page'
 
-export const ProductDetails = ({
-	details,
-}: {
-	details: NonNullable<Product>['details']
-}) => {
+export const ProductDetails = () => {
 	const [activeTab, setActiveTab] = useState(0)
+	const { product } = useProductPage()
 
-	if (!details || details.length === 0) return null
+	if (!product || !product.details || product.details.length === 0) return null
 
 	return (
 		<div>
 			<Separator />
 			<div className="mt-8 mb-6 flex w-full gap-6 overflow-scroll border-b">
-				{details.map((detail, idx) => (
+				{product.details.map((detail, idx) => (
 					<Button
 						key={idx}
 						onClick={() => setActiveTab(idx)}
@@ -35,7 +32,7 @@ export const ProductDetails = ({
 			</div>
 			<div className="prose prose-sm max-w-none">
 				<p className="text-primary/90 leading-relaxed whitespace-pre-line">
-					{details[activeTab].content}
+					{product.details[activeTab].content}
 				</p>
 			</div>
 		</div>
