@@ -31,7 +31,7 @@ export function ProductBreadcrumb() {
 			<BreadcrumbList>
 				<BreadcrumbItem className="text-sm">
 					<BreadcrumbLink asChild>
-						<Link to={storeConfig?.storeFrontPath || '/store'}>Store</Link>
+						<Link to={storeConfig.storeFrontPath}>Store</Link>
 					</BreadcrumbLink>
 				</BreadcrumbItem>
 

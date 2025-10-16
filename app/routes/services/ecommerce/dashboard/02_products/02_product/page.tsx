@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 
 import { useAtom } from 'jotai'
+import { ExternalLink } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
@@ -13,7 +15,7 @@ import { Separator } from '~/components/ui/separator'
 import { Switch } from '~/components/ui/switch'
 
 import { Header } from '../../../store/layout/components/header'
-import { productAtom } from '../../../store/product/context'
+import { productAtom, storeConfigAtom } from '../../../store/product/context'
 import { StoreProductPage } from '../../../store/product/page'
 import { Attributes } from './components/attributes'
 import { Details } from './components/details'
@@ -26,8 +28,9 @@ import { Taxonomies } from './components/taxonomies'
 import { Variants } from './components/variants'
 
 export function ProductEditPage() {
-	const [preview, setPreview] = useState(true)
+	const [preview, setPreview] = useState(false)
 
+	const [storeConfig] = useAtom(storeConfigAtom)
 	const [product] = useAtom(productAtom)
 
 	if (!product) return null
@@ -58,6 +61,20 @@ export function ProductEditPage() {
 									checked={preview}
 									onCheckedChange={setPreview}
 								/>
+								<Button
+									variant={'ghost'}
+									size={'icon'}
+									asChild
+									className="size-8"
+								>
+									<Link
+										to={`${storeConfig.storeFrontPath}/product/${product.slug}`}
+										target="_blank"
+										rel="noreferrer"
+									>
+										<ExternalLink />
+									</Link>
+								</Button>
 								<Separator orientation="vertical" className="h-6" />
 								<Button size="sm" variant="outline" type="button">
 									Restore
@@ -103,7 +120,7 @@ export function ProductEditPage() {
 			{preview && (
 				<>
 					<ResizableHandle />
-					<ResizablePanel defaultSize={50} minSize={30}>
+					<ResizablePanel className="@container" defaultSize={50} minSize={30}>
 						<section className="h-full w-full overflow-auto">
 							<Header />
 							<StoreProductPage />

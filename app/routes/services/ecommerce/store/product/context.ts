@@ -14,12 +14,16 @@ import type {
 type StoreConfig = {
 	id: number
 	/** Name of the store, used for SEO @default "Store" */
-	name?: string
+	name: string
 	/** Absolute path for the store @default "/store" */
-	storeFrontPath?: string
+	storeFrontPath: string
 }
 
-export const storeConfigAtom = atom<StoreConfig | null>(null)
+export const storeConfigAtom = atom<StoreConfig>({
+	id: -1,
+	name: 'Store',
+	storeFrontPath: '/store',
+})
 
 export const productAtom = atom<Awaited<ReturnType<typeof getProduct>>>(null)
 export type Product = Awaited<ReturnType<typeof getProduct>>
