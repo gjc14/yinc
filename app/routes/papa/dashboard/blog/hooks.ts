@@ -37,9 +37,6 @@ export const useAssetsContext = () => {
 	const fetcher = useFetcher<typeof loader>()
 
 	const [filesContext, setFilesContext] = useAtom(assetsAtom)
-	const files = filesContext?.files || []
-	const origin = filesContext?.origin || ''
-	const hasObjectStorage = filesContext?.hasObjectStorage || false
 
 	useEffect(() => {
 		if (filesContext) {
@@ -56,9 +53,6 @@ export const useAssetsContext = () => {
 
 	return {
 		filesContext,
-		files,
-		origin,
-		hasObjectStorage,
 		isLoading: fetcher.state !== 'idle',
 	}
 }

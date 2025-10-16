@@ -32,7 +32,10 @@ export const PostMetaPart = () => {
 	const [post, setPost] = useAtom(postAtom)
 	const [editor] = useAtom(editorAtom)
 
-	const { files, origin, hasObjectStorage, isLoading } = useAssetsContext()
+	const { filesContext, isLoading } = useAssetsContext()
+	const files = filesContext?.files || []
+	const origin = filesContext?.origin || ''
+	const hasObjectStorage = filesContext?.hasObjectStorage || false
 
 	if (!editor || !post) return <Spinner />
 
