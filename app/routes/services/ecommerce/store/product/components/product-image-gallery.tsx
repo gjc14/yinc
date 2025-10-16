@@ -17,7 +17,7 @@ const ProductImageGalleryWrapper = ({
 	children?: React.ReactNode
 }) => {
 	return (
-		<div className={`${sticky ? 'md:sticky md:top-16' : ''} h-min`}>
+		<div className={`${sticky ? '@md:sticky @md:top-16' : ''} h-min`}>
 			{children}
 		</div>
 	)
@@ -33,26 +33,37 @@ export const ProductImageGallery = () => {
 
 	if (!product) return null
 
-	const productName = product.name
+	const gallery = [
+		...(product.option.image
+			? [
+					{
+						image: product.option.image,
+						alt: product.option.imageAlt || product.name,
+						title: product.option.imageTitle || product.name,
+					},
+				]
+			: []),
+		...(productGallery || []),
+	]
 
 	const nextImage = () => {
-		if (!productGallery) return
-		setCurrentImageIndex(prev => (prev + 1) % productGallery.length)
+		if (!gallery) return
+		setCurrentImageIndex(prev => (prev + 1) % gallery.length)
 	}
 
 	const prevImage = () => {
-		if (!productGallery) return
-		setCurrentImageIndex(
-			prev => (prev - 1 + productGallery.length) % productGallery.length,
-		)
+		if (!gallery) return
+		setCurrentImageIndex(prev => (prev - 1 + gallery.length) % gallery.length)
 	}
 
 	// Handle empty gallery
-	if (!productGallery || productGallery.length === 0) {
+	if (!gallery || gallery.length === 0) {
 		return (
 			<ProductImageGalleryWrapper sticky={true}>
 				<div className="bg-muted flex aspect-square w-full items-center justify-center">
-					<p className="text-muted-foreground">No images available</p>
+					<p className="text-muted-foreground text-center">
+						No images available
+					</p>
 				</div>
 			</ProductImageGalleryWrapper>
 		)
@@ -62,11 +73,11 @@ export const ProductImageGallery = () => {
 		<ProductImageGalleryWrapper sticky={true}>
 			<div className="relative">
 				<img
-					src={productGallery[currentImageIndex].image}
-					alt={productName}
+					src={gallery[currentImageIndex].image}
+					alt={product.name}
 					className="aspect-square w-full object-cover"
 				/>
-				{productGallery.length > 1 && (
+				{gallery.length > 1 && (
 					<>
 						<Button
 							onClick={prevImage}
@@ -84,7 +95,7 @@ export const ProductImageGallery = () => {
 				)}
 			</div>
 			<div className="mt-4 flex gap-2">
-				{productGallery.map((img, idx) => (
+				{gallery.map((img, idx) => (
 					<button
 						key={idx}
 						onClick={() => setCurrentImageIndex(idx)}
@@ -96,8 +107,8 @@ export const ProductImageGallery = () => {
 					>
 						<img
 							src={img.image}
-							alt={img.alt || productName}
-							title={img.title || productName}
+							alt={img.alt || product.name}
+							title={img.title || product.name}
 							className="h-full w-full object-cover"
 						/>
 					</button>

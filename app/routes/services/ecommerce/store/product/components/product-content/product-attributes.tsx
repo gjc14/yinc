@@ -1,11 +1,11 @@
 import { Separator } from '~/components/ui/separator'
 
-import type { ProductContentProps } from '.'
+import type { Product } from '../../context'
 
 export const ProductAttributes = ({
 	productAttributes,
 }: {
-	productAttributes: ProductContentProps['productAttributes']
+	productAttributes: NonNullable<Product>['attributes']
 }) => {
 	const visibleAttributes = productAttributes.filter(attr => attr.visible === 1)
 

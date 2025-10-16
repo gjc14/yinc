@@ -2,9 +2,13 @@ import { useMemo, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 
-import type { ProductContentProps } from '.'
+import type { Product } from '../../context'
 
-export const ProductInformation = ({ product }: ProductContentProps) => {
+export const ProductInformation = ({
+	product,
+}: {
+	product: NonNullable<Product>
+}) => {
 	const variantProduct = product.variants.length > 0 // Check if there are variants
 
 	// === Attribute Selection State for Variants ===
@@ -70,9 +74,7 @@ export const ProductInformation = ({ product }: ProductContentProps) => {
 		})
 	}, [selectedAttributes, product.variants])
 
-	const getLowestPrice = (
-		variants: ProductContentProps['product']['variants'],
-	) => {
+	const getLowestPrice = (variants: NonNullable<Product>['variants']) => {
 		return Math.min(
 			...variants.map(
 				variant => variant.option.salePrice || variant.option.price,

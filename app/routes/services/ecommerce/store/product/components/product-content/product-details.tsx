@@ -3,12 +3,12 @@ import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 
-import type { ProductContentProps } from '.'
+import type { Product } from '../../context'
 
 export const ProductDetails = ({
 	details,
 }: {
-	details: ProductContentProps['product']['details']
+	details: NonNullable<Product>['details']
 }) => {
 	const [activeTab, setActiveTab] = useState(0)
 

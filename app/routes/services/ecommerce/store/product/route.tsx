@@ -1,5 +1,5 @@
 import type { Route } from './+types/route'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router'
 
 import { useAtom } from 'jotai'
