@@ -1,5 +1,6 @@
 import type { Route } from './+types/route'
 import { useEffect } from 'react'
+import { type ShouldRevalidateFunctionArgs } from 'react-router'
 
 import { useAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
@@ -51,7 +52,12 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 
 // To prevent revalidation when fetchers are called (taxonomies, brands, etc.)
 // Please call revalidate() manually when updating product
-export const shouldRevalidate = () => false
+export const shouldRevalidate = ({
+	currentParams,
+	nextParams,
+}: ShouldRevalidateFunctionArgs) => {
+	return currentParams !== nextParams
+}
 
 export default function ECProduct({ loaderData }: Route.ComponentProps) {
 	useHydrateAtoms([[productAtom, loaderData.product]])
