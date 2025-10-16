@@ -11,9 +11,18 @@ import type {
 	EcTag as Tag,
 } from '../../lib/db/schema'
 
-export const productAtom = atom<Awaited<ReturnType<typeof getProduct>> | null>(
-	null,
-)
+type StoreConfig = {
+	id: number
+	/** Name of the store, used for SEO @default "Store" */
+	name?: string
+	/** Absolute path for the store @default "/store" */
+	storeFrontPath?: string
+}
+
+export const storeConfigAtom = atom<StoreConfig | null>(null)
+
+export const productAtom = atom<Awaited<ReturnType<typeof getProduct>>>(null)
+export type Product = Awaited<ReturnType<typeof getProduct>>
 
 // === Product Related Data ===
 export const productGalleryAtom = atom<Awaited<

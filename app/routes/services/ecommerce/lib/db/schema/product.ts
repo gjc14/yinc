@@ -140,6 +140,9 @@ export const productOption = pgTable(
 		id: serial('id').primaryKey(),
 		active: integer('active').notNull().default(1),
 		image: varchar('image'),
+		imageAlt: varchar('image_alt'),
+		imageTitle: varchar('image_title'),
+
 		/** Please save $19.99 as 1999; $18.99 as 1899 */
 		price: integer('price').notNull().default(0),
 		salePrice: integer('sale_price').default(0),
