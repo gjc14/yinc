@@ -5,6 +5,7 @@ import { useAtom } from 'jotai'
 
 import { Separator } from '~/components/ui/separator'
 
+import { ProductBreadcrumb } from './components/product-breadcrumb'
 import { ProductCard, ProductCardSkeleton } from './components/product-card'
 import { ProductContent } from './components/product-content'
 import {
@@ -27,7 +28,7 @@ export function StoreProductPage() {
 	return (
 		<div className="relative w-full flex-1 space-y-16 px-3 md:px-8 xl:px-12">
 			<div className="my-3 flex items-center justify-start gap-2">
-				category {'>'} sub-category {'>'} {product.name}
+				<ProductBreadcrumb />
 			</div>
 			<div className="grid grid-cols-1 gap-16 md:grid-cols-2 md:gap-8 lg:gap-16">
 				{isResolving.productGallery ? (
