@@ -1,37 +1,50 @@
 import { Button } from '~/components/ui/button'
 
-import { useProductPage } from '../../hooks/use-product-page'
+import { useProductContext } from '../../hooks/use-product-context'
+import {
+	getAttributeKeys,
+	getAttributeValueImage,
+	getAttributeValues,
+	getIsAttributeValueAvailable,
+} from '../../utils/attributes'
+import { getPricing } from '../../utils/price'
+import { getHasVariants, getSelectedVariant } from '../../utils/variants'
 
 export const ProductInformation = () => {
 	const {
-		// State & Flags
 		product,
 		selectedAttributes,
+		setSelectedAttributes,
 		setHoveredAttributeImage,
-		hasVariants,
-
-		// Attributes
-		attributeKeys,
-		attributeValues,
-
-		// Selection
-		selectedVariant,
-		selectedOption,
-
-		// Pricing
-		displayPrice,
-		hasDiscount,
-		displayOriginalPrice,
-
-		// Availability & Helpers
-		isAttributeValueAvailable,
-		getAttributeValueImage,
-
-		// Actions
-		handleAttributeSelect,
-	} = useProductPage()
+	} = useProductContext()
 
 	if (!product) return null
+
+	const hasVariants = getHasVariants(product)
+
+	const attributeKeys = getAttributeKeys(product)
+	const attributeValues = getAttributeValues(product)
+
+	const selectedVariant = getSelectedVariant({ product, selectedAttributes })
+
+	const selectedOption = selectedVariant?.option || product.option
+
+	const { displayOriginalPrice, displayPrice, hasDiscount } = getPricing({
+		product,
+		selectedAttributes,
+	})
+
+	const handleAttributeSelect = (attributeName: string, value: string) => {
+		setSelectedAttributes(prev => {
+			const newSelection = { ...prev }
+			if (newSelection[attributeName] === value) {
+				delete newSelection[attributeName] // Deselect if clicking the same value
+			} else {
+				newSelection[attributeName] = value
+			}
+			return newSelection
+		})
+	}
 
 	return (
 		<>
@@ -72,10 +85,12 @@ export const ProductInformation = () => {
 								</h3>
 								<div className="flex flex-wrap gap-2">
 									{attributeValues[attrName].map(attrValue => {
-										const isAvailable = isAttributeValueAvailable(
-											attrName,
-											attrValue,
-										)
+										const isAvailable = getIsAttributeValueAvailable({
+											product,
+											selectedAttributes,
+											attributeName: attrName,
+											attributeValue: attrValue,
+										})
 										const isSelected =
 											selectedAttributes[attrName] === attrValue
 
@@ -86,10 +101,12 @@ export const ProductInformation = () => {
 													handleAttributeSelect(attrName, attrValue)
 												}
 												onMouseEnter={() => {
-													const image = getAttributeValueImage(
-														attrName,
-														attrValue,
-													)
+													const image = getAttributeValueImage({
+														product,
+														selectedAttributes,
+														attributeName: attrName,
+														attributeValue: attrValue,
+													})
 													setHoveredAttributeImage(image)
 												}}
 												onMouseLeave={() => setHoveredAttributeImage(undefined)}

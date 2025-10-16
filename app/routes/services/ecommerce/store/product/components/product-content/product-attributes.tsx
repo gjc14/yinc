@@ -1,9 +1,10 @@
 import { Separator } from '~/components/ui/separator'
 
-import { useProductPage } from '../../hooks/use-product-page'
+import { useProductContext } from '../../hooks/use-product-context'
 
 export const ProductAttributes = () => {
-	const { product } = useProductPage()
+	const { product } = useProductContext()
+
 	if (!product || !product.attributes || product.attributes.length === 0)
 		return null
 
@@ -12,6 +13,7 @@ export const ProductAttributes = () => {
 	)
 
 	if (visibleAttributes.length === 0) return null
+
 	return (
 		<div>
 			<Separator />

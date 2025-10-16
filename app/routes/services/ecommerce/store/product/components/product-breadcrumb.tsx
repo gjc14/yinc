@@ -17,10 +17,10 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 
-import { useProductPage } from '../hooks/use-product-page'
+import { useProductContext } from '../hooks/use-product-context'
 
 export function ProductBreadcrumb() {
-	const { store, product } = useProductPage()
+	const { storeConfig, product } = useProductContext()
 
 	if (!product) return null
 
@@ -31,7 +31,7 @@ export function ProductBreadcrumb() {
 			<BreadcrumbList>
 				<BreadcrumbItem className="text-sm">
 					<BreadcrumbLink asChild>
-						<Link to={store?.storeFrontPath || '/store'}>Store</Link>
+						<Link to={storeConfig?.storeFrontPath || '/store'}>Store</Link>
 					</BreadcrumbLink>
 				</BreadcrumbItem>
 

@@ -3,11 +3,11 @@ import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 
-import { useProductPage } from '../../hooks/use-product-page'
+import { useProductContext } from '../../hooks/use-product-context'
 
 export const ProductDetails = () => {
 	const [activeTab, setActiveTab] = useState(0)
-	const { product } = useProductPage()
+	const { product } = useProductContext()
 
 	if (!product || !product.details || product.details.length === 0) return null
 

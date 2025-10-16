@@ -1,10 +1,15 @@
 import { Button } from '~/components/ui/button'
 
-import type { Product } from '../../context'
-import { useProductPage } from '../../hooks/use-product-page'
+import { useProductContext } from '../../hooks/use-product-context'
+import { getHasVariants, getSelectedVariant } from '../../utils/variants'
 
 export const ProductAction = () => {
-	const { selectedVariant, hasVariants } = useProductPage()
+	const { product, selectedAttributes } = useProductContext()
+
+	if (!product) return null
+
+	const hasVariants = getHasVariants(product)
+	const selectedVariant = getSelectedVariant({ product, selectedAttributes })
 
 	return (
 		<div className="flex flex-col items-center gap-2">

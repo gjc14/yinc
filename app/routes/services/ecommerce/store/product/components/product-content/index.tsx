@@ -1,11 +1,11 @@
-import { useProductPage } from '../../hooks/use-product-page'
+import { useProductContext } from '../../hooks/use-product-context'
 import { ProductAction } from './product-action'
 import { ProductAttributes } from './product-attributes'
 import { ProductDetails } from './product-details'
 import { ProductInformation } from './product-information'
 
 export const ProductContent = () => {
-	const { product } = useProductPage()
+	const { product } = useProductContext()
 
 	if (!product) return null
 

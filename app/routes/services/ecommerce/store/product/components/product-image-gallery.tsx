@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button'
 import { Skeleton } from '~/components/ui/skeleton'
 
 import { productGallery as productGalleryTable } from '../../../lib/db/schema'
-import { useProductPage } from '../hooks/use-product-page'
+import { useProductContext } from '../hooks/use-product-context'
 
 const ProductImageGalleryWrapper = ({
 	sticky = true,
@@ -25,7 +25,7 @@ const ProductImageGalleryWrapper = ({
 export type ProductGallery = (typeof productGalleryTable.$inferSelect)[]
 
 export const ProductImageGallery = () => {
-	const { product, productGallery, hoveredAttributeImage } = useProductPage()
+	const { product, productGallery, hoveredAttributeImage } = useProductContext()
 
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
