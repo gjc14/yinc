@@ -7,7 +7,11 @@ import { Button } from '~/components/ui/button'
 import { Skeleton } from '~/components/ui/skeleton'
 
 import { productGallery as productGalleryTable } from '../../../lib/db/schema'
-import { productAtom, productGalleryAtom } from '../context'
+import {
+	hoveredAttributeImageAtom,
+	productAtom,
+	productGalleryAtom,
+} from '../context'
 
 const ProductImageGalleryWrapper = ({
 	sticky = true,
@@ -28,6 +32,7 @@ export type ProductGallery = (typeof productGalleryTable.$inferSelect)[]
 export const ProductImageGallery = () => {
 	const [product] = useAtom(productAtom)
 	const [productGallery] = useAtom(productGalleryAtom)
+	const [hoveredAttributeImage] = useAtom(hoveredAttributeImageAtom)
 
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
@@ -73,9 +78,22 @@ export const ProductImageGallery = () => {
 		<ProductImageGalleryWrapper sticky={true}>
 			<div className="relative">
 				<img
-					src={gallery[currentImageIndex].image}
-					alt={product.name}
-					className="aspect-square w-full object-cover"
+					src={
+						hoveredAttributeImage
+							? hoveredAttributeImage.image
+							: gallery[currentImageIndex].image
+					}
+					alt={
+						hoveredAttributeImage?.imageAlt
+							? hoveredAttributeImage.imageAlt
+							: product.name
+					}
+					title={
+						hoveredAttributeImage?.imageTitle
+							? hoveredAttributeImage.imageTitle
+							: product.name
+					}
+					className="aspect-square w-full object-cover transition-all"
 				/>
 				{gallery.length > 1 && (
 					<>
