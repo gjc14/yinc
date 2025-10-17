@@ -1,8 +1,8 @@
 import { useProductContext } from '../../hooks/use-product-context'
 import { ProductAction } from './product-action'
 import { ProductAttributes } from './product-attributes'
-import { ProductDetails } from './product-details'
 import { ProductInformation } from './product-information'
+import { ProductInstructions } from './product-instructions'
 
 export const ProductContent = () => {
 	const { product } = useProductContext()
@@ -15,8 +15,8 @@ export const ProductContent = () => {
 
 			<ProductAction />
 
-			{/* Details Tabs */}
-			{product.details && <ProductDetails />}
+			{/* Instructions Tabs */}
+			{product.instructions && <ProductInstructions />}
 
 			{/* Attributes */}
 			<ProductAttributes />

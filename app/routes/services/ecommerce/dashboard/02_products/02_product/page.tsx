@@ -18,9 +18,9 @@ import { Header } from '../../../store/layout/components/header'
 import { productAtom, storeConfigAtom } from '../../../store/product/context'
 import { StoreProductPage } from '../../../store/product/page'
 import { Attributes } from './components/attributes'
-import { Details } from './components/details'
 import { Gallery } from './components/gallery'
 import { GeneralInformation } from './components/general-information'
+import { Instructions } from './components/instruction'
 import { LinkedProducts } from './components/linked-products'
 import { MainOption } from './components/main-option'
 import { Publishing } from './components/publishing'
@@ -103,7 +103,7 @@ export function ProductEditPage() {
 							{/* Left Column */}
 							<div className="space-y-6 @xl:col-span-3">
 								<GeneralInformation />
-								<Details />
+								<Instructions />
 								<MainOption />
 								{/* Specifications / Options */}
 								<Attributes />

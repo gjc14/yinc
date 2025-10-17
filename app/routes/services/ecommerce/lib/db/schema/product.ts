@@ -75,7 +75,7 @@ export const ProductAttributeSelectType = [
 export type ProductAttributeSelectType =
 	(typeof ProductAttributeSelectType)[number]
 
-export type ProductDetailSection = {
+export type ProductInstruction = {
 	order: number
 	title: string
 	content: string | null
@@ -94,7 +94,7 @@ export const product = pgTable(
 		name: varchar('name').notNull(),
 		subtitle: varchar('subtitle'),
 		description: varchar('description'),
-		details: jsonb('details').$type<ProductDetailSection[]>(),
+		instructions: jsonb('instructions').$type<ProductInstruction[]>(),
 		purchaseNote: varchar('purchase_note'),
 
 		productOptionId: integer('product_option_id')

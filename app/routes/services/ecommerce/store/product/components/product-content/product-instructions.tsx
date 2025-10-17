@@ -5,17 +5,18 @@ import { Separator } from '~/components/ui/separator'
 
 import { useProductContext } from '../../hooks/use-product-context'
 
-export const ProductDetails = () => {
+export const ProductInstructions = () => {
 	const [activeTab, setActiveTab] = useState(0)
 	const { product } = useProductContext()
 
-	if (!product || !product.details || product.details.length === 0) return null
+	if (!product || !product.instructions || product.instructions.length === 0)
+		return null
 
 	return (
 		<div>
 			<Separator />
 			<div className="mt-8 mb-6 flex w-full gap-6 overflow-scroll border-b">
-				{product.details.map((detail, idx) => (
+				{product.instructions.map((detail, idx) => (
 					<Button
 						key={idx}
 						onClick={() => setActiveTab(idx)}
@@ -32,7 +33,7 @@ export const ProductDetails = () => {
 			</div>
 			<div className="prose prose-sm max-w-none">
 				<p className="text-primary/90 leading-relaxed whitespace-pre-line">
-					{product.details[activeTab].content}
+					{product.instructions[activeTab].content}
 				</p>
 			</div>
 		</div>

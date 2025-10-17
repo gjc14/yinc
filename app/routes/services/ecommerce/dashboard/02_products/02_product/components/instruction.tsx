@@ -24,54 +24,53 @@ import {
 
 import { productAtom } from '../../../../store/product/context'
 
-type DetailType = NonNullable<
-	NonNullable<ReturnType<typeof productAtom.read>>['details']
+type InstructionsType = NonNullable<
+	NonNullable<ReturnType<typeof productAtom.read>>['instructions']
 >[number]
 
-// Add _id for internal tracking
-type DetailWithId = DetailType & { _id: string }
+type InstructionWithId = InstructionsType & { _id: string }
 
-export const Details = () => {
+export const Instructions = () => {
 	const [product, setProduct] = useAtom(productAtom)
 
-	// useMemo to ensure each detail has a unique and stable _id
-	const detailsWithIds = useMemo<DetailWithId[]>(() => {
-		if (!product || !product.details) return []
-		return product.details.map(d => ({
+	// useMemo to ensure each instruction has a unique and stable _id
+	const instructionsWithIds = useMemo<InstructionWithId[]>(() => {
+		if (!product || !product.instructions) return []
+		return product.instructions.map(d => ({
 			...d,
-			_id: (d as DetailWithId)._id || nanoid(),
+			_id: (d as InstructionWithId)._id || nanoid(),
 		}))
-	}, [product?.details])
+	}, [product?.instructions])
 
-	const handleAddDetail = () => {
+	const handleAddInstruction = () => {
 		if (!product) return
-		const newDetail: DetailWithId = {
-			order: detailsWithIds.length,
-			title: 'New Detail',
+		const newInstruction: InstructionWithId = {
+			order: instructionsWithIds.length,
+			title: 'New Instruction',
 			content: 'Content here',
 			_id: nanoid(),
 		}
 		setProduct({
 			...product,
-			details: [...detailsWithIds, newDetail],
+			instructions: [...instructionsWithIds, newInstruction],
 		})
 	}
 
-	const handleUpdateDetail = (updatedDetail: DetailWithId) => {
+	const handleUpdateInstruction = (updatedInstruction: InstructionWithId) => {
 		if (!product) return
 		setProduct({
 			...product,
-			details: detailsWithIds.map(d =>
-				d._id === updatedDetail._id ? updatedDetail : d,
+			instructions: instructionsWithIds.map(d =>
+				d._id === updatedInstruction._id ? updatedInstruction : d,
 			),
 		})
 	}
 
-	const handleDeleteDetail = (id: string) => {
+	const handleDeleteInstruction = (id: string) => {
 		if (!product) return
 		setProduct({
 			...product,
-			details: detailsWithIds.filter(d => d._id !== id),
+			instructions: instructionsWithIds.filter(d => d._id !== id),
 		})
 	}
 
@@ -80,25 +79,25 @@ export const Details = () => {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Details</CardTitle>
+				<CardTitle>Instructions</CardTitle>
 				<CardDescription>
-					Every detail will help your customers make the right choice. e.g. How
-					To Use; Ingredients.
+					Every instruction will help your customers make the right choice. e.g.
+					How To Use; Ingredients.
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-2">
-				{detailsWithIds.length > 0 ? (
-					detailsWithIds.map(detail => (
-						<DetailItem
-							key={detail._id}
-							detail={detail}
-							onUpdate={handleUpdateDetail}
-							onDelete={handleDeleteDetail}
+				{instructionsWithIds.length > 0 ? (
+					instructionsWithIds.map(instruction => (
+						<InstructionItem
+							key={instruction._id}
+							instruction={instruction}
+							onUpdate={handleUpdateInstruction}
+							onDelete={handleDeleteInstruction}
 						/>
 					))
 				) : (
 					<p className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-sm">
-						No details added yet. Click "Add Detail" to create one.
+						No instructions added yet. Click "Add Instruction" to create one.
 					</p>
 				)}
 			</CardContent>
@@ -107,43 +106,49 @@ export const Details = () => {
 					variant="outline"
 					size="sm"
 					className="w-full"
-					onClick={handleAddDetail}
+					onClick={handleAddInstruction}
 				>
 					<Plus />
-					Add Detail
+					Add Instruction
 				</Button>
 			</CardFooter>
 		</Card>
 	)
 }
 
-function DetailItem({
-	detail,
+function InstructionItem({
+	instruction,
 	onUpdate,
 	onDelete,
 }: {
-	detail: DetailWithId
-	onUpdate: (updatedDetail: DetailWithId) => void
+	instruction: InstructionWithId
+	onUpdate: (updatedInstruction: InstructionWithId) => void
 	onDelete: (id: string) => void
 }) {
 	const [isEditing, setIsEditing] = useState(false)
-	const [editedDetail, setEditedDetail] = useState(detail)
+	const [editedInstruction, setEditedInstruction] = useState(instruction)
 
 	return (
 		<Item variant="outline">
 			{isEditing ? (
 				<ItemContent>
 					<Input
-						value={editedDetail.title}
+						value={editedInstruction.title}
 						onChange={e =>
-							setEditedDetail({ ...editedDetail, title: e.target.value })
+							setEditedInstruction({
+								...editedInstruction,
+								title: e.target.value,
+							})
 						}
 						placeholder="Title"
 					/>
 					<Input
-						value={editedDetail.content || ''}
+						value={editedInstruction.content || ''}
 						onChange={e =>
-							setEditedDetail({ ...editedDetail, content: e.target.value })
+							setEditedInstruction({
+								...editedInstruction,
+								content: e.target.value,
+							})
 						}
 						placeholder="Content"
 					/>
@@ -151,7 +156,7 @@ function DetailItem({
 						<Button
 							size="sm"
 							onClick={() => {
-								onUpdate(editedDetail)
+								onUpdate(editedInstruction)
 								setIsEditing(false)
 							}}
 						>
@@ -161,7 +166,7 @@ function DetailItem({
 							variant="outline"
 							size="sm"
 							onClick={() => {
-								setEditedDetail(detail) // Reset to original
+								setEditedInstruction(instruction) // Reset to original
 								setIsEditing(false)
 							}}
 						>
@@ -170,7 +175,7 @@ function DetailItem({
 						<Button
 							variant="destructive"
 							size="sm"
-							onClick={() => onDelete(detail._id)}
+							onClick={() => onDelete(instruction._id)}
 							className="ml-auto"
 						>
 							Delete
@@ -180,8 +185,10 @@ function DetailItem({
 			) : (
 				<>
 					<ItemContent>
-						<ItemTitle>{detail.title || 'Untitled'}</ItemTitle>
-						<ItemDescription>{detail.content || 'No content'}</ItemDescription>
+						<ItemTitle>{instruction.title || 'Untitled'}</ItemTitle>
+						<ItemDescription>
+							{instruction.content || 'No content'}
+						</ItemDescription>
 					</ItemContent>
 					<ItemActions>
 						<Button
