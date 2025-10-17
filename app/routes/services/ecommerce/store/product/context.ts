@@ -4,6 +4,7 @@ import type {
 	getCrossSellProducts,
 	getProduct,
 	getProductGallery,
+	getUpsellProducts,
 } from '../../lib/db/product.server'
 import type {
 	EcBrand as Brand,
@@ -34,6 +35,9 @@ export const productGalleryAtom = atom<Awaited<
 > | null>(null)
 export const crossSellProductsAtom = atom<Awaited<
 	ReturnType<typeof getCrossSellProducts>
+> | null>(null)
+export const upsellProductsAtom = atom<Awaited<
+	ReturnType<typeof getUpsellProducts>
 > | null>(null)
 
 // === Taxonomies ===

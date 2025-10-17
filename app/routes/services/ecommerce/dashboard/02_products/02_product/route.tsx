@@ -2,19 +2,21 @@ import type { Route } from './+types/route'
 import { useEffect } from 'react'
 import { type ShouldRevalidateFunctionArgs } from 'react-router'
 
-import { useAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
 
 import {
 	getCrossSellProducts,
 	getProduct,
 	getProductGallery,
+	getUpsellProducts,
 } from '../../../lib/db/product.server'
 import {
 	crossSellProductsAtom,
 	isResolvingAtom,
 	productAtom,
 	productGalleryAtom,
+	upsellProductsAtom,
 } from '../../../store/product/context'
 import { ProductEditPage } from './page'
 
@@ -46,8 +48,14 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 	})
 
 	const crossSellProductsPromise = getCrossSellProducts(product.id)
+	const upsellProductsPromise = getUpsellProducts(product.id)
 
-	return { product, productGalleryPromise, crossSellProductsPromise }
+	return {
+		product,
+		productGalleryPromise,
+		crossSellProductsPromise,
+		upsellProductsPromise,
+	}
 }
 
 // To prevent revalidation when fetchers are called (taxonomies, brands, etc.)
@@ -61,10 +69,11 @@ export const shouldRevalidate = ({
 
 export default function ECProduct({ loaderData }: Route.ComponentProps) {
 	useHydrateAtoms([[productAtom, loaderData.product]])
-	const [, setProduct] = useAtom(productAtom)
-	const [, setIsResolving] = useAtom(isResolvingAtom)
-	const [, setCrossSellProducts] = useAtom(crossSellProductsAtom)
-	const [, setProductGallery] = useAtom(productGalleryAtom)
+	const setProduct = useSetAtom(productAtom)
+	const setIsResolving = useSetAtom(isResolvingAtom)
+	const setProductGallery = useSetAtom(productGalleryAtom)
+	const setCrossSellProducts = useSetAtom(crossSellProductsAtom)
+	const setUpsellProducts = useSetAtom(upsellProductsAtom)
 
 	useEffect(() => {
 		setProduct(loaderData.product)
@@ -74,12 +83,15 @@ export default function ECProduct({ loaderData }: Route.ComponentProps) {
 		})
 
 		// Resolve promises
-		loaderData.crossSellProductsPromise
-			.then(setCrossSellProducts)
-			.finally(() => setIsResolving(r => ({ ...r, crossSellProducts: false })))
 		loaderData.productGalleryPromise
 			.then(setProductGallery)
 			.finally(() => setIsResolving(r => ({ ...r, productGallery: false })))
+		loaderData.crossSellProductsPromise
+			.then(setCrossSellProducts)
+			.finally(() => setIsResolving(r => ({ ...r, crossSellProducts: false })))
+		loaderData.upsellProductsPromise
+			.then(setUpsellProducts)
+			.finally(() => setIsResolving(r => ({ ...r, upsellProducts: false })))
 
 		return () => {
 			setProduct(null)

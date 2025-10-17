@@ -12,6 +12,7 @@ import {
 	productToBrand,
 	productToCategory,
 	productToTag,
+	productUpsell,
 	productVariant,
 	type ProductStatus,
 } from './schema/product'
@@ -388,6 +389,44 @@ export const getCrossSellProducts = async (
 
 	const converted = convertDateFields(
 		camelcaseKeys(crossSells.rows, { deep: true }),
+		['updatedAt'],
+	)
+
+	return converted
+}
+
+export const getUpsellProducts = async (
+	productId: number,
+): Promise<ProductListing[]> => {
+	const upsells = await dbStore.execute<ProductListing>(sql`
+		SELECT
+		DISTINCT ON (p.id)
+			p.id,
+			p.name,
+			p.slug,
+			p.status,
+			p.updated_at,
+			CASE
+				WHEN po.id IS NOT NULL
+				THEN json_build_object(
+					'id', po.id,
+					'image', po.image,
+					'price', po.price,
+					'sale_price', po.sale_price,
+					'sku', po.sku,
+					'manage_stock', po.manage_stock,
+					'stock_status', po.stock_status
+				)
+				ELSE NULL
+	   		END AS option
+		FROM ${productUpsell} pus
+		LEFT JOIN ${product} p ON p.id = pus.upsell_product_id
+		LEFT JOIN ${productOption} po ON p.product_option_id = po.id
+		WHERE pus.product_id = ${productId}
+	`)
+
+	const converted = convertDateFields(
+		camelcaseKeys(upsells.rows, { deep: true }),
 		['updatedAt'],
 	)
 

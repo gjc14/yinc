@@ -25,26 +25,32 @@ import {
 import { Input } from '~/components/ui/input'
 import { Spinner } from '~/components/ui/spinner'
 import type { ProductListing } from '~/routes/services/ecommerce/lib/db/product.server'
-import { crossSellProductsAtom } from '~/routes/services/ecommerce/store/product/context'
+import {
+	crossSellProductsAtom,
+	upsellProductsAtom,
+} from '~/routes/services/ecommerce/store/product/context'
 
 import type { loader } from '../resource'
 
 export function LinkedProducts() {
 	const fetcher = useFetcher<typeof loader>()
 
-	const [productOptions, setProductOptions] = useState<ProductListing[]>([])
+	const [productsAvailable, setProductsAvailable] = useState<ProductListing[]>(
+		[],
+	)
 	const [productsLoaded, setProductsLoaded] = useState(false)
 
 	const [crossSellProducts, setCrossSellProducts] = useAtom(
 		crossSellProductsAtom,
 	)
+	const [upsellProducts, setUpsellProducts] = useAtom(upsellProductsAtom)
 
 	const [isCSOpen, setIsCSOpen] = useState(false)
 	const [isUSOpen, setIsUSOpen] = useState(false)
 
 	useEffect(() => {
 		if (!fetcher.data) return
-		setProductOptions(fetcher.data.products)
+		setProductsAvailable(fetcher.data.products)
 		setProductsLoaded(true)
 	}, [fetcher.data])
 
@@ -53,8 +59,19 @@ export function LinkedProducts() {
 		setIsCSOpen(false)
 	}
 
-	const handleRemoveProduct = (productId: number) => {
+	const handleSetUSProducts = (products: ProductListing[]) => {
+		setUpsellProducts(products)
+		setIsUSOpen(false)
+	}
+
+	const handleRemoveCSProduct = (productId: number) => {
 		setCrossSellProducts(prev =>
+			!prev ? null : prev.filter(p => p.id !== productId),
+		)
+	}
+
+	const handleRemoveUSProduct = (productId: number) => {
+		setUpsellProducts(prev =>
 			!prev ? null : prev.filter(p => p.id !== productId),
 		)
 	}
@@ -87,7 +104,7 @@ export function LinkedProducts() {
 								<LinkedProductItem
 									key={product.id}
 									product={product}
-									onRemove={handleRemoveProduct}
+									onRemove={handleRemoveCSProduct}
 								/>
 							))}
 						</div>
@@ -108,6 +125,52 @@ export function LinkedProducts() {
 					</Button>
 				</CardFooter>
 			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Upsell Products</CardTitle>
+					<CardDescription>
+						These products will be shown as recommendations on the cart page.
+					</CardDescription>
+				</CardHeader>
+
+				<CardContent>
+					{!upsellProducts ? (
+						<div className="flex items-center justify-center py-5">
+							<Spinner />
+						</div>
+					) : upsellProducts.length === 0 ? (
+						/* Empty state */
+						<div className="text-muted-foreground rounded-md border border-dashed px-2 py-5 text-center text-sm">
+							No linked products yet. Click "Add Upsell Product" to get started.
+						</div>
+					) : (
+						/* Product list */
+						<div className="space-y-2">
+							{upsellProducts.map(product => (
+								<LinkedProductItem
+									key={product.id}
+									product={product}
+									onRemove={handleRemoveUSProduct}
+								/>
+							))}
+						</div>
+					)}
+				</CardContent>
+				<CardFooter>
+					<Button
+						size="sm"
+						variant="outline"
+						className="w-full"
+						onClick={() => {
+							!productsLoaded && fetcher.load('resource')
+							setIsUSOpen(true)
+						}}
+					>
+						<Plus />
+						Add Upsell Product
+					</Button>
+				</CardFooter>
+			</Card>
 
 			{/* Add products dialog */}
 			<AddLinkedProductsDialog
@@ -115,7 +178,15 @@ export function LinkedProducts() {
 				onOpenChange={setIsCSOpen}
 				onConfirm={handleSetCSProducts}
 				selected={crossSellProducts ?? []}
-				products={productOptions}
+				products={productsAvailable}
+				isLoading={fetcher.state === 'loading'}
+			/>
+			<AddLinkedProductsDialog
+				open={isUSOpen}
+				onOpenChange={setIsUSOpen}
+				onConfirm={handleSetUSProducts}
+				selected={upsellProducts ?? []}
+				products={productsAvailable}
 				isLoading={fetcher.state === 'loading'}
 			/>
 		</>

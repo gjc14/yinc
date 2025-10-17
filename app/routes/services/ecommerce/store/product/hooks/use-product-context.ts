@@ -10,6 +10,7 @@ import {
 	productGalleryAtom,
 	selectedAttributesAtom,
 	storeConfigAtom,
+	upsellProductsAtom,
 } from '../context'
 
 /**
@@ -22,6 +23,7 @@ export const useProductContext = () => {
 	const [crossSellProducts, setCrossSellProducts] = useAtom(
 		crossSellProductsAtom,
 	)
+	const [upsellProducts, setUpsellProducts] = useAtom(upsellProductsAtom)
 	const [isResolving, setIsResolving] = useAtom(isResolvingAtom)
 
 	const [selectedAttributes, setSelectedAttributes] = useAtom(
@@ -51,6 +53,8 @@ export const useProductContext = () => {
 		setProductGallery,
 		crossSellProducts,
 		setCrossSellProducts,
+		upsellProducts,
+		setUpsellProducts,
 		isResolving,
 		setIsResolving,
 

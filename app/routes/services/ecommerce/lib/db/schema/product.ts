@@ -25,7 +25,7 @@
  * == Linked products ==
  * associating products to other products
  * - cross_sell
- * - up_sell
+ * - upsell
  *
  * == Review ==
  */
@@ -330,13 +330,13 @@ export const productCrossSell = pgTable('ec_product_cross_sell', {
 	order: integer('order').notNull().default(0),
 })
 
-// Linked products - up sell
-export const productUpSell = pgTable('ec_product_up_sell', {
+// Linked products - upsell
+export const productUpsell = pgTable('ec_product_upsell', {
 	id: serial('id').primaryKey(),
 	productId: integer('product_id')
 		.notNull()
 		.references(() => product.id, { onDelete: 'cascade' }),
-	upSellProductId: integer('up_sell_product_id')
+	upsellProductId: integer('upsell_product_id')
 		.notNull()
 		.references(() => product.id, { onDelete: 'cascade' }),
 	order: integer('order').notNull().default(0),
