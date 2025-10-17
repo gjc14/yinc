@@ -59,6 +59,26 @@ type GetProductsParamsBase = {
 	title?: string
 }
 
+type PriceFields = {
+	price?: number
+	salePrice?: number | null
+}
+
+function convertPriceFromDb<T extends PriceFields>(data: T): T {
+	// TODO: Pass in scale factor if needed in the future
+	const result = { ...data }
+
+	if (typeof result.price === 'number') {
+		result.price = result.price / 100
+	}
+
+	if (typeof result.salePrice === 'number') {
+		result.salePrice = result.salePrice / 100
+	}
+
+	return result
+}
+
 export async function getProducts(
 	params?: GetProductsParamsBase & {
 		relations?: false
@@ -173,7 +193,10 @@ export async function getProducts({
 		return true
 	})
 
-	return validProducts
+	return validProducts.map(p => ({
+		...p,
+		option: convertPriceFromDb(p.option),
+	}))
 }
 
 export type ProductWithOption = Product & {
@@ -332,7 +355,7 @@ export const getProduct = async ({
 			return null
 		}
 
-		return convertDateFields(
+		const product = convertDateFields(
 			camelcaseKeys(p, { deep: true, stopPaths: ['variants.combination'] }),
 			[
 				'createdAt',
@@ -343,6 +366,11 @@ export const getProduct = async ({
 				'saleEndsAt',
 			],
 		)
+
+		return {
+			...product,
+			option: convertPriceFromDb(product.option),
+		}
 	}
 
 	// Should never happen since slug is unique
@@ -392,7 +420,10 @@ export const getCrossSellProducts = async (
 		['updatedAt'],
 	)
 
-	return converted
+	return converted.map(p => ({
+		...p,
+		option: convertPriceFromDb(p.option),
+	}))
 }
 
 export const getUpsellProducts = async (
@@ -430,5 +461,8 @@ export const getUpsellProducts = async (
 		['updatedAt'],
 	)
 
-	return converted
+	return converted.map(p => ({
+		...p,
+		option: convertPriceFromDb(p.option),
+	}))
 }

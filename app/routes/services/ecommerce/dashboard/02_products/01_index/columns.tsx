@@ -64,10 +64,10 @@ export const columns: ColumnDef<
 
 			return (
 				<div className="flex flex-col">
-					<span>${(displayPrice / 100).toFixed(2)}</span>
+					<span>${displayPrice}</span>
 					{hasDiscount && (
 						<span className="text-muted-foreground text-xs line-through">
-							${(price / 100).toFixed(2)}
+							${price}
 						</span>
 					)}
 				</div>

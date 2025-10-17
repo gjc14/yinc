@@ -58,12 +58,11 @@ export const ProductInformation = () => {
 				</div>
 				<div className="my-8 flex items-baseline gap-3">
 					<span className="text-3xl font-light">
-						{hasVariants && !selectedVariant && 'From '}$
-						{(displayPrice / 100).toFixed(2)}
+						{hasVariants && !selectedVariant && 'From '}${displayPrice}
 					</span>
 					{hasDiscount && displayOriginalPrice && (
 						<span className="text-muted-foreground text-xl line-through">
-							${(displayOriginalPrice / 100).toFixed(2)}
+							${displayOriginalPrice}
 						</span>
 					)}
 				</div>

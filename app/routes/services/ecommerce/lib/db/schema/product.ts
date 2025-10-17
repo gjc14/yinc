@@ -146,6 +146,7 @@ export const productOption = pgTable(
 		/** Please save $19.99 as 1999; $18.99 as 1899 */
 		price: integer('price').notNull().default(0),
 		salePrice: integer('sale_price').default(0),
+		// TODO: add currency / scale / taxStatus / taxClass
 		saleStartsAt: timestamp('sale_starts_at', { withTimezone: true }),
 		saleEndsAt: timestamp('sale_ends_at', { withTimezone: true }),
 

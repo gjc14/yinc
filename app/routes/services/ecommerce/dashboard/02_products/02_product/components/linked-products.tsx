@@ -225,13 +225,8 @@ function LinkedProductItem({ product, onRemove }: LinkedProductItemProps) {
 				</Button>
 				<div className="mt-1">
 					<div className="flex flex-col">
-						<span className="text-sm">
-							${(product.option.price / 100).toFixed(2)}
-						</span>
 						{!!product.option.salePrice && (
-							<span className="text-muted-foreground text-xs line-through">
-								${(product.option.salePrice / 100).toFixed(2)}
-							</span>
+							<span className="text-muted-foreground text-xs line-through"></span>
 						)}
 					</div>
 				</div>
@@ -412,13 +407,8 @@ function SelectableProductItem({
 				<div className="line-clamp-1 font-medium">{product.name}</div>
 				<div className="mt-1">
 					<div className="flex flex-col">
-						<span className="text-sm">
-							${(product.option.price / 100).toFixed(2)}
-						</span>
 						{!!product.option.salePrice && (
-							<span className="text-muted-foreground text-xs line-through">
-								${(product.option.salePrice / 100).toFixed(2)}
-							</span>
+							<span className="text-muted-foreground text-xs line-through"></span>
 						)}
 					</div>
 				</div>

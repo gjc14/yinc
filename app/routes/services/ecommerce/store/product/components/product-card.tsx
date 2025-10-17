@@ -39,10 +39,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 			</div>
 			<h3 className="mb-2 text-sm font-light">{product.name}</h3>
 			<div className="flex items-center gap-x-2">
-				<span className="text-base">${(displayPrice / 100).toFixed(2)}</span>
+				<span className="text-base">${displayPrice}</span>
 				{hasDiscount && (
 					<span className="text-muted-foreground text-xs line-through">
-						${(product.option.price / 100).toFixed(2)}
+						${product.option.price}
 					</span>
 				)}
 			</div>

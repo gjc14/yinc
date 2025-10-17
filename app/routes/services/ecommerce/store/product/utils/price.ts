@@ -32,10 +32,9 @@ const getDisplayPrice = (props: {
 }) => {
 	const hasVariants = getHasVariants(props.product)
 
-	const selectedVariant = getSelectedVariant(props)
-	const filteredVariants = getFilteredVariants(props)
-
 	if (hasVariants) {
+		const selectedVariant = getSelectedVariant(props)
+		const filteredVariants = getFilteredVariants(props)
 		return selectedVariant
 			? selectedVariant.option.salePrice || selectedVariant.option.price
 			: getLowestPrice(filteredVariants)
@@ -52,11 +51,9 @@ const getHasDiscount = (props: {
 }) => {
 	const hasVariants = getHasVariants(props.product)
 
-	const selectedVariant = getSelectedVariant(props)
-
-	const selectedOption = selectedVariant?.option || props.product.option
-
 	if (hasVariants) {
+		const selectedVariant = getSelectedVariant(props)
+		const selectedOption = selectedVariant?.option || props.product.option
 		return (
 			selectedOption &&
 			!!selectedOption.salePrice &&
@@ -79,9 +76,8 @@ const getDisplayOriginalPrice = (props: {
 }) => {
 	const hasVariants = getHasVariants(props.product)
 
-	const selectedVariant = getSelectedVariant(props)
-
 	if (hasVariants) {
+		const selectedVariant = getSelectedVariant(props)
 		return selectedVariant ? selectedVariant.option.price : undefined
 	}
 	return props.product.option.price
