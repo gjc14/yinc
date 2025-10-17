@@ -225,6 +225,11 @@ type CreatePostProps = Omit<
 	seo: Pick<Seo, 'metaDescription' | 'metaTitle'>
 }
 
+/**
+ * This function does not uses id and seoId from the props.
+ * post id placeholder: -1
+ * post seoId placeholder: -1
+ */
 export const createPost = async (
 	props: CreatePostProps,
 ): Promise<{ post: PostWithRelations }> => {
