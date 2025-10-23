@@ -1,9 +1,10 @@
 import camelcaseKeys from 'camelcase-keys'
-import { sql } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 
+import { seo } from '~/lib/db/schema'
 import { convertDateFields } from '~/lib/db/utils'
 
-import { dbStore } from './db.server'
+import { dbStore, type TransactionType } from './db.server'
 import {
 	product,
 	productAttribute,
@@ -20,6 +21,9 @@ import { ecAttribute, ecBrand, ecCategory, ecTag } from './schema/taxonomy'
 
 type Product = typeof product.$inferSelect
 type ProductOption = typeof productOption.$inferSelect
+type Category = typeof ecCategory.$inferSelect
+type Tag = typeof ecTag.$inferSelect
+type Brand = typeof ecBrand.$inferSelect
 
 export type ProductListing = Pick<
 	Product,
@@ -41,9 +45,9 @@ export type ProductListing = Pick<
 }
 
 export type ProductListingWithRelations = ProductListing & {
-	categories: (typeof ecCategory.$inferSelect)[]
-	tags: (typeof ecTag.$inferSelect)[]
-	brands: (typeof ecBrand.$inferSelect)[]
+	categories: Category[]
+	tags: Tag[]
+	brands: Brand[]
 }
 
 type GetProductsParamsBase = {
@@ -208,7 +212,7 @@ export type ProductWithOption = Product & {
 
 /** Single product select attribute type */
 export type ProductVariant = typeof productVariant.$inferSelect & {
-	option: typeof productOption.$inferSelect
+	option: ProductOption
 }
 
 /** Single product select attribute type */
@@ -237,9 +241,9 @@ export const getProduct = async ({
 	console.time('getProduct')
 	const products = await dbStore.execute<
 		ProductWithOption & {
-			categories: (typeof ecCategory.$inferSelect)[]
-			tags: (typeof ecTag.$inferSelect)[]
-			brands: (typeof ecBrand.$inferSelect)[]
+			categories: Category[]
+			tags: Tag[]
+			brands: Brand[]
 			variants: ProductVariant[]
 			attributes: ProductAttribute[]
 		}
@@ -492,4 +496,254 @@ export const getUpsellProducts = async (
 		...p,
 		option: convertPriceStringToBigInt(p.option),
 	}))
+}
+
+// ==============================
+// Create / Update / Delete
+// ==============================
+
+export type UpdateCrossSellProductsParams = {
+	productId: number
+	values: Pick<
+		typeof productCrossSell.$inferInsert,
+		'crossSellProductId' | 'order'
+	>[]
+}
+export const updateCrossSellProducts = async ({
+	productId,
+	values,
+}: UpdateCrossSellProductsParams) => {
+	await dbStore.transaction(async tx => {
+		// Delete existing associations
+		await tx
+			.delete(productCrossSell)
+			.where(eq(productCrossSell.productId, productId))
+
+		// Insert new associations (including order)
+		if (values.length > 0) {
+			await tx
+				.insert(productCrossSell)
+				.values(values.map(v => ({ ...v, productId })))
+		}
+	})
+}
+
+export type UpdateUpsellProductsParams = {
+	productId: number
+	values: Pick<typeof productUpsell.$inferInsert, 'upsellProductId' | 'order'>[]
+}
+export const updateUpsellProducts = async ({
+	productId,
+	values,
+}: UpdateUpsellProductsParams) => {
+	await dbStore.transaction(async tx => {
+		// Delete existing associations
+		await tx.delete(productUpsell).where(eq(productUpsell.productId, productId))
+
+		// Insert new associations (including order)
+		if (values.length > 0) {
+			await tx
+				.insert(productUpsell)
+				.values(values.map(v => ({ ...v, productId })))
+		}
+	})
+}
+
+// ===== Helper Functions =====
+
+/**
+ * 	1. categories: Category[]
+ *	2. tags: Tag[]
+ *	3. brands: Brand[]
+ *	4. variants: ProductVariant[]
+ *	5. attributes: ProductAttribute[]
+ */
+
+/** Update product categories - replace all associations */
+async function updateProductCategories(
+	tx: TransactionType,
+	productId: number,
+	categories: Category[],
+) {
+	// Delete existing associations
+	await tx
+		.delete(productToCategory)
+		.where(eq(productToCategory.productId, productId))
+
+	// Insert new associations
+	if (categories.length > 0) {
+		await tx.insert(productToCategory).values(
+			categories.map((cat, index) => ({
+				productId,
+				categoryId: cat.id,
+				order: index,
+			})),
+		)
+	}
+}
+
+/** Update product tags - replace all associations */
+async function updateProductTags(
+	tx: TransactionType,
+	productId: number,
+	tags: Tag[],
+) {
+	// Delete existing associations
+	await tx.delete(productToTag).where(eq(productToTag.productId, productId))
+
+	// Insert new associations
+	if (tags.length > 0) {
+		await tx.insert(productToTag).values(
+			tags.map((tag, index) => ({
+				productId,
+				tagId: tag.id,
+				order: index,
+			})),
+		)
+	}
+}
+
+/** Update product brands - replace all associations */
+async function updateProductBrands(
+	tx: TransactionType,
+	productId: number,
+	brands: Brand[],
+) {
+	// Delete existing associations
+	await tx.delete(productToBrand).where(eq(productToBrand.productId, productId))
+
+	// Insert new associations
+	if (brands.length > 0) {
+		await tx.insert(productToBrand).values(
+			brands.map((brand, index) => ({
+				productId,
+				brandId: brand.id,
+				order: index,
+			})),
+		)
+	}
+}
+
+/** Update product variants - replace all variants and their options */
+async function updateProductVariants(
+	tx: TransactionType,
+	productId: number,
+	variants: ProductVariant[],
+) {
+	const existingVariants = await tx.query.productVariant.findMany({
+		where: eq(productVariant.productId, productId),
+	})
+
+	// Collect option IDs to delete (those not being reused)
+	const existingOptionIds = existingVariants.map(v => v.optionId)
+	const optionIdsInUse = variants
+		.map(v => v.option.id)
+		.filter(id => existingOptionIds.includes(id))
+	const optionIdsToDelete = existingOptionIds.filter(
+		id => !optionIdsInUse.includes(id),
+	)
+
+	// Delete orphaned options
+	if (optionIdsToDelete.length > 0) {
+		await tx
+			.delete(productOption)
+			.where(inArray(productOption.id, optionIdsToDelete))
+	}
+
+	// Insert new variants
+	if (variants.length > 0) {
+		const variantsToInsert = await Promise.all(
+			variants.map(async variant => {
+				let optionIdDatabase: number
+				const [{ id: optionId }] = await tx
+					.select({ id: productOption.id })
+					.from(productOption)
+					.where(eq(productOption.id, variant.option.id))
+
+				if (!optionId) {
+					const [{ id: newOptionId }] = await tx
+						.insert(productOption)
+						.values(variant.option)
+						.returning({
+							id: productOption.id,
+						})
+					optionIdDatabase = newOptionId
+				} else {
+					await tx
+						.update(productOption)
+						.set(variant.option)
+						.where(eq(productOption.id, optionId))
+					optionIdDatabase = optionId
+				}
+
+				const { combination, order } = variant
+				return { combination, order, optionId: optionIdDatabase, productId }
+			}),
+		)
+
+		// Insert variants at once
+		await tx.insert(productVariant).values(variantsToInsert)
+	}
+}
+
+/** Update product attributes - replace all */
+async function updateProductAttributes(
+	tx: TransactionType,
+	productId: number,
+	attributes: ProductAttribute[],
+) {
+	// Delete existing attributes
+	await tx
+		.delete(productAttribute)
+		.where(eq(productAttribute.productId, productId))
+
+	// Insert new attributes
+	if (attributes.length > 0) {
+		await tx.insert(productAttribute).values(
+			attributes.map(
+				attr =>
+					({
+						productId,
+						name: attr.name,
+						value: attr.value,
+						attributeId: attr.attributeId,
+						order: attr.order,
+						selectType: attr.selectType,
+						visible: attr.visible,
+					}) satisfies typeof productAttribute.$inferInsert,
+			),
+		)
+	}
+}
+
+/** Delete a product (soft delete by default, or hard delete) */
+export async function deleteProduct(productId: number, hardDelete = false) {
+	if (hardDelete) {
+		await dbStore.transaction(async tx => {
+			// Get product to find its default option
+			const [p] = await tx
+				.select({
+					productOptionId: product.productOptionId,
+					seoId: product.seoId,
+				})
+				.from(product)
+				.where(eq(product.id, productId))
+
+			if (!p) {
+				throw new Error(`ProductId ${productId} not found`)
+			}
+
+			await tx.delete(product).where(eq(product.id, productId)).returning({
+				name: product.name,
+			})
+			await tx.delete(seo).where(eq(seo.id, p.seoId))
+		})
+	} else {
+		// Soft delete
+		await dbStore
+			.update(product)
+			.set({ deletedAt: new Date() })
+			.where(eq(product.id, productId))
+			.returning({ name: product.name })
+	}
 }
