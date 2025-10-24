@@ -59,7 +59,7 @@ export const LINKS: { [key in SocialMedia]: Link } = {
 		title: 'Blog',
 		icon: <PenBox className="h-full w-full" />, // Changed to BlogIcon
 		link: '/blog',
-		text: 'yinc.me',
+		text: 'yinc.tw',
 	},
 
 	bubu: {
