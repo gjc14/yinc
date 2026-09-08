@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yin Chen Chiu</title>
+<meta name="description" content="Yin Chen Chiu — full-stack developer based in Taipei, Taiwan." />
+<link rel="icon" href="/favicon.ico" />
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --fg: #1a1a1a;      /* primary text */
+    --muted: #5c5c58;   /* secondary text: roles, dates */
+    --faint: #8c8c88;   /* tertiary text: labels, location */
+    --rule: #e6e6e2;
+    --link: #1a1a1a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110;
+      --fg: #ededec;
+      --muted: #a6a6a3;
+      --faint: #6f6f6b;
+      --rule: #2a2a27;
+      --link: #ededec;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 13vh 1.5rem 15vh;
+  }
+
+  /* ---- Level 1: name ---- */
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.4rem;
+  }
+  .lede {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 0 4rem;
+  }
+
+  /* ---- Level 2: section labels ---- */
+  section { margin-bottom: 3.25rem; }
+  section:last-of-type { margin-bottom: 2.5rem; }
+  h2 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: var(--faint);
+    margin: 0 0 0.5rem;
+  }
+
+  /* ---- Level 3: entries ---- */
+  ul { list-style: none; margin: 0; padding: 0; }
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  li:last-child { border-bottom: 1px solid var(--rule); }
+
+  .title { font-weight: 500; color: var(--fg); }        /* primary: org / project */
+  .role { color: var(--muted); font-weight: 400; }      /* secondary: position / degree */
+  .role::before { content: " — "; }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+    gap: 0.1rem;
+    text-align: right;
+  }
+  .when {                                               /* secondary: dates */
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .where {                                              /* tertiary: location */
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  a:hover { border-bottom-color: currentColor; }
+
+  footer {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--muted); border-bottom-color: transparent; }
+  footer a:hover { color: var(--fg); border-bottom-color: currentColor; }
+
+  /* ---- small screens ---- */
+  @media (max-width: 30rem) {
+    li { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+    .role { display: block; }
+    .role::before { content: ""; }
+    .meta {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0;
+      text-align: left;
+    }
+    .where { font-size: 0.85rem; }                      /* match .when on one line */
+    .where::before {
+      content: "·";
+      margin: 0 0.5rem;
+      color: var(--faint);
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Chiu Yin Chen (Gabriel)</h1>
+  <p class="lede">Full-stack developer. Taipei, Taiwan (R.O.C.).</p>
+
+  <section>
+    <h2>Work</h2>
+    <ul>
+      <li>
+        <span><span class="title">Satori Underwriting Technology</span><span class="role">Full Stack Developer</span></span>
+        <span class="meta"><span class="when">Mar 2026 — Present</span><span class="where">Remote</span></span>
+      </li>
+      <li>
+        <span><span class="title">R.O.C. Army</span><span class="role">Compulsory Military Service</span></span>
+        <span class="meta"><span class="when">Oct 2025 — Feb 2026</span><span class="where">Tainan</span></span>
+      </li>
+      <li>
+        <span><span class="title">BUBU E-Scooter</span><span class="role">Co-Founder &amp; Full Stack Engineer</span></span>
+        <span class="meta"><span class="when">Jul 2023 — Aug 2025</span><span class="where">Taipei</span></span>
+      </li>
+      <li>
+        <span><span class="title">Gabriel &amp; Chris Brothers</span><span class="role">Co-Founder</span></span>
+        <span class="meta"><span class="when">Feb 2023 — Dec 2024</span><span class="where">Changhua</span></span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <ul>
+      <li>
+        <span class="title"><a href="https://github.com/gjc14/papa" target="_blank" rel="noreferrer">Papa Stack</a></span>
+        <span class="meta"><span class="when">2024 —</span></span>
+      </li>
+      <li>
+        <span class="title"><a href="https://ridebubu.com" target="_blank" rel="noreferrer">BUBU E-Scooter</a></span>
+        <span class="meta"><span class="when">2023 — 2025</span></span>
+      </li>
+      <li>
+        <span class="title">TWNCHA</span>
+        <span class="meta"><span class="when">2023 — 2024</span></span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <ul>
+      <li>
+        <span><span class="title">National Chengchi University</span><span class="role">BA Spanish &amp; BSc Accounting</span></span>
+        <span class="meta"><span class="when">2020 — 2025</span><span class="where">Taipei</span></span>
+      </li>
+      <li>
+        <span><span class="title">Universidad de los Andes</span><span class="role">Exchange, Management</span></span>
+        <span class="meta"><span class="when">2024</span><span class="where">Bogotá</span></span>
+      </li>
+    </ul>
+  </section>
+
+  <footer>
+    <a href="mailto:cyc@yinc.tw">cyc@yinc.tw</a>
+    <a href="https://github.com/gjc14" target="_blank" rel="noreferrer">GitHub</a>
+    <a href="https://www.linkedin.com/in/yinctw" target="_blank" rel="noreferrer">LinkedIn</a>
+  </footer>
+</main>
+</body>
+</html>
